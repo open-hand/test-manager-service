@@ -54,14 +54,18 @@ public class TestStatusServiceImpl implements TestStatusService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void delete(TestStatusVO testStatusVO) {
+    public Boolean delete(TestStatusVO testStatusVO) {
         TestStatusDTO testStatusDTO = testStatusMapper.selectByPrimaryKey(testStatusVO.getStatusId());
+        boolean canDelete = true;
         if (StringUtils.equals(testStatusDTO.getStatusType(), TestStatusType.STATUS_TYPE_CASE)) {
-            validateDeleteCycleCaseAllow(testStatusDTO.getStatusId());
+            canDelete = validateDeleteCycleCaseAllow(testStatusDTO.getStatusId());
         } else {
-            validateDeleteCaseStepAllow(testStatusDTO.getStatusId());
+            canDelete = validateDeleteCaseStepAllow(testStatusDTO.getStatusId());
         }
-        testStatusMapper.delete(testStatusDTO);
+        if(canDelete){
+            testStatusMapper.delete(testStatusDTO);
+        }
+        return canDelete;
     }
 
     @Override
@@ -90,18 +94,20 @@ public class TestStatusServiceImpl implements TestStatusService {
         return testStatusMapper.getDefaultStatus(type);
     }
 
-    private void validateDeleteCycleCaseAllow(Long statusId) {
+    private Boolean validateDeleteCycleCaseAllow(Long statusId) {
         Assert.notNull(statusId, "error.validate.delete.allow.parameter.statusId.not.null");
 
         if (testStatusMapper.ifDeleteCycleCaseAllow(statusId) > 0) {
-            throw new CommonException("error.delete.status.have.used");
+            return false;
         }
+        return true;
     }
 
-    private void validateDeleteCaseStepAllow(Long statusId) {
+    private Boolean validateDeleteCaseStepAllow(Long statusId) {
         Assert.notNull(statusId, "error.validate.delete.allow.parameter.statusId.not.null");
         if (testStatusMapper.ifDeleteCaseStepAllow(statusId) > 0) {
-            throw new CommonException("error.delete.status.have.used");
+            return false;
         }
+        return true;
     }
 }

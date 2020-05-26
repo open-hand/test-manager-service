@@ -199,8 +199,8 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
         CustomUserDetails userDetails = DetailsHelper.getUserDetails();
         Long defaultStatusId = testStatusService.getDefaultStatusId(TestStatusType.STATUS_TYPE_CASE_STEP);
         int count = testCycleCaseStepMapper.countByExecuteIds(olderExecuteIds);
-        int ceil = (int) Math.ceil(count / AVG_NUM == 0 ? 1 : count / AVG_NUM);
-        for(int page = 1;page <= ceil;page++){
+        int ceil = (int) Math.ceil(count / AVG_NUM == 0 ? 0 : count / AVG_NUM);
+        for(int page = 0;page < ceil;page++){
             Page<TestCycleCaseStepDTO> stepDTOPageInfo = PageHelper.doPageAndSort(new PageRequest(page, (int) AVG_NUM),() -> testCycleCaseStepMapper.listByexecuteIds(olderExecuteIds));
             List<TestCycleCaseStepDTO> list = stepDTOPageInfo.getContent();
             if (CollectionUtils.isEmpty(list)) {

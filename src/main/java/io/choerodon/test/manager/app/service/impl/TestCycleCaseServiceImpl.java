@@ -281,7 +281,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
     @Override
     public List<TestCycleCaseDTO> queryWithAttachAndDefect(TestCycleCaseDTO convert, PageRequest pageRequest) {
-        return testCycleCaseMapper.queryWithAttachAndDefect(convert, (pageRequest.getPage() - 1) * pageRequest.getSize(), pageRequest.getSize());
+        return testCycleCaseMapper.queryWithAttachAndDefect(convert, pageRequest.getPage()  * pageRequest.getSize(), pageRequest.getSize());
     }
 
     @Override
@@ -492,8 +492,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     @Override
     public void batchInsertByTestCase(Map<Long, TestCycleDTO> testCycleMap, List<Long> caseIds, Long project,Long planId) {
         int count = testCaseMapper.countByProjectIdAndCaseIds(project, caseIds);
-        int ceil = (int) Math.ceil(count / AVG_NUM == 0 ? 1 : count / AVG_NUM);
-        for (int i = 1; i <= ceil; i++) {
+        int ceil = (int) Math.ceil(count / AVG_NUM == 0 ? 0 : count / AVG_NUM);
+        for (int i = 0; i < ceil; i++) {
             Page<TestCaseDTO> testCasePage = PageHelper.doPageAndSort(new PageRequest(i, (int) AVG_NUM),() -> testCaseMapper.listByCaseIds(project, caseIds,false));
             List<TestCaseDTO> testCaseDTOS = testCasePage.getContent();
             if (CollectionUtils.isEmpty(testCaseDTOS)) {
@@ -705,8 +705,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             bathcInsert(testCycleCaseDTOS);
             // 同步步骤
             int count = testCaseStepMapper.countByProjectIdAndCaseIds(caseIds);
-            int ceil = (int) Math.ceil(count / AVG_NUM == 0 ? 1 : count / AVG_NUM);
-            for(int page = 1;page <= ceil;page++) {
+            int ceil = (int) Math.ceil(count / AVG_NUM == 0 ? 0 : count / AVG_NUM);
+            for(int page = 0;page < ceil;page++) {
                 Page<TestCaseStepDTO> caseStepDTOPageInfo = PageHelper.doPageAndSort(new PageRequest(page, 500),() -> testCaseStepMapper.listByCaseIds(caseIds));
                 List<TestCaseStepDTO> testCaseStepDTOS = caseStepDTOPageInfo.getContent();
                 Map<Long, List<TestCaseStepDTO>> caseStepMap = testCaseStepDTOS.stream().collect(Collectors.groupingBy(TestCaseStepDTO::getIssueId));
@@ -723,8 +723,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     public void cloneCycleCase(Map<Long, Long> cycleMapping, List<Long> cycIds) {
         Long defaultStatusId = testStatusService.getDefaultStatusId(TestStatusType.STATUS_TYPE_CASE);
         Integer count = testCycleCaseMapper.countByCycleIds(cycIds);
-        int ceil = (int) Math.ceil(count / AVG_NUM == 0 ? 1 : count / AVG_NUM);
-        for(int page=1;page<=ceil;page ++) {
+        int ceil = (int) Math.ceil(count / AVG_NUM == 0 ? 0 : count / AVG_NUM);
+        for(int page=0;page<ceil;page ++) {
             Page<TestCycleCaseDTO> testCyclePageInfo = PageHelper.doPageAndSort(new PageRequest(page,500),() -> testCycleCaseMapper.listByCycleIds(cycIds));
             if (CollectionUtils.isEmpty(testCyclePageInfo.getContent())) {
                 return;

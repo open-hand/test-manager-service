@@ -103,7 +103,7 @@ public class ReporterFormServiceImpl implements ReporterFormService {
         if (ObjectUtils.isEmpty(allFilteredIssues)) {
             return new Page<>();
         }
-        int pageNum = pageRequest.getPage()- 1;
+        int pageNum = pageRequest.getPage();
         int pageSize = pageRequest.getSize();
         int highPage = (pageNum + 1) * pageSize - 1;
         int lowPage = pageNum * pageSize;

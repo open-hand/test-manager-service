@@ -50,12 +50,11 @@ public class TestStatusController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("删除状态")
     @DeleteMapping("/{statusId}")
-    public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity<Boolean> delete(@PathVariable(name = "project_id") Long projectId,
                                  @PathVariable(name = "statusId") Long statusId) {
         TestStatusVO dto = new TestStatusVO();
         dto.setStatusId(statusId);
-        testStatusService.delete(dto);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(testStatusService.delete(dto),HttpStatus.NO_CONTENT);
     }
 
     @Permission(level = ResourceLevel.ORGANIZATION)
