@@ -77,13 +77,13 @@ class TestPlanTree extends Component {
     if (isPlan) {
       await handleRequestFailed(deletePlan(item.id));
       testPlanStore.loadIssueTree();
+      // 只移除跟节点，作用是删除目录后可以正确判断是不是没目录了，来显示空插画
+      testPlanStore.removeRootItem(item.id);
     } else {
       const [, folderId] = testPlanStore.getId(item.id);
       await handleRequestFailed(deleteFolder(folderId));
       testPlanStore.loadIssueTree();
     }
-    // 只移除跟节点，作用是删除目录后可以正确判断是不是没目录了，来显示空插画
-    // testPlanStore.removeRootItem(item.id);
   }
 
   handleCreateFolder = async (value, parentId, item) => {
@@ -229,10 +229,10 @@ class TestPlanTree extends Component {
         </Menu.Item>,
       ] : [
         <Menu.Item key="rename">
-            重命名
+          重命名
         </Menu.Item>,
         <Menu.Item key="delete">
-            删除
+          删除
         </Menu.Item>,
       ];
     }
