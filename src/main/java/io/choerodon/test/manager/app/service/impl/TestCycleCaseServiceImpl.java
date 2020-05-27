@@ -512,7 +512,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             bathcInsert(testCycleCaseDTOS);
             int stepCount = testCaseStepMapper.countByProjectIdAndCaseIds(currentIds);
             int ceilStep = (int) Math.ceil(stepCount / AVG_NUM == 0 ? 1 : stepCount / AVG_NUM);
-            for (int page = 1; page <= ceilStep; page++) {
+            for (int page = 0; page < ceilStep; page++) {
                 Page<TestCaseStepDTO> stepPageInfo = PageHelper.doPageAndSort(new PageRequest(page, (int) AVG_NUM),() -> testCaseStepMapper.listByCaseIds(currentIds));
                 List<TestCaseStepDTO> testCaseStepDTOS = stepPageInfo.getContent();
                 Map<Long, List<TestCaseStepDTO>> caseStepMap = testCaseStepDTOS.stream().collect(Collectors.groupingBy(TestCaseStepDTO::getIssueId));
