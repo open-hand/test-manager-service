@@ -54,7 +54,9 @@ public class TestStatusController {
                                  @PathVariable(name = "statusId") Long statusId) {
         TestStatusVO dto = new TestStatusVO();
         dto.setStatusId(statusId);
-        return new ResponseEntity<>(testStatusService.delete(dto),HttpStatus.NO_CONTENT);
+        return Optional.ofNullable(testStatusService.delete(dto))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.testStatus.delete"));
     }
 
     @Permission(level = ResourceLevel.ORGANIZATION)

@@ -55,7 +55,7 @@ public class ReporterFormServiceImpl implements ReporterFormService {
         Page page = new Page();
         Map<Long, IssueInfosVO> issueResponse = testCaseService.getIssueInfoMapAndPopulatePageInfo(projectId, searchDTO, pageRequest, page, organizationId);
         List<ReporterFormVO> reporterFormES = doCreateFromIssueToDefect(issueResponse.values().stream().collect(Collectors.toList()), projectId, organizationId);
-        page.addAll(reporterFormES);
+        page.setContent(reporterFormES);
         return page;
     }
 
@@ -114,8 +114,11 @@ public class ReporterFormServiceImpl implements ReporterFormService {
         System.arraycopy(allFilteredIssues, lowPage, pagedIssues, 0, size);
         // 得到包装好的报表List
         List<DefectReporterFormVO> reporterFormES = createFormDefectFromIssue(projectId, pagedIssues, organizationId);
-
-        return new CustomPage(reporterFormES, allFilteredIssues);
+        CustomPage customPage = new CustomPage(reporterFormES, allFilteredIssues);
+        customPage.setContent(reporterFormES);
+        customPage.setSize(pageSize);
+        customPage.setNumber(pageNum);
+        return customPage;
     }
 
 

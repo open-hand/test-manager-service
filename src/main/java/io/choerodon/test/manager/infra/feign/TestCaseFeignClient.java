@@ -37,7 +37,7 @@ public interface TestCaseFeignClient {
             @RequestBody(required = false) SearchDTO searchDTO,
             @RequestParam(name = "organizationId") Long organizationId,
             @RequestParam(name = "page") int page, @RequestParam(name = "size") int size,
-            @RequestParam(name = "orders") String orders);
+            @RequestParam(name = "sort") String sort);
 
     @PostMapping("/v1/projects/{project_id}/issues/issue_infos")
     ResponseEntity<List<IssueInfoDTO>> listByIssueIds(@ApiParam(value = "项目id", required = true)

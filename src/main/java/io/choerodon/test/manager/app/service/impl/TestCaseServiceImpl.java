@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import io.choerodon.core.utils.PageableHelper;
 import io.choerodon.mybatis.pagehelper.PageHelper;
 import io.choerodon.core.domain.Page;
 import io.choerodon.test.manager.api.vo.agile.*;
@@ -110,7 +111,13 @@ public class TestCaseServiceImpl implements TestCaseService {
     public ResponseEntity<Page<IssueListTestVO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId) {
         Assert.notNull(projectId, "error.TestCaseService.listIssueWithoutSub.param.projectId.not.null");
         Assert.notNull(pageRequest, "error.TestCaseService.listIssueWithoutSub.param.pageRequest.not.null");
-        return testCaseFeignClient.listIssueWithoutSubToTestComponent(projectId, searchDTO, organizationId, pageRequest.getPage(), pageRequest.getSize(), PageUtil.sortToSql(pageRequest.getSort()));
+        Sort sort = pageRequest.getSort();
+        String sortSql = null;
+        if (!ObjectUtils.isEmpty(sort)) {
+            sortSql = PageableHelper.getSortSql(sort);
+            sortSql = sortSql.replace(" ", ",");
+        }
+        return testCaseFeignClient.listIssueWithoutSubToTestComponent(projectId, searchDTO, organizationId, pageRequest.getPage(), pageRequest.getSize(), sortSql);
     }
 
     @Override

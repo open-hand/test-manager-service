@@ -109,10 +109,10 @@ public class TestPlanServiceImpl implements TestPlanServcie {
     @Override
     @Async
     public void delete(Long projectId, Long planId) {
+        baseDelete(planId);
         List<TestCycleDTO> testCycleDTOS = testCycleService.listByPlanIds(Arrays.asList(planId),projectId);
         List<Long> collect = testCycleDTOS.stream().map(TestCycleDTO::getCycleId).collect(Collectors.toList());
         testCycleService.batchDelete(collect);
-        baseDelete(planId);
     }
 
     @Override
