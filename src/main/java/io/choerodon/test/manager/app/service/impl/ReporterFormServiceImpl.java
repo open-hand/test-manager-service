@@ -116,6 +116,8 @@ public class ReporterFormServiceImpl implements ReporterFormService {
         List<DefectReporterFormVO> reporterFormES = createFormDefectFromIssue(projectId, pagedIssues, organizationId);
         CustomPage customPage = new CustomPage(reporterFormES, allFilteredIssues);
         customPage.setContent(reporterFormES);
+        customPage.setSize(pageSize);
+        customPage.setNumber(pageNum);
         return customPage;
     }
 
