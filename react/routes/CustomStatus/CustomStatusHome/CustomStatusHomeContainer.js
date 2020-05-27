@@ -106,7 +106,7 @@ class CustomStatusHomeContainer extends Component {
       loading: true,
     });
     deleteStatus(data.statusId).then((res) => {
-      if (res.failed) {
+      if (!res) {
         Choerodon.prompt('状态已被使用，不可删除');
       }
       this.setState({
