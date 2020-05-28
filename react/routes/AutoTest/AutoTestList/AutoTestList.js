@@ -150,12 +150,7 @@ const AutoTestList = ({
     <Page
       className="c7ntest-AutoTestList"
       service={[
-        'devops-service.app-service.pageByOptions',
-        'devops-service.devops-environment.listDevopsClusters',
-        'test-manager-service.test-automation-history.queryWithInstance',
-        'test-manager-service.test-app-instance.queryValues',
-        'test-manager-service.test-app-instance.deploy',
-        'test-manager-service.test-automation-history.queryLog',
+        'choerodon.code.project.test.autotest.ps.default',
       ]}
     >
       <Header title={<FormattedMessage id="autotestlist_title" />}>
