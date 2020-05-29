@@ -5,16 +5,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import io.choerodon.core.iam.ResourceLevel;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import io.choerodon.core.enums.ResourceType;
+
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
-import io.choerodon.core.annotation.Permission;
+import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.test.manager.api.vo.TestAutomationResultVO;
 import io.choerodon.test.manager.app.service.TestAutomationHistoryService;
 import io.choerodon.test.manager.app.service.TestAutomationResultService;
@@ -29,7 +30,7 @@ public class TestAutomationResultController {
     @Autowired
     private TestAutomationHistoryService testAutomationHistoryService;
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("查询")
     @GetMapping("/query/{id}")
     public ResponseEntity<Map<String, Object>> query(@PathVariable("project_id") Long projectId,
@@ -47,7 +48,7 @@ public class TestAutomationResultController {
         return new ResponseEntity(result, HttpStatus.OK);
     }
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("变动一个测试报告(增加|修改)")
     @PutMapping("/change")
     public ResponseEntity<TestAutomationResultVO> changeOneAutomationResult(@PathVariable("project_id") Long projectId,
@@ -57,7 +58,7 @@ public class TestAutomationResultController {
                 .orElseThrow(() -> new CommonException("error.automationResult.update"));
     }
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("删除一个测试报告")
     @DeleteMapping("/remove")
     public ResponseEntity removeAutomationResult(@PathVariable("project_id") Long projectId,

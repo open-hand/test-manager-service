@@ -109,24 +109,25 @@ public class TestPlanServiceImpl implements TestPlanServcie {
     @Override
     @Async
     public void delete(Long projectId, Long planId) {
+        baseDelete(planId);
         List<TestCycleDTO> testCycleDTOS = testCycleService.listByPlanIds(Arrays.asList(planId),projectId);
         List<Long> collect = testCycleDTOS.stream().map(TestCycleDTO::getCycleId).collect(Collectors.toList());
         testCycleService.batchDelete(collect);
-        baseDelete(planId);
     }
 
     @Override
     @Saga(code = SagaTopicCodeConstants.TEST_MANAGER_CREATE_PLAN,
             description = "test-manager创建测试计划", inputSchema = "{}")
     public TestPlanDTO create(Long projectId, TestPlanVO testPlanVO) {
+        checkPlan(testPlanVO);
         // 创建计划
         testPlanVO.setProjectId(projectId);
         TestPlanDTO testPlan = modelMapper.map(testPlanVO, TestPlanDTO.class);
         testPlan.setStatusCode(TestPlanStatus.TODO.getStatus());
         testPlan.setInitStatus("creating");
         TestPlanDTO testPlanDTO = baseCreate(testPlan);
-        testPlanVO.setPlanId(testPlan.getPlanId());
-        testPlanVO.setObjectVersionNumber(testPlan.getObjectVersionNumber());
+        testPlanVO.setPlanId(testPlanDTO.getPlanId());
+        testPlanVO.setObjectVersionNumber(testPlanDTO.getObjectVersionNumber());
         producer.apply(
                 StartSagaBuilder
                         .newBuilder()
@@ -140,6 +141,16 @@ public class TestPlanServiceImpl implements TestPlanServcie {
                 });
 
         return testPlanDTO;
+    }
+
+    private void checkPlan(TestPlanVO testPlanVO){
+        if (ObjectUtils.isEmpty(testPlanVO.getManagerId())) {
+            throw new CommonException("error.create.plan.manager.null");
+        }
+
+        if (ObjectUtils.isEmpty(testPlanVO.getStartDate()) || ObjectUtils.isEmpty(testPlanVO.getEndDate())) {
+            throw new CommonException("error.create.plan.date.scope.null");
+        }
     }
     @Override
     public TestTreeIssueFolderVO buildPlanTree(Long projectId, String statusCode) {
@@ -382,8 +393,10 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         if (ObjectUtils.isEmpty(testPlanDTO)) {
             throw new CommonException("error.test.plan.is.not.null");
         }
-        DBValidateUtil.executeAndvalidateUpdateNum(testPlanMapper::insertSelective, testPlanDTO, 1, "error.insert.test.plan");
-        return testPlanDTO;
+        if(testPlanMapper.insertSelective(testPlanDTO) != 1){
+           throw  new CommonException("error.insert.test.plan");
+        }
+        return testPlanMapper.selectByPrimaryKey(testPlanDTO.getPlanId());
     }
 
     private void baseDelete(Long planId) {

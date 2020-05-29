@@ -2,16 +2,20 @@ package io.choerodon.test.manager.infra.dto;
 
 import javax.persistence.*;
 
-import io.choerodon.mybatis.entity.BaseDTO;
+import io.choerodon.mybatis.annotation.ModifyAudit;
+import io.choerodon.mybatis.annotation.VersionAudit;
+import io.choerodon.mybatis.domain.AuditDomain;
 
 /**
  * Created by 842767365@qq.com on 6/25/18.
  */
+@VersionAudit
+@ModifyAudit
 @Table(name = "test_status")
-public class TestStatusDTO extends BaseDTO {
+public class TestStatusDTO extends AuditDomain {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long statusId;
 
     private String statusName;

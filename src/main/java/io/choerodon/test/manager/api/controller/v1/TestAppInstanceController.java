@@ -1,9 +1,10 @@
 package io.choerodon.test.manager.api.controller.v1;
 
+import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.test.manager.api.vo.asgard.QuartzTask;
 import io.choerodon.test.manager.api.vo.asgard.ScheduleTaskDTO;
-import io.choerodon.core.annotation.Permission;
-import io.choerodon.core.enums.ResourceType;
+import io.choerodon.swagger.annotation.Permission;
+
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.oauth.DetailsHelper;
@@ -38,8 +39,7 @@ public class TestAppInstanceController {
      * @param versionId 版本id
      * @return ReplaceResult
      */
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_OWNER,
-            InitRoleCode.PROJECT_MEMBER})
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation(value = "查询value列表")
     @GetMapping("/value")
     public ResponseEntity<InstanceValueVO> queryValues(
@@ -59,9 +59,7 @@ public class TestAppInstanceController {
      * @param applicationDeployVO 部署信息
      * @return ApplicationInstanceDTO
      */
-    @Permission(type = ResourceType.PROJECT,
-            roles = {InitRoleCode.PROJECT_OWNER,
-                    InitRoleCode.PROJECT_MEMBER})
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @PostMapping
     public ResponseEntity<TestAppInstanceVO> deploy(
             @PathVariable(value = "project_id") Long projectId,
@@ -79,9 +77,7 @@ public class TestAppInstanceController {
      * @param scheduleTaskDTO 定时信息
      * @return QuartzTask
      */
-    @Permission(type = ResourceType.PROJECT,
-            roles = {InitRoleCode.PROJECT_OWNER,
-                    InitRoleCode.PROJECT_MEMBER})
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @PostMapping("/schedule")
     public ResponseEntity<QuartzTask> deployBySchedule(
             @PathVariable(value = "project_id") Long projectId,

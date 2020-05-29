@@ -130,12 +130,12 @@ public class TestCycleServiceImpl implements TestCycleService {
         });
     }
 
-    @Override
-    public void populateVersion(TestCycleVO cycle, Long projectId) {
-        Map<Long, ProductVersionDTO> map = testCaseService.getVersionInfo(projectId);
-        cycle.setVersionName(map.get(cycle.getVersionId()).getName());
-        cycle.setVersionStatusName(map.get(cycle.getVersionId()).getStatusName());
-    }
+//    @Override
+//    public void populateVersion(TestCycleVO cycle, Long projectId) {
+//        Map<Long, ProductVersionDTO> map = testCaseService.getVersionInfo(projectId);
+//        cycle.setVersionName(map.get(cycle.getVersionId()).getName());
+//        cycle.setVersionStatusName(map.get(cycle.getVersionId()).getStatusName());
+//    }
 
     private TestCycleVO baseInsert(Long projectId, TestCycleVO testCycleVO) {
         TestCycleDTO testCycleDTO = modelMapper.map(testCycleVO, TestCycleDTO.class);

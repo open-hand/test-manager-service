@@ -3,8 +3,8 @@ package io.choerodon.test.manager.app.service.impl;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
+import io.choerodon.mybatis.pagehelper.PageHelper;
+import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
 
 import io.choerodon.core.oauth.CustomUserDetails;
@@ -23,7 +23,7 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Pageable;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -100,15 +100,15 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
     }
 
     @Override
-    public PageInfo<TestCycleCaseStepVO> queryCaseStep(Long cycleCaseId, Long projectId, Pageable pageable) {
-        PageInfo<TestCycleCaseStepDTO> cycleCaseStepDTOPageInfo = PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize()).doSelectPageInfo(() ->
+    public Page<TestCycleCaseStepVO> queryCaseStep(Long cycleCaseId, Long projectId, PageRequest pageRequest) {
+        Page<TestCycleCaseStepDTO> cycleCaseStepDTOPageInfo = PageHelper.doPageAndSort(pageRequest,() ->
                 testCycleCaseStepMapper.querListByexecuteId(cycleCaseId));
-        PageInfo<TestCycleCaseStepVO> testCycleCaseStepVOList = modelMapper.map(cycleCaseStepDTOPageInfo, PageInfo.class);
+        Page<TestCycleCaseStepVO> testCycleCaseStepVOList = modelMapper.map(cycleCaseStepDTOPageInfo, Page.class);
         return testCycleCaseStepVOList;
     }
 
     @Override
-    public PageInfo<TestCycleCaseStepVO> querySubStep(Long cycleCaseId, Long projectId, Long organizationId,Pageable pageable) {
+    public Page<TestCycleCaseStepVO> querySubStep(Long cycleCaseId, Long projectId, Long organizationId,PageRequest pageRequest) {
         if (cycleCaseId == null) {
             throw new CommonException("error.test.cycle.case.step.caseId.not.null");
         }
@@ -126,11 +126,11 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
                 testCycleCaseStepVOS.add(testCycleCaseStepVO);
             });
             testCycleCaseDefectRelService.populateCaseStepDefectInfo(testCycleCaseStepVOS, projectId, organizationId);
-            PageInfo<TestCycleCaseStepVO> pageFromList = PageUtil.createPageFromList(testCycleCaseStepVOS, pageable);
+            Page<TestCycleCaseStepVO> pageFromList = PageUtil.createPageFromList(testCycleCaseStepVOS, pageRequest);
             return pageFromList;
         } else {
-            PageInfo<TestCycleCaseStepVO> emptyPage = new PageInfo<>();
-            emptyPage.setList(new ArrayList<>());
+            Page<TestCycleCaseStepVO> emptyPage = new Page<>();
+            emptyPage.setContent(new ArrayList<>());
             return emptyPage;
         }
     }
@@ -199,10 +199,10 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
         CustomUserDetails userDetails = DetailsHelper.getUserDetails();
         Long defaultStatusId = testStatusService.getDefaultStatusId(TestStatusType.STATUS_TYPE_CASE_STEP);
         int count = testCycleCaseStepMapper.countByExecuteIds(olderExecuteIds);
-        int ceil = (int) Math.ceil(count / AVG_NUM == 0 ? 1 : count / AVG_NUM);
-        for(int page = 1;page <= ceil;page++){
-            PageInfo<TestCycleCaseStepDTO> stepDTOPageInfo = PageHelper.startPage(page, (int) AVG_NUM).doSelectPageInfo(() -> testCycleCaseStepMapper.listByexecuteIds(olderExecuteIds));
-            List<TestCycleCaseStepDTO> list = stepDTOPageInfo.getList();
+        int ceil = (int) Math.ceil(count / AVG_NUM == 0 ? 0 : count / AVG_NUM);
+        for(int page = 0;page < ceil;page++){
+            Page<TestCycleCaseStepDTO> stepDTOPageInfo = PageHelper.doPageAndSort(new PageRequest(page, (int) AVG_NUM),() -> testCycleCaseStepMapper.listByexecuteIds(olderExecuteIds));
+            List<TestCycleCaseStepDTO> list = stepDTOPageInfo.getContent();
             if (CollectionUtils.isEmpty(list)) {
                 return;
             }

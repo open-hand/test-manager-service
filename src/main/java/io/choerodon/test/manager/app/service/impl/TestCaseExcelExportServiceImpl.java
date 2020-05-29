@@ -13,7 +13,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
+
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import com.alibaba.fastjson.JSON;
@@ -23,8 +23,8 @@ import io.choerodon.test.manager.api.vo.agile.IssueStatusDTO;
 import io.choerodon.test.manager.api.vo.agile.LookupValueDTO;
 import io.choerodon.test.manager.api.vo.agile.ProductVersionDTO;
 import io.choerodon.test.manager.api.vo.agile.UserDTO;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Pageable;
+import io.choerodon.mybatis.pagehelper.domain.Sort;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 
 import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.app.service.UserService;
@@ -88,7 +88,7 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
     @Override
     public int populateVersionHeader(Sheet sheet, String projectName, TestIssueFolderVO folder, CellStyle rowStyle) {
         if (sheet.getWorkbook().getNumberOfSheets() == 1) {
-            versionInfo = testCaseService.getVersionInfo(folder.getProjectId());
+//            versionInfo = testCaseService.getVersionInfo(folder.getProjectId());
             return 0;
         }
         StringBuilder stringBuilder = new StringBuilder(folder.getName());
@@ -251,13 +251,13 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
 
         List<LookupValueDTO> lookupValueDTOS = testCaseService.queryLookupValueByCode("priority").getLookupValues();
 
-        Pageable pageable = PageRequest.of(1, 999999999, Sort.Direction.ASC, "componentId");
+        PageRequest pageRequest = new PageRequest(0, 999999999, Sort.Direction.ASC, "componentId");
 
-        List<UserDTO> userDTOS = userService.list(pageable, projectId, null, null).getBody().getList();
+        List<UserDTO> userDTOS = userService.list(pageRequest, projectId, null, null).getBody().getContent();
 
         userDTOS.forEach(v -> v.setLoginName(v.getLoginName() + v.getRealName()));
 
-        List<ProductVersionDTO> productVersionDTOS = new ArrayList<>(versionInfo.values());
+        List<ProductVersionDTO> productVersionDTOS = new ArrayList<>();
 
         TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO();
         testIssueFolderDTO.setProjectId(projectId);
@@ -270,7 +270,7 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
         //加1的原因是每一个新数据开始时都会有一个header
         //从2开始，所以第一个end是size+1
         lookEnd = lookupValueDTOS.size() + 1;
-        productEnd = lookEnd + productVersionDTOS.size() + 1;
+//        productEnd = lookEnd + productVersionDTOS.size() + 1;
         statusEnd = productEnd + issueStatusDTOS.size() + 1;
         folderEnd = statusEnd + testIssueFolderVOS.size() + 1;
         userEnd = folderEnd + userDTOS.size() + 1;

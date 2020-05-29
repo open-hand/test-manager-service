@@ -7,6 +7,8 @@ import {
   Spin, Table, Pagination, Tooltip,
 } from 'choerodon-ui';
 import { Droppable, DragDropContext } from 'react-beautiful-dnd';
+import UserHead from '@/components/UserHead';
+import useAvoidClosure from '@/hooks/useAvoidClosure';
 import CreateIssueTiny from '../CreateIssueTiny';
 import IssueStore from '../../stores/IssueStore';
 import TableDraggleItem from './TableDraggleItem';
@@ -14,9 +16,7 @@ import IssueTreeStore from '../../stores/IssueTreeStore';
 import {
   renderIssueNum, renderSummary, renderAction,
 } from './tags';
-import UserHead from '@/components/UserHead';
 import './IssueTable.less';
-import useAvoidClosure from '@/hooks/useAvoidClosure';
 
 export default observer((props) => {
   const [firstIndex, setFirstIndex] = useState(null);
@@ -174,7 +174,7 @@ export default observer((props) => {
               <tbody
                 ref={provided.innerRef}
               >
-                {renderTbody(IssueStore.getIssues, columns)}
+                {renderTbody(IssueStore.getIssues || [], columns)}
                 {/* {provided.placeholder} */}
               </tbody>
             )}
@@ -304,14 +304,15 @@ export default observer((props) => {
   ]);
 
   const { currentFolder } = IssueTreeStore;
+
   return (
     <div className="c7ntest-issueArea">
       <div id="template_copy" style={{ display: 'none' }}>
-          当前状态：
+        当前状态：
         <span style={{ fontWeight: 500 }}>复制</span>
       </div>
       <div id="template_move" style={{ display: 'none' }}>
-          当前状态：
+        当前状态：
         <span style={{ fontWeight: 500 }}>移动</span>
       </div>
       <section
@@ -343,25 +344,21 @@ export default observer((props) => {
             }
           </div>
         </div>
-        {
-            IssueStore.issues.length !== 0 ? (
-              <div style={{
-                display: 'flex', justifyContent: 'flex-end', marginBottom: 16,
-              }}
-              >
-                <Pagination
-                  current={IssueStore.pagination.current}
-                  defaultCurrent={1}
-                  defaultPageSize={10}
-                  pageSize={IssueStore.pagination.pageSize}
-                  showSizeChanger
-                  total={IssueStore.pagination.total}
-                  onChange={handlePaginationChange.bind(this)}
-                  onShowSizeChange={handlePaginationShowSizeChange.bind(this)}
-                />
-              </div>
-            ) : null
-          }
+        <div style={{
+          display: 'flex', justifyContent: 'flex-end', marginBottom: 16,
+        }}
+        >
+          <Pagination
+            current={IssueStore.pagination.current}
+            defaultCurrent={1}
+            defaultPageSize={10}
+            pageSize={IssueStore.pagination.pageSize}
+            showSizeChanger
+            total={IssueStore.pagination.total}
+            onChange={handlePaginationChange.bind(this)}
+            onShowSizeChange={handlePaginationShowSizeChange.bind(this)}
+          />
+        </div>
       </section>
     </div>
   );

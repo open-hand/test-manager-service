@@ -6,8 +6,8 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
+import io.choerodon.mybatis.pagehelper.PageHelper;
+import io.choerodon.core.domain.Page;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,13 +16,13 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
+
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
-import org.springframework.data.domain.Pageable;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
 import io.choerodon.test.manager.app.service.TestCycleCaseService;
 import io.choerodon.test.manager.app.service.TestStatusService;
@@ -32,7 +32,7 @@ import io.choerodon.test.manager.infra.enums.TestStatusType;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseHistoryMapper;
 import io.choerodon.test.manager.infra.util.PageUtil;
 import io.choerodon.test.manager.infra.util.RedisTemplateUtil;
-import org.springframework.data.domain.Sort;
+import io.choerodon.mybatis.pagehelper.domain.Sort;
 
 /**
  * Created by 842767365@qq.com on 8/20/18.
@@ -70,7 +70,7 @@ public class TestCaseCountRecordAspect {
     public Object updateTestCase(ProceedingJoinPoint pjp, TestCycleCaseDTO testCycleCaseDTO, Long projectId) throws Throwable {
         TestCycleCaseDTO case1 = new TestCycleCaseDTO();
         case1.setExecuteId(testCycleCaseDTO.getExecuteId());
-        TestCycleCaseDTO before = testCycleCaseService.queryWithAttachAndDefect(case1, PageRequest.of(1, 1)).get(0);
+        TestCycleCaseDTO before = testCycleCaseService.queryWithAttachAndDefect(case1, new PageRequest(0, 1)).get(0);
         TestCycleCaseVO beforeCeaseDTO = modelMapper.map(before, TestCycleCaseVO.class);
         testStatusService.populateStatus(beforeCeaseDTO);
         Object o = pjp.proceed();
@@ -110,7 +110,7 @@ public class TestCaseCountRecordAspect {
     public Object deleteTestCase(ProceedingJoinPoint pjp, Long cycleCaseId, Long projectId) throws Throwable {
         TestCycleCaseDTO cycleCaseE = new TestCycleCaseDTO();
         cycleCaseE.setExecuteId(cycleCaseId);
-        TestCycleCaseDTO oldCase = testCycleCaseService.queryWithAttachAndDefect(cycleCaseE, PageRequest.of(1, 1)).get(0);
+        TestCycleCaseDTO oldCase = testCycleCaseService.queryWithAttachAndDefect(cycleCaseE, new PageRequest(0, 1)).get(0);
         Object o = pjp.proceed();
         countCaseToRedis(oldCase, projectId);
         return o;
@@ -143,11 +143,10 @@ public class TestCaseCountRecordAspect {
         e.setExecuteId(executeId);
         e.setOldValue(TestStatusType.STATUS_UN_EXECUTED);
         e.setField(FIELD_STATUS);
-        Pageable pageable = PageRequest.of(1, 1,new Sort(Sort.Direction.DESC, "id"));
-        PageInfo<TestCycleCaseHistoryDTO> page = PageHelper.startPage(pageable.getPageNumber(),
-                pageable.getPageSize(), PageUtil.sortToSql(pageable.getSort())).doSelectPageInfo(() -> testCycleCaseHistoryMapper.query(e));
-        if (page != null && !page.getList().isEmpty()) {
-            time = LocalDateTime.ofInstant(page.getList().get(0).getLastUpdateDate().toInstant(), ZoneId.systemDefault());
+        PageRequest pageRequest =  new PageRequest(0, 1,new Sort(Sort.Direction.DESC, "id"));
+        Page<TestCycleCaseHistoryDTO> page = PageHelper.doPageAndSort(pageRequest,() -> testCycleCaseHistoryMapper.query(e));
+        if (page != null && !page.getContent().isEmpty()) {
+            time = LocalDateTime.ofInstant(page.getContent().get(0).getLastUpdateDate().toInstant(), ZoneId.systemDefault());
         }
         String key = REDIS_COUNT_KEY + projectId + ":" + time.format(DateTimeFormatter.ofPattern(DATE_FORMATTER));
         RedisAtomicLong entityIdCounter = redisTemplateUtil.getRedisAtomicLong(key, redisTemplate);

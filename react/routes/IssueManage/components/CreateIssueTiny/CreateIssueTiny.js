@@ -49,6 +49,12 @@ export default observer(() => {
           IssueStore.setIssues(issues);
           IssueStore.setClickIssue(res); // 将新创建的测试用例打开
           IssueTreeStore.updateHasCase(folderId, true);// 设置含有用例
+          IssueStore.setPagination({
+            current: 1,
+            pageSize: 10,
+            total: IssueStore.pagination.total,
+          });
+          IssueStore.loadIssues(1, 10);
           setCreating(false);
           setCreateLoading(false);
           setCreateIssueValue('');

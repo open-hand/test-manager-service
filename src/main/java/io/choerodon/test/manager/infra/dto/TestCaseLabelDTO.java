@@ -5,17 +5,21 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import io.choerodon.mybatis.entity.BaseDTO;
+import io.choerodon.mybatis.annotation.ModifyAudit;
+import io.choerodon.mybatis.annotation.VersionAudit;
+import io.choerodon.mybatis.domain.AuditDomain;
 
 /**
  * @author: 25499
  * @date: 2019/11/20 13:41
  * @description:
  */
+@VersionAudit
+@ModifyAudit
 @Table(name = "test_case_label")
-public class TestCaseLabelDTO extends BaseDTO {
+public class TestCaseLabelDTO extends AuditDomain {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long labelId;
     private String labelName;
     private Long projectId;

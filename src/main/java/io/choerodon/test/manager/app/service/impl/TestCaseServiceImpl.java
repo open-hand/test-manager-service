@@ -4,16 +4,16 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
+import io.choerodon.core.utils.PageableHelper;
+import io.choerodon.mybatis.pagehelper.PageHelper;
+import io.choerodon.core.domain.Page;
 import io.choerodon.test.manager.api.vo.agile.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.mybatis.pagehelper.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +35,6 @@ import io.choerodon.test.manager.infra.constant.DataLogConstants;
 import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.feign.ApplicationFeignClient;
 import io.choerodon.test.manager.infra.feign.BaseFeignClient;
-import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import io.choerodon.test.manager.infra.mapper.*;
 import io.choerodon.test.manager.infra.util.ConvertUtils;
@@ -53,9 +52,9 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     @Autowired
     private TestCaseFeignClient testCaseFeignClient;
-
-    @Autowired
-    private ProductionVersionClient productionVersionClient;
+//
+//    @Autowired
+//    private ProductionVersionClient productionVersionClient;
 
     @Autowired
     private BaseFeignClient baseFeignClient;
@@ -109,17 +108,23 @@ public class TestCaseServiceImpl implements TestCaseService {
     private String attachmentUrl;
 
     @Override
-    public ResponseEntity<PageInfo<IssueListTestVO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, Pageable pageable, Long organizationId) {
+    public ResponseEntity<Page<IssueListTestVO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId) {
         Assert.notNull(projectId, "error.TestCaseService.listIssueWithoutSub.param.projectId.not.null");
-        Assert.notNull(pageable, "error.TestCaseService.listIssueWithoutSub.param.pageable.not.null");
-        return testCaseFeignClient.listIssueWithoutSubToTestComponent(projectId, searchDTO, organizationId, pageable.getPageNumber(), pageable.getPageSize(), PageUtil.sortToSql(pageable.getSort()));
+        Assert.notNull(pageRequest, "error.TestCaseService.listIssueWithoutSub.param.pageRequest.not.null");
+        Sort sort = pageRequest.getSort();
+        String sortSql = null;
+        if (!ObjectUtils.isEmpty(sort)) {
+            sortSql = PageableHelper.getSortSql(sort);
+            sortSql = sortSql.replace(" ", ",");
+        }
+        return testCaseFeignClient.listIssueWithoutSubToTestComponent(projectId, searchDTO, organizationId, pageRequest.getPage(), pageRequest.getSize(), sortSql);
     }
 
     @Override
-    public ResponseEntity<PageInfo<IssueComponentDetailVO>> listIssueWithoutSubDetail(Long projectId, SearchDTO searchDTO, Pageable pageable, Long organizationId) {
+    public ResponseEntity<Page<IssueComponentDetailVO>> listIssueWithoutSubDetail(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId) {
         Assert.notNull(projectId, "error.TestCaseService.listIssueWithoutSubDetail.param.projectId.not.null");
-        Assert.notNull(pageable, "error.TestCaseService.listIssueWithoutSubDetail.param.pageable.not.null");
-        return testCaseFeignClient.listIssueWithoutSubDetail(pageable.getPageNumber(), pageable.getPageSize(), PageUtil.sortToSql(pageable.getSort()), projectId, searchDTO, organizationId);
+        Assert.notNull(pageRequest, "error.TestCaseService.listIssueWithoutSubDetail.param.pageRequest.not.null");
+        return testCaseFeignClient.listIssueWithoutSubDetail(pageRequest.getPage(), pageRequest.getSize(), PageUtil.sortToSql(pageRequest.getSort()), projectId, searchDTO, organizationId);
     }
 
     @Override
@@ -130,8 +135,8 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
-    public Map<Long, IssueInfosVO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, Pageable pageable, Long organizationId) {
-        return listIssueWithoutSub(projectId, searchDTO, pageable, organizationId).getBody().getList().stream().collect(Collectors.toMap(IssueListTestVO::getIssueId, IssueInfosVO::new));
+    public Map<Long, IssueInfosVO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId) {
+        return listIssueWithoutSub(projectId, searchDTO, pageRequest, organizationId).getBody().getContent().stream().collect(Collectors.toMap(IssueListTestVO::getIssueId, IssueInfosVO::new));
     }
 
     /**
@@ -139,26 +144,26 @@ public class TestCaseServiceImpl implements TestCaseService {
      *
      * @param projectId
      * @param searchDTO
-     * @param pageable
+     * @param pageRequest
      * @return
      */
-    public <T> Map<Long, IssueInfosVO> getIssueInfoMapAndPopulatePageInfo(Long projectId, SearchDTO searchDTO, Pageable pageable, Page page, Long organizationId) {
-        PageInfo<IssueListTestWithSprintVersionDTO> returnDto = listIssueWithLinkedIssues(projectId, searchDTO, pageable, organizationId).getBody();
+    public <T> Map<Long, IssueInfosVO> getIssueInfoMapAndPopulatePageInfo(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Page page, Long organizationId) {
+        Page<IssueListTestWithSprintVersionDTO> returnDto = listIssueWithLinkedIssues(projectId, searchDTO, pageRequest, organizationId).getBody();
         Assert.notNull(returnDto, "error.TestCaseService.getIssueInfoMapAndPopulatePageInfo.param.page.not.be.null");
-        page.setPageNum(returnDto.getPageNum());
-        page.setPageSize(returnDto.getPageSize());
-        page.setTotal(returnDto.getTotal());
-        return returnDto.getList().stream().collect(Collectors.toMap(IssueListTestWithSprintVersionDTO::getIssueId, IssueInfosVO::new));
+        page.setNumber(returnDto.getNumber());
+        page.setSize(returnDto.getSize());
+        page.setTotalElements(returnDto.getTotalElements());
+        return returnDto.getContent().stream().collect(Collectors.toMap(IssueListTestWithSprintVersionDTO::getIssueId, IssueInfosVO::new));
 
     }
 
     @Override
     public Map<Long, IssueInfosVO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, boolean needDetail, Long organizationId) {
-        Pageable pageable = PageRequest.of(1, 999999999, Sort.Direction.DESC, "issueId");
+        PageRequest pageRequest = new PageRequest(0, 999999999, Sort.Direction.DESC, "issueId");
         if (needDetail) {
-            return listIssueWithoutSubDetail(projectId, searchDTO, pageable, organizationId).getBody().getList().stream().collect(Collectors.toMap(IssueComponentDetailVO::getIssueId, IssueInfosVO::new));
+            return listIssueWithoutSubDetail(projectId, searchDTO, pageRequest, organizationId).getBody().getContent().stream().collect(Collectors.toMap(IssueComponentDetailVO::getIssueId, IssueInfosVO::new));
         } else {
-            return listIssueWithoutSub(projectId, searchDTO, pageable, organizationId).getBody().getList().stream().collect(Collectors.toMap(IssueListTestVO::getIssueId, IssueInfosVO::new));
+            return listIssueWithoutSub(projectId, searchDTO, pageRequest, organizationId).getBody().getContent().stream().collect(Collectors.toMap(IssueListTestVO::getIssueId, IssueInfosVO::new));
         }
     }
 
@@ -171,11 +176,11 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
-    public Map<Long, IssueInfosVO> getIssueInfoMap(Long projectId, Long[] issueIds, Pageable pageable, Long organizationId) {
+    public Map<Long, IssueInfosVO> getIssueInfoMap(Long projectId, Long[] issueIds, PageRequest pageRequest, Long organizationId) {
         if (ObjectUtils.isEmpty(issueIds)) {
             return new HashMap<>();
         }
-        return getIssueInfoMap(projectId, buildIdsSearchDTO(issueIds), pageable, organizationId);
+        return getIssueInfoMap(projectId, buildIdsSearchDTO(issueIds), pageRequest, organizationId);
     }
 
     private SearchDTO buildIdsSearchDTO(Long[] issueIds) {
@@ -310,7 +315,7 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
-    public PageInfo<TestCaseRepVO> listAllCaseByFolderId(Long projectId, Long folderId, Pageable pageable, SearchDTO searchDTO,Long planId) {
+    public Page<TestCaseRepVO> listAllCaseByFolderId(Long projectId, Long folderId, PageRequest pageRequest, SearchDTO searchDTO, Long planId) {
 
         // 查询文件夹下所有的目录
         Set<Long> folderIds = new HashSet<>();
@@ -319,15 +324,15 @@ public class TestCaseServiceImpl implements TestCaseService {
         Map<Long, List<TestIssueFolderDTO>> folderMap = testIssueFolderMapper.select(testIssueFolder).stream().collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
         queryAllFolderIds(folderId, folderIds, folderMap);
         // 查询文件夹下的的用例
-        PageInfo<Long> longPageInfo = PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize()).doSelectPageInfo(() -> testCaseMapper.listCaseIds(projectId, folderIds, searchDTO));
-        PageInfo<TestCaseRepVO> pageRepList = modelMapper.map(longPageInfo, PageInfo.class);
-        if (CollectionUtils.isEmpty(longPageInfo.getList())) {
-            pageRepList.setList(new ArrayList<>());
+        Page<Long> longPageInfo = PageHelper.doPageAndSort(pageRequest,() -> testCaseMapper.listCaseIds(projectId, folderIds, searchDTO));
+        Page<TestCaseRepVO> pageRepList = PageUtil.buildPageInfoWithPageInfoList(longPageInfo,new ArrayList());
+        if (CollectionUtils.isEmpty(longPageInfo.getContent())) {
+            pageRepList.setContent(new ArrayList<>());
             return pageRepList;
         }
-        List<TestCaseDTO> testCaseDTOS = testCaseMapper.listByCaseIds(projectId, longPageInfo.getList(),true);
+        List<TestCaseDTO> testCaseDTOS = testCaseMapper.listByCaseIds(projectId, longPageInfo.getContent(),true);
         List<TestCaseRepVO> repVOS = testCaseAssembler.listDtoToRepVo(projectId,testCaseDTOS,planId);
-        pageRepList.setList(repVOS);
+        pageRepList.setContent(repVOS);
         return pageRepList;
     }
 
@@ -447,17 +452,17 @@ public class TestCaseServiceImpl implements TestCaseService {
         return listIssueLinkByIssueId(projectId, issueId).stream().collect(Collectors.toList());
     }
 
-    @Override
-    public Map<Long, ProductVersionDTO> getVersionInfo(Long projectId) {
-        Assert.notNull(projectId, "error.TestCaseService.getVersionInfo.param.projectId.not.be.null");
-        return productionVersionClient.listByProjectId(projectId).getBody().stream().collect(Collectors.toMap(ProductVersionDTO::getVersionId, Function.identity()));
-    }
+//    @Override
+//    public Map<Long, ProductVersionDTO> getVersionInfo(Long projectId) {
+//        Assert.notNull(projectId, "error.TestCaseService.getVersionInfo.param.projectId.not.be.null");
+//        return productionVersionClient.listByProjectId(projectId).getBody().stream().collect(Collectors.toMap(ProductVersionDTO::getVersionId, Function.identity()));
+//    }
 
-    public Long[] getVersionIds(Long projectId) {
-        Assert.notNull(projectId, "error.TestCaseService.getVersionIds.param.projectId.not.be.null");
-        return productionVersionClient.listByProjectId(projectId).getBody().stream().map(ProductVersionDTO::getVersionId).distinct().toArray(Long[]::new);
-
-    }
+//    public Long[] getVersionIds(Long projectId) {
+//        Assert.notNull(projectId, "error.TestCaseService.getVersionIds.param.projectId.not.be.null");
+//        return productionVersionClient.listByProjectId(projectId).getBody().stream().map(ProductVersionDTO::getVersionId).distinct().toArray(Long[]::new);
+//
+//    }
 
     @Override
     public ProjectDTO getProjectInfo(Long projectId) {
@@ -486,10 +491,10 @@ public class TestCaseServiceImpl implements TestCaseService {
         }
     }
 
-    private ResponseEntity<PageInfo<IssueListTestWithSprintVersionDTO>> listIssueWithLinkedIssues(Long projectId, SearchDTO searchDTO, Pageable pageable, Long organizationId) {
+    private ResponseEntity<Page<IssueListTestWithSprintVersionDTO>> listIssueWithLinkedIssues(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId) {
         Assert.notNull(projectId, "error.TestCaseService.listIssueWithLinkedIssues.param.projectId.not.null");
-        Assert.notNull(pageable, "error.TestCaseService.listIssueWithLinkedIssues.param.pageable.not.null");
-        return testCaseFeignClient.listIssueWithLinkedIssues(pageable.getPageNumber(), pageable.getPageSize(), PageUtil.sortToSql(pageable.getSort()), projectId, searchDTO, organizationId);
+        Assert.notNull(pageRequest, "error.TestCaseService.listIssueWithLinkedIssues.param.pageRequest.not.null");
+        return testCaseFeignClient.listIssueWithLinkedIssues(pageRequest.getPage(), pageRequest.getSize(), PageUtil.sortToSql(pageRequest.getSort()), projectId, searchDTO, organizationId);
     }
 
     private TestCaseDTO baseInsert(TestCaseVO testCaseVO) {

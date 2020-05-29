@@ -16,11 +16,11 @@ import io.choerodon.test.manager.api.vo.TestCycleCaseAttachmentRelVO;
  */
 public interface TestCycleCaseAttachmentRelService {
 
-    TestCycleCaseAttachmentRelVO upload(String bucketName, String fileName, MultipartFile file, Long attachmentLinkId, String attachmentType, String comment);
+    TestCycleCaseAttachmentRelVO upload(Long organizationId,String bucketName, String fileName, MultipartFile file, Long attachmentLinkId, String attachmentType, String comment);
 
-    void deleteAttachmentRel(Long attachId);
+    void deleteAttachmentRel(Long projectId,Long attachId);
 
-    void delete(Long linkedId, String type);
+    void delete(Long projectId,Long linkedId, String type);
 
     /**
      * 上传多个附件
@@ -29,7 +29,7 @@ public interface TestCycleCaseAttachmentRelService {
      * @param
      * @return TestCycleCaseAttachmentRelVO
      */
-    List<TestCycleCaseAttachmentRelVO> uploadMultipartFile(HttpServletRequest request,String attachmentType,Long attachmentLinkId,String comment);
+    List<TestCycleCaseAttachmentRelVO> uploadMultipartFile(Long projectId,HttpServletRequest request,String attachmentType,Long attachmentLinkId,String comment);
 
     void batchInsert(List<TestCycleCaseDTO> testCycleCaseDTOS, Map<Long, List<TestCaseAttachmentDTO>> attachmentMap);
 

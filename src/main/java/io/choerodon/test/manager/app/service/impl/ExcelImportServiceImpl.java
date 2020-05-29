@@ -3,9 +3,10 @@ package io.choerodon.test.manager.app.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import feign.FeignException;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.api.vo.agile.*;
 
-import org.springframework.data.domain.PageRequest;
+
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.vo.ExcelReadMeOptionVO;
 import io.choerodon.test.manager.api.vo.TestFileLoadHistoryWithRateVO;
@@ -14,6 +15,7 @@ import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.enums.ExcelTitleName;
 import io.choerodon.test.manager.infra.enums.TestAttachmentCode;
 import io.choerodon.test.manager.infra.enums.TestFileLoadHistoryEnums;
+import io.choerodon.test.manager.infra.feign.BaseFeignClient;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import io.choerodon.test.manager.infra.mapper.TestFileLoadHistoryMapper;
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
@@ -23,6 +25,8 @@ import io.choerodon.test.manager.infra.util.MultipartExcel;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.hzero.boot.file.FileClient;
+import org.hzero.boot.message.MessageClient;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,11 +93,8 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     @Autowired
     private TestCaseStepService testCaseStepService;
 
-    @Autowired
-    private FileService fileService;
-
-    @Autowired
-    private NotifyService notifyService;
+//    @Autowired
+//    private NotifyService notifyService;
 
     @Autowired
     private TestFileLoadHistoryMapper testFileLoadHistoryMapper;
@@ -101,12 +102,20 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     @Autowired
     private TestIssueFolderMapper testIssueFolderMapper;
 
-
     @Autowired
     private TestCaseFeignClient testCaseFeignClient;
 
     @Autowired
     private ModelMapper modelMapper;
+    
+    @Autowired
+    private BaseFeignClient baseFeignClient;
+
+    @Autowired
+    private FileClient fileClient;
+
+    @Autowired
+    private MessageClient messageClient;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -123,6 +132,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     @Async
     @Override
     public void importIssueByExcel(Long projectId, Long folderId, Long userId, Workbook issuesWorkbook) {
+        ProjectDTO projectDTO = baseFeignClient.queryProject(projectId).getBody();
         // 默认是导入到导入文件夹，不存在则创建
         Sheet testCasesSheet = issuesWorkbook.getSheet("测试用例");
         TestFileLoadHistoryDTO testFileLoadHistoryDTO = initLoadHistory(projectId, folderId, userId);
@@ -192,7 +202,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         if (!errorRowIndexes.isEmpty() && status != TestFileLoadHistoryEnums.Status.CANCEL) {
             logger.info("导入数据有误，上传 error workbook");
             shiftErrorRowsToTop(testCasesSheet, errorRowIndexes);
-            status = checkoutStatus(uploadErrorWorkbook(issuesWorkbook, testFileLoadHistoryDTO), status);
+            status = checkoutStatus(uploadErrorWorkbook(projectDTO.getOrganizationId(),issuesWorkbook, testFileLoadHistoryDTO), status);
         }
 
         finishImport(testFileLoadHistoryDTO, userId, status);
@@ -202,7 +212,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     public Workbook buildImportTemp(Long organizationId, Long projectId) {
 
         Workbook importTemp = ExcelUtil.getWorkBook(ExcelUtil.Mode.XSSF);
-        List<UserDTO> userDTOS = userService.list(new PageRequest(1, 99999), projectId, null, null).getBody().getList();
+        List<UserDTO> userDTOS = userService.list(new PageRequest(0, 99999), projectId, null, null).getBody().getContent();
 
         List<String> userNameList = new ArrayList<>();
         for (UserDTO userDTO : userDTOS) {
@@ -505,7 +515,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             // Todo:重构
             // 查询所有的linktype
             List<IssueLinkTypeDTO> issueLinkTypeDTOList = testCaseFeignClient.listIssueLinkType(projectId, null,
-                    new IssueLinkTypeSearchDTO()).getBody().getList();
+                    new IssueLinkTypeSearchDTO()).getBody().getContent();
 
             TestCaseLinkDTO testCaseLinkDTO = new TestCaseLinkDTO();
             testCaseLinkDTO.setIssueId(issueNumDTO.getIssueId());
@@ -539,9 +549,11 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         testFileLoadHistoryWithRateVO.setRate(rate);
         if(TestFileLoadHistoryEnums.Status.FAILURE.getTypeValue().equals(testFileLoadHistoryWithRateVO.getStatus())){
             testFileLoadHistoryWithRateVO.setCode(IMPORT_ERROR);
-            notifyService.postWebSocket(IMPORT_NOTIFY_CODE, userId.toString(), JSON.toJSONString(testFileLoadHistoryWithRateVO));
+            //notifyService.postWebSocket(IMPORT_NOTIFY_CODE, userId.toString(), JSON.toJSONString(testFileLoadHistoryWithRateVO));
+            messageClient.sendByUserId(userId,IMPORT_NOTIFY_CODE,JSON.toJSONString(testFileLoadHistoryWithRateVO));
         }else {
-            notifyService.postWebSocket(IMPORT_NOTIFY_CODE, userId.toString(), JSON.toJSONString(testFileLoadHistoryWithRateVO));
+            //notifyService.postWebSocket(IMPORT_NOTIFY_CODE, userId.toString(), JSON.toJSONString(testFileLoadHistoryWithRateVO));
+            messageClient.sendByUserId(userId,IMPORT_NOTIFY_CODE,JSON.toJSONString(testFileLoadHistoryWithRateVO));
         }
 
         logger.info("导入进度：{}", rate);
@@ -557,20 +569,19 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         }
     }
 
-    private String uploadErrorWorkbook(Workbook errorWorkbook, TestFileLoadHistoryDTO testFileLoadHistoryDTO) {
-        ResponseEntity<String> response = fileService.uploadFile(TestAttachmentCode.ATTACHMENT_BUCKET, ".xlsx",
+    private String uploadErrorWorkbook(Long organizationId,Workbook errorWorkbook, TestFileLoadHistoryDTO testFileLoadHistoryDTO) {
+        String url = fileClient.uploadFile(organizationId,TestAttachmentCode.ATTACHMENT_BUCKET, null,
                 new MultipartExcel("file", ".xlsx", errorWorkbook));
 
         boolean failed = false;
-        if (response.getBody().startsWith("{")) {
-            JSONObject jsonObject = JSON.parseObject(response.getBody());
+        if (url.startsWith("{")) {
+            JSONObject jsonObject = JSON.parseObject(url);
             failed = jsonObject.containsKey("failed") && jsonObject.getBooleanValue("failed");
         }
-
-        if (response.getStatusCode().is2xxSuccessful() && !failed) {
-            testFileLoadHistoryDTO.setFileUrl(response.getBody());
+        if (!failed) {
+            testFileLoadHistoryDTO.setFileUrl(url);
             logger.debug(testFileLoadHistoryDTO.getFileUrl());
-            return response.getBody();
+            return url;
         } else {
             testFileLoadHistoryDTO.setFileStream(ExcelUtil.getBytes(errorWorkbook));
             return null;

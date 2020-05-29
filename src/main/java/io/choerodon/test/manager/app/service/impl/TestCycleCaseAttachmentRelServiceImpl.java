@@ -6,6 +6,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 
+import io.choerodon.test.manager.api.vo.agile.ProjectDTO;
+import io.choerodon.test.manager.infra.feign.BaseFeignClient;
+import io.choerodon.test.manager.infra.feign.FileFeignClient;
+import org.hzero.boot.file.FileClient;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +27,7 @@ import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.oauth.CustomUserDetails;
 import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.test.manager.api.vo.TestCycleCaseAttachmentRelVO;
-import io.choerodon.test.manager.app.service.FileService;
+//import io.choerodon.test.manager.app.service.FileService;
 import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
 import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelUploadService;
 import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
@@ -41,8 +45,8 @@ import io.choerodon.test.manager.infra.mapper.TestCycleCaseAttachmentRelMapper;
 @Transactional(rollbackFor = Exception.class)
 public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttachmentRelService {
 
-    @Autowired
-    private FileService fileService;
+//    @Autowired
+//    private FileService fileService;
 
     @Autowired
     private TestCycleCaseAttachmentRelMapper testCycleCaseAttachmentRelMapper;
@@ -56,6 +60,15 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
     private static final String BACKETNAME = "test";
 
     @Autowired
+    private BaseFeignClient baseFeignClient;
+
+    @Autowired
+    private FileClient fileClient;
+
+    @Autowired
+    private FileFeignClient fileFeignClient;
+
+    @Autowired
     private TestCycleCaseAttachmentRelUploadService testCycleCaseAttachmentRelUploadService;
 
 
@@ -65,37 +78,40 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
 
 
     @Override
-    public void deleteAttachmentRel(Long attachId) {
-        baseDelete(BACKETNAME, attachId);
+    public void deleteAttachmentRel(Long projectId,Long attachId) {
+        ProjectDTO projectDTO = baseFeignClient.queryProject(projectId).getBody();
+        baseDelete(projectDTO.getOrganizationId(),BACKETNAME, attachId);
     }
 
     @Override
-    public TestCycleCaseAttachmentRelVO upload(String bucketName, String fileName, MultipartFile file, Long attachmentLinkId, String attachmentType, String comment) {
-        return modelMapper.map(testCycleCaseAttachmentRelUploadService.baseUpload(bucketName, fileName, file, attachmentLinkId, attachmentType, comment), TestCycleCaseAttachmentRelVO.class);
+    public TestCycleCaseAttachmentRelVO upload(Long organizationId,String bucketName, String fileName, MultipartFile file, Long attachmentLinkId, String attachmentType, String comment) {
+        return modelMapper.map(testCycleCaseAttachmentRelUploadService.baseUpload(bucketName, fileName, file, attachmentLinkId, attachmentType, comment,organizationId), TestCycleCaseAttachmentRelVO.class);
     }
 
     @Override
-    public void delete(Long linkedId, String type) {
+    public void delete(Long projectId,Long linkedId, String type) {
         Assert.notNull(linkedId, "error.delete.linkedId.not.null");
         Assert.notNull(type, "error.delete.type,not.null");
         TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO = new TestCycleCaseAttachmentRelDTO();
         testCycleCaseAttachmentRelDTO.setAttachmentLinkId(linkedId);
         testCycleCaseAttachmentRelDTO.setAttachmentType(type);
+        ProjectDTO projectDTO= baseFeignClient.queryProject(projectId).getBody();
         Optional.ofNullable(testCycleCaseAttachmentRelMapper.select(testCycleCaseAttachmentRelDTO)).ifPresent(m ->
-                m.forEach(v -> baseDelete(TestAttachmentCode.ATTACHMENT_BUCKET, v.getId()))
+                m.forEach(v -> baseDelete(projectDTO.getOrganizationId(),TestAttachmentCode.ATTACHMENT_BUCKET, v.getId()))
         );
     }
 
 
     @Override
-    public List<TestCycleCaseAttachmentRelVO> uploadMultipartFile(HttpServletRequest request,String attachmentType,Long attachmentLinkId,String comment) {
+    public List<TestCycleCaseAttachmentRelVO> uploadMultipartFile(Long projectId,HttpServletRequest request,String attachmentType,Long attachmentLinkId,String comment) {
         List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
         if (CollectionUtils.isEmpty(files)) {
             throw new CommonException("error.files.null");
         }
+        ProjectDTO projectDTO = baseFeignClient.queryProject(projectId).getBody();
         for (MultipartFile multipartFile : files) {
             String fileName = multipartFile.getOriginalFilename();
-            upload(BACKETNAME, fileName, multipartFile, attachmentLinkId, attachmentType, comment);
+            upload(projectDTO.getOrganizationId(),BACKETNAME, fileName, multipartFile, attachmentLinkId, attachmentType, comment);
         }
         TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO = new TestCycleCaseAttachmentRelDTO();
         testCycleCaseAttachmentRelDTO.setAttachmentType(attachmentType);
@@ -173,7 +189,7 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
         testCycleCaseAttachmentRelMapper.batchInsert(list);
     }
 
-    private void baseDelete(String bucketName, Long attachId) {
+    private void baseDelete(Long organizationId,String bucketName, Long attachId) {
         TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO = testCycleCaseAttachmentRelMapper.selectByPrimaryKey(attachId);
         TestCaseAttachmentDTO testCaseAttachmentDTO = new TestCaseAttachmentDTO();
         String url1 = testCycleCaseAttachmentRelDTO.getUrl();
@@ -189,10 +205,7 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
                 } catch (IOException i) {
                     throw new CommonException(i);
                 }
-                ResponseEntity<String> response = fileService.deleteFile(bucketName, url);
-                if (response == null || response.getStatusCode() != HttpStatus.OK) {
-                    throw new CommonException("error.attachment.upload");
-                }
+                fileFeignClient.deleteFileByUrl(organizationId,bucketName,Arrays.asList(url));
             }
         }
         testCycleCaseAttachmentRelMapper.deleteByPrimaryKey(attachId);

@@ -4,7 +4,7 @@ import java.util.*;
 
 import io.choerodon.test.manager.api.vo.ExcelCaseVO;
 import io.choerodon.test.manager.api.vo.agile.SearchDTO;
-import io.choerodon.mybatis.common.Mapper;
+import io.choerodon.mybatis.common.BaseMapper;
 import io.choerodon.test.manager.api.vo.CaseCompareVO;
 import io.choerodon.test.manager.api.vo.TestCaseMigrateDTO;
 import io.choerodon.test.manager.infra.dto.TestCaseDTO;
@@ -15,7 +15,7 @@ import org.apache.ibatis.annotations.Param;
  * @author zhaotianxin
  * @since 2019/11/14
  */
-public interface TestCaseMapper extends Mapper<TestCaseDTO> {
+public interface TestCaseMapper extends BaseMapper<TestCaseDTO> {
     List<TestCaseDTO> listCaseByFolderIds(@Param("projectId") Long projectId, @Param("folderIds") Set<Long> folderIds, @Param("searchDTO") SearchDTO searchDTO);
 
     List<TestCaseDTO> listCopyCase(@Param("projectId") Long projectId ,@Param("caseIds") List<Long> caseIds);

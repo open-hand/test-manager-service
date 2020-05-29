@@ -3,8 +3,8 @@ package io.choerodon.test.manager.app.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageInfo;
+import io.choerodon.core.domain.Page;
+import io.choerodon.core.domain.Page;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import com.google.common.collect.Lists;
 
 import io.choerodon.test.manager.api.vo.agile.IssueLinkDTO;
 import io.choerodon.test.manager.api.vo.agile.SearchDTO;
-import org.springframework.data.domain.Pageable;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.app.service.ReporterFormService;
 import io.choerodon.test.manager.app.service.TestCaseService;
@@ -51,12 +51,12 @@ public class ReporterFormServiceImpl implements ReporterFormService {
     @Autowired
     private ModelMapper modelMapper;
 
-    public PageInfo<ReporterFormVO> createFromIssueToDefect(Long projectId, SearchDTO searchDTO, Pageable pageable, Long organizationId) {
+    public Page<ReporterFormVO> createFromIssueToDefect(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId) {
         Page page = new Page();
-        Map<Long, IssueInfosVO> issueResponse = testCaseService.getIssueInfoMapAndPopulatePageInfo(projectId, searchDTO, pageable, page, organizationId);
+        Map<Long, IssueInfosVO> issueResponse = testCaseService.getIssueInfoMapAndPopulatePageInfo(projectId, searchDTO, pageRequest, page, organizationId);
         List<ReporterFormVO> reporterFormES = doCreateFromIssueToDefect(issueResponse.values().stream().collect(Collectors.toList()), projectId, organizationId);
-        page.addAll(reporterFormES);
-        return page.toPageInfo();
+        page.setContent(reporterFormES);
+        return page;
     }
 
 
@@ -86,10 +86,10 @@ public class ReporterFormServiceImpl implements ReporterFormService {
 
 
     @Override
-    public PageInfo<ReporterFormVO> createFormDefectFromIssue(Long projectId, SearchDTO searchDTO, Pageable pageable, Long organizationId) {
+    public Page<ReporterFormVO> createFormDefectFromIssue(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId) {
         List<Long> issueIdsList = testCycleCaseDefectRelMapper.queryIssueIdAndDefectId(projectId);
         if (ObjectUtils.isEmpty(issueIdsList)) {
-            return new PageInfo<>(new ArrayList<>());
+            return new Page<>();
         }
         Long[] issueIds = issueIdsList.stream().toArray(Long[]::new);
         Map args = Optional.ofNullable(searchDTO.getOtherArgs()).orElseGet(HashMap::new);
@@ -101,10 +101,10 @@ public class ReporterFormServiceImpl implements ReporterFormService {
         // 此处假设返回的是 long数组所有值
         Long[] allFilteredIssues = testCaseService.queryIssueIdsByOptions(searchDTO, projectId).stream().sorted(Comparator.reverseOrder()).toArray(Long[]::new);
         if (ObjectUtils.isEmpty(allFilteredIssues)) {
-            return new PageInfo<>(new ArrayList<>());
+            return new Page<>();
         }
-        int pageNum = pageable.getPageNumber()- 1;
-        int pageSize = pageable.getPageSize();
+        int pageNum = pageRequest.getPage();
+        int pageSize = pageRequest.getSize();
         int highPage = (pageNum + 1) * pageSize - 1;
         int lowPage = pageNum * pageSize;
         //创建一个Long数组，将对应分页的issuesId传给它
@@ -114,8 +114,11 @@ public class ReporterFormServiceImpl implements ReporterFormService {
         System.arraycopy(allFilteredIssues, lowPage, pagedIssues, 0, size);
         // 得到包装好的报表List
         List<DefectReporterFormVO> reporterFormES = createFormDefectFromIssue(projectId, pagedIssues, organizationId);
-
-        return new CustomPage(reporterFormES, allFilteredIssues);
+        CustomPage customPage = new CustomPage(reporterFormES, allFilteredIssues);
+        customPage.setContent(reporterFormES);
+        customPage.setSize(pageSize);
+        customPage.setNumber(pageNum);
+        return customPage;
     }
 
 

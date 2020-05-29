@@ -3,19 +3,23 @@ package io.choerodon.test.manager.infra.dto;
 import java.util.Date;
 import javax.persistence.*;
 
+import io.choerodon.mybatis.annotation.ModifyAudit;
+import io.choerodon.mybatis.annotation.VersionAudit;
 import io.swagger.annotations.ApiModelProperty;
 
-import io.choerodon.mybatis.entity.BaseDTO;
+import io.choerodon.mybatis.domain.AuditDomain;
 
 /**
  * @author: 25499
  * @date: 2019/11/26 14:11
  * @description:
  */
+@VersionAudit
+@ModifyAudit
 @Table(name = "test_plan")
-public class TestPlanDTO extends BaseDTO {
+public class TestPlanDTO extends AuditDomain {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long planId;
 
     @ApiModelProperty(value = "计划名称")

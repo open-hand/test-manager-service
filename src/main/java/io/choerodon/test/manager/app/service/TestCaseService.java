@@ -1,9 +1,9 @@
 package io.choerodon.test.manager.app.service;
 
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageInfo;
+import io.choerodon.core.domain.Page;
+import io.choerodon.core.domain.Page;
 import io.choerodon.test.manager.api.vo.agile.*;
-import org.springframework.data.domain.Pageable;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.api.vo.devops.AppServiceDeployVO;
 import io.choerodon.test.manager.api.vo.devops.AppServiceVersionRespVO;
 import io.choerodon.test.manager.api.vo.devops.ApplicationRepDTO;
@@ -23,21 +23,21 @@ import java.util.Map;
  */
 public interface TestCaseService {
 
-    ResponseEntity<PageInfo<IssueListTestVO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, Pageable pageable, Long organizationId);
+    ResponseEntity<Page<IssueListTestVO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId);
 
-    ResponseEntity<PageInfo<IssueComponentDetailVO>> listIssueWithoutSubDetail(Long projectId, SearchDTO searchDTO, Pageable pageable, Long organizationId);
+    ResponseEntity<Page<IssueComponentDetailVO>> listIssueWithoutSubDetail(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId);
 
     ResponseEntity<IssueDTO> queryIssue(Long projectId, Long issueId, Long organizationId);
 
-    Map<Long, IssueInfosVO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, Pageable pageable, Long organizationId);
+    Map<Long, IssueInfosVO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId);
 
-    <T> Map<Long, IssueInfosVO> getIssueInfoMapAndPopulatePageInfo(Long projectId, SearchDTO searchDTO, Pageable pageable, Page page, Long organizationId);
+    <T> Map<Long, IssueInfosVO> getIssueInfoMapAndPopulatePageInfo(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Page page, Long organizationId);
 
     Map<Long, IssueInfosVO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, boolean needDetail, Long organizationId);
 
     Map<Long, IssueInfosVO> getIssueInfoMap(Long projectId, Long[] issueIds, boolean needDetail, Long organizationId);
 
-    Map<Long, IssueInfosVO> getIssueInfoMap(Long projectId, Long[] issueIds, Pageable pageable, Long organizationId);
+    Map<Long, IssueInfosVO> getIssueInfoMap(Long projectId, Long[] issueIds, PageRequest pageRequest, Long organizationId);
 
     List<IssueLinkDTO> getLinkIssueFromIssueToTest(Long projectId, List<Long> issueId);
 
@@ -45,9 +45,9 @@ public interface TestCaseService {
 
     List<IssueLinkDTO> listIssueLinkByIssueId(Long projectId, List<Long> issueId);
 
-    Map<Long, ProductVersionDTO> getVersionInfo(Long projectId);
-
-    Long[] getVersionIds(Long projectId);
+//    Map<Long, ProductVersionDTO> getVersionInfo(Long projectId);
+//
+//    Long[] getVersionIds(Long projectId);
 
     ProjectDTO getProjectInfo(Long projectId);
 
@@ -98,11 +98,11 @@ public interface TestCaseService {
      * 查询当前文件夹下面所有子文件夹的用例
      * @param projectId
      * @param folderId
-     * @param pageable
+     * @param pageRequest
      * @param searchDTO
      * @return
      */
-    PageInfo<TestCaseRepVO> listAllCaseByFolderId(Long projectId, Long folderId, Pageable pageable,SearchDTO searchDTO,Long planId);
+    Page<TestCaseRepVO> listAllCaseByFolderId(Long projectId, Long folderId, PageRequest pageRequest,SearchDTO searchDTO,Long planId);
 
     /**
      * 查询单个文件夹下的用例

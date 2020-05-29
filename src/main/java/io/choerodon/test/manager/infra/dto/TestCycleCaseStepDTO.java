@@ -5,15 +5,19 @@ import java.util.Date;
 import java.util.List;
 
 
-import io.choerodon.mybatis.entity.BaseDTO;
+import io.choerodon.mybatis.annotation.ModifyAudit;
+import io.choerodon.mybatis.annotation.VersionAudit;
+import io.choerodon.mybatis.domain.AuditDomain;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
  */
+@VersionAudit
+@ModifyAudit
 @Table(name = "test_cycle_case_step")
-public class TestCycleCaseStepDTO extends BaseDTO {
+public class TestCycleCaseStepDTO extends AuditDomain {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long executeStepId;
 
     private Long executeId;

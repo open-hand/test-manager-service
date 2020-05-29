@@ -162,7 +162,7 @@ function ExportSide(props) {
           <Button className="test-export-issue-btn" type="primary" icon="playlist_add" onClick={handleCreateExport}>新建导出</Button>
         </div>
         <WSHandler
-          messageKey={`choerodon:msg:test-issue-export:${AppState.userInfo.id}`}
+          messageKey="test-issue-export"
           onMessage={handleMessage}
         >
           <Table dataSet={exportSideDataSet} className="test-export-issue-table">

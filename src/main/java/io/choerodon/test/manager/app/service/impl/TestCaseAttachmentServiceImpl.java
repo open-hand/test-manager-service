@@ -5,12 +5,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.oauth.CustomUserDetails;
 import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.test.manager.api.vo.TestCycleCaseAttachmentRelVO;
+import io.choerodon.test.manager.api.vo.agile.ProjectDTO;
 import io.choerodon.test.manager.app.assembler.TestCaseAssembler;
 import io.choerodon.test.manager.app.service.IIssueAttachmentService;
 import io.choerodon.test.manager.app.service.TestCaseAttachmentService;
@@ -21,10 +23,13 @@ import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
 import io.choerodon.test.manager.infra.dto.TestCaseDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseAttachmentRelDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
+import io.choerodon.test.manager.infra.feign.BaseFeignClient;
+//import io.choerodon.test.manager.infra.feign.FileFeignClient;
 import io.choerodon.test.manager.infra.feign.FileFeignClient;
 import io.choerodon.test.manager.infra.mapper.TestAttachmentMapper;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseAttachmentRelMapper;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper;
+import org.hzero.boot.file.FileClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,13 +54,10 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
 
     private static final String BACKETNAME = "test";
 
-
-    private final FileFeignClient fileFeignClient;
-
     @Autowired
-    public TestCaseAttachmentServiceImpl(FileFeignClient fileFeignClient) {
-        this.fileFeignClient = fileFeignClient;
-    }
+    private  FileFeignClient fileFeignClient;
+    @Autowired
+    private BaseFeignClient baseFeignClient;
 
     @Autowired
     private TestAttachmentMapper testAttachmentMapper;
@@ -76,6 +78,9 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
 
     @Value("${services.attachment.url}")
     private String attachmentUrl;
+    @Autowired
+    private FileClient fileClient;
+
 
     @Override
     public void dealIssue(Long projectId, Long issueId, String fileName, String url) {
@@ -83,7 +88,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
         issueAttachmentDTO.setProjectId(projectId);
         issueAttachmentDTO.setCaseId(issueId);
         issueAttachmentDTO.setFileName(fileName);
-        issueAttachmentDTO.setUrl(String.format("/%s/%s",BACKETNAME,url));
+        issueAttachmentDTO.setUrl(url);
         iIssueAttachmentService.createBase(issueAttachmentDTO);
     }
 
@@ -111,7 +116,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
         String dealUrl = null;
         try {
             URL netUrl = new URL(url);
-            dealUrl = netUrl.getFile().substring(BACKETNAME.length() + 2);
+            dealUrl = netUrl.getFile();
         } catch (MalformedURLException e) {
             throw new CommonException(e.getMessage());
         }
@@ -121,14 +126,12 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
     @Override
     public List<TestCaseAttachmentDTO> create(Long projectId, Long issueId, HttpServletRequest request) {
         List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
+        ProjectDTO projectDTO = baseFeignClient.queryProject(projectId).getBody();
         if (files != null && !files.isEmpty()) {
             for (MultipartFile multipartFile : files) {
                 String fileName = multipartFile.getOriginalFilename();
-                ResponseEntity<String> response = fileFeignClient.uploadFile(BACKETNAME, fileName, multipartFile);
-                if (response == null || response.getStatusCode() != HttpStatus.OK) {
-                    throw new CommonException("error.attachment.upload");
-                }
-                dealIssue(projectId, issueId, fileName, dealUrl(response.getBody()));
+                String path = fileClient.uploadFile(projectDTO.getOrganizationId(),BACKETNAME,null, fileName, multipartFile);
+                dealIssue(projectId, issueId, fileName, dealUrl(path));
             }
         }
         TestCaseAttachmentDTO issueAttachmentDTO = new TestCaseAttachmentDTO();
@@ -160,8 +163,9 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
         if(CollectionUtils.isEmpty(testCycleCaseAttachmentRelDTOS)){
             String url = null;
             try {
+                ProjectDTO projectDTO = baseFeignClient.queryProject(projectId).getBody();
                 url = URLDecoder.decode(issueAttachmentDTO.getUrl(), "UTF-8");
-                fileFeignClient.deleteFile(BACKETNAME, attachmentUrl + url);
+                fileFeignClient.deleteFileByUrl(projectDTO.getOrganizationId(),BACKETNAME, Arrays.asList(attachmentUrl + url));
             } catch (Exception e) {
                 LOGGER.error("error.attachment.delete", e);
             }
@@ -180,14 +184,12 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
         if (!(files != null && !files.isEmpty())) {
             throw new CommonException("error.attachment.exits");
         }
+        ProjectDTO projectDTO = baseFeignClient.queryProject(projectId).getBody();
         List<String> result = new ArrayList<>();
         for (MultipartFile multipartFile : files) {
             String fileName = multipartFile.getOriginalFilename();
-            ResponseEntity<String> response = fileFeignClient.uploadFile(BACKETNAME, fileName, multipartFile);
-            if (response == null || response.getStatusCode() != HttpStatus.OK) {
-                throw new CommonException("error.attachment.upload");
-            }
-            result.add(attachmentUrl + "/" + BACKETNAME + "/" + dealUrl(response.getBody()));
+            String path = fileClient.uploadFile(projectDTO.getOrganizationId(),BACKETNAME, null,fileName, multipartFile);
+            result.add(path);
         }
         return result;
     }

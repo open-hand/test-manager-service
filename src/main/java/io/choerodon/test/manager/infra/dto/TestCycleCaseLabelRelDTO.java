@@ -1,14 +1,19 @@
 package io.choerodon.test.manager.infra.dto;
 
 import javax.persistence.Table;
-import io.choerodon.mybatis.entity.BaseDTO;
+
+import io.choerodon.mybatis.annotation.ModifyAudit;
+import io.choerodon.mybatis.annotation.VersionAudit;
+import io.choerodon.mybatis.domain.AuditDomain;
 
 /**
  * @author zhaotianxin
  * @since 2019/11/27
  */
+@VersionAudit
+@ModifyAudit
 @Table(name = "test_cycle_case_label_rel")
-public class TestCycleCaseLabelRelDTO extends BaseDTO {
+public class TestCycleCaseLabelRelDTO extends AuditDomain {
     private Long executeId;
     private Long caseId;
     private Long labelId;

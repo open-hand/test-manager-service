@@ -2,13 +2,13 @@ import React, { Component, createRef } from 'react';
 import { observer } from 'mobx-react';
 import { handleRequestFailed } from '@/common/utils';
 import './IssueTree.scss';
-import IssueTreeStore from '../../stores/IssueTreeStore';
-import IssueStore from '../../stores/IssueStore';
 import {
   addFolder, editFolder, deleteFolder, moveFolder,
 } from '@/api/IssueManageApi';
 import { Loading } from '@/components';
 import Tree from '@/components/Tree';
+import IssueStore from '../../stores/IssueStore';
+import IssueTreeStore from '../../stores/IssueTreeStore';
 import TreeNode from './TreeNode';
 
 @observer
@@ -86,7 +86,12 @@ class IssueTree extends Component {
   setSelected = (item) => {
     IssueTreeStore.setCurrentFolder(item);
     IssueStore.setClickIssue({});
-    IssueStore.loadIssues();
+    IssueStore.setPagination({
+      current: 1,
+      pageSize: 10,
+      total: IssueStore.pagination.total,
+    });
+    IssueStore.loadIssues(1, 10);
   }
 
   handleUpdateItem=(item) => {

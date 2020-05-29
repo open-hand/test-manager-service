@@ -264,10 +264,6 @@ class TestPlanStore extends TestPlanTreeStore {
           ...mineExecutePagination,
           ...{ total: executes.total },
         });
-        console.log({
-          ...mineExecutePagination,
-          ...{ total: executes.total },
-        });
       }
       this.setTestList(executes.list || []);
       this.setTableLoading(false);

@@ -71,20 +71,12 @@ class IssueStore {
     const { id } = currentFolder;
     try {
       const res = await handleRequestFailed(getIssuesByFolder(folderId || id, Page, size, this.getFilter, orderField, orderType));
-      this.setIssues(res.list);
-      if (Page > 1) {
-        this.setPagination({
-          current: Page,
-          pageSize: size,
-          total: this.pagination.total,
-        });
-      } else {
-        this.setPagination({
-          current: res.pageNum,
-          pageSize: size,
-          total: res.total,
-        });
-      }
+      this.setIssues(res.list || []);
+      this.setPagination({
+        current: res.pageNum,
+        pageSize: size,
+        total: res.total,
+      });
       this.setLoading(false);
     } catch (e) {
       this.setLoading(false);

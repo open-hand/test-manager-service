@@ -6,13 +6,15 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.oauth.CustomUserDetails;
-import io.choerodon.mybatis.entity.BaseDTO;
+import io.choerodon.mybatis.domain.AuditDomain;
 import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.app.service.TestCaseLinkService;
 import io.choerodon.test.manager.app.service.TestCycleCaseService;
 import io.choerodon.test.manager.app.service.UserService;
 import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.mapper.*;
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.poi.ss.formula.functions.T;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.modelmapper.convention.MatchingStrategies;
@@ -87,9 +89,9 @@ public class TestCaseAssembler {
         if (assignedTo != null && !Objects.equals(assignedTo, 0L)) {
             UserMessageDTO userMessage = userMap.get(assignedTo);
             if(ObjectUtils.isEmpty(userMessage)){
-                BaseDTO baseDTO = new BaseDTO();
-                baseDTO.setCreatedBy(assignedTo);
-                Map<Long, UserMessageDTO> userMap1 = getUserMap(baseDTO, null);
+                TestCycleCaseDTO cycleCaseDTO = new TestCycleCaseDTO();
+                cycleCaseDTO.setCreatedBy(testCycleCaseDTO.getAssignedTo());
+                Map<Long, UserMessageDTO> userMap1 = getUserMap(cycleCaseDTO, null);
                 testFolderCycleCaseVO.setAssignedUser(userMap1.get(assignedTo));
                 userMap.putAll(userMap1);
             }
@@ -165,16 +167,26 @@ public class TestCaseAssembler {
         return issue;
     }
 
-    public Map<Long, UserMessageDTO> getUserMap(BaseDTO baseDTO, List<BaseDTO> list) {
+    public <T> Map<Long, UserMessageDTO> getUserMap(T t, List<T> list) {
         List<Long> userIds = new ArrayList<>();
-        if (!ObjectUtils.isEmpty(baseDTO)) {
-            userIds.add(baseDTO.getCreatedBy());
-            userIds.add(baseDTO.getLastUpdatedBy());
+        if (!ObjectUtils.isEmpty(t)) {
+            AuditDomain auditDomain = (AuditDomain) t;
+            if (!ObjectUtils.isEmpty(auditDomain.getCreatedBy())) {
+                userIds.add(auditDomain.getCreatedBy());
+            }
+            if (!ObjectUtils.isEmpty(auditDomain.getLastUpdatedBy())) {
+                userIds.add(auditDomain.getLastUpdatedBy());
+            }
         }
         if (!CollectionUtils.isEmpty(list)) {
             list.forEach(v -> {
-                userIds.add(v.getCreatedBy());
-                userIds.add(v.getLastUpdatedBy());
+                AuditDomain auditDomain = (AuditDomain) v;
+                if (!ObjectUtils.isEmpty(auditDomain.getCreatedBy())) {
+                    userIds.add(auditDomain.getCreatedBy());
+                }
+                if (!ObjectUtils.isEmpty(auditDomain.getLastUpdatedBy())) {
+                    userIds.add(auditDomain.getLastUpdatedBy());
+                }
             });
         }
         Map<Long, UserMessageDTO> userMessageDTOMap = userService.queryUsersMap(userIds);
@@ -183,9 +195,9 @@ public class TestCaseAssembler {
 
     public TestCycleCaseInfoVO cycleCaseExtraInfo(TestCycleCaseInfoVO testCycleCaseInfoVO) {
         if (testCycleCaseInfoVO.getAssignedTo() != null && !Objects.equals(testCycleCaseInfoVO.getAssignedTo(), 0L)) {
-            BaseDTO baseDTO = new BaseDTO();
-            baseDTO.setCreatedBy(testCycleCaseInfoVO.getAssignedTo());
-            Map<Long, UserMessageDTO> userMessageDTOMap = getUserMap(baseDTO, null);
+            TestCycleDTO testCycleDTO = new TestCycleDTO();
+            testCycleDTO.setCreatedBy(testCycleCaseInfoVO.getAssignedTo());
+            Map<Long, UserMessageDTO> userMessageDTOMap = getUserMap(testCycleDTO, null);
             if (!ObjectUtils.isEmpty(userMessageDTOMap.get(testCycleCaseInfoVO.getAssignedTo()))) {
                 testCycleCaseInfoVO.setExecutor(userMessageDTOMap.get(testCycleCaseInfoVO.getAssignedTo()));
             }

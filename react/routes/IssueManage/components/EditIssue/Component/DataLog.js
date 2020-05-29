@@ -161,8 +161,8 @@ class DataLog extends Component {
     } else if ((oldValue || oldValue === 0) && (!newValue && newValue !== 0)) {
       // yyy -> null
       if (field === 'Attachment') {
-        const attachnewArr = oldString.split('_');
-        return ` 【${decodeURI(attachnewArr.slice(2, attachnewArr.length).join('_'))}】 `;
+        const attachnewArr = oldString.split('@');
+        return ` 【${decodeURI(attachnewArr.slice(1, attachnewArr.length).join('_'))}】 `;
       } else {
         return ` 【${oldString}】 `;
       }
@@ -236,8 +236,8 @@ class DataLog extends Component {
         return ` 【${newString}】 `;
       }
       if (field === 'Attachment') {
-        const attachnewArr = newString.split('_');
-        return ` 【${decodeURI(attachnewArr.slice(2, attachnewArr.length).join('_'))}】 `;
+        const attachnewArr = newString.split('@');
+        return ` 【${decodeURI(attachnewArr.slice(1, attachnewArr.length).join('_'))}】 `;
       }
       // 自定义字段
       if (field && field.isCusLog) {

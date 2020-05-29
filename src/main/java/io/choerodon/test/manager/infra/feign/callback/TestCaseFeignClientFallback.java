@@ -2,7 +2,7 @@ package io.choerodon.test.manager.infra.feign.callback;
 
 import java.util.List;
 
-import com.github.pagehelper.PageInfo;
+import io.choerodon.core.domain.Page;
 import io.choerodon.test.manager.api.vo.agile.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -32,7 +32,7 @@ public class TestCaseFeignClientFallback implements TestCaseFeignClient {
     }
 
     @Override
-    public ResponseEntity<PageInfo<IssueListTestVO>> listIssueWithoutSubToTestComponent(Long projectId, SearchDTO searchDTO, Long organizationId, int page, int size, String orders) {
+    public ResponseEntity<Page<IssueListTestVO>> listIssueWithoutSubToTestComponent(Long projectId, SearchDTO searchDTO, Long organizationId, int page, int size, String sort) {
         throw new CommonException(QUERY_ERROR);
     }
 
@@ -47,7 +47,7 @@ public class TestCaseFeignClientFallback implements TestCaseFeignClient {
     }
 
     @Override
-    public ResponseEntity<PageInfo<IssueComponentDetailVO>> listIssueWithoutSubDetail(int page, int size, String orders, Long projectId, SearchDTO searchDTO, Long organizationId) {
+    public ResponseEntity<Page<IssueComponentDetailVO>> listIssueWithoutSubDetail(int page, int size, String orders, Long projectId, SearchDTO searchDTO, Long organizationId) {
         throw new CommonException(QUERY_ERROR);
     }
 
@@ -77,12 +77,12 @@ public class TestCaseFeignClientFallback implements TestCaseFeignClient {
     }
 
     @Override
-    public ResponseEntity<PageInfo<IssueListTestWithSprintVersionDTO>> listIssueWithLinkedIssues(int page, int size, String orders, Long projectId, SearchDTO searchDTO, Long organizationId) {
+    public ResponseEntity<Page<IssueListTestWithSprintVersionDTO>> listIssueWithLinkedIssues(int page, int size, String orders, Long projectId, SearchDTO searchDTO, Long organizationId) {
         throw new CommonException(QUERY_ERROR);
     }
 
     @Override
-    public ResponseEntity<PageInfo<ComponentForListDTO>> listByProjectId(Long projectId, SearchDTO searchDTO) {
+    public ResponseEntity<Page<ComponentForListDTO>> listByProjectId(Long projectId, SearchDTO searchDTO) {
         throw new CommonException(QUERY_ERROR);
     }
 
@@ -102,7 +102,7 @@ public class TestCaseFeignClientFallback implements TestCaseFeignClient {
     }
 
     @Override
-    public ResponseEntity<PageInfo<IssueLinkTypeDTO>> listIssueLinkType(Long projectId, Long issueLinkTypeId, IssueLinkTypeSearchDTO issueLinkTypeSearchDTO) {
+    public ResponseEntity<Page<IssueLinkTypeDTO>> listIssueLinkType(Long projectId, Long issueLinkTypeId, IssueLinkTypeSearchDTO issueLinkTypeSearchDTO) {
         throw new CommonException(QUERY_ERROR);
     }
 

@@ -13,7 +13,7 @@ public interface TestStatusService {
 
     TestStatusVO insert(TestStatusVO testStatusVO);
 
-    void delete(TestStatusVO testStatusVO);
+    Boolean delete(TestStatusVO testStatusVO);
 
     TestStatusVO update(TestStatusVO testStatusVO);
 

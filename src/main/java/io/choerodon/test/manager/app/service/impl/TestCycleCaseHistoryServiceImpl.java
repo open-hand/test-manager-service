@@ -3,17 +3,17 @@ package io.choerodon.test.manager.app.service.impl;
 import java.util.List;
 import java.util.Map;
 
-import com.github.pagehelper.PageHelper;
+import io.choerodon.mybatis.pagehelper.PageHelper;
 import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.github.pagehelper.PageInfo;
+import io.choerodon.core.domain.Page;
 
 import io.choerodon.test.manager.api.vo.agile.UserDO;
-import org.springframework.data.domain.Pageable;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseHistoryVO;
 import io.choerodon.test.manager.app.service.TestCycleCaseHistoryService;
@@ -49,13 +49,12 @@ public class TestCycleCaseHistoryServiceImpl implements TestCycleCaseHistoryServ
     }
 
     @Override
-    public PageInfo<TestCycleCaseHistoryVO> query(Long cycleCaseId, Pageable pageable) {
+    public Page<TestCycleCaseHistoryVO> query(Long cycleCaseId, PageRequest pageRequest) {
         TestCycleCaseHistoryVO historyVO = new TestCycleCaseHistoryVO();
         historyVO.setExecuteId(cycleCaseId);
-        PageInfo<TestCycleCaseHistoryDTO> testCycleCaseHistoryDTOPageInfo = PageHelper.startPage(pageable.getPageNumber(),
-                pageable.getPageSize(), PageUtil.sortToSql(pageable.getSort())).doSelectPageInfo(()
+        Page<TestCycleCaseHistoryDTO> testCycleCaseHistoryDTOPageInfo = PageHelper.doPageAndSort(pageRequest,()
                 -> testCycleCaseHistoryMapper.query(modelMapper.map(historyVO, TestCycleCaseHistoryDTO.class)));
-        List<TestCycleCaseHistoryVO> testCycleCaseHistoryVOS = modelMapper.map(testCycleCaseHistoryDTOPageInfo.getList(),
+        List<TestCycleCaseHistoryVO> testCycleCaseHistoryVOS = modelMapper.map(testCycleCaseHistoryDTOPageInfo.getContent(),
                 new TypeToken<List<TestCycleCaseHistoryVO>>() {
                 }.getType());
         userService.populateUsersInHistory(testCycleCaseHistoryVOS);

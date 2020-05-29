@@ -66,7 +66,12 @@ export default class IssueManage extends Component {
       IssueTreeStore.setCurrentFolderById(folderId);
       IssueTreeStore.updateHasCase(folderId, true);// 设置含有用例
     }
-    IssueStore.loadIssues();
+    IssueStore.setPagination({
+      current: 1,
+      pageSize: 10,
+      total: IssueStore.pagination.total,
+    });
+    IssueStore.loadIssues(1, 10);
   }
 
 
@@ -173,34 +178,7 @@ export default class IssueManage extends Component {
       <Page
         className="c7ntest-Issue c7ntest-region"
         service={[
-          'test-manager-service.test-issue-folder.query',
-          'test-manager-service.test-case.listCaseByFolderId',
-          'test-manager-service.test-file-load-history.queryLatestLoadHistory',
-          'test-manager-service.test-case.downloadImportTemplate',
-          'test-manager-service.test-file-load-history.cancelUpLoad',
-          'test-manager-service.test-case.importIssues',
-          'test-manager-service.test-file-load-history.queryIssues',
-          'test-manager-service.test-case.downLoadByFolder',
-          'test-manager-service.test-case.downExcelFail',
-          'test-manager-service.test-issue-folder.create',
-          'test-manager-service.test-issue-folder.moveFolder',
-          'test-manager-service.test-issue-folder.update',
-          'test-manager-service.test-issue-folder.delete',
-          'test-manager-service.test-case.createTestCase',
-          'test-manager-service.test-attachment.uploadFile',
-          'agile-service.issue-attachment.uploadForAddress',
-          'test-manager-service.test-case-link.queryLinkIssues',
-          'test-manager-service.test-case.queryCaseInfo',
-          'test-manager-service.test-case-step.query',
-          'test-manager-service.test-case-data-log.queryByCaseId',
-          'test-manager-service.test-case.updateCase',
-          'test-manager-service.test-case-attachment.uploadAttachment',
-          'test-manager-service.test-case.batchCloneCase',
-          'test-manager-service.test-case.batchMoveCase',
-          'test-manager-service.test-case.deleteCase',
-          'test-manager-service.test-case-step.changeOneStep',
-          'test-manager-service.test-case-step.clone',
-          'test-manager-service.test-case-step.removeStep',
+          'choerodon.code.project.test.manager.ps.default',
         ]}
       >
         <Header

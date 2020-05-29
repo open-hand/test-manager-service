@@ -3,9 +3,9 @@ package io.choerodon.test.manager.app.service;
 import java.util.List;
 import java.util.Map;
 
-import com.github.pagehelper.PageInfo;
+import io.choerodon.core.domain.Page;
 import io.choerodon.test.manager.infra.dto.TestCaseDTO;
-import org.springframework.data.domain.Pageable;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 
 import io.choerodon.test.manager.api.vo.TestCycleCaseStepVO;
 import io.choerodon.test.manager.infra.dto.TestCaseStepDTO;
@@ -33,7 +33,7 @@ public interface TestCycleCaseStepService {
      * @param organizationId organizationId
      * @return TestCycleCaseStepVO
      */
-    PageInfo<TestCycleCaseStepVO> querySubStep(Long cycleCaseId, Long projectId, Long organizationId,Pageable pageable);
+    Page<TestCycleCaseStepVO> querySubStep(Long cycleCaseId, Long projectId, Long organizationId,PageRequest pageRequest);
 
     /**
      * 查询用例下的步骤
@@ -42,7 +42,7 @@ public interface TestCycleCaseStepService {
      * @param projectId
      * @return
      */
-    PageInfo<TestCycleCaseStepVO> queryCaseStep(Long cycleCaseId, Long projectId, Pageable pageable);
+    Page<TestCycleCaseStepVO> queryCaseStep(Long cycleCaseId, Long projectId, PageRequest pageRequest);
 
 
     void baseUpdate(TestCycleCaseStepDTO testCycleCaseStepDTO);

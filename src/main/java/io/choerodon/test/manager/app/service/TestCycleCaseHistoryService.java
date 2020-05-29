@@ -1,7 +1,7 @@
 package io.choerodon.test.manager.app.service;
 
-import com.github.pagehelper.PageInfo;
-import org.springframework.data.domain.Pageable;
+import io.choerodon.core.domain.Page;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseHistoryVO;
 
@@ -11,7 +11,7 @@ import io.choerodon.test.manager.api.vo.TestCycleCaseHistoryVO;
 public interface TestCycleCaseHistoryService {
     TestCycleCaseHistoryVO insert(TestCycleCaseHistoryVO testCycleCaseHistoryVO);
 
-    PageInfo<TestCycleCaseHistoryVO> query(Long cycleCaseId, Pageable pageable);
+    Page<TestCycleCaseHistoryVO> query(Long cycleCaseId, PageRequest pageRequest);
 
     void createAssignedHistory(TestCycleCaseVO afterCycleCase, TestCycleCaseVO beforeCycleCase);
 

@@ -2,8 +2,9 @@ package io.choerodon.test.manager.api.controller.v1;
 
 import java.util.List;
 
-import io.choerodon.core.annotation.Permission;
-import io.choerodon.core.enums.ResourceType;
+import io.choerodon.core.iam.ResourceLevel;
+import io.choerodon.swagger.annotation.Permission;
+
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.test.manager.api.vo.IssueLinkVO;
 import io.choerodon.test.manager.app.service.TestCaseLinkService;
@@ -25,7 +26,7 @@ public class TestCaseLinkController {
     @Autowired
     private TestCaseLinkService testCaseLinkService;
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("创建问题链接")
     @PostMapping
     public ResponseEntity<List<TestCaseLinkDTO>> create(@PathVariable(name = "project_id") Long projectId,
@@ -35,7 +36,7 @@ public class TestCaseLinkController {
     }
 
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("解除关联issue")
     @DeleteMapping
     public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
@@ -44,7 +45,7 @@ public class TestCaseLinkController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("查询测试用例关联的问题链接")
     @GetMapping("/list_issue_info")
     public ResponseEntity<List<IssueLinkVO>> queryLinkIssues(@PathVariable(name = "project_id") Long projectId,

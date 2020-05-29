@@ -13,6 +13,11 @@ function dataConverter(data) {
       list: data,
       hasNextPage: false,
     };
+  } else if (data.number + 1 < data.totalPages) {
+    return {
+      list: data.content,
+      hasNextPage: true,
+    };
   }
   return data;
 }
@@ -36,7 +41,7 @@ const SelectFocusLoad = (props) => {
   } = totalProps;
   const [loading, setLoading] = useState(false);
   const [List, setList] = useState(defaultOption ? [defaultOption] : []);
-  const [extraList, setExtraList] = useState(false);
+  const [extraList, setExtraList] = useState([]);
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState(1);
   const [canLoadMore, setCanLoadMore] = useState(false);
@@ -60,7 +65,7 @@ const SelectFocusLoad = (props) => {
       setFilter(filter);
       setCanLoadMore(hasNextPage);
       avoidShowError(TotalList);
-      setList(TotalList);
+      setList(TotalList || []);
       setLoading(false);
       resolve(TotalList);
     });
@@ -99,7 +104,6 @@ const SelectFocusLoad = (props) => {
     setLoading(true);
     loadData({ filter, page: page + 1, isLoadMore: true });
   };
-
   const totalList = [...List, ...extraList];
   if (saveList) {
     saveList(totalList);
@@ -118,13 +122,10 @@ const SelectFocusLoad = (props) => {
       {...props}
     >
       {Options}
-      {/* {canLoadMore && (
-        <Option key="SelectFocusLoad-loadMore" disabled style={{ cursor: 'auto' }}>
-          <Button type="primary" style={{ textAlign: 'left', width: '100%', background: 'transparent' }} onClick={loadMore}>更多</Button>
-        </Option>
-      )} */}
-      <Option style={{ display: canLoadMore ? 'block' : 'none', cursor: 'pointer' }} key="SelectFocusLoad-loadMore" className="SelectFocusLoad-loadMore" disabled>
-        <Button type="primary" style={{ textAlign: 'left', width: '100%', background: 'transparent' }} onClick={loadMore}>更多</Button>
+      <Option style={{ display: canLoadMore || Options.length === 0 ? 'block' : 'none', cursor: 'pointer' }} key="SelectFocusLoad-loadMore" className="SelectFocusLoad-loadMore" disabled>
+        {Options.length > 0 
+          ? <Button type="primary" style={{ textAlign: 'left', width: '100%', background: 'transparent' }} onClick={loadMore}>更多</Button>
+          : '无匹配结果'}
       </Option>
     </Select>
   );

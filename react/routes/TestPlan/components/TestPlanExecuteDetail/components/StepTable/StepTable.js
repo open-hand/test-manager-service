@@ -48,7 +48,7 @@ const DefectSelectText = ({
     return (
       <ul className="c7n-test-execute-detail-step-table-defects">
         {
-          defects.map(defect => (
+          defects.map(defect => defect.issueInfosVO && (
             <DefectItem data={defect} delBtnVisible={visibleDel}>
               {`${defect.issueInfosVO.issueName} ${defect.issueInfosVO.summary}`}
             </DefectItem>

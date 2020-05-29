@@ -2,13 +2,16 @@ package io.choerodon.test.manager.infra.dto;
 
 import javax.persistence.*;
 
-import io.choerodon.mybatis.entity.BaseDTO;
-
+import io.choerodon.mybatis.annotation.ModifyAudit;
+import io.choerodon.mybatis.annotation.VersionAudit;
+import io.choerodon.mybatis.domain.AuditDomain;
+@VersionAudit
+@ModifyAudit
 @Table(name = "test_fileload_history")
-public class TestFileLoadHistoryDTO extends BaseDTO {
+public class TestFileLoadHistoryDTO extends AuditDomain {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
 
     private Long projectId;

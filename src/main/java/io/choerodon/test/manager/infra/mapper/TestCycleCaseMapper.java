@@ -10,7 +10,7 @@ import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Param;
 
 import io.choerodon.test.manager.api.vo.agile.SearchDTO;
-import io.choerodon.mybatis.common.Mapper;
+import io.choerodon.mybatis.common.BaseMapper;
 import io.choerodon.test.manager.api.vo.FormStatusVO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.infra.dto.TestStatusDTO;
@@ -18,7 +18,7 @@ import io.choerodon.test.manager.infra.dto.TestStatusDTO;
 /**
  * Created by 842767365@qq.com on 6/11/18.
  */
-public interface TestCycleCaseMapper extends Mapper<TestCycleCaseDTO> {
+public interface TestCycleCaseMapper extends BaseMapper<TestCycleCaseDTO> {
     List<TestCycleCaseDTO> queryWithAttachAndDefect(@Param("dto") TestCycleCaseDTO testCycleCaseDTO, @Param("page") int page, @Param("pageSize") int pageSize);
     /**
      * 查询为父cycle的所有子阶段的信息

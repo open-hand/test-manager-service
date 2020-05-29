@@ -4,16 +4,21 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import io.choerodon.mybatis.entity.BaseDTO;
+
+import io.choerodon.mybatis.annotation.ModifyAudit;
+import io.choerodon.mybatis.annotation.VersionAudit;
+import io.choerodon.mybatis.domain.AuditDomain;
 
 /**
  * @author zhaotianxin
  * @since 2019/11/14
  */
+@VersionAudit
+@ModifyAudit
 @Table(name = "test_project_info")
-public class TestProjectInfoDTO extends BaseDTO {
+public class TestProjectInfoDTO extends AuditDomain {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long infoId;
     private Long projectId;
     private String projectCode;

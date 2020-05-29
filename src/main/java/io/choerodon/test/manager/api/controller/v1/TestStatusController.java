@@ -1,7 +1,8 @@
 package io.choerodon.test.manager.api.controller.v1;
 
-import io.choerodon.core.annotation.Permission;
-import io.choerodon.core.enums.ResourceType;
+import io.choerodon.core.iam.ResourceLevel;
+import io.choerodon.swagger.annotation.Permission;
+
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.test.manager.api.vo.TestStatusVO;
@@ -25,7 +26,7 @@ public class TestStatusController {
     @Autowired
     TestStatusService testStatusService;
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("查询状态")
     @PostMapping("/query")
     public ResponseEntity<List<TestStatusVO>> query(@PathVariable(name = "project_id") Long projectId,
@@ -36,7 +37,7 @@ public class TestStatusController {
 
     }
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("更新状态")
     @PutMapping("/update")
     public ResponseEntity<TestStatusVO> update(@PathVariable(name = "project_id") Long projectId,
@@ -46,18 +47,19 @@ public class TestStatusController {
                 .orElseThrow(() -> new CommonException("error.testStatus.update"));
     }
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("删除状态")
     @DeleteMapping("/{statusId}")
-    public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity<Boolean> delete(@PathVariable(name = "project_id") Long projectId,
                                  @PathVariable(name = "statusId") Long statusId) {
         TestStatusVO dto = new TestStatusVO();
         dto.setStatusId(statusId);
-        testStatusService.delete(dto);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return Optional.ofNullable(testStatusService.delete(dto))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.testStatus.delete"));
     }
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("插入状态")
     @PostMapping
     public ResponseEntity<TestStatusVO> insert(@PathVariable(name = "project_id") Long projectId,

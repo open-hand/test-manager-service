@@ -3,19 +3,20 @@ package io.choerodon.test.manager.api.controller.v1;
 import java.util.Map;
 import java.util.Optional;
 
+import io.choerodon.core.iam.ResourceLevel;
+import io.choerodon.mybatis.pagehelper.domain.Sort;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.github.pagehelper.PageInfo;
+import io.choerodon.core.domain.Page;
 
-import org.springframework.data.domain.Sort;
-import io.choerodon.core.enums.ResourceType;
+
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
-import org.springframework.data.domain.Pageable;
-import io.choerodon.core.annotation.Permission;
-import org.springframework.data.web.SortDefault;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.swagger.annotation.Permission;
+import io.choerodon.mybatis.pagehelper.annotation.SortDefault;
 import io.choerodon.test.manager.api.vo.TestAutomationHistoryVO;
 import io.choerodon.test.manager.app.service.TestAppInstanceLogService;
 import io.choerodon.test.manager.app.service.TestAutomationHistoryService;
@@ -32,18 +33,18 @@ public class TestAutomationHistoryController {
     TestAppInstanceLogService testAppInstanceLogService;
 
     @PostMapping("/queryWithHistroy")
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    public ResponseEntity<PageInfo<TestAutomationHistoryVO>> queryWithInstance(@RequestBody(required = false) Map map,
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    public ResponseEntity<Page<TestAutomationHistoryVO>> queryWithInstance(@RequestBody(required = false) Map map,
                                                                                @SortDefault(value = "id", direction = Sort.Direction.DESC)
-                                                                                       Pageable pageable,
+                                                                                       PageRequest pageRequest,
                                                                                @PathVariable(name = "project_id") Long projectId) {
-        return Optional.ofNullable(testAutomationHistoryService.queryWithInstance(map, pageable, projectId))
+        return Optional.ofNullable(testAutomationHistoryService.queryWithInstance(map, pageRequest, projectId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.queryWithInstance"));
     }
 
     @GetMapping("/queryLog/{logId}")
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.ORGANIZATION)
     public ResponseEntity queryLog(@PathVariable("logId") Long logId, @PathVariable("project_id") Long projectId) {
         TestAppInstanceLogDTO logE = new TestAppInstanceLogDTO();
         logE.setId(logId);

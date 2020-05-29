@@ -3,17 +3,18 @@ package io.choerodon.test.manager.api.controller.v1;
 import java.util.List;
 import java.util.Optional;
 
-import com.github.pagehelper.PageInfo;
+import io.choerodon.core.domain.Page;
+import io.choerodon.core.iam.ResourceLevel;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import io.choerodon.core.annotation.Permission;
-import io.choerodon.core.enums.ResourceType;
+import io.choerodon.swagger.annotation.Permission;
+
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.test.manager.api.vo.TestCycleCaseStepVO;
@@ -35,7 +36,7 @@ public class TestCycleCaseStepController {
      * @param testCycleCaseStepVO
      * @return
      */
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("更新一个循环步骤")
     @PutMapping
     public ResponseEntity update(@RequestBody TestCycleCaseStepVO testCycleCaseStepVO) {
@@ -49,34 +50,34 @@ public class TestCycleCaseStepController {
      * @param cycleCaseId cycleCaseId
      * @return TestCycleCaseStepVO
      */
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("查询循环步骤")
     @GetMapping("/query/{cycleCaseId}")
-    public ResponseEntity<PageInfo<TestCycleCaseStepVO>> querySubStep(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity<Page<TestCycleCaseStepVO>> querySubStep(@PathVariable(name = "project_id") Long projectId,
                                                                   @ApiParam(value = "cycleCaseId", required = true)
                                                                   @PathVariable(name = "cycleCaseId") Long cycleCaseId,
                                                                   @RequestParam Long organizationId,
-                                                                  Pageable pageable) {
-        return Optional.ofNullable(testCycleCaseStepService.querySubStep(cycleCaseId, projectId, organizationId,pageable))
+                                                                  PageRequest pageRequest) {
+        return Optional.ofNullable(testCycleCaseStepService.querySubStep(cycleCaseId, projectId, organizationId,pageRequest))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.testCycleCaseStep.query"));
 
     }
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("查询循环步骤")
     @GetMapping("/query_list/{execute_id}")
-    public ResponseEntity<PageInfo<TestCycleCaseStepVO>> queryCaseStep(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity<Page<TestCycleCaseStepVO>> queryCaseStep(@PathVariable(name = "project_id") Long projectId,
                                                                        @ApiParam(value = "execute_id", required = true)
                                                                        @PathVariable(name = "execute_id") Long execute_id,
-                                                                       Pageable pageable) {
-        return Optional.ofNullable(testCycleCaseStepService.queryCaseStep(execute_id, projectId, pageable))
+                                                                       PageRequest pageRequest) {
+        return Optional.ofNullable(testCycleCaseStepService.queryCaseStep(execute_id, projectId, pageRequest))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.testCycleCaseStep.query"));
 
     }
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("删除一个循环步骤")
     @DeleteMapping("/{execute_step_id}")
     public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
@@ -85,7 +86,7 @@ public class TestCycleCaseStepController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("创建一个循环步骤")
     @PostMapping
     public ResponseEntity create(@PathVariable(name = "project_id") Long projectId,
