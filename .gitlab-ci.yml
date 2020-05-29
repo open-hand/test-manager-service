@@ -19,7 +19,7 @@ build front:
       - src/**/*
       - docker/**/*
       - chart/**/*
-      - init-local-database.sh
+      - init-mysql-database.sh
       - .circleci/**/*
       - .gitignore
       - .github/**/*
@@ -27,7 +27,6 @@ build front:
       - "*.md"
     variables:
       - $CI_COMMIT_MESSAGE =~ /combine/
-
 tag front:
   stage: build
   script:
@@ -63,7 +62,6 @@ build backend:
       - .eslintrc.json
       - .stylelintrc.json
       - gulpfile.js
-      - alias.js
       - package.json
       - react/**/*
       - .gitignore
@@ -131,7 +129,6 @@ release backend:
       - .eslintrc.json
       - .stylelintrc.json
       - gulpfile.js
-      - alias.js
       - package.json
       - react/**/*
       - .gitignore
