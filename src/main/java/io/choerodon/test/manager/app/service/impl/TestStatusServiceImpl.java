@@ -18,6 +18,7 @@ import io.choerodon.test.manager.infra.dto.TestStatusDTO;
 import io.choerodon.test.manager.infra.enums.TestStatusType;
 import io.choerodon.test.manager.infra.mapper.TestStatusMapper;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
+import org.springframework.util.ObjectUtils;
 
 /**
  * Created by 842767365@qq.com on 6/25/18.
@@ -44,6 +45,14 @@ public class TestStatusServiceImpl implements TestStatusService {
     public TestStatusVO insert(TestStatusVO testStatusVO) {
         if (testStatusVO == null || testStatusVO.getStatusId() != null) {
             throw new CommonException("error.status.insert.statusId.should.be.null");
+        }
+        TestStatusDTO test = new TestStatusDTO(null, testStatusVO.getStatusType(), testStatusVO.getProjectId(), testStatusVO.getStatusName());
+        if (!ObjectUtils.isEmpty(testStatusMapper.select(test))) {
+            throw new CommonException("error.status.name.exist");
+        }
+        TestStatusDTO testStatus = new TestStatusDTO(testStatusVO.getStatusColor(), testStatusVO.getStatusType(), testStatusVO.getProjectId(), null);
+        if (!ObjectUtils.isEmpty(testStatusMapper.select(testStatus))) {
+            throw new CommonException("error.status.color.exist");
         }
         TestStatusDTO testStatusDTO = modelMapper.map(testStatusVO, TestStatusDTO.class);
         if (testStatusMapper.insert(testStatusDTO) != 1) {
