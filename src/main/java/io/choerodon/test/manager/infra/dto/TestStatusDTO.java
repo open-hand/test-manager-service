@@ -30,7 +30,10 @@ public class TestStatusDTO extends AuditDomain {
     @Transient
     private Long count;
 
-    public TestStatusDTO(String statusColor, String statusType, Long projectId,String statusName) {
+    public TestStatusDTO() {
+    }
+
+    public TestStatusDTO(String statusColor, String statusType, Long projectId, String statusName) {
         this.statusColor = statusColor;
         this.statusType = statusType;
         this.projectId = projectId;
