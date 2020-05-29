@@ -7,6 +7,7 @@ module.exports = {
     }],
   ],
   plugins: [
+    '@umijs/babel-plugin-auto-css-modules',
     [
       'babel-plugin-module-resolver',
       {

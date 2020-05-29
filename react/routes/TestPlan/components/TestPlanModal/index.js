@@ -42,6 +42,7 @@ function TestPlanModal({
   }, [initCaseSelected, mode, selectIssueStore]);
   const handleSubmit = useCallback(async () => {
     const data = dataSet.toData()[0];
+    
     const {
       range, custom, __id, __status, objectVersionNumber, id, ...rest
     } = data;
@@ -51,7 +52,7 @@ function TestPlanModal({
     }
     try {
       const validate = await dataSet.validate();
-      if (dataSet.isModified() && validate) {
+      if (dataSet.isModified() && validate && data.range && data.range[0] && data.range[1]) {
         const plan = {
           ...rest,
           custom,
