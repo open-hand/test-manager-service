@@ -186,18 +186,16 @@ class CustomStatusHomeContainer extends Component {
   handleCreateStatusSubmit = (newStatus) => {
     this.setState({ CreateStatusLoading: true });
     createStatus(newStatus).then((res) => {
-      if (res.failed) {
-        Choerodon.prompt('状态或颜色不能相同');
-      } else {
-        this.setState({
-          statusType: newStatus.statusType,
-        });
-        this.ToggleCreateStatusVisible(false);
-        this.loadStatusList();
-      }
+      this.setState({
+        statusType: newStatus.statusType,
+      });
+      this.ToggleCreateStatusVisible(false);
+      this.loadStatusList();
       this.setState({ CreateStatusLoading: false });
-    }).catch(() => {
-      Choerodon.prompt('网络异常');
+    }).catch((error) => {
+      if (!(error.failed && error.code === 'error.status.color.exist')) {
+        Choerodon.prompt('网络异常');
+      }
       this.setState({ CreateStatusLoading: false });
     });
   }
