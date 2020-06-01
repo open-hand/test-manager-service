@@ -48,11 +48,11 @@ public class TestStatusServiceImpl implements TestStatusService {
         }
         TestStatusDTO test = new TestStatusDTO(null, testStatusVO.getStatusType(), testStatusVO.getProjectId(), testStatusVO.getStatusName());
         if (!ObjectUtils.isEmpty(testStatusMapper.select(test))) {
-            throw new CommonException("error.status.name.exist");
+            throw new CommonException("error.status.name.or.color.exist");
         }
         TestStatusDTO testStatus = new TestStatusDTO(testStatusVO.getStatusColor(), testStatusVO.getStatusType(), testStatusVO.getProjectId(), null);
         if (!ObjectUtils.isEmpty(testStatusMapper.select(testStatus))) {
-            throw new CommonException("error.status.color.exist");
+            throw new CommonException("error.status.name.or.color.exist");
         }
         TestStatusDTO testStatusDTO = modelMapper.map(testStatusVO, TestStatusDTO.class);
         if (testStatusMapper.insert(testStatusDTO) != 1) {
