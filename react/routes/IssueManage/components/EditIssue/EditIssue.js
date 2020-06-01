@@ -5,6 +5,7 @@ import React, {
 } from 'react';
 import { Choerodon } from '@choerodon/boot';
 import { throttle } from 'lodash';
+import { Spin } from 'choerodon-ui';
 import { observer } from 'mobx-react-lite';
 import { Tabs } from 'choerodon-ui';
 import './EditIssue.less';

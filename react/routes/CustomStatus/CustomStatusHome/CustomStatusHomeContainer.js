@@ -192,10 +192,7 @@ class CustomStatusHomeContainer extends Component {
       this.ToggleCreateStatusVisible(false);
       this.loadStatusList();
       this.setState({ CreateStatusLoading: false });
-    }).catch((error) => {
-      if (!(error.failed && error.code === 'error.status.color.exist')) {
-        Choerodon.prompt('网络异常');
-      }
+    }).catch(() => {
       this.setState({ CreateStatusLoading: false });
     });
   }

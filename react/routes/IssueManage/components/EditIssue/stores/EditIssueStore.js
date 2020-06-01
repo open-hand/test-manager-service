@@ -55,10 +55,13 @@ class EditIssueStore {
   }
   
 
-  async loadWithLoading(promise) {
+  async loadWithLoading(promise, callback) {
     this.setLoading(true);
     try {
       const result = await promise;
+      if (callback && typeof callback === 'function') {
+        callback();
+      }
       this.setLoading(false);
       return result;
     } catch (error) {
