@@ -170,10 +170,8 @@ export default class IssueManage extends Component {
   render() {
     const { clickIssue } = IssueStore;
     const currentFolder = IssueTreeStore.getCurrentFolder;
-    const treeData = IssueTreeStore.getTreeData;
-    const { loading } = IssueTreeStore;
-    const noFolder = treeData.rootIds.length === 0;
-    // const noFolder = true;
+    const { loading, rootIds } = IssueTreeStore;
+    const noFolder = rootIds.length === 0;
     return (
       <Page
         className="c7ntest-Issue c7ntest-region"

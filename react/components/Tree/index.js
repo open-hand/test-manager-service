@@ -122,17 +122,8 @@ function PureTree({
     }).then(async (button) => {
       if (button === 'ok') {
         try {
-          const preRootLength = data.rootIds.length;
           await onDelete(item);
-          if (item.path.length === 1) {
-            if (data.rootIds.length === preRootLength) {
-              setTree(oldTree => removeItem(oldTree, item.path));
-            }
-          } else {
-            // console.log(removeItem(oldTree, item.path));
-            setTree(oldTree => removeItem(oldTree, item.path));
-          }
-          
+          setTree(oldTree => removeItem(oldTree, item.path));
           if (selected.id === item.id) {
             // 这里取旧的tree数据
             setSelected(getSiblingOrParent(tree, item));          
