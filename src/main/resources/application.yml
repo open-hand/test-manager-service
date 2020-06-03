@@ -43,14 +43,14 @@ choerodon:
 eureka:
   instance:
     preferIpAddress: true
-    leaseRenewalIntervalInSeconds: 1
-    leaseExpirationDurationInSeconds: 3
+    leaseRenewalIntervalInSeconds: 3
+    leaseExpirationDurationInSeconds: 9
     metadata-map:
       VERSION: 0.22.0.RELEASE
   client:
     serviceUrl:
       defaultZone: http://localhost:8000/eureka/
-    registryFetchIntervalSeconds: 1
+    registryFetchIntervalSeconds: 3
 
 mybatis:
   mapperLocations: classpath*:/mapper/*.xml
