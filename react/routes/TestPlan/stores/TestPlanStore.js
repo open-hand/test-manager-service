@@ -235,7 +235,7 @@ class TestPlanStore extends TestPlanTreeStore {
      *
      * @memberof TestPlanStore
      */
-    async loadExecutes(planId = this.getId()[0], folderId = this.getId()[1], isMine = false) {
+    async loadExecutes(planId = this.getId()[0], folderId = this.getId()[1], isMine = this.mainActiveTab === 'mineTestPlanTable') {
       const {
         executePagination, mineExecutePagination, order, mineOrder, getSearchObj, getMineSearchObj,
       } = this;
