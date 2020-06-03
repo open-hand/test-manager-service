@@ -91,7 +91,7 @@ class IssueTree extends Component {
       pageSize: 10,
       total: IssueStore.pagination.total,
     });
-    IssueStore.loadIssues(1, 10);
+    IssueStore.loadIssues();
   }
 
   handleUpdateItem=(item) => {

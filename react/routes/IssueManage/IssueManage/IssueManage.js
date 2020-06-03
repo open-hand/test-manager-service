@@ -193,14 +193,15 @@ export default class IssueManage extends Component {
           <Button icon="playlist_add" onClick={this.handleAddFolderClick}>
             创建一级目录
           </Button>
-          <Button icon="unarchive" onClick={this.handleOpenExportIssue}>
-            <FormattedMessage id="issue_export" />
-          </Button>
-          <Button className="leftBtn" onClick={this.handleOpenImportIssue}>
-            {/* <Icon type="file_upload icon" /> */}
-            <Icon type="archive" />
-            <FormattedMessage id="issue_import" />
-          </Button>
+          {!noFolder && [
+            <Button icon="unarchive" onClick={this.handleOpenExportIssue}>
+              <FormattedMessage id="issue_export" />
+            </Button>,
+            <Button className="leftBtn" onClick={this.handleOpenImportIssue}>
+              {/* <Icon type="file_upload icon" /> */}
+              <Icon type="archive" />
+              <FormattedMessage id="issue_import" />
+            </Button>]}
         </Header>
         <Breadcrumb />
         <Content style={{ display: 'flex', padding: '0', borderTop: '0.01rem solid rgba(0,0,0,0.12)' }}>
