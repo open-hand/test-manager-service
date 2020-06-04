@@ -542,10 +542,7 @@ export function normFile(e) {
 }
 export function handleRequestFailed(promise) {
   return promise.then((res) => {
-    if (res.failed) {
-      Choerodon.prompt(res.message, 'error');
-      throw new Error(res.message);
-    } else {
+    if (!res.failed) {
       return res;
     }
   });
