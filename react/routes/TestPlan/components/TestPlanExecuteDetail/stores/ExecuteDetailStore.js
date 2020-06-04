@@ -115,8 +115,7 @@ class ExecuteDetailStore {
         this.setStatusList(statusList);
 
         this.unloading();
-      }).catch((error) => {
-        Choerodon.prompt(`${error || '网络异常'}`);
+      }).catch(() => {
         this.unloading();
       });
   }
