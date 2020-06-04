@@ -23,6 +23,14 @@
     </properties>
 
     <dependencies>
+        <!--
+            由于choerodon-core重写了CommonException, 所以choerodon-starter-core和hzero-starter-core顺序不能颠倒
+            choerodon-starter-core的CommonException要先加载才能生效
+        -->
+        <dependency>
+            <groupId>io.choerodon</groupId>
+            <artifactId>choerodon-starter-core</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.hzero.starter</groupId>
@@ -50,11 +58,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.choerodon</groupId>
-            <artifactId>choerodon-starter-core</artifactId>
         </dependency>
 
         <dependency>
