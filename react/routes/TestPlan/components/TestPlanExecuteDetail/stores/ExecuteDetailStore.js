@@ -93,7 +93,16 @@ class ExecuteDetailStore {
     Promise.all([
       // getCycle(id, cycleId),
       getStatusList('CYCLE_CASE'),
-      getDetailsData(id, this.detailParams, this.getSearchFilter),
+      getDetailsData(id, this.detailParams, {
+        ...this.getSearchFilter, 
+        ...this.detailData ? {
+          searchArgs: {
+            ...this.getSearchFilter.searchArgs,
+            previousExecuteId: this.detailData.previousExecuteId,
+            nextExecuteId: this.detailData.nextExecuteId,
+          },          
+        } : {},
+      }),
     ])
       .then(([statusList, detailData]) => {
         // console.log('statusList', statusList);
@@ -113,7 +122,16 @@ class ExecuteDetailStore {
   }
 
   loadDetailData(id = this.id) {
-    getDetailsData(id, this.detailParams, this.getSearchFilter).then((res) => {
+    getDetailsData(id, this.detailParams, {
+      ...this.getSearchFilter, 
+      ...this.detailData ? {
+        searchArgs: {
+          ...this.getSearchFilter.searchArgs,
+          previousExecuteId: this.detailData.previousExecuteId,
+          nextExecuteId: this.detailData.nextExecuteId,
+        },
+      } : {},
+    }).then((res) => {
       this.setDetailData(res);
     });
   }
