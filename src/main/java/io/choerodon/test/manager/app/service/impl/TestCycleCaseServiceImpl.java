@@ -464,6 +464,10 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
     @Override
     public TestCycleCaseInfoVO queryCycleCaseInfo(Long executeId, Long projectId, Long planId, Long cycleId, SearchDTO searchDTO) {
+        TestCycleCaseDTO cycleCaseDTO = testCycleCaseMapper.selectByPrimaryKey(executeId);
+        if (ObjectUtils.isEmpty(cycleCaseDTO)) {
+            throw new CommonException("error.cycle.case.not.exist");
+        }
         Set<Long> cycleIds = new HashSet<>();
         if (!ObjectUtils.isEmpty(cycleId)) {
             cycleIds.addAll(queryCycleIds(cycleId, planId));
@@ -480,12 +484,19 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             }
         }
         if (ObjectUtils.isEmpty(testCycleCaseDTO)) {
-            throw new CommonException("error.cycle.case.not.exist");
+            testCycleCaseDTO = cycleCaseDTO;
         }
         TestCycleCaseInfoVO testCycleCaseInfoVO = modelMapper.map(testCycleCaseDTO, TestCycleCaseInfoVO.class);
-
         testCycleCaseInfoVO.setExecutorDate(testCycleCaseDTO.getLastUpdateDate());
-        previousNextId(index, testCycleCaseDTOS, testCycleCaseInfoVO);
+        Map<String, Object> searchArgs = searchDTO.getSearchArgs();
+        Object previousExecuteId = searchArgs.get("previousExecuteId");
+        Object nextExecuteId = searchArgs.get("nextExecuteId");
+        if (!ObjectUtils.isEmpty(previousExecuteId) || !ObjectUtils.isEmpty(nextExecuteId)) {
+            testCycleCaseInfoVO.setPreviousExecuteId(ObjectUtils.isEmpty(previousExecuteId) ? null : Long.valueOf(String.valueOf(previousExecuteId)));
+            testCycleCaseInfoVO.setNextExecuteId(ObjectUtils.isEmpty(nextExecuteId) ? null : Long.valueOf(String.valueOf(nextExecuteId)));
+        } else {
+            previousNextId(index, testCycleCaseDTOS, testCycleCaseInfoVO);
+        }
         return testCaseAssembler.cycleCaseExtraInfo(testCycleCaseInfoVO);
     }
 
