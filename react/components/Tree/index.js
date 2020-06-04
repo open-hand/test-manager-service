@@ -182,7 +182,6 @@ function PureTree({
       const newItem = await afterDrag(sourceItem, destination);
       setTree(oldTree => mutateTree(oldTree, sourceItem.id, { ...sourceItem, ...newItem }));
     } catch (error) {
-      Choerodon.prompt(error.message, 'error');
       setTree(oldTree => moveItemOnTree(oldTree, destination, source));
     }
   };
