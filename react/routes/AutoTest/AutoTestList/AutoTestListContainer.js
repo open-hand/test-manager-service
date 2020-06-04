@@ -118,7 +118,6 @@ class AutoTestListContainer extends Component {
       this.loadTestHistoryByApp();
     }).catch((err) => {
       store.unLoading();
-      Choerodon.prompt('网络出错');
     });
   }
 
