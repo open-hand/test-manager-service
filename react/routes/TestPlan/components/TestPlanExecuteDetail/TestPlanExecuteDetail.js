@@ -25,6 +25,7 @@ import {
 } from './components';
 import Store from './stores';
 import EditExecuteIssue from './components/EditExecuteIssue';
+import StepTableDataSet from './stores/StepTableDataSet';
 
 const CardWrapper = ({ children, title, style }) => (
   <Card
@@ -119,6 +120,7 @@ function TestPlanExecuteDetail(props) {
   const handleBugCreate = () => {
     ExecuteDetailStore.setCreateBugShow(false);
     ExecuteDetailStore.getInfo();
+    stepTableDataSet.query();
   };
 
 
