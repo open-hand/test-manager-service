@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="io.choerodon.test.manager.infra.mapper.TestAppInstanceLogMapper">
     <insert id="insertTestAppInstanceLog">
-        insert into test_app_instance(log)
+        insert into test_app_instance_log(log)
              values(#{logE.log})
     </insert>
 </mapper>
