@@ -169,7 +169,6 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
      */
     @Override
     public TestAppInstanceVO create(ApplicationDeployVO deployDTO, Long projectId, Long userId) {
-        DetailsHelper.setCustomUserDetails(userId, "zh_CN");
 
         Yaml yaml = new Yaml();
         TestEnvCommandDTO envCommand;
