@@ -160,7 +160,7 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
         }
         TestCaseStepDTO testCaseStepDTO = modelMapper.map(testCaseStepProDTO, TestCaseStepDTO.class);
         DBValidateUtil.executeAndvalidateUpdateNum(testCaseStepMapper::insert, testCaseStepDTO, 1, "error.testStepCase.insert");
-        return testCaseStepDTO;
+        return testCaseStepMapper.selectByPrimaryKey(testCaseStepDTO.getStepId());
     }
 
     private TestCaseStepDTO changeOneStep(TestCaseStepProDTO testCaseStepProDTO) {
