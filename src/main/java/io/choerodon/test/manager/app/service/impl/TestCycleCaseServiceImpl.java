@@ -468,6 +468,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         if (ObjectUtils.isEmpty(cycleCaseDTO)) {
             throw new CommonException("error.cycle.case.not.exist");
         }
+
         Set<Long> cycleIds = new HashSet<>();
         if (!ObjectUtils.isEmpty(cycleId)) {
             cycleIds.addAll(queryCycleIds(cycleId, planId));
