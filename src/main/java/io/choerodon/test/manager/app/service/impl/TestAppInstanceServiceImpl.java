@@ -301,9 +301,7 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         testAppInstanceDTO.setId(Long.valueOf(TestAppInstanceDTO.getInstanceIDFromReleaseName(releaseNames)));
         TestAppInstanceLogDTO logE = new TestAppInstanceLogDTO();
         logE.setLog(logFile);
-        logE.setCreatedBy(0L);
-        logE.setLastUpdatedBy(0L);
-        if (testAppInstanceLogMapper.insert(logE) == 0) {
+        if (testAppInstanceLogMapper.insertTestAppInstanceLog(logE) == 0) {
             throw new CommonException("error.ITestAppInstanceLogServiceImpl.insert");
         }
         testAppInstanceDTO.setLogId(logE.getId());
