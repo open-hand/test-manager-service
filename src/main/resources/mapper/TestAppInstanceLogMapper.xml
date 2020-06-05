@@ -3,7 +3,7 @@
 <mapper namespace="io.choerodon.test.manager.infra.mapper.TestAppInstanceLogMapper">
     <insert id="insertTestAppInstanceLog">
         insert into test_app_instance(log)
-             valeus(#{logE.log})
+             values(#{logE.log})
     </insert>
 </mapper>
 
