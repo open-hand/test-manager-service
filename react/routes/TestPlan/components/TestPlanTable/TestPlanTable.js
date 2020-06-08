@@ -54,6 +54,7 @@ const TestPlanTable = observer(({
   const divRef = useRef();
   const [tipVisible, setTipVisible] = useState(false);
 
+  // eslint-disable-next-line consistent-return
   useEffect(() => {
     if (divRef.current) {
       divRef.current.addEventListener('mousedown', (e) => {
@@ -358,13 +359,13 @@ const TestPlanTable = observer(({
                 style={{ width: 180, zIndex: 100, display: `${testPlanStatus === 'done' ? 'none' : 'unset'}` }}
               >
                 <SelectFocusLoad
+                  key={testPlanStore.assignToUserId}
                   allowClear
                   style={{ display: 'flex' }}
                   placeholder="批量指派"
                   getPopupContainer={trigger => trigger.parentNode}
                   type="user"
                   onChange={onAssignToChange}
-                  value={testPlanStore.assignToUserId}
                 />
               </div>
             </Popover>

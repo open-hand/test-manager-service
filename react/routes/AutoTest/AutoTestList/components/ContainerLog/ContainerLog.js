@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Content } from '@choerodon/boot';
 import { Button, Select, Modal } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
+import uuidv1 from 'uuid/v1';
 import _ from 'lodash';
 import CodeMirror from 'react-codemirror';
 import 'codemirror/lib/codemirror.css';
@@ -93,7 +94,11 @@ class ContainerLog extends Component {
         try { 
           // eslint-disable-next-line no-underscore-dangle
           const wsUrl = removeEndsChar(window._env_.DEVOPS_HOST, '/');
-          const ws = new WebSocket(`${wsUrl}/devops/log?key=cluster:${envId}.log:${logId}&env=${'choerodon-test'}&podName=${podName}&containerName=${containerName}&logId=${logId}&token=${authToken}`);
+          // eslint-disable-next-line no-underscore-dangle
+          const secretKey = window._env_.DEVOPS_WEBSOCKET_SECRET_KEY;
+          const key = `cluster:${envId}.log:${uuidv1()}`;
+          const url = `${wsUrl}/websocket?key=${key}&group=from_front:${key}&processor=front_log&secret_key=${secretKey}&env=${'choerodon-test'}&podName=${podName}&containerName=${containerName}&logId=${logId}&clusterId=${envId}`;
+          const ws = new WebSocket(url);
           // console.log(ws);
           this.setState({ ws, following: true });
           if (!followingOK) {

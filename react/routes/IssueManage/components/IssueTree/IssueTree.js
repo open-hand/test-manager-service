@@ -19,13 +19,16 @@ class IssueTree extends Component {
     IssueTreeStore.setTreeRef(this.treeRef);
   }
 
-  handleCreate = async (value, parentId) => {
+  handleCreate = async (value, parentId) => {    
     const data = {
       parentId,
       name: value,
       type: 'cycle',
     };
     const result = await handleRequestFailed(addFolder(data));    
+    if (parentId === 0) {
+      IssueTreeStore.addRootItem(result.folderId);
+    }
     return {
       id: result.folderId,
       data: {
@@ -91,7 +94,7 @@ class IssueTree extends Component {
       pageSize: 10,
       total: IssueStore.pagination.total,
     });
-    IssueStore.loadIssues(1, 10);
+    IssueStore.loadIssues();
   }
 
   handleUpdateItem=(item) => {

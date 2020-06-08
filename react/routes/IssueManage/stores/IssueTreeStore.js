@@ -11,6 +11,8 @@ class IssueTreeStore {
     treeFolder: [],
   }
 
+  @observable rootIds=[]
+
   @observable selectedKeys = [];
 
   @observable currentFolder = {};
@@ -25,6 +27,7 @@ class IssueTreeStore {
       rootIds: [],
       treeFolder: [],
     };
+    this.rootIds = [];
     this.treeRef = null;
   }
 
@@ -77,13 +80,18 @@ class IssueTreeStore {
         };
       }),
     };
+    this.rootIds = [...rootIds];
     if (selectedId) {
       this.setCurrentFolder(find(this.treeData.treeFolder, { id: selectedId }) || {});
     }
   }
 
+  @action addRootItem(folderId) {
+    this.rootIds.push(folderId);
+  }
+
   @action removeRootItem(folderId) {
-    pull(this.treeData.rootIds, folderId);
+    pull(this.rootIds, folderId);
   }
 
   @action setCurrentFolder(currentFolder) {

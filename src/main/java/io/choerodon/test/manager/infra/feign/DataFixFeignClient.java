@@ -2,6 +2,7 @@ package io.choerodon.test.manager.infra.feign;
 
 import java.util.List;
 
+import io.choerodon.test.manager.infra.feign.callback.DataFixFeignClientFallback;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -16,13 +17,12 @@ import io.choerodon.test.manager.api.vo.agile.TestVersionFixVO;
 import io.choerodon.test.manager.api.vo.IssueLinkFixVO;
 import io.choerodon.test.manager.api.vo.TestCaseMigrateDTO;
 import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
-import io.choerodon.test.manager.infra.feign.callback.TestCaseFeignClientFallback;
 
 /**
  * Created by 842767365@qq.com on 6/13/18.
  */
 @Component
-@FeignClient(value = "agile-service", fallback = TestCaseFeignClientFallback.class)
+@FeignClient(value = "agile-service", fallback = DataFixFeignClientFallback.class)
 public interface DataFixFeignClient {
 
     /**

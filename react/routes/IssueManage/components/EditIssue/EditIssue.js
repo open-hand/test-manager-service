@@ -126,6 +126,10 @@ function EditIssue() {
     }
   };
 
+  const handleTabChange = () => {
+    store.loadIssueData();
+  };
+
   return (
     <div style={{
       position: 'fixed',
@@ -158,7 +162,7 @@ function EditIssue() {
           <div className={`${prefixCls}-content`}>
             <Header onUpdate={handleUpdate} />
             <div className={`${prefixCls}-content-bottom`} id="scroll-area" style={{ position: 'relative' }}>              
-              <Tabs>
+              <Tabs onChange={handleTabChange}>
                 <TabPane tab="步骤" key="test">
                   <EditTestStepTable />
                 </TabPane>

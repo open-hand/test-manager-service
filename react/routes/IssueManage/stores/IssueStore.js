@@ -69,17 +69,19 @@ class IssueStore {
     const { orderField, orderType } = this.order;
     const { currentFolder } = IssueTreeStore;
     const { id } = currentFolder;
-    try {
-      const res = await handleRequestFailed(getIssuesByFolder(folderId || id, Page, size, this.getFilter, orderField, orderType));
-      this.setIssues(res.list || []);
-      this.setPagination({
-        current: res.pageNum,
-        pageSize: size,
-        total: res.total,
-      });
-      this.setLoading(false);
-    } catch (e) {
-      this.setLoading(false);
+    if (folderId || id) {
+      try {
+        const res = await handleRequestFailed(getIssuesByFolder(folderId || id, Page, size, this.getFilter, orderField, orderType));
+        this.setIssues(res.list || []);
+        this.setPagination({
+          current: res.pageNum,
+          pageSize: size,
+          total: res.total,
+        });
+        this.setLoading(false);
+      } catch (e) {
+        this.setLoading(false);
+      }
     }
   }
 

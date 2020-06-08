@@ -3,7 +3,7 @@ preJob:
   # job 超时时间
   timeout: 1200
   # 工具 jar 包镜像库地址
-  image: registry.cn-shanghai.aliyuncs.com/c7n/dbtool:0.6.7
+  image: registry.cn-shanghai.aliyuncs.com/c7n/dbtool:0.7.0
   # 初始化数据库定义
   preInitDB:
     # 是否初始化本服务数据库
@@ -15,6 +15,7 @@ preJob:
       url: jdbc:mysql://localhost:3306/?useUnicode=true&characterEncoding=utf-8&useSSL=false&useInformationSchema=true&remarks=true&allowMultiQueries=true&serverTimezone=Asia/Shanghai
       username: username
       password: password
+      driver: com.mysql.jdbc.Driver
 
 ## 实例运行数量
 replicaCount: 1
@@ -58,7 +59,7 @@ env:
     MANAGEMENT_SERVER_PORT: 8094
 
     # 是否启用配置中心
-    SPRING_CLOUD_CONFIG_ENABLED: true
+    SPRING_CLOUD_CONFIG_ENABLED: false
     # 配置中心地址
     SPRING_CLOUD_CONFIG_URI: http://register-server:8000
 
@@ -138,11 +139,11 @@ service:
     # 服务端口
     http:
       port: 8093
-      nodePort: 30114
+      nodePort: 30146
     # 管理端口
     actuator:
       port: 8094
-      nodePort: 30115
+      nodePort: 30147
   ## externalIPs 设置
   # externalIPs:
   #   - externalIp1

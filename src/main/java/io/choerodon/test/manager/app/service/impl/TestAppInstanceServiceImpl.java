@@ -169,7 +169,6 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
      */
     @Override
     public TestAppInstanceVO create(ApplicationDeployVO deployDTO, Long projectId, Long userId) {
-        DetailsHelper.setCustomUserDetails(userId, "zh_CN");
 
         Yaml yaml = new Yaml();
         TestEnvCommandDTO envCommand;
@@ -302,7 +301,7 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         testAppInstanceDTO.setId(Long.valueOf(TestAppInstanceDTO.getInstanceIDFromReleaseName(releaseNames)));
         TestAppInstanceLogDTO logE = new TestAppInstanceLogDTO();
         logE.setLog(logFile);
-        if (testAppInstanceLogMapper.insert(logE) == 0) {
+        if (testAppInstanceLogMapper.insertTestAppInstanceLog(logE) == 0) {
             throw new CommonException("error.ITestAppInstanceLogServiceImpl.insert");
         }
         testAppInstanceDTO.setLogId(logE.getId());
