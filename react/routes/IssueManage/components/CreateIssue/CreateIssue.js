@@ -5,6 +5,7 @@ import { withRouter } from 'react-router-dom';
 import {
   Form, DataSet, Icon, message,
 } from 'choerodon-ui/pro';
+import { PromptInput } from '@/components';
 import UploadButton from './UploadButton';
 import { WYSIWYGEditor } from '../../../../components';
 import CreateIssueDataSet from './store/CreateIssueDataSet';
@@ -13,7 +14,6 @@ import SelectTree from '../SelectTree';
 import { beforeTextUpload, returnBeforeTextUpload } from '../../../../common/utils';
 import './CreateIssue.less';
 import { uploadFile } from '../../../../api/IssueManageApi';
-import { PromptInput } from '@/components';
 
 function CreateIssue(props) {
   const [visibleDetail, setVisibleDetail] = useState(true);
