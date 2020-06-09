@@ -5,5 +5,5 @@ COPY dist dist
 COPY enterpoint.sh enterpoint.sh
 RUN chmod 777 /choerodon/enterpoint.sh \
    && chown -R www-data:www-data  /choerodon
-USER www-data
+USER 33
 CMD /choerodon/enterpoint.sh java $JAVA_OPTS $SKYWALKING_OPTS -jar /choerodon/test-manager-service.jar

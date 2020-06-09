@@ -4,5 +4,5 @@ WORKDIR /choerodon
 COPY app.jar test-manager-service.jar
 RUN chown -R www-data:www-data  /choerodon
 
-USER www-data
+USER 33
 CMD java $JAVA_OPTS $SKYWALKING_OPTS -jar /choerodon/test-manager-service.jar
