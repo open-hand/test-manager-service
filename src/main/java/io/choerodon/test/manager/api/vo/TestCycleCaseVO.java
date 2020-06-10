@@ -112,6 +112,9 @@ public class TestCycleCaseVO {
     @ApiModelProperty(value = "项目id")
     private Long projectId;
 
+    @ApiModelProperty(value = "所属计划Id")
+    private Long planId;
+
     public Long getProjectId() {
         return projectId;
     }
@@ -385,4 +388,11 @@ public class TestCycleCaseVO {
         this.description = description;
     }
 
+    public Long getPlanId() {
+        return planId;
+    }
+
+    public void setPlanId(Long planId) {
+        this.planId = planId;
+    }
 }
