@@ -18,7 +18,7 @@ import {
 } from '../../../api/agileApi';
 import { getStatusList } from '../../../api/TestStatusApi';
 import {
-  issueLink, TestExecuteLink, executeDetailLink, getProjectName,
+  issueLink, executeDetailLink, getProjectName,
 } from '../../../common/utils';
 import './ReportStory.scss';
 
@@ -374,6 +374,12 @@ class ReportStory extends Component {
                 } else {
                   executeStatus[statusName] += 1;
                 }
+                // 跳转到执行详情时所需要的参数
+                const filters = {
+                  cycle_id: execute.cycleId,
+                  plan_id: 999999999, // 错误的Plan id 导致无法获取上下执行
+
+                };
                 const marginBottom = Math.max((execute.defects.length + execute.subStepDefects.length) - 1, 0) * 30;
                 return (
                   <div className="c7ntest-cycle-show-container" style={{ marginBottom }}>
@@ -383,7 +389,7 @@ class ReportStory extends Component {
                       }}
                     >
                       <Tooltip title={`${execute.cycleName}${execute.folderName ? `/${execute.folderName}` : ''}`}>
-                        <Link className="c7ntest-showId" to={TestExecuteLink(execute.cycleId)}>
+                        <Link className="c7ntest-showId" to={executeDetailLink(execute.executeId,filters)}>
                           {execute.cycleName}
                           {execute.folderName ? `/${execute.folderName}` : ''}
                         </Link>
@@ -397,7 +403,7 @@ class ReportStory extends Component {
                     </div>
                     <Link
                       style={{ lineHeight: '13px' }}
-                      to={executeDetailLink(execute.executeId)}
+                      to={executeDetailLink(execute.executeId,filters)}
                     >
                       <Icon type="explicit2" style={{ marginLeft: 10, color: 'black' }} />
                     </Link>
