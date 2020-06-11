@@ -294,7 +294,7 @@ class ReportTest extends Component {
           }
           // 跳转到执行详情时所需要的参数
           const filters = {
-            cycle_id: execute.cycleId,
+            cycle_id: execute.cycleId || '', //  测试步骤关联的缺陷 无cycle_id，当无cycle_id将其置空，防止后端查询时出错.
             plan_id: 999999999, // 错误的Plan id 导致无上下执行
           };
           return (
