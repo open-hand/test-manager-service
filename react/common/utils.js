@@ -350,7 +350,7 @@ export function TestExecuteLink(cycleId) {
     type, id: projectId, name, organizationId,
   } = menu;
 
-  return encodeURI(`/testManager/TestExecute?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&orgId=${`${cycleId ? `&cycleId=${cycleId || 0}` : ''}`}`);
+  return encodeURI(`/testManager/TestPlan/execute/${cycleId}?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&orgId=${`${cycleId ? `&cycleId=${cycleId || 0}` : ''}`}`);
 }
 export function TestPlanLink(cycleId) {
   const menu = AppState.currentMenuType;
@@ -545,5 +545,6 @@ export function handleRequestFailed(promise) {
     if (!res.failed) {
       return res;
     }
+    return '';
   });
 }
