@@ -156,20 +156,16 @@ public class ExcelServiceImpl implements ExcelService {
         List<TestCycleDTO> testCycleDTOList = cycleMapper.queryChildCycle(testCycleDTO);
         List<Long> cycleIds = Stream.concat(testCycleDTOList.stream().map(TestCycleDTO::getCycleId), Stream.of(cycleId)).collect(Collectors.toList());
         testFileLoadHistoryWithRateVO.setRate(15.0);
-        //notifyService.postWebSocket(NOTIFYCYCLECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
         messageClient.sendByUserId(userId,NOTIFYCYCLECODE,JSON.toJSONString(testFileLoadHistoryWithRateVO));
         TestCycleVO cycle = modelMapper.map(cycleMapper.selectOne(testCycleDTO), TestCycleVO.class);
 
         testFileLoadHistoryWithRateVO.setName(cycle.getCycleName());
 
-//        testCycleService.populateVersion(cycle, projectId);
         testFileLoadHistoryWithRateVO.setRate(35.0);
-        //notifyService.postWebSocket(NOTIFYCYCLECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
         messageClient.sendByUserId(userId,NOTIFYCYCLECODE,JSON.toJSONString(testFileLoadHistoryWithRateVO));
         testCycleService.populateUsers(Lists.newArrayList(cycle));
 
         testFileLoadHistoryWithRateVO.setRate(55.0);
-        //notifyService.postWebSocket(NOTIFYCYCLECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
         messageClient.sendByUserId(userId,NOTIFYCYCLECODE,JSON.toJSONString(testFileLoadHistoryWithRateVO));
         Map<Long, List<TestCycleCaseVO>> cycleCaseMap = Optional.ofNullable(testCycleCaseService.queryCaseAllInfoInCyclesOrVersions(cycleIds.toArray(new Long[cycleIds.size()]), null, projectId, organizationId))
                 .orElseGet(ArrayList::new).stream().collect(Collectors.groupingBy(TestCycleCaseVO::getCycleId));
@@ -178,7 +174,6 @@ public class ExcelServiceImpl implements ExcelService {
             sum += list.size();
         }
         testFileLoadHistoryWithRateVO.setRate(65.0);
-        //notifyService.postWebSocket(NOTIFYCYCLECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
         messageClient.sendByUserId(userId,NOTIFYCYCLECODE,JSON.toJSONString(testFileLoadHistoryWithRateVO));
         ExcelExportService service = new <TestCycleVO, TestCycleCaseVO>CycleCaseExcelExportServiceImpl();
         Workbook workbook = ExcelUtil.getWorkBook(ExcelUtil.Mode.XSSF);
@@ -186,7 +181,6 @@ public class ExcelServiceImpl implements ExcelService {
         String projectName = testCaseService.getProjectInfo(projectId).getName();
         service.exportWorkBookWithOneSheet(cycleCaseMap, projectName, cycle, workbook);
         testFileLoadHistoryWithRateVO.setRate(95.0);
-        //notifyService.postWebSocket(NOTIFYCYCLECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
         messageClient.sendByUserId(userId,NOTIFYCYCLECODE,JSON.toJSONString(testFileLoadHistoryWithRateVO));
         String fileName = projectName + "-" + cycle.getCycleName() + FILESUFFIX;
         downloadWorkBook(projectDTO.getOrganizationId(),workbook, fileName, testFileLoadHistoryWithRateVO, userId, sum, NOTIFYCYCLECODE);

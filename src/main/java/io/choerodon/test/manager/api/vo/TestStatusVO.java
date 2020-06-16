@@ -1,6 +1,8 @@
 package io.choerodon.test.manager.api.vo;
 
+import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.swagger.annotations.ApiModelProperty;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
  * Created by 842767365@qq.com on 6/25/18.
@@ -8,6 +10,7 @@ import io.swagger.annotations.ApiModelProperty;
 public class TestStatusVO {
 
     @ApiModelProperty(value = "主键状态ID")
+    @Encrypt(EncryptKeyConstants.TEST_STATUS)
     private Long statusId;
 
     @ApiModelProperty(value = "状态名")

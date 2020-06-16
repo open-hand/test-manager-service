@@ -67,7 +67,7 @@ public class TestCaseStepController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("克隆")
     @PostMapping("/clone")
-    public ResponseEntity clone(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity<TestCaseStepVO> clone(@PathVariable(name = "project_id") Long projectId,
                                 @RequestBody TestCaseStepVO testCaseStepVO) {
         return Optional.ofNullable(testCaseStepService.clone(testCaseStepVO, projectId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))

@@ -123,13 +123,13 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
 
 
     @Override
-    public String moveFolder(Long projectId, Long targetForderId, TestIssueFolderVO issueFolderVO) {
-        List<TestCaseDTO> testCaseDTOS = testCaseService.listCaseByFolderId(targetForderId);
+    public String moveFolder(Long projectId, Long targetFolderId, TestIssueFolderVO issueFolderVO) {
+        List<TestCaseDTO> testCaseDTOS = testCaseService.listCaseByFolderId(targetFolderId);
         if (!CollectionUtils.isEmpty(testCaseDTOS)) {
             throw new CommonException("error.issueFolder.has.case");
         }
         TestIssueFolderDTO testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(issueFolderVO.getFolderId());
-        testIssueFolderDTO.setParentId(targetForderId);
+        testIssueFolderDTO.setParentId(targetFolderId);
         if (ObjectUtils.isEmpty(issueFolderVO.getLastRank()) && ObjectUtils.isEmpty(issueFolderVO.getNextRank())) {
             testIssueFolderDTO.setRank(RankUtil.Operation.INSERT.getRank(issueFolderVO.getLastRank(), issueFolderVO.getNextRank()));
         } else {

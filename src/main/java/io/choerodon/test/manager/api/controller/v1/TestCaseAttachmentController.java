@@ -10,9 +10,11 @@ import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.test.manager.app.service.TestCaseAttachmentService;
+import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,7 +50,9 @@ public class TestCaseAttachmentController {
     public ResponseEntity deleteAttachment(@ApiParam(value = "项目id", required = true)
                                            @PathVariable(name = "project_id") Long projectId,
                                            @ApiParam(value = "附件id", required = true)
-                                           @PathVariable(name = "issueAttachment_id") Long issueAttachmentId) {
+                                           @PathVariable(name = "issueAttachment_id")
+                                           @Encrypt(EncryptKeyConstants.TEST_CASE_ATTACHMENT)
+                                                   Long issueAttachmentId) {
         testCaseAttachmentService.delete(projectId, issueAttachmentId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

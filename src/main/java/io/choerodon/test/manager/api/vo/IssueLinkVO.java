@@ -4,8 +4,10 @@ package io.choerodon.test.manager.api.vo;
 import io.choerodon.test.manager.api.vo.agile.IssueTypeVO;
 import io.choerodon.test.manager.api.vo.agile.PriorityVO;
 import io.choerodon.test.manager.api.vo.agile.StatusVO;
+import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.choerodon.test.manager.infra.util.StringUtil;
 import io.swagger.annotations.ApiModelProperty;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
  * 敏捷开发Issue链接
@@ -39,6 +41,7 @@ public class IssueLinkVO {
     private String typeCode;
 
     @ApiModelProperty(value = "问题链接id")
+    @Encrypt(EncryptKeyConstants.TEST_CASE_LINK)
     private Long linkId;
 
     @ApiModelProperty(value = "经办人id")

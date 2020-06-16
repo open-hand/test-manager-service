@@ -1,7 +1,10 @@
 package io.choerodon.test.manager.api.vo;
 
 import java.util.Date;
+
+import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.swagger.annotations.ApiModelProperty;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
  * Created by zongw.lee@gmail.com on 08/30/2018
@@ -9,6 +12,7 @@ import io.swagger.annotations.ApiModelProperty;
 public class TestIssueFolderVO {
 
     @ApiModelProperty(value = "文件夹ID")
+    @Encrypt(EncryptKeyConstants.TEST_ISSUE_FOLDER)
     private Long folderId;
 
     @ApiModelProperty(value = "父级文件夹ID,无父级目录id传0")

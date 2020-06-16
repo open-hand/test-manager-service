@@ -11,7 +11,9 @@ import io.choerodon.test.manager.api.vo.TestCycleVO;
 import io.choerodon.test.manager.api.vo.TestTreeIssueFolderVO;
 import io.choerodon.test.manager.app.service.TestCycleService;
 import io.choerodon.test.manager.app.service.TestPlanServcie;
+import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.swagger.annotations.ApiOperation;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +45,8 @@ public class TestCycleController {
     @ApiOperation("删除计划文件夹")
     @DeleteMapping("/delete/{cycleId}")
     public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
-                                 @PathVariable(name = "cycleId") Long cycleId) {
+                                 @PathVariable(name = "cycleId")
+                                 @Encrypt(EncryptKeyConstants.TEST_CYCLE) Long cycleId) {
 
         testCycleService.delete(cycleId, projectId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -63,8 +66,9 @@ public class TestCycleController {
     @ApiOperation("查询树")
     @GetMapping(value = "/tree")
     public ResponseEntity<TestTreeIssueFolderVO> queryTree(@PathVariable(name = "project_id") Long projectId,
-                                                           @RequestParam("plan_id") Long planId){
-        return new ResponseEntity<>(testCycleService.queryTreeByPlanId(planId,projectId),HttpStatus.OK);
+                                                           @RequestParam("plan_id")
+                                                           @Encrypt(EncryptKeyConstants.TEST_PLAN) Long planId) {
+        return new ResponseEntity<>(testCycleService.queryTreeByPlanId(planId, projectId), HttpStatus.OK);
     }
 
     @Permission(level = ResourceLevel.ORGANIZATION)
@@ -82,9 +86,9 @@ public class TestCycleController {
     @ApiOperation("操作计划日历")
     @PostMapping("/operate_calendar")
     public ResponseEntity operatePlanCalendar(@PathVariable(name = "project_id") Long projectId,
-                                                           @RequestBody TestCycleVO testCycleVO,
-                                                           @RequestParam(defaultValue = "true") Boolean isCycle){
-        testPlanServcie.operatePlanCalendar(projectId,testCycleVO,isCycle);
+                                              @RequestBody TestCycleVO testCycleVO,
+                                              @RequestParam(defaultValue = "true") Boolean isCycle) {
+        testPlanServcie.operatePlanCalendar(projectId, testCycleVO, isCycle);
         return new ResponseEntity(HttpStatus.OK);
     }
 }

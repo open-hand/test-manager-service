@@ -2,9 +2,11 @@ package io.choerodon.test.manager.api.vo;
 
 import java.util.Date;
 
+import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.swagger.annotations.ApiModelProperty;
 
 import io.choerodon.test.manager.api.vo.agile.UserDO;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -13,6 +15,7 @@ import io.choerodon.test.manager.api.vo.agile.UserDO;
 public class TestCycleCaseHistoryVO {
 
     @ApiModelProperty(value = "测试执行ID")
+    @Encrypt(EncryptKeyConstants.TEST_CYCLE_CASE_HISTORY)
     private Long executeId;
 
     @ApiModelProperty(value = "旧值")

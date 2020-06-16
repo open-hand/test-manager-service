@@ -5,7 +5,6 @@ import java.util.List;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.swagger.annotation.Permission;
 
-import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.test.manager.api.vo.DataLogVO;
 import io.choerodon.test.manager.app.service.TestDataLogService;
 import io.swagger.annotations.ApiOperation;

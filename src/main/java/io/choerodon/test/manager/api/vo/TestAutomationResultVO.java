@@ -2,11 +2,14 @@ package io.choerodon.test.manager.api.vo;
 
 import java.util.Date;
 
+import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.swagger.annotations.ApiModelProperty;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 public class TestAutomationResultVO {
 
     @ApiModelProperty(value = "主键ID")
+    @Encrypt(EncryptKeyConstants.TEST_AUTOMATION_RESULT)
     private Long id;
 
     @ApiModelProperty(value = "测试结果")

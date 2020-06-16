@@ -6,7 +6,6 @@ import io.choerodon.test.manager.api.vo.asgard.ScheduleTaskDTO;
 import io.choerodon.swagger.annotation.Permission;
 
 import io.choerodon.core.exception.CommonException;
-import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.test.manager.api.vo.devops.InstanceValueVO;
 import io.choerodon.test.manager.api.vo.ApplicationDeployVO;

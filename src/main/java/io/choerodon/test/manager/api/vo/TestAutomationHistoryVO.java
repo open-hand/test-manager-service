@@ -6,10 +6,12 @@ import javax.persistence.Id;
 import java.util.Date;
 import java.util.List;
 
+import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.swagger.annotations.ApiModelProperty;
 
 import io.choerodon.test.manager.api.vo.agile.UserDO;
 import io.choerodon.mybatis.domain.AuditDomain;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 public class TestAutomationHistoryVO extends AuditDomain {
 
@@ -29,6 +31,7 @@ public class TestAutomationHistoryVO extends AuditDomain {
     @Id
     @GeneratedValue
     @ApiModelProperty(value = "主键id")
+    @Encrypt(EncryptKeyConstants.TEST_AUTOMATION_HISTORY)
     private Long id;
 
     @ApiModelProperty(value = "测试框架")

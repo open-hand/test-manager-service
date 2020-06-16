@@ -2,9 +2,11 @@ package io.choerodon.test.manager.api.vo;
 
 import java.util.Date;
 
+import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.swagger.annotations.ApiModelProperty;
 
 import io.choerodon.test.manager.infra.dto.UserMessageDTO;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
  * @author: 25499
@@ -13,6 +15,7 @@ import io.choerodon.test.manager.infra.dto.UserMessageDTO;
  */
 public class TestFolderCycleCaseVO {
     @ApiModelProperty(value = "执行ID")
+    @Encrypt(EncryptKeyConstants.TEST_CYCLE_CASE)
     private Long executeId;
 
     @ApiModelProperty(value = "循环Id")

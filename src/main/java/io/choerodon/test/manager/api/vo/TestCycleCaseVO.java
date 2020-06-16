@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.swagger.annotations.ApiModelProperty;
 
 import io.choerodon.test.manager.api.vo.agile.IssueLinkDTO;
@@ -11,6 +12,7 @@ import io.choerodon.test.manager.api.vo.agile.SearchDTO;
 import io.choerodon.test.manager.api.vo.agile.UserDO;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDefectRelDTO;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -18,6 +20,7 @@ import io.choerodon.test.manager.infra.dto.TestCycleCaseDefectRelDTO;
 public class TestCycleCaseVO {
 
     @ApiModelProperty(value = "测试执行ID")
+    @Encrypt(EncryptKeyConstants.TEST_CYCLE_CASE)
     private Long executeId;
 
     @ApiModelProperty(value = "循环ID")

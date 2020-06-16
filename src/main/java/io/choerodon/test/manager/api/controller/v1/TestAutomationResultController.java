@@ -6,7 +6,9 @@ import java.util.Map;
 import java.util.Optional;
 
 import io.choerodon.core.iam.ResourceLevel;
+import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.swagger.annotations.ApiOperation;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 
 import io.choerodon.core.exception.CommonException;
-import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.test.manager.api.vo.TestAutomationResultVO;
 import io.choerodon.test.manager.app.service.TestAutomationHistoryService;
@@ -34,7 +35,7 @@ public class TestAutomationResultController {
     @ApiOperation("查询")
     @GetMapping("/query/{id}")
     public ResponseEntity<Map<String, Object>> query(@PathVariable("project_id") Long projectId,
-                                                     @PathVariable("id") Long id) {
+                                                     @PathVariable("id") @Encrypt(EncryptKeyConstants.TEST_AUTOMATION_RESULT) Long id) {
         Map<String, Object> result = new HashMap<>(2);
         String framework = testAutomationHistoryService.queryFrameworkByResultId(projectId, id);
         TestAutomationResultVO testAutomationResultVO = new TestAutomationResultVO();

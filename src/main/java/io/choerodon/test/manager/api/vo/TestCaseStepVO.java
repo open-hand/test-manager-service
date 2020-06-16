@@ -2,9 +2,11 @@ package io.choerodon.test.manager.api.vo;
 
 import java.util.List;
 
+import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.swagger.annotations.ApiModelProperty;
 
 import io.choerodon.test.manager.infra.dto.TestCycleCaseAttachmentRelDTO;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -12,6 +14,7 @@ import io.choerodon.test.manager.infra.dto.TestCycleCaseAttachmentRelDTO;
 public class TestCaseStepVO {
 
     @ApiModelProperty(value = "步骤id")
+    @Encrypt(EncryptKeyConstants.TEST_CASE_STEP)
     private Long stepId;
 
     @ApiModelProperty(value = "排序值")

@@ -3,10 +3,12 @@ package io.choerodon.test.manager.api.vo;
 import java.util.Date;
 import java.util.List;
 import io.choerodon.test.manager.api.vo.agile.IssueInfoDTO;
+import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
 import io.choerodon.test.manager.infra.dto.TestCaseStepDTO;
 import io.choerodon.test.manager.infra.dto.UserMessageDTO;
 import io.swagger.annotations.ApiModelProperty;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
  * @author zhaotianxin
@@ -15,6 +17,7 @@ import io.swagger.annotations.ApiModelProperty;
 public class TestCaseInfoVO {
 
     @ApiModelProperty(value = "用例Id")
+    @Encrypt(EncryptKeyConstants.TEST_CASE)
     private Long caseId;
 
     @ApiModelProperty(value = "用例编号")

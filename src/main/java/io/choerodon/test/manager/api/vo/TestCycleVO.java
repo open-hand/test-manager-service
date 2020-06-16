@@ -1,7 +1,9 @@
 package io.choerodon.test.manager.api.vo;
 
 import io.choerodon.test.manager.api.vo.agile.UserDO;
+import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.swagger.annotations.ApiModelProperty;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 import java.util.Date;
 import java.util.List;
@@ -12,6 +14,7 @@ import java.util.List;
 public class TestCycleVO {
 
     @ApiModelProperty(value = "主键，循环ID")
+    @Encrypt(EncryptKeyConstants.TEST_CYCLE)
     private Long cycleId;
 
     @ApiModelProperty(value = "父循环ID")

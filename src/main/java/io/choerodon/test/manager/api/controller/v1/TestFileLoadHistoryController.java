@@ -6,7 +6,9 @@ import java.util.Optional;
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.test.manager.api.vo.agile.SearchDTO;
+import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.swagger.annotations.ApiOperation;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -34,11 +36,10 @@ public class TestFileLoadHistoryController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("查询用例导出历史")
     @PostMapping("/case")
-    public ResponseEntity<Page<TestFileLoadHistoryVO>> queryIssues(
-            @PathVariable(name = "project_id") Long projectId,
-             PageRequest pageRequest,
-            @RequestBody(required = false) SearchDTO searchDTO) {
-        return Optional.ofNullable(testFileLoadHistoryService.pageFileHistoryByoptions(projectId,searchDTO,pageRequest))
+    public ResponseEntity<Page<TestFileLoadHistoryVO>> queryIssues(@PathVariable(name = "project_id") Long projectId,
+                                                                   PageRequest pageRequest,
+                                                                   @RequestBody(required = false) SearchDTO searchDTO) {
+        return Optional.ofNullable(testFileLoadHistoryService.pageFileHistoryByoptions(projectId, searchDTO, pageRequest))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.file.history.query"));
     }
@@ -55,7 +56,9 @@ public class TestFileLoadHistoryController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("将指定导入记录置为取消")
     @PutMapping("/cancel")
-    public ResponseEntity cancelUpLoad(@PathVariable("project_id") Long projectId, @RequestParam Long historyId) {
+    public ResponseEntity cancelUpLoad(@PathVariable("project_id") Long projectId,
+                                       @Encrypt(EncryptKeyConstants.TEST_FILELOAD_HISTORY)
+                                       @RequestParam Long historyId) {
         excelImportService.cancelFileUpload(historyId);
         return new ResponseEntity(HttpStatus.OK);
     }

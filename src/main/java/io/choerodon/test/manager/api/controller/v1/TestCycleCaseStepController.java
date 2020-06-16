@@ -1,12 +1,13 @@
 package io.choerodon.test.manager.api.controller.v1;
 
-import java.util.List;
 import java.util.Optional;
 
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.iam.ResourceLevel;
+import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import io.choerodon.swagger.annotation.Permission;
 
 import io.choerodon.core.exception.CommonException;
-import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.test.manager.api.vo.TestCycleCaseStepVO;
 import io.choerodon.test.manager.app.service.TestCycleCaseStepService;
 
@@ -81,8 +81,9 @@ public class TestCycleCaseStepController {
     @ApiOperation("删除一个循环步骤")
     @DeleteMapping("/{execute_step_id}")
     public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
-                                 @PathVariable(name = "execute_step_id") Long execute_stepId) {
-        testCycleCaseStepService.delete(execute_stepId);
+                                 @PathVariable(name = "execute_step_id")
+                                 @Encrypt(EncryptKeyConstants.TEST_CYCLE_CASE_STEP) Long executeStepId) {
+        testCycleCaseStepService.delete(executeStepId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
