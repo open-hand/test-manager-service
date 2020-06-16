@@ -11,7 +11,7 @@ import org.hzero.starter.keyencrypt.core.Encrypt;
 public class ProjectInfoVO {
 
     @ApiModelProperty(value = "主键id")
-    @Encrypt(EncryptKeyConstants.TEST_PROJECT_INFO)
+    @Encrypt(/**EncryptKeyConstants.TEST_PROJECT_INFO**/)
     private Long infoId;
 
     @ApiModelProperty(value = "项目id")

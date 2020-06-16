@@ -19,7 +19,7 @@ public class InstanceValueVO {
     private List<Integer> newLines;
     private String deltaYaml;
     private String name;
-    @Encrypt(EncryptKeyConstants.INSTANCE_VALUE)
+    @Encrypt(/**EncryptKeyConstants.INSTANCE_VALUE**/)
     private Long id;
     private Long objectVersionNumber;
 

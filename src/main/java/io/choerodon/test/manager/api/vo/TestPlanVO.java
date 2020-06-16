@@ -14,7 +14,7 @@ import org.hzero.starter.keyencrypt.core.Encrypt;
 public class TestPlanVO {
 
     @ApiModelProperty(value = "计划Id")
-    @Encrypt(EncryptKeyConstants.TEST_PLAN)
+    @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/)
     private Long planId;
 
     @ApiModelProperty(value = "计划名称")
@@ -44,6 +44,7 @@ public class TestPlanVO {
     @ApiModelProperty(value = "选中的用例是否有改变")
     private Boolean caseHasChange;
 
+    @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/)
     private Map<Long, CaseSelectVO> caseSelected;
 
     private Long objectVersionNumber;

@@ -36,9 +36,9 @@ public class TestAutomationHistoryController {
     @PostMapping("/queryWithHistroy")
     @Permission(level = ResourceLevel.ORGANIZATION)
     public ResponseEntity<Page<TestAutomationHistoryVO>> queryWithInstance(@RequestBody(required = false) Map map,
-                                                                               @SortDefault(value = "id", direction = Sort.Direction.DESC)
-                                                                                       PageRequest pageRequest,
-                                                                               @PathVariable(name = "project_id") Long projectId) {
+                                                                           @SortDefault(value = "id", direction = Sort.Direction.DESC)
+                                                                                   PageRequest pageRequest,
+                                                                           @PathVariable(name = "project_id") Long projectId) {
         return Optional.ofNullable(testAutomationHistoryService.queryWithInstance(map, pageRequest, projectId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.queryWithInstance"));
@@ -46,7 +46,8 @@ public class TestAutomationHistoryController {
 
     @GetMapping("/queryLog/{logId}")
     @Permission(level = ResourceLevel.ORGANIZATION)
-    public ResponseEntity<String> queryLog(@PathVariable("logId") @Encrypt(EncryptKeyConstants.TEST_APP_INSTANCE_LOG) Long logId, @PathVariable("project_id") Long projectId) {
+    public ResponseEntity<String> queryLog(@PathVariable("logId")
+                                           @Encrypt(/**EncryptKeyConstants.TEST_APP_INSTANCE_LOG**/) Long logId, @PathVariable("project_id") Long projectId) {
         TestAppInstanceLogDTO logE = new TestAppInstanceLogDTO();
         logE.setId(logId);
 

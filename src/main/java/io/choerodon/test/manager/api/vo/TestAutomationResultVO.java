@@ -9,7 +9,7 @@ import org.hzero.starter.keyencrypt.core.Encrypt;
 public class TestAutomationResultVO {
 
     @ApiModelProperty(value = "主键ID")
-    @Encrypt(EncryptKeyConstants.TEST_AUTOMATION_RESULT)
+    @Encrypt(/**EncryptKeyConstants.TEST_AUTOMATION_RESULT**/)
     private Long id;
 
     @ApiModelProperty(value = "测试结果")

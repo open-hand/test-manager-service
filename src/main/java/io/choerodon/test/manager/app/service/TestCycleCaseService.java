@@ -5,7 +5,6 @@ import java.util.Map;
 
 import io.choerodon.core.domain.Page;
 
-import io.choerodon.test.manager.api.vo.agile.SearchDTO;
 import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.infra.dto.TestCycleDTO;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
@@ -58,7 +57,7 @@ public interface TestCycleCaseService {
      * @param
      * @return
      */
-    TestCycleCaseInfoVO queryCycleCaseInfo(Long executeId,Long projectId, Long planId, Long folderId, SearchDTO searchDTO);
+    TestCycleCaseInfoVO queryCycleCaseInfo(Long executeId,Long projectId, Long planId, Long folderId, CaseSearchVO caseSearchVO);
 
 
     /**
@@ -74,7 +73,7 @@ public interface TestCycleCaseService {
 
     void update(TestCycleCaseVO testCycleCaseVO);
 
-    Page<TestFolderCycleCaseVO> listAllCaseByCycleId(Long projectId, Long planId, Long folderId, PageRequest pageRequest, SearchDTO searchDTO);
+    Page<TestFolderCycleCaseVO> listAllCaseByCycleId(Long projectId, Long planId, Long folderId, PageRequest pageRequest, CaseSearchVO caseSearchVO);
 
 
     List<TestCycleCaseDTO> listByCycleIds(List<Long> cycleId);

@@ -1,9 +1,12 @@
 package io.choerodon.test.manager.api.vo;
 
 import java.util.List;
+
+import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
 import io.choerodon.test.manager.infra.dto.TestCaseLabelDTO;
 import io.swagger.annotations.ApiModelProperty;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
  * @author zhaotianxin
@@ -21,6 +24,7 @@ public class TestCaseVO {
     @ApiModelProperty(value = "rank")
     private String rank;
     @ApiModelProperty(value = "文件夹Id")
+    @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/)
     private Long folderId;
     @ApiModelProperty(value = "版本Id")
     private Long versionId;

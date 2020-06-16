@@ -14,13 +14,14 @@ import org.hzero.starter.keyencrypt.core.Encrypt;
 public class TestCaseStepVO {
 
     @ApiModelProperty(value = "步骤id")
-    @Encrypt(EncryptKeyConstants.TEST_CASE_STEP)
+    @Encrypt(/**EncryptKeyConstants.TEST_CASE_STEP**/)
     private Long stepId;
 
     @ApiModelProperty(value = "排序值")
     private String rank;
 
     @ApiModelProperty(value = "用例issueID")
+    @Encrypt(/**EncryptKeyConstants.TEST_CASE**/)
     private Long issueId;
 
     @ApiModelProperty(value = "测试步骤")

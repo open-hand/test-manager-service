@@ -6,7 +6,6 @@ import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.swagger.annotation.Permission;
 
 import io.choerodon.core.exception.CommonException;
-import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.test.manager.api.vo.TestCycleVO;
 import io.choerodon.test.manager.api.vo.TestTreeIssueFolderVO;
 import io.choerodon.test.manager.app.service.TestCycleService;
@@ -46,7 +45,7 @@ public class TestCycleController {
     @DeleteMapping("/delete/{cycleId}")
     public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
                                  @PathVariable(name = "cycleId")
-                                 @Encrypt(EncryptKeyConstants.TEST_CYCLE) Long cycleId) {
+                                 @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/) Long cycleId) {
 
         testCycleService.delete(cycleId, projectId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -67,7 +66,7 @@ public class TestCycleController {
     @GetMapping(value = "/tree")
     public ResponseEntity<TestTreeIssueFolderVO> queryTree(@PathVariable(name = "project_id") Long projectId,
                                                            @RequestParam("plan_id")
-                                                           @Encrypt(EncryptKeyConstants.TEST_PLAN) Long planId) {
+                                                           @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/) Long planId) {
         return new ResponseEntity<>(testCycleService.queryTreeByPlanId(planId, projectId), HttpStatus.OK);
     }
 
@@ -75,7 +74,8 @@ public class TestCycleController {
     @ApiOperation("移动文件夹")
     @PutMapping("/move")
     public ResponseEntity<String> moveFolder(@PathVariable(name = "project_id") Long projectId,
-                                             @RequestParam(name = "target_cycle_id") Long targetCycleId,
+                                             @RequestParam(name = "target_cycle_id", required = false)
+                                             @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/) Long targetCycleId,
                                              @RequestBody TestCycleVO testCycleVO) {
         return Optional.ofNullable(testCycleService.moveCycle(projectId, targetCycleId, testCycleVO))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))

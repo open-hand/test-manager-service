@@ -16,7 +16,7 @@ import org.hzero.starter.keyencrypt.core.Encrypt;
  */
 public class TestCycleCaseInfoVO {
     @ApiModelProperty(value = "测试执行ID")
-    @Encrypt(EncryptKeyConstants.TEST_CYCLE_CASE)
+    @Encrypt(/**EncryptKeyConstants.TEST_CYCLE_CASE**/)
     private Long executeId;
 
     @ApiModelProperty(value = "caseNum")
@@ -47,6 +47,7 @@ public class TestCycleCaseInfoVO {
     private String planStatus;
 
     @ApiModelProperty(value = "执行状态")
+    @Encrypt
     private Long executionStatus;
 
     @ApiModelProperty(value = "执行状态名")
@@ -68,14 +69,15 @@ public class TestCycleCaseInfoVO {
     @ApiModelProperty(value = "原用例是否存在")
     private Boolean caseHasExist;
 
-
     @ApiModelProperty(value = "执行日期")
     private Date executorDate;
 
     @ApiModelProperty(value = "上一个执行")
+    @Encrypt(/**EncryptKeyConstants.TEST_CYCLE_CASE**/)
     private Long previousExecuteId;
 
     @ApiModelProperty(value = "下一个执行")
+    @Encrypt(/**EncryptKeyConstants.TEST_CYCLE_CASE**/)
     private Long nextExecuteId;
 
     @ApiModelProperty(value = "测试用例关联的附件信息")

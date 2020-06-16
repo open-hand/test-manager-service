@@ -15,7 +15,7 @@ import org.hzero.starter.keyencrypt.core.Encrypt;
 public class TestCycleCaseHistoryVO {
 
     @ApiModelProperty(value = "测试执行ID")
-    @Encrypt(EncryptKeyConstants.TEST_CYCLE_CASE_HISTORY)
+    @Encrypt(/**EncryptKeyConstants.TEST_CYCLE_CASE_HISTORY**/)
     private Long executeId;
 
     @ApiModelProperty(value = "旧值")

@@ -55,7 +55,8 @@ public class TestCycleCaseStepController {
     @GetMapping("/query/{cycleCaseId}")
     public ResponseEntity<Page<TestCycleCaseStepVO>> querySubStep(@PathVariable(name = "project_id") Long projectId,
                                                                   @ApiParam(value = "cycleCaseId", required = true)
-                                                                  @PathVariable(name = "cycleCaseId") Long cycleCaseId,
+                                                                  @PathVariable(name = "cycleCaseId")
+                                                                  @Encrypt(/**EncryptKeyConstants.TEST_CYCLE_CASE**/) Long cycleCaseId,
                                                                   @RequestParam Long organizationId,
                                                                   PageRequest pageRequest) {
         return Optional.ofNullable(testCycleCaseStepService.querySubStep(cycleCaseId, projectId, organizationId,pageRequest))
@@ -82,7 +83,7 @@ public class TestCycleCaseStepController {
     @DeleteMapping("/{execute_step_id}")
     public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
                                  @PathVariable(name = "execute_step_id")
-                                 @Encrypt(EncryptKeyConstants.TEST_CYCLE_CASE_STEP) Long executeStepId) {
+                                 @Encrypt(/**EncryptKeyConstants.TEST_CYCLE_CASE_STEP**/) Long executeStepId) {
         testCycleCaseStepService.delete(executeStepId);
         return new ResponseEntity<>(HttpStatus.OK);
     }

@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import io.choerodon.swagger.annotation.Permission;
 
 import io.choerodon.core.exception.CommonException;
-import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.test.manager.api.vo.TestIssueFolderVO;
 import io.choerodon.test.manager.app.service.TestIssueFolderService;
 
@@ -44,7 +43,7 @@ public class TestIssueFolderController {
     @DeleteMapping("/{folderId}")
     public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
                                  @PathVariable(name = "folderId")
-                                 @Encrypt(EncryptKeyConstants.TEST_ISSUE_FOLDER) Long folderId) {
+                                 @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/) Long folderId) {
         testIssueFolderService.delete(projectId, folderId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -73,7 +72,8 @@ public class TestIssueFolderController {
     @ApiOperation("移动文件夹")
     @PutMapping("/move")
     public ResponseEntity<String> moveFolder(@PathVariable(name = "project_id") Long projectId,
-                                             @RequestParam(name = "targetFolderId") Long targetFolderId,
+                                             @RequestParam(name = "targetFolderId", required = false)
+                                             @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/) Long targetFolderId,
                                              @RequestBody TestIssueFolderVO issueFolderVO) {
         return Optional.ofNullable(testIssueFolderService.moveFolder(projectId, targetFolderId, issueFolderVO))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))

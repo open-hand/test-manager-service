@@ -8,6 +8,7 @@ import io.choerodon.core.utils.PageableHelper;
 import io.choerodon.mybatis.pagehelper.PageHelper;
 import io.choerodon.core.domain.Page;
 import io.choerodon.test.manager.api.vo.agile.*;
+import io.choerodon.test.manager.infra.feign.IssueFeignClient;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -52,15 +53,15 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     @Autowired
     private TestCaseFeignClient testCaseFeignClient;
-//
-//    @Autowired
-//    private ProductionVersionClient productionVersionClient;
 
     @Autowired
     private BaseFeignClient baseFeignClient;
 
     @Autowired
     private ApplicationFeignClient applicationFeignClient;
+
+    @Autowired
+    private IssueFeignClient issueFeignClient;
 
     @Autowired
     private TestCaseMapper testCaseMapper;
@@ -522,6 +523,15 @@ public class TestCaseServiceImpl implements TestCaseService {
         }
         DBValidateUtil.executeAndvalidateUpdateNum(testCaseMapper::updateByPrimaryKeySelective, testCaseDTO, 1, "error.testcase.update");
         return testCaseDTO;
+    }
+
+    @Override
+    public Page<IssueNumDTO> queryIssueByOptionForAgile(Long projectId, Long issueId, String issueNum, Boolean self, String content, PageRequest pageRequest) {
+        return issueFeignClient
+                .queryIssueByOptionForAgile(
+                        pageRequest.getPage(),
+                        pageRequest.getSize(),projectId,issueId,issueNum,self,content)
+                .getBody();
     }
 
     private TestCaseDTO baseQuery(Long caseId) {

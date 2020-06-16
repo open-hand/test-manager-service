@@ -2,14 +2,15 @@ package io.choerodon.test.manager.api.controller.v1;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import com.alibaba.fastjson.JSONObject;
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.iam.ResourceLevel;
+import io.choerodon.swagger.annotation.CustomPageRequest;
 import io.choerodon.test.manager.api.vo.*;
+import io.choerodon.test.manager.api.vo.agile.IssueNumDTO;
 import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.choerodon.test.manager.infra.util.VerifyUpdateUtil;
 import io.swagger.annotations.ApiOperation;
@@ -116,7 +117,7 @@ public class TestCaseController {
     @GetMapping("/download/excel/folder")
     public ResponseEntity downLoadByFolder(@PathVariable(name = "project_id") Long projectId,
                                            @RequestParam(name = "folder_id")
-                                           @Encrypt(EncryptKeyConstants.TEST_ISSUE_FOLDER) Long folderId,
+                                           @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/) Long folderId,
                                            HttpServletRequest request,
                                            HttpServletResponse response,
                                            @RequestParam Long organizationId) {
@@ -138,7 +139,7 @@ public class TestCaseController {
     @GetMapping("/download/excel/fail")
     public ResponseEntity downExcelFail(@PathVariable(name = "project_id") Long projectId,
                                         @RequestParam(name = "historyId")
-                                        @Encrypt(EncryptKeyConstants.TEST_FILELOAD_HISTORY) Long historyId) {
+                                        @Encrypt(/**EncryptKeyConstants.TEST_FILELOAD_HISTORY**/) Long historyId) {
         excelServiceHandler.exportFailCase(projectId, historyId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -159,7 +160,8 @@ public class TestCaseController {
     @PostMapping("/import/testCase")
     public ResponseEntity importIssues(@PathVariable("project_id") Long projectId,
                                        @RequestParam("file") MultipartFile excelFile,
-                                       @RequestParam("folder_id") Long folderId) {
+                                       @RequestParam("folder_id")
+                                       @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/) Long folderId) {
         excelImportService.importIssueByExcel(projectId, folderId,
                 DetailsHelper.getUserDetails().getUserId(),
                 ExcelUtil.getWorkbookFromMultipartFile(ExcelUtil.Mode.XSSF, excelFile));
@@ -179,7 +181,7 @@ public class TestCaseController {
     @GetMapping("/{case_id}/info")
     public ResponseEntity<TestCaseInfoVO> queryCaseInfo(@PathVariable("project_id") Long projectId,
                                                         @PathVariable(name = "case_id")
-                                                        @Encrypt(EncryptKeyConstants.TEST_CASE) Long caseId) {
+                                                        @Encrypt(/**EncryptKeyConstants.TEST_CASE**/) Long caseId) {
         return new ResponseEntity<>(testCaseService.queryCaseInfo(projectId, caseId), HttpStatus.OK);
     }
 
@@ -188,7 +190,7 @@ public class TestCaseController {
     @DeleteMapping("/{case_id}/delete")
     public ResponseEntity deleteCase(@PathVariable("project_id") Long projectId,
                                      @PathVariable(name = "case_id")
-                                     @Encrypt(EncryptKeyConstants.TEST_CASE) Long caseId) {
+                                     @Encrypt(/**EncryptKeyConstants.TEST_CASE**/) Long caseId) {
         testCaseService.deleteCase(projectId, caseId);
         return new ResponseEntity(HttpStatus.OK);
     }
@@ -197,10 +199,11 @@ public class TestCaseController {
     @ApiOperation("查询当前文件夹下面所有子文件夹中用例")
     @PostMapping("/list_by_folder_id")
     public ResponseEntity<Page<TestCaseRepVO>> listCaseByFolderId(@PathVariable("project_id") Long projectId,
-                                                                  @RequestParam(name = "folder_id") Long folderId,
+                                                                  @RequestParam(name = "folder_id")
+                                                                  @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/) Long folderId,
                                                                   @SortDefault PageRequest pageRequest,
                                                                   @RequestParam(name = "plan_id", required = false)
-                                                                  @Encrypt(EncryptKeyConstants.TEST_PLAN) Long planId,
+                                                                  @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/) Long planId,
                                                                   @RequestBody(required = false) SearchDTO searchDTO) {
         return new ResponseEntity<>(testCaseService.listAllCaseByFolderId(projectId, folderId, pageRequest, searchDTO, planId), HttpStatus.OK);
     }
@@ -220,7 +223,7 @@ public class TestCaseController {
     @PostMapping("/batch_move")
     public ResponseEntity batchMoveCase(@PathVariable("project_id") Long projectId,
                                         @RequestParam(name = "folder_id")
-                                        @Encrypt(EncryptKeyConstants.TEST_ISSUE_FOLDER) Long folderId,
+                                        @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/) Long folderId,
                                         @RequestBody List<TestCaseRepVO> testCaseRepVOS) {
 
         testCaseService.batchMove(projectId, folderId, testCaseRepVOS);
@@ -232,7 +235,7 @@ public class TestCaseController {
     @PostMapping("/batch_clone")
     public ResponseEntity batchCloneCase(@PathVariable("project_id") Long projectId,
                                          @RequestParam(name = "folder_id")
-                                         @Encrypt(EncryptKeyConstants.TEST_ISSUE_FOLDER) Long folderId,
+                                         @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/) Long folderId,
                                          @RequestBody List<TestCaseRepVO> testCaseRepVOS) {
 
         testCaseService.batchCopy(projectId, folderId, testCaseRepVOS);
@@ -240,4 +243,25 @@ public class TestCaseController {
     }
 
 
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @ApiOperation("分页搜索查询issue列表")
+    @CustomPageRequest
+    @GetMapping(value = "/agile/summary")
+    public ResponseEntity<Page<IssueNumDTO>> queryIssueByOptionForAgile(@ApiIgnore
+                                                                        @ApiParam(value = "分页信息", required = true)
+                                                                        @SortDefault(value = "issueId", direction = Sort.Direction.DESC)
+                                                                                PageRequest pageRequest,
+                                                                        @ApiParam(value = "项目id", required = true)
+                                                                        @PathVariable(name = "project_id") Long projectId,
+                                                                        @ApiParam(value = "issueId")
+                                                                        @RequestParam(required = false)
+                                                                        @Encrypt(/**EncryptKeyConstants.TEST_CASE**/) Long issueId,
+                                                                        @ApiParam(value = "issueNum")
+                                                                        @RequestParam(required = false) String issueNum,
+                                                                        @ApiParam(value = "是否包含自身", required = true)
+                                                                        @RequestParam() Boolean self,
+                                                                        @ApiParam(value = "搜索内容")
+                                                                        @RequestParam(required = false) String content) {
+        return ResponseEntity.ok(testCaseService.queryIssueByOptionForAgile(projectId, issueId, issueNum, self, content, pageRequest));
+    }
 }

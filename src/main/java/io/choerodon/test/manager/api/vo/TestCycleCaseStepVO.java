@@ -16,7 +16,7 @@ import org.hzero.starter.keyencrypt.core.Encrypt;
 public class TestCycleCaseStepVO {
 
     @ApiModelProperty(value = "执行步骤ID")
-    @Encrypt(EncryptKeyConstants.TEST_CYCLE_CASE_STEP)
+    @Encrypt(/**EncryptKeyConstants.TEST_CYCLE_CASE_STEP**/)
     private Long executeStepId;
 
     @ApiModelProperty(value = "测试执行ID")
@@ -32,6 +32,7 @@ public class TestCycleCaseStepVO {
     private Long objectVersionNumber;
 
     @ApiModelProperty(value = "步骤状态ID")
+    @Encrypt
     private Long stepStatus;
 
     @ApiModelProperty(value = "测试步骤")

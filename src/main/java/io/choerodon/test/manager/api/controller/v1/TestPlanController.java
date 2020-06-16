@@ -5,7 +5,6 @@ import java.util.List;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.swagger.annotation.Permission;
 
-import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.test.manager.api.vo.FormStatusVO;
 import io.choerodon.test.manager.api.vo.TestPlanVO;
 import io.choerodon.test.manager.api.vo.TestTreeIssueFolderVO;
@@ -59,7 +58,7 @@ public class TestPlanController {
     @GetMapping("/{plan_id}/query")
     public ResponseEntity<TestPlanVO> query(@PathVariable(name = "project_id") Long projectId,
                                             @PathVariable(name = "plan_id")
-                                            @Encrypt(EncryptKeyConstants.TEST_PLAN) Long planId) {
+                                            @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/) Long planId) {
         return new ResponseEntity<>(testPlanServcie.queryPlanInfo(projectId, planId), HttpStatus.OK);
     }
 
@@ -68,7 +67,7 @@ public class TestPlanController {
     @GetMapping("/{plan_id}/info")
     public ResponseEntity<TestPlanVO> queryInfo(@PathVariable(name = "project_id") Long projectId,
                                                 @PathVariable(name = "plan_id")
-                                                @Encrypt(EncryptKeyConstants.TEST_PLAN) Long planId) {
+                                                @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/) Long planId) {
         return new ResponseEntity<>(testPlanServcie.queryPlan(projectId, planId), HttpStatus.OK);
     }
 
@@ -86,7 +85,7 @@ public class TestPlanController {
     @DeleteMapping("/{plan_id}/delete")
     public ResponseEntity deletePlan(@PathVariable(name = "project_id") Long projectId,
                                      @PathVariable(name = "plan_id")
-                                     @Encrypt(EncryptKeyConstants.TEST_PLAN) Long planId) {
+                                     @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/) Long planId) {
         testPlanServcie.delete(projectId, planId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -96,7 +95,7 @@ public class TestPlanController {
     @PostMapping("/{plan_id}/clone")
     public ResponseEntity<TestPlanVO> clonePlan(@PathVariable(name = "project_id") Long projectId,
                                                 @PathVariable(name = "plan_id")
-                                                @Encrypt(EncryptKeyConstants.TEST_PLAN) Long planId) {
+                                                @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/) Long planId) {
 
         return new ResponseEntity<>(testPlanServcie.clone(projectId, planId), HttpStatus.OK);
     }
@@ -114,7 +113,7 @@ public class TestPlanController {
     @GetMapping("/form_status/{plan_id}")
     public ResponseEntity<List<FormStatusVO>> formStatus(@PathVariable(name = "project_id") Long projectId,
                                                          @PathVariable(name = "plan_id")
-                                                         @Encrypt(EncryptKeyConstants.TEST_PLAN) Long planId) {
+                                                         @Encrypt(/**EncryptKeyConstants.TEST_PLAN**/) Long planId) {
         return new ResponseEntity<>(testPlanServcie.planStatus(projectId, planId), HttpStatus.OK);
     }
 }

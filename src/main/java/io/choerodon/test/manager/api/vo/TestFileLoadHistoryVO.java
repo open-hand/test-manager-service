@@ -9,7 +9,7 @@ import org.hzero.starter.keyencrypt.core.Encrypt;
 public class TestFileLoadHistoryVO {
 
     @ApiModelProperty(value = "主键ID")
-    @Encrypt(EncryptKeyConstants.TEST_FILELOAD_HISTORY)
+    @Encrypt(/**EncryptKeyConstants.TEST_FILELOAD_HISTORY**/)
     private Long id;
 
     @ApiModelProperty(value = "项目ID")

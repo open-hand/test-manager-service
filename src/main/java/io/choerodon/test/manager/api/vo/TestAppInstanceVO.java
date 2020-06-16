@@ -10,7 +10,7 @@ import org.hzero.starter.keyencrypt.core.Encrypt;
 public class TestAppInstanceVO {
 
     @ApiModelProperty(value = "主键ID")
-    @Encrypt(EncryptKeyConstants.TEST_APP_INSTANCE)
+    @Encrypt(/**EncryptKeyConstants.TEST_APP_INSTANCE**/)
     private Long id;
 
     @ApiModelProperty(value = "应用code")

@@ -13,7 +13,7 @@ import org.hzero.starter.keyencrypt.core.Encrypt;
 
 public class DataLogVO {
     @ApiModelProperty(value = "日志主键id")
-    @Encrypt(EncryptKeyConstants.TEST_DATA_LOG)
+    @Encrypt(/**EncryptKeyConstants.TEST_DATA_LOG**/)
     private Long logId;
     @ApiModelProperty(value = "项目id")
     private Long projectId;

@@ -16,7 +16,7 @@ import org.hzero.starter.keyencrypt.core.Encrypt;
  */
 public class TestCaseRepVO {
     @ApiModelProperty(value = "用例Id")
-    @Encrypt(EncryptKeyConstants.TEST_CASE)
+    @Encrypt(/**EncryptKeyConstants.TEST_CASE**/)
     private Long caseId;
 
     @ApiModelProperty(value = "用例编号")
@@ -32,6 +32,7 @@ public class TestCaseRepVO {
     private Long projectId;
 
     @ApiModelProperty(value = "文件夹Id")
+    @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/)
     private Long folderId;
 
     @ApiModelProperty(value = "创建人")

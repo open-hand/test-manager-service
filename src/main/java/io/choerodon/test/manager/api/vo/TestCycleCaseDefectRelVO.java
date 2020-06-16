@@ -11,13 +11,14 @@ import org.hzero.starter.keyencrypt.core.Encrypt;
 public class TestCycleCaseDefectRelVO {
 
     @ApiModelProperty(value = "主键id")
-    @Encrypt(EncryptKeyConstants.TEST_CYCLE_CASE_DEFECT_REL)
+    @Encrypt(/**EncryptKeyConstants.TEST_CYCLE_CASE_DEFECT_REL**/)
     private Long id;
 
     @ApiModelProperty(value = "缺陷关联类型：测试执行，执行步骤")
     private String defectType;
 
     @ApiModelProperty(value = "缺陷关联对象id")
+    @Encrypt
     private Long defectLinkId;
 
     @ApiModelProperty(value = "缺陷issueID")

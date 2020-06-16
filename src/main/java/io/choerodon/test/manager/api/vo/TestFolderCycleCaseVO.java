@@ -15,19 +15,21 @@ import org.hzero.starter.keyencrypt.core.Encrypt;
  */
 public class TestFolderCycleCaseVO {
     @ApiModelProperty(value = "执行ID")
-    @Encrypt(EncryptKeyConstants.TEST_CYCLE_CASE)
+    @Encrypt(/**EncryptKeyConstants.TEST_CYCLE_CASE**/)
     private Long executeId;
 
     @ApiModelProperty(value = "循环Id")
+    @Encrypt
     private Long cycleId;
 
-
     @ApiModelProperty(value = "用例ID")
+    @Encrypt
     private Long caseId;
 
     @ApiModelProperty(value = "排序")
     private String rank;
     @ApiModelProperty(value = "执行状态")
+    @Encrypt(/**EncryptKeyConstants.TEST_STATUS**/)
     private Long executionStatus;
 
     @ApiModelProperty(value = "项目ID")

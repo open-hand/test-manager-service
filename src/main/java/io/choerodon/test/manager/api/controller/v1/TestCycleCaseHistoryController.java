@@ -47,7 +47,7 @@ public class TestCycleCaseHistoryController {
                                                               @SortDefault(value = "id", direction = Sort.Direction.DESC)
                                                                       PageRequest pageRequest,
                                                               @PathVariable(name = "cycleCaseId")
-                                                              @Encrypt(EncryptKeyConstants.TEST_CYCLE_CASE_HISTORY) Long cycleCaseId) {
+                                                              @Encrypt(/**EncryptKeyConstants.TEST_CYCLE_CASE**/) Long cycleCaseId) {
 
         return Optional.ofNullable(testCycleCaseHistoryService.query(cycleCaseId, pageRequest))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))

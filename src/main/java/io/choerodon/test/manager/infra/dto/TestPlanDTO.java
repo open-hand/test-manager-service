@@ -22,7 +22,7 @@ import org.hzero.starter.keyencrypt.core.Encrypt;
 public class TestPlanDTO extends AuditDomain {
     @Id
     @GeneratedValue
-    @Encrypt(EncryptKeyConstants.TEST_PLAN)
+    @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/)
     private Long planId;
 
     @ApiModelProperty(value = "计划名称")

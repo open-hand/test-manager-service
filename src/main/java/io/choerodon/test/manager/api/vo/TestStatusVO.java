@@ -10,7 +10,7 @@ import org.hzero.starter.keyencrypt.core.Encrypt;
 public class TestStatusVO {
 
     @ApiModelProperty(value = "主键状态ID")
-    @Encrypt(EncryptKeyConstants.TEST_STATUS)
+    @Encrypt(/**EncryptKeyConstants.TEST_STATUS**/)
     private Long statusId;
 
     @ApiModelProperty(value = "状态名")

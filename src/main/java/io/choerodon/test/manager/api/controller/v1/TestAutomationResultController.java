@@ -35,7 +35,8 @@ public class TestAutomationResultController {
     @ApiOperation("查询")
     @GetMapping("/query/{id}")
     public ResponseEntity<Map<String, Object>> query(@PathVariable("project_id") Long projectId,
-                                                     @PathVariable("id") @Encrypt(EncryptKeyConstants.TEST_AUTOMATION_RESULT) Long id) {
+                                                     @PathVariable("id")
+                                                     @Encrypt(/**EncryptKeyConstants.TEST_AUTOMATION_RESULT**/) Long id) {
         Map<String, Object> result = new HashMap<>(2);
         String framework = testAutomationHistoryService.queryFrameworkByResultId(projectId, id);
         TestAutomationResultVO testAutomationResultVO = new TestAutomationResultVO();

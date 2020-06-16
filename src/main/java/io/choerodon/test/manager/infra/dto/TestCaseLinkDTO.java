@@ -21,7 +21,7 @@ import org.hzero.starter.keyencrypt.core.Encrypt;
 public class TestCaseLinkDTO extends AuditDomain {
     @Id
     @GeneratedValue
-    @Encrypt(EncryptKeyConstants.TEST_CASE_LINK)
+    @Encrypt(/**EncryptKeyConstants.TEST_CASE_LINK**/)
     private Long linkId;
     private Long linkCaseId;
     private Long issueId;

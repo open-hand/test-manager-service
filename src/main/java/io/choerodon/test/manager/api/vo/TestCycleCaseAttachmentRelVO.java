@@ -11,7 +11,7 @@ import org.hzero.starter.keyencrypt.core.Encrypt;
 public class TestCycleCaseAttachmentRelVO {
 
     @ApiModelProperty(value = "主键id")
-    @Encrypt(EncryptKeyConstants.TEST_CYCLE_CASE_ATTACH_REL)
+    @Encrypt(/**EncryptKeyConstants.TEST_CYCLE_CASE_ATTACH_REL**/)
     private Long id;
 
     @ApiModelProperty(value = "附件类型：测试执行附件，步骤附件")

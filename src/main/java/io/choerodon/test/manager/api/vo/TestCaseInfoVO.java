@@ -17,7 +17,7 @@ import org.hzero.starter.keyencrypt.core.Encrypt;
 public class TestCaseInfoVO {
 
     @ApiModelProperty(value = "用例Id")
-    @Encrypt(EncryptKeyConstants.TEST_CASE)
+    @Encrypt(/**EncryptKeyConstants.TEST_CASE**/)
     private Long caseId;
 
     @ApiModelProperty(value = "用例编号")

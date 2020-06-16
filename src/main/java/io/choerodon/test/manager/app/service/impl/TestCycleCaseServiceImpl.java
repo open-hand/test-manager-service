@@ -400,7 +400,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
     @Override
-    public Page<TestFolderCycleCaseVO> listAllCaseByCycleId(Long projectId, Long planId, Long cycleId, PageRequest pageRequest, SearchDTO searchDTO) {
+    public Page<TestFolderCycleCaseVO> listAllCaseByCycleId(Long projectId, Long planId, Long cycleId, PageRequest pageRequest, CaseSearchVO caseSearchVO) {
         // 查询文件夹下所有的目录
         Set<Long> cycleIds = new HashSet<>();
         if (!ObjectUtils.isEmpty(cycleId)) {
@@ -408,7 +408,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         }
         // 查询文件夹下的的用例
         Page<TestCycleCaseDTO> caseDTOPageInfo = PageHelper.doPageAndSort(pageRequest,() ->
-                testCycleCaseMapper.queryFolderCycleCase(planId, cycleIds, searchDTO));
+                testCycleCaseMapper.queryFolderCycleCase(planId, cycleIds, caseSearchVO));
         Map<Long, UserMessageDTO> userMap = testCaseAssembler.getUserMap(null, caseDTOPageInfo.getContent());
         List<TestFolderCycleCaseVO> testFolderCycleCaseVOS = caseDTOPageInfo.getContent().stream().map(v -> testCaseAssembler.setAssianUser(v,userMap)).collect(Collectors.toList());
         if (CollectionUtils.isEmpty(testFolderCycleCaseVOS)) {
@@ -463,7 +463,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
     @Override
-    public TestCycleCaseInfoVO queryCycleCaseInfo(Long executeId, Long projectId, Long planId, Long cycleId, SearchDTO searchDTO) {
+    public TestCycleCaseInfoVO queryCycleCaseInfo(Long executeId, Long projectId, Long planId, Long cycleId, CaseSearchVO caseSearchVO) {
         TestCycleCaseDTO cycleCaseDTO = testCycleCaseMapper.selectByPrimaryKey(executeId);
         if (ObjectUtils.isEmpty(cycleCaseDTO)) {
             throw new CommonException("error.cycle.case.not.exist");
@@ -474,7 +474,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             cycleIds.addAll(queryCycleIds(cycleId, planId));
         }
         // 查询循环下的用例
-        List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.queryFolderCycleCase(planId, cycleIds, searchDTO);
+        List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.queryFolderCycleCase(planId, cycleIds, caseSearchVO);
         int index = 0;
         TestCycleCaseDTO testCycleCaseDTO = null;
         for (TestCycleCaseDTO cyclecase : testCycleCaseDTOS) {
@@ -489,12 +489,12 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         }
         TestCycleCaseInfoVO testCycleCaseInfoVO = modelMapper.map(testCycleCaseDTO, TestCycleCaseInfoVO.class);
         testCycleCaseInfoVO.setExecutorDate(testCycleCaseDTO.getLastUpdateDate());
-        Map<String, Object> searchArgs = searchDTO.getSearchArgs();
-        Object previousExecuteId = searchArgs.get("previousExecuteId");
-        Object nextExecuteId = searchArgs.get("nextExecuteId");
+        CaseSearchVO.SearchArgs searchArgs = caseSearchVO.getSearchArgs();
+        Long previousExecuteId = searchArgs.getPreviousExecuteId();
+        Long nextExecuteId = searchArgs.getNextExecuteId();
         if (!ObjectUtils.isEmpty(previousExecuteId) || !ObjectUtils.isEmpty(nextExecuteId)) {
-            testCycleCaseInfoVO.setPreviousExecuteId(ObjectUtils.isEmpty(previousExecuteId) ? null : Long.valueOf(String.valueOf(previousExecuteId)));
-            testCycleCaseInfoVO.setNextExecuteId(ObjectUtils.isEmpty(nextExecuteId) ? null : Long.valueOf(String.valueOf(nextExecuteId)));
+            testCycleCaseInfoVO.setPreviousExecuteId(ObjectUtils.isEmpty(previousExecuteId) ? null : previousExecuteId);
+            testCycleCaseInfoVO.setNextExecuteId(ObjectUtils.isEmpty(nextExecuteId) ? null : nextExecuteId);
         } else {
             previousNextId(index, testCycleCaseDTOS, testCycleCaseInfoVO);
         }

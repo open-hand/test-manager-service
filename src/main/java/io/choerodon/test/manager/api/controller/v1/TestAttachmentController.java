@@ -37,9 +37,9 @@ public class TestAttachmentController {
     public ResponseEntity<List<TestCycleCaseAttachmentRelVO>> uploadFile(HttpServletRequest request,
                                                                          @PathVariable(name = "project_id") Long projectId,
                                                                          @Param("attachmentType") String attachmentType,
-                                                                         @Param("attachmentLinkId")Long attachmentLinkId,
+                                                                         @Param("attachmentLinkId") @Encrypt Long attachmentLinkId,
                                                                          @Param("comment") String comment) {
-        return Optional.ofNullable(testCycleCaseAttachmentRelService.uploadMultipartFile(projectId,request,attachmentType,attachmentLinkId,comment))
+        return Optional.ofNullable(testCycleCaseAttachmentRelService.uploadMultipartFile(projectId, request, attachmentType, attachmentLinkId, comment))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.upload.file"));
 
@@ -48,10 +48,11 @@ public class TestAttachmentController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("删除附件")
     @DeleteMapping("/{attachId}")
-    public ResponseEntity removeAttachment(@PathVariable(name = "attachId") @Encrypt(EncryptKeyConstants.TEST_CYCLE_CASE_ATTACH_REL) Long attachId,
+    public ResponseEntity removeAttachment(@PathVariable(name = "attachId")
+                                           @Encrypt(/**EncryptKeyConstants.TEST_CYCLE_CASE_ATTACH_REL**/) Long attachId,
                                            @PathVariable(name = "project_id") Long projectId) {
-        testCycleCaseAttachmentRelService.deleteAttachmentRel(projectId,attachId);
+        testCycleCaseAttachmentRelService.deleteAttachmentRel(projectId, attachId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-    
+
 }

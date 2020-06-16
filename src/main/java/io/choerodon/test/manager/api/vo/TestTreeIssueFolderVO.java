@@ -1,5 +1,8 @@
 package io.choerodon.test.manager.api.vo;
 
+import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
+import org.hzero.starter.keyencrypt.core.Encrypt;
+
 import java.util.List;
 
 /**
@@ -8,6 +11,7 @@ import java.util.List;
  * @description:
  */
 public class TestTreeIssueFolderVO {
+    @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/)
     private List<Long> rootIds;
     private List<TestTreeFolderVO> treeFolder;
 

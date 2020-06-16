@@ -57,7 +57,7 @@ public class TestFileLoadHistoryController {
     @ApiOperation("将指定导入记录置为取消")
     @PutMapping("/cancel")
     public ResponseEntity cancelUpLoad(@PathVariable("project_id") Long projectId,
-                                       @Encrypt(EncryptKeyConstants.TEST_FILELOAD_HISTORY)
+                                       @Encrypt(/**EncryptKeyConstants.TEST_FILELOAD_HISTORY**/)
                                        @RequestParam Long historyId) {
         excelImportService.cancelFileUpload(historyId);
         return new ResponseEntity(HttpStatus.OK);

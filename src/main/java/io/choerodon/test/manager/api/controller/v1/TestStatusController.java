@@ -53,7 +53,8 @@ public class TestStatusController {
     @ApiOperation("删除状态")
     @DeleteMapping("/{statusId}")
     public ResponseEntity<Boolean> delete(@PathVariable(name = "project_id") Long projectId,
-                                          @PathVariable(name = "statusId") @Encrypt(EncryptKeyConstants.TEST_STATUS) Long statusId) {
+                                          @PathVariable(name = "statusId")
+                                          @Encrypt(/**EncryptKeyConstants.TEST_STATUS**/) Long statusId) {
         TestStatusVO dto = new TestStatusVO();
         dto.setStatusId(statusId);
         return Optional.ofNullable(testStatusService.delete(dto))

@@ -41,7 +41,7 @@ public class IssueLinkVO {
     private String typeCode;
 
     @ApiModelProperty(value = "问题链接id")
-    @Encrypt(EncryptKeyConstants.TEST_CASE_LINK)
+    @Encrypt(/**EncryptKeyConstants.TEST_CASE_LINK**/)
     private Long linkId;
 
     @ApiModelProperty(value = "经办人id")

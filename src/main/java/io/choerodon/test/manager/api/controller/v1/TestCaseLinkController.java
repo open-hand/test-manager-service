@@ -31,7 +31,7 @@ public class TestCaseLinkController {
     @ApiOperation("创建问题链接")
     @PostMapping
     public ResponseEntity<List<TestCaseLinkDTO>> create(@PathVariable(name = "project_id") Long projectId,
-                                                        @RequestParam("case_id") Long caseId,
+                                                        @RequestParam("case_id") @Encrypt Long caseId,
                                                         @RequestBody List<Long> issueIds) {
         return new ResponseEntity<>(testCaseLinkService.create(projectId, caseId, issueIds), HttpStatus.NO_CONTENT);
     }
@@ -42,7 +42,7 @@ public class TestCaseLinkController {
     @DeleteMapping
     public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
                                  @RequestParam
-                                 @Encrypt(EncryptKeyConstants.TEST_CASE_LINK) Long linkId) {
+                                 @Encrypt(/**EncryptKeyConstants.TEST_CASE_LINK**/) Long linkId) {
         testCaseLinkService.delete(projectId, linkId);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
@@ -51,8 +51,8 @@ public class TestCaseLinkController {
     @ApiOperation("查询测试用例关联的问题链接")
     @GetMapping("/list_issue_info")
     public ResponseEntity<List<IssueLinkVO>> queryLinkIssues(@PathVariable(name = "project_id") Long projectId,
-                                                             @RequestParam(name = "case_id") Long caseId) {
-
+                                                             @RequestParam(name = "case_id")
+                                                             @Encrypt(/**EncryptKeyConstants.TEST_CASE**/) Long caseId) {
         return new ResponseEntity<>(testCaseLinkService.queryLinkIssues(projectId, caseId), HttpStatus.OK);
     }
 }

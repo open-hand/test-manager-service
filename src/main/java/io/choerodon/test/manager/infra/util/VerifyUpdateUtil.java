@@ -13,6 +13,7 @@ import com.alibaba.fastjson.JSONObject;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.infra.annotation.Update;
 import org.hzero.starter.keyencrypt.core.Encrypt;
+import org.hzero.starter.keyencrypt.core.EncryptProperties;
 import org.hzero.starter.keyencrypt.core.EncryptionService;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +23,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class VerifyUpdateUtil {
 
-    private EncryptionService encryptionService = new EncryptionService();
+    private EncryptionService encryptionService;
+
+    public VerifyUpdateUtil(EncryptProperties encryptProperties) {
+        encryptionService = new EncryptionService(encryptProperties);
+    }
 
     /**
      * 根据前端数据进行部分更新

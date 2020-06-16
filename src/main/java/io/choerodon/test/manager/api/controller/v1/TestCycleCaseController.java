@@ -1,7 +1,6 @@
 package io.choerodon.test.manager.api.controller.v1;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,11 +18,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import io.choerodon.test.manager.api.vo.agile.SearchDTO;
 import io.choerodon.swagger.annotation.Permission;
 
 import io.choerodon.core.exception.CommonException;
-import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.app.service.ExcelServiceHandler;
 import io.choerodon.test.manager.app.service.TestCycleCaseService;
@@ -43,7 +40,7 @@ public class TestCycleCaseController {
     @DeleteMapping
     public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
                                  @RequestParam
-                                 @Encrypt(EncryptKeyConstants.TEST_CYCLE_CASE) Long cycleCaseId) {
+                                 @Encrypt(/**EncryptKeyConstants.TEST_CYCLE_CASE**/) Long cycleCaseId) {
         testCycleCaseService.delete(cycleCaseId, projectId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -64,7 +61,7 @@ public class TestCycleCaseController {
     @GetMapping("/download/excel/{cycleId}")
     public ResponseEntity downLoad(@PathVariable(name = "project_id") Long projectId,
                                    @PathVariable(name = "cycleId")
-                                   @Encrypt(EncryptKeyConstants.TEST_CYCLE) Long cycleId,
+                                   @Encrypt(/**EncryptKeyConstants.TEST_CYCLE**/) Long cycleId,
                                    HttpServletRequest request,
                                    HttpServletResponse response,
                                    @RequestParam Long organizationId) {
@@ -77,13 +74,13 @@ public class TestCycleCaseController {
     @PostMapping("/{executeId}/info")
     public ResponseEntity<TestCycleCaseInfoVO> queryCaseInfo(@PathVariable("project_id") Long projectId,
                                                              @RequestParam(name = "cycle_id")
-                                                             @Encrypt(EncryptKeyConstants.TEST_CYCLE) Long cycleId,
+                                                             @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/) Long cycleId,
                                                              @RequestParam(name = "plan_id")
-                                                             @Encrypt(EncryptKeyConstants.TEST_PLAN) Long planId,
-                                                             @RequestBody(required = false) SearchDTO searchDTO,
+                                                             @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/) Long planId,
+                                                             @RequestBody(required = false) CaseSearchVO caseSearchVO,
                                                              @PathVariable(name = "executeId")
-                                                             @Encrypt(EncryptKeyConstants.TEST_CYCLE_CASE) Long executeId) {
-        return new ResponseEntity<>(testCycleCaseService.queryCycleCaseInfo(executeId, projectId, planId, cycleId, searchDTO), HttpStatus.OK);
+                                                             @Encrypt(/**EncryptKeyConstants.TEST_CYCLE_CASE**/) Long executeId) {
+        return new ResponseEntity<>(testCycleCaseService.queryCycleCaseInfo(executeId, projectId, planId, cycleId, caseSearchVO), HttpStatus.OK);
     }
 
     @Permission(level = ResourceLevel.ORGANIZATION)
@@ -92,9 +89,10 @@ public class TestCycleCaseController {
     public ResponseEntity<ExecutionStatusVO> queryExecutionStatus(@PathVariable(name = "project_id") Long projectId,
                                                                   @ApiParam(value = "plan_id", required = false)
                                                                   @RequestParam(name = "plan_id")
-                                                                  @Encrypt(EncryptKeyConstants.TEST_PLAN) Long planId,
+                                                                  @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/) Long planId,
                                                                   @ApiParam(value = "cycle_id", required = false)
-                                                                  @RequestParam(name = "cycle_id") Long cycleId) {
+                                                                  @RequestParam(name = "cycle_id")
+                                                                  @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/) Long cycleId) {
         return Optional.ofNullable(testCycleCaseService.queryExecuteStatus(projectId, planId, cycleId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.plan.status.query"));
@@ -126,12 +124,13 @@ public class TestCycleCaseController {
     @ApiOperation("查询当前文件夹下面所有子文件夹中用例")
     @PostMapping("/query/caseList")
     public ResponseEntity<Page<TestFolderCycleCaseVO>> listCaseByCycleId(@PathVariable("project_id") Long projectId,
-                                                                         @RequestParam(name = "cycle_id") Long cycleId,
+                                                                         @RequestParam(name = "cycle_id")
+                                                                         @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/) Long cycleId,
                                                                          @RequestParam(name = "plan_id")
-                                                                         @Encrypt(EncryptKeyConstants.TEST_PLAN) Long planId,
+                                                                         @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/) Long planId,
                                                                          @SortDefault PageRequest pageRequest,
-                                                                         @RequestBody(required = false) SearchDTO searchDTO) {
-        return new ResponseEntity<>(testCycleCaseService.listAllCaseByCycleId(projectId, planId, cycleId, pageRequest, searchDTO), HttpStatus.OK);
+                                                                         @RequestBody(required = false) CaseSearchVO caseSearchVO) {
+        return new ResponseEntity<>(testCycleCaseService.listAllCaseByCycleId(projectId, planId, cycleId, pageRequest, caseSearchVO), HttpStatus.OK);
     }
 
     @Permission(level = ResourceLevel.ORGANIZATION)
@@ -139,7 +138,8 @@ public class TestCycleCaseController {
     @PostMapping("/batchAssign/cycleCase")
     public ResponseEntity batchAssignCase(@PathVariable("project_id") Long projectId,
                                           @RequestParam(name = "assign_user_id") Long assignUserId,
-                                          @RequestBody(required = true) List<Long> cycleCaseIds) {
+                                          @RequestBody
+                                          @Encrypt(/**EncryptKeyConstants.TEST_CYCLE_CASE**/) List<Long> cycleCaseIds) {
         testCycleCaseService.batchAssignCycleCase(projectId, assignUserId, cycleCaseIds);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -149,7 +149,7 @@ public class TestCycleCaseController {
     @GetMapping("/case_step/{execute_id}")
     public ResponseEntity<TestCycleCaseUpdateVO> queryCaseAndStep(@PathVariable(name = "project_id") Long projectId,
                                                                   @PathVariable(name = "execute_id")
-                                                                  @Encrypt(EncryptKeyConstants.TEST_CYCLE_CASE) Long executeId) {
+                                                                  @Encrypt(/**EncryptKeyConstants.TEST_CYCLE_CASE**/) Long executeId) {
         return Optional.ofNullable(testCycleCaseService.queryCaseAndStep(executeId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.testCycleCase.query.executeId"));
@@ -160,7 +160,7 @@ public class TestCycleCaseController {
     @GetMapping("/{execute_id}/compared")
     public ResponseEntity<CaseChangeVO> selectUpdateCompare(@PathVariable("project_id") Long projectId,
                                                             @PathVariable(name = "execute_id")
-                                                            @Encrypt(EncryptKeyConstants.TEST_CYCLE_CASE) Long executeId) {
+                                                            @Encrypt(/**EncryptKeyConstants.TEST_CYCLE_CASE**/) Long executeId) {
 
         return new ResponseEntity<>(testCycleCaseService.selectUpdateCompare(projectId, executeId), HttpStatus.OK);
     }
@@ -179,7 +179,7 @@ public class TestCycleCaseController {
     @PostMapping("/{execute_id}/ignore/update")
     public ResponseEntity ignoreUpdate(@PathVariable("project_id") Long projectId,
                                        @PathVariable("execute_id")
-                                       @Encrypt(EncryptKeyConstants.TEST_CYCLE_CASE) Long executedId) {
+                                       @Encrypt(/**EncryptKeyConstants.TEST_CYCLE_CASE**/) Long executedId) {
         testCycleCaseService.ignoreUpdate(projectId, executedId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -188,11 +188,12 @@ public class TestCycleCaseController {
     @ApiOperation("导入用例")
     @PostMapping("/import")
     public ResponseEntity importCase(@PathVariable("project_id") Long projectId,
-                                     @RequestParam("cycle_id") Long cycleId,
+                                     @RequestParam("cycle_id")
+                                     @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/) Long cycleId,
                                      @RequestParam("plan_id")
-                                     @Encrypt(EncryptKeyConstants.TEST_PLAN) Long planId,
-                                     @RequestBody Map<Long, CaseSelectVO> map) {
-        testCycleCaseService.importCase(projectId, cycleId, map, planId);
+                                     @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/) Long planId,
+                                     @RequestBody TestPlanVO testPlanVO) {
+        testCycleCaseService.importCase(projectId, cycleId, testPlanVO.getCaseSelected(), planId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

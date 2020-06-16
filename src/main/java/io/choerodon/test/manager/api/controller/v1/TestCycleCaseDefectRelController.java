@@ -59,7 +59,7 @@ public class TestCycleCaseDefectRelController {
     @DeleteMapping("/delete/{defectId}")
     public ResponseEntity removeAttachment(@PathVariable(name = "project_id") Long projectId,
                                            @PathVariable(name = "defectId")
-                                           @Encrypt(EncryptKeyConstants.TEST_CYCLE_CASE_DEFECT_REL) Long defectId,
+                                           @Encrypt(/**EncryptKeyConstants.TEST_CYCLE_CASE_DEFECT_REL**/) Long defectId,
                                            @RequestParam Long organizationId) {
         TestCycleCaseDefectRelVO testCycleCaseDefectRelVO = new TestCycleCaseDefectRelVO();
         testCycleCaseDefectRelVO.setId(defectId);

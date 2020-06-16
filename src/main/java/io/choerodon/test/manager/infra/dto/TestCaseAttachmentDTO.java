@@ -17,7 +17,7 @@ import org.hzero.starter.keyencrypt.core.Encrypt;
 public class TestCaseAttachmentDTO extends AuditDomain {
     @Id
     @GeneratedValue
-    @Encrypt(EncryptKeyConstants.TEST_CASE_ATTACHMENT)
+    @Encrypt(/**EncryptKeyConstants.TEST_CASE_ATTACHMENT**/)
     private Long attachmentId;
     private Long caseId;
     private String url;

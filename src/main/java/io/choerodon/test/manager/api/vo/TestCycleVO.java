@@ -14,10 +14,11 @@ import java.util.List;
 public class TestCycleVO {
 
     @ApiModelProperty(value = "主键，循环ID")
-    @Encrypt(EncryptKeyConstants.TEST_CYCLE)
+    @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/)
     private Long cycleId;
 
     @ApiModelProperty(value = "父循环ID")
+    @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/)
     private Long parentCycleId;
 
     @ApiModelProperty(value = "循环名")
@@ -78,6 +79,7 @@ public class TestCycleVO {
     private Long projectId;
 
     @ApiModelProperty(value = "计划Id")
+    @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/)
     private Long planId;
 
     public Long getCycleId() {

@@ -31,7 +31,7 @@ public class TestAutomationHistoryVO extends AuditDomain {
     @Id
     @GeneratedValue
     @ApiModelProperty(value = "主键id")
-    @Encrypt(EncryptKeyConstants.TEST_AUTOMATION_HISTORY)
+    @Encrypt(/**EncryptKeyConstants.TEST_AUTOMATION_HISTORY**/)
     private Long id;
 
     @ApiModelProperty(value = "测试框架")

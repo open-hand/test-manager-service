@@ -11,7 +11,7 @@ import java.util.List;
  * @description:
  */
 public class TestCycleCaseUpdateVO {
-    @Encrypt(EncryptKeyConstants.TEST_CYCLE_CASE)
+    @Encrypt(/**EncryptKeyConstants.TEST_CYCLE_CASE**/)
     private Long executeId;
 
     private String summary;
