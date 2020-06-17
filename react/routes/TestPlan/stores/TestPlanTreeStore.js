@@ -67,7 +67,7 @@ class TestPlanTreeStore {
       return [id, ''];
     } else if (id.split('%').length === 2) {
       const [planId, folderId] = id.split('%');
-      return [Number(planId), Number(folderId)];
+      return [planId, folderId];
     } else {
       return [id, ''];
     }
@@ -154,7 +154,7 @@ class TestPlanTreeStore {
     // 选中之前选中的
     let selectedId = this.currentCycle ? this.currentCycle.id : undefined;
     if (!this.currentCycle.id && rootIds && rootIds.length > 0) {
-      selectedId = defaultSelectId ? Number(defaultSelectId) : firstRoot.id;
+      selectedId = defaultSelectId || firstRoot.id;
     }
     this.treeData = {
       rootIds: rootIds || [],

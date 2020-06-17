@@ -160,7 +160,7 @@ class ExecuteDetailStore {
   }
 
   getStatusById = (status) => {
-    const statusId = Number(status);
+    const statusId = status;
     return {
       statusName: _.find(this.statusList, { statusId })
         && _.find(this.statusList, { statusId }).statusName,
