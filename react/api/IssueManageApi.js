@@ -151,7 +151,7 @@ export function editFolder(data) {
  * @returns
  */
 export function moveFolder(data, targetFolderId) {
-  return request.put(`/test/v1/projects/${getProjectId()}/issueFolder/move${targetFolderId ? `?targetFolderId=${targetFolderId}` : ''}`, data);
+  return request.put(`/test/v1/projects/${getProjectId()}/issueFolder/move${targetFolderId && Number(targetFolderId) !== 0 ? `?targetFolderId=${targetFolderId}` : ''}`, data);
 }
 /**
  *删除目录
