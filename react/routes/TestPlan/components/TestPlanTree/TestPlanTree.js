@@ -90,7 +90,7 @@ class TestPlanTree extends Component {
     const [planId, folderId] = testPlanStore.getId(parentId);
     const data = {
       planId,
-      parentCycleId: isPlan ? 0 : folderId,
+      parentCycleId: isPlan ? null : folderId,
       cycleName: value,
     };
     const result = await handleRequestFailed(addFolder(data));
