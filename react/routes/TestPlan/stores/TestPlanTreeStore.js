@@ -139,6 +139,8 @@ class TestPlanTreeStore {
     this.setTreeLoading(true);
     const treeData = await getPlanTree(this.testPlanStatus);
     this.setTreeData(treeData, defaultSelectId);
+    // console.log('loadIssueTree', treeData, defaultSelectId);
+
     this.setTreeLoading(false);
   }
 
@@ -162,6 +164,7 @@ class TestPlanTreeStore {
         const {
           id, planId, issueFolderVO, expanded, children, ...other
         } = folder;
+        
         return {
           id: planId ? `${planId}%${id}` : id,
           children: children ? children.map(child => `${planId || id}%${child}`) : [],

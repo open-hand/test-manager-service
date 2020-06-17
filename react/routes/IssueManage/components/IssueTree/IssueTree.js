@@ -19,13 +19,13 @@ class IssueTree extends Component {
     IssueTreeStore.setTreeRef(this.treeRef);
   }
 
-  handleCreate = async (value, parentId) => {    
+  handleCreate = async (value, parentId) => {
     const data = {
-      parentId,
+      [parentId ? 'parentId' : 'rootNode']: parentId || true, // 解决主键为0 无法解密
       name: value,
       type: 'cycle',
     };
-    const result = await handleRequestFailed(addFolder(data));    
+    const result = await handleRequestFailed(addFolder(data));
     if (parentId === 0) {
       IssueTreeStore.addRootItem(result.folderId);
     }
@@ -54,11 +54,11 @@ class IssueTree extends Component {
         name: result.name,
         objectVersionNumber: result.objectVersionNumber,
       },
-    };    
+    };
   }
 
   handleDelete = async (item) => {
-    await handleRequestFailed(deleteFolder(item.id));    
+    await handleRequestFailed(deleteFolder(item.id));
     // 只移除跟节点，作用是删除目录后可以正确判断是不是没目录了，来显示空插画
     IssueTreeStore.removeRootItem(item.id);
   }
@@ -73,8 +73,8 @@ class IssueTree extends Component {
       folderId: sourceItem.id,
       lastRank: lastId ? treeData.items[lastId].data.rank : null,
       nextRank: nextId ? treeData.items[nextId].data.rank : null,
-    };    
-    const rank = await handleRequestFailed(moveFolder(data, destination.parentId));    
+    };
+    const rank = await handleRequestFailed(moveFolder(data, destination.parentId));
     return {
       data: {
         ...sourceItem.data,
@@ -82,9 +82,9 @@ class IssueTree extends Component {
         parentId: destination.parentId,
         objectVersionNumber: sourceItem.data.objectVersionNumber + 1,
       },
-    };   
+    };
   }
-  
+
 
   setSelected = (item) => {
     IssueTreeStore.setCurrentFolder(item);
@@ -97,7 +97,7 @@ class IssueTree extends Component {
     IssueStore.loadIssues();
   }
 
-  handleUpdateItem=(item) => {
+  handleUpdateItem = (item) => {
     IssueTreeStore.setCurrentFolder(item);
   }
 
@@ -110,7 +110,7 @@ class IssueTree extends Component {
       <div className="c7ntest-IssueTree">
         <Loading loading={loading} />
         <Tree
-          ref={this.treeRef}          
+          ref={this.treeRef}
           data={treeData}
           onCreate={this.handleCreate}
           onEdit={this.handleEdit}
@@ -124,7 +124,7 @@ class IssueTree extends Component {
             // 最多8层
             enableAddFolder: item => item.path.length < 9 && !item.hasCase,
           }}
-          getDeleteTitle={item => `确认删除“${item.data.name}”目录？|删除后目录下的所有用例也将被删除`}        
+          getDeleteTitle={item => `确认删除“${item.data.name}”目录？|删除后目录下的所有用例也将被删除`}
         />
       </div>
     );

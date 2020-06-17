@@ -100,6 +100,7 @@ function PureTree({
     const newChild = {
       id: 'new',
       parentId: 0, // 放入父id，方便创建时读取
+      rootNode: true,
       children: [],
       hasChildren: false,
       isExpanded: false,
