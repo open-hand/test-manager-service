@@ -49,7 +49,7 @@ function ImportIssue(props) {
       },
       {
         name: 'folderId',
-        type: 'number',
+        type: 'string',
         bind: 'folder.folderId',
       },
     ],
