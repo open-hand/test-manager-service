@@ -37,7 +37,7 @@ function CreateIssueDataSet(intlPrefix, intl) {
       },
       {
         name: 'folderId',
-        type: 'number',
+        type: 'string',
         bind: 'folder.folderId',
       },
       {
