@@ -46,7 +46,7 @@ function initLoad(isForbidRoot, defaultValue, props, dataSet) {
  * @param {*} setData  设置当前选中项数据
  * @param {*} isForbidRoot  是否禁止根节点可选 默认禁止
  */
-const treeDataSet = (parentDataSet, name, defaultValue, setData = false, isForbidRoot = true, selectRef) => new DataSet({
+const treeDataSet = (parentDataSet, name, defaultValue, setData = false, isForbidRoot = true, selectRef, rootIdsRef) => new DataSet({
   primaryKey: 'folderId',
   paging: false,
   autoQuery: true,
@@ -56,25 +56,27 @@ const treeDataSet = (parentDataSet, name, defaultValue, setData = false, isForbi
   // idField: 'folderId',
   fields: [
     { name: 'fileName', type: 'string' },
-    { name: 'folderId', type: 'number' },
+    { name: 'folderId', type: 'string' },
     { name: 'expanded', type: 'boolean' },
-    { name: 'parentId', type: 'number' },
+    { name: 'parentId', type: 'string' },
     { name: 'versionId', type: 'number' },
   ],
-
+  
   transport: {
     read: () => ({
       url: `/test/v1/projects/${getProjectId()}/issueFolder/query`,
       method: 'get',
       transformResponse: (res) => {
-        const resObj = JSON.parse(res);
+        const resObj = JSON.parse(res);          
+        // eslint-disable-next-line no-param-reassign
+        rootIdsRef.current = resObj.rootIds;        
         const newArr = resObj.treeFolder.map(item => ({
           expanded: item.expanded,
           children: item.children,
           ...item.issueFolderVO,
           fileName: item.issueFolderVO.name,
         }));
-        // console.log('read', newArr); 
+          // console.log('read', newArr); 
         return newArr;
       },
     }),

@@ -35,9 +35,11 @@ function SelectTree(props) {
     name, renderSelect, defaultValue, parentDataSet, data, onChange, isForbidRoot = true, ...restProps
   } = props;
   const selectRef = useRef();
+  const rootIdsRef = useRef([]);
   // const [searchValue, setSearchValue] = useState('');// 搜索框内值  
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const dataSet = useMemo(() => treeDataSet(parentDataSet, name, defaultValue, onChange, isForbidRoot, selectRef), []);
+  const dataSet = useMemo(() => treeDataSet(parentDataSet, name, defaultValue, onChange, isForbidRoot, selectRef, rootIdsRef), []);
+  const map = useMemo(() => new Map(dataSet.map(record => [record.get('folderId'), record])), [dataSet.length]);
   const [treeState, dispatch] = useReducer((state, action) => {
     const { expandedKeys = [], searchValue } = action;
     switch (action.type) {
@@ -155,27 +157,6 @@ function SelectTree(props) {
     onFilterNode(value);
   }, 450);
 
-  /**
-   * 得到树节点 
-   * @param {*} parentId 
-   */
-  function getChildrenTreeNode(parentId) {
-    const children = dataSet.filter(record => record.get('parentId') === parentId)
-      .map((record) => {
-        let tempArr = [];
-        if (record.get('children').length > 0) {
-          tempArr = getChildrenTreeNode(record.get('folderId'));
-          return (
-            <TreeNode selectable={isForbidRoot ? record.get('children').length === 0 : true} title={renderNode(record)} key={record.id}>
-              {tempArr}
-            </TreeNode>
-          );
-        } else {
-          return <TreeNode title={renderNode(record)} key={record.id} />;
-        }
-      });
-    return children;
-  }
   const handleSelectNode = (selectedKeys, { selected }) => {
     const record = dataSet.findRecordById(Number(selectedKeys[0]));
     if (selected) {
@@ -203,22 +184,15 @@ function SelectTree(props) {
   /**
    * 渲染树节点
    */
-  function renderTreeNode() {
-    const treeArr = dataSet.map((record) => {
-      const parentId = record.get('parentId');
-      if (!parentId) {
-        let treeNodes = null;
-        treeNodes = getChildrenTreeNode(record.get('folderId'));
-        return (
-          <TreeNode selectable={isForbidRoot ? record.get('children').length === 0 : true} title={renderNode(record)} key={record.id}>
-            {treeNodes}
-          </TreeNode>
-        );
-      }
-      return -1;
-    }).filter(i => i !== -1);
-    // return <div>11</div>;
-    return treeArr;
+  function renderTreeNode(ids) {
+    return ids.map((folderId) => {
+      const record = map.get(folderId);
+      return (
+        <TreeNode selectable={isForbidRoot ? record.get('children').length === 0 : true} title={renderNode(record)} key={record.id}>
+          {renderTreeNode(record.get('children'))}
+        </TreeNode>
+      );
+    });    
   }
   /**
   * 渲染树
@@ -268,7 +242,7 @@ function SelectTree(props) {
           onSelect={handleSelectNode}
           className="test-select-tree-body"
         >
-          {renderTreeNode()}
+          {renderTreeNode(rootIdsRef.current)}
 
         </OldTree>
       ) : ''}
