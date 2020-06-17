@@ -20,6 +20,7 @@ import TestCaseDetail from '../components/TestCaseDetail';
 import openCreateFolder from '../components/CreateFolder';
 import './IssueManage.less';
 import IssueTreeStore from '../stores/IssueTreeStore';
+
 @injectIntl
 @observer
 export default class IssueManage extends Component {
@@ -36,7 +37,7 @@ export default class IssueManage extends Component {
     IssueStore.setParamIssueId(paramIssueId);
     if (paramName && paramIssueId) {
       IssueStore.setClickIssue({
-        caseId: Number(paramIssueId),
+        caseId: paramIssueId,
       });
     }
     // 当参数中有用例名时，在table的筛选框中加入
