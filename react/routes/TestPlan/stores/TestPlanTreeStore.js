@@ -63,10 +63,10 @@ class TestPlanTreeStore {
     if (!id) {
       return [id, ''];
     }
-    if (typeof id === 'number') {
+    if (id.split('%').length === 1) {
       return [id, ''];
-    } else if (id.split('-').length === 2) {
-      const [planId, folderId] = id.split('-');
+    } else if (id.split('%').length === 2) {
+      const [planId, folderId] = id.split('%');
       return [Number(planId), Number(folderId)];
     } else {
       return [id, ''];
@@ -74,9 +74,9 @@ class TestPlanTreeStore {
   }
 
   isPlan(id) {
-    if (typeof id === 'number') {
+    if (id.split('%').length === 1) {
       return true;
-    } else if (id && id.split('-').length === 2) {
+    } else if (id && id.split('%').length === 2) {
       return false;
     }
     return false;
@@ -163,10 +163,10 @@ class TestPlanTreeStore {
           id, planId, issueFolderVO, expanded, children, ...other
         } = folder;
         return {
-          id: planId ? `${planId}-${id}` : id,
-          children: children ? children.map(child => `${planId || id}-${child}`) : [],
+          id: planId ? `${planId}%${id}` : id,
+          children: children ? children.map(child => `${planId || id}%${child}`) : [],
           data: issueFolderVO,
-          isExpanded: (flattenedTreeIds && (flattenedTreeIds.includes(id) || flattenedTreeIds.includes(`${planId}-${id}`))) || expanded,
+          isExpanded: (flattenedTreeIds && (flattenedTreeIds.includes(id) || flattenedTreeIds.includes(`${planId}%${id}`))) || expanded,
           selected: folder.id === selectedId,
           ...other,
         };
