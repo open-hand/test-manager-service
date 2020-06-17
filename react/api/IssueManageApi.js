@@ -83,13 +83,13 @@ export function loadDatalogs(caseId) {
  */
 export function loadIssuesInLink(page = 0, size = 10, issueId, content) {
   if (issueId && content) {
-    return request.get(`/agile/v1/projects/${getProjectId()}/issues/agile/summary?issueId=${issueId}&self=false&content=${content}&page=${page}&size=${size}`);
+    return request.get(`/agile/v1/projects/${getProjectId()}/case/agile/summary?issueId=${issueId}&self=false&content=${content}&page=${page}&size=${size}`);
   } else if (issueId && !content) {
-    return request.get(`/agile/v1/projects/${getProjectId()}/issues/agile/summary?issueId=${issueId}&self=false&page=${page}&size=${size}`);
+    return request.get(`/agile/v1/projects/${getProjectId()}/case/agile/summary?issueId=${issueId}&self=false&page=${page}&size=${size}`);
   } else if (!issueId && content) {
-    return request.get(`/agile/v1/projects/${getProjectId()}/issues/agile/summary?self=false&content=${content}&page=${page}&size=${size}`);
+    return request.get(`/agile/v1/projects/${getProjectId()}/case/agile/summary?self=false&content=${content}&page=${page}&size=${size}`);
   } else {
-    return request.get(`/agile/v1/projects/${getProjectId()}/issues/agile/summary?self=false&page=${page}&size=${size}`);
+    return request.get(`/agile/v1/projects/${getProjectId()}/case/agile/summary?self=false&page=${page}&size=${size}`);
   }
 }
 /**
@@ -151,7 +151,7 @@ export function editFolder(data) {
  * @returns
  */
 export function moveFolder(data, targetFolderId) {
-  return request.put(`/test/v1/projects/${getProjectId()}/issueFolder/move?targetFolderId=${targetFolderId}`, data);
+  return request.put(`/test/v1/projects/${getProjectId()}/issueFolder/move${targetFolderId ? `?targetFolderId=${targetFolderId}` : ''}`, data);
 }
 /**
  *删除目录
