@@ -83,13 +83,13 @@ export function loadDatalogs(caseId) {
  */
 export function loadIssuesInLink(page = 0, size = 10, issueId, content) {
   if (issueId && content) {
-    return request.get(`/agile/v1/projects/${getProjectId()}/case/agile/summary?issueId=${issueId}&self=false&content=${content}&page=${page}&size=${size}`);
+    return request.get(`/test/v1/projects/${getProjectId()}/case/agile/summary?issueId=${issueId}&self=false&content=${content}&page=${page}&size=${size}`);
   } else if (issueId && !content) {
-    return request.get(`/agile/v1/projects/${getProjectId()}/case/agile/summary?issueId=${issueId}&self=false&page=${page}&size=${size}`);
+    return request.get(`/test/v1/projects/${getProjectId()}/case/agile/summary?issueId=${issueId}&self=false&page=${page}&size=${size}`);
   } else if (!issueId && content) {
-    return request.get(`/agile/v1/projects/${getProjectId()}/case/agile/summary?self=false&content=${content}&page=${page}&size=${size}`);
+    return request.get(`/test/v1/projects/${getProjectId()}/case/agile/summary?self=false&content=${content}&page=${page}&size=${size}`);
   } else {
-    return request.get(`/agile/v1/projects/${getProjectId()}/case/agile/summary?self=false&page=${page}&size=${size}`);
+    return request.get(`/test/v1/projects/${getProjectId()}/case/agile/summary?self=false&page=${page}&size=${size}`);
   }
 }
 /**
