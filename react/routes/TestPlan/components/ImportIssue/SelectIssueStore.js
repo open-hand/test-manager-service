@@ -99,7 +99,7 @@ class IssueTreeStore {
     // 数据初始化之后，设置选中的值
     if (initCaseSelected) {
       Object.keys(initCaseSelected).forEach((key) => {
-        const folderId = Number(key);
+        const folderId = key;
         this.handleCheckChange(true, folderId);
         const mapData = this.treeMap.get(folderId);
         if (mapData) {
@@ -258,7 +258,7 @@ class IssueTreeStore {
   @computed get getSelectedIssueNum() {
     const selectedFolders = this.getSelectedFolders();   
     return Object.keys(selectedFolders).reduce((total, key) => {
-      const folderId = Number(key);
+      const folderId = key;
       const item = this.treeMap.get(folderId);
       if (item.selected) {
         total += item.selected.length;
