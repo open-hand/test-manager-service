@@ -125,7 +125,7 @@ function TestPlanHome({ history }) {
   };
 
   const handleTableSummaryClick = (record) => {
-    const lastIndexOf = testPlanStore.currentCycle.id.toString().lastIndexOf('-');
+    const lastIndexOf = testPlanStore.currentCycle.id.toString().lastIndexOf('%');
     const cycleId = lastIndexOf === -1 ? '' : testPlanStore.currentCycle.id.substring(lastIndexOf + 1);
     const assignerId = testPlanStore.getFilters.assignUser;
     const { contents, searchArgs: { executionStatus, summary } } = testPlanStore.getSearchObj;
@@ -354,33 +354,33 @@ function TestPlanHome({ history }) {
                         activeKey={mainActiveTab}
                       >
                         {
-                          testPlanStore.isPlan(currentCycle.id) ? (
-                            <TabPane tab="计划日历" key="testPlanSchedule">
-                              <EventCalendar key={currentCycle.id} showMode="multi" times={times} calendarLoading={calendarLoading} />
-                            </TabPane>
-                          ) : ''
-                        }
+                            testPlanStore.isPlan(currentCycle.id) ? (
+                              <TabPane tab="计划日历" key="testPlanSchedule">
+                                <EventCalendar key={currentCycle.id} showMode="multi" times={times} calendarLoading={calendarLoading} />
+                              </TabPane>
+                            ) : ''
+                          }
                         <TabPane tab="测试用例" key="testPlanTable" />
                         <TabPane tab="我的执行" key="mineTestPlanTable" />
                       </Tabs>
                       {
-                        mainActiveTab !== 'testPlanSchedule' && (
-                          <TestPlanTable
-                            onDragEnd={onDragEnd}
-                            onTableChange={mainActiveTab === 'testPlanTable' ? handleExecuteTableChange : handleMineExecuteTableChange}
-                            onDeleteExecute={handleDeleteExecute}
-                            onQuickPass={handleQuickPassOrFail}
-                            onQuickFail={handleQuickPassOrFail}
-                            onOpenUpdateRemind={handleOpenUpdateRemind}
-                            onTableSummaryClick={handleTableSummaryClick}
-                            onAssignToChange={handleAssignToChange}
-                            onSearchAssign={handleSearchAssign}
-                            hasCheckBox={mainActiveTab === 'testPlanTable'}
-                            isMine={mainActiveTab === 'mineTestPlanTable'}
-                            key={mainActiveTab}
-                          />
-                        )
-                      }
+                          mainActiveTab !== 'testPlanSchedule' && (
+                            <TestPlanTable
+                              onDragEnd={onDragEnd}
+                              onTableChange={mainActiveTab === 'testPlanTable' ? handleExecuteTableChange : handleMineExecuteTableChange}
+                              onDeleteExecute={handleDeleteExecute}
+                              onQuickPass={handleQuickPassOrFail}
+                              onQuickFail={handleQuickPassOrFail}
+                              onOpenUpdateRemind={handleOpenUpdateRemind}
+                              onTableSummaryClick={handleTableSummaryClick}
+                              onAssignToChange={handleAssignToChange}
+                              onSearchAssign={handleSearchAssign}
+                              hasCheckBox={mainActiveTab === 'testPlanTable'}
+                              isMine={mainActiveTab === 'mineTestPlanTable'}
+                              key={mainActiveTab}
+                            />
+                          )
+                        }
                     </Card>
                   </div>
                 </div>
