@@ -36,7 +36,8 @@ export function editFolder(data) {
   return request.put(`/test/v1/projects/${getProjectId()}/cycle`, data);
 }
 export function moveFolder(folderId, targetFolderId, lastRank, nextRank) {
-  return request.put(`/test/v1/projects/${getProjectId()}/cycle/move?target_cycle_id=${targetFolderId}`,
+  const requestParam = (targetFolderId && Number(targetFolderId) !== 0) ? `?target_cycle_id=${targetFolderId}` : '';
+  return request.put(`/test/v1/projects/${getProjectId()}/cycle/move${requestParam}`,
     {
       cycleId: folderId,
       lastRank,
