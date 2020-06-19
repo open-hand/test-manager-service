@@ -46,7 +46,7 @@ function TestPlanExecuteDetail(props) {
   const [syncLoading, setSyncLoading] = useState(false);
   useEffect(() => {
     const { executeId } = context;
-    ExecuteDetailStore.setDetailParams(queryString.parse(context.location.search));
+    ExecuteDetailStore.setDetailParams(queryString.parse(context.location.search.replace(/%253D/g, '%3D'))); // 全局替换 id加密后 防止有% 被转义
     ExecuteDetailStore.getInfo(executeId);
     ExecuteDetailStore.setId(executeId);
   }, [ExecuteDetailStore, context, context.match.params]);
