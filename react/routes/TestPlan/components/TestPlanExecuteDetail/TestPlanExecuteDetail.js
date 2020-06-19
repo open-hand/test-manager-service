@@ -60,7 +60,7 @@ function TestPlanExecuteDetail(props) {
     if (toExecuteId) {
       const {
         contents, plan_id: planId, cycle_id: cycleId, assignerId, executionStatus, summary,
-      } = queryString.parse(context.location.search);
+      } = queryString.parse(context.location.search.replace(/%253D/g, '%3D'));
       const filters = {
         cycle_id: cycleId,
         plan_id: planId,
