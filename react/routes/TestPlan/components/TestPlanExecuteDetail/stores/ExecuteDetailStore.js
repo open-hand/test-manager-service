@@ -47,14 +47,14 @@ class ExecuteDetailStore {
       plan_id: data.plan_id,
       size: data.size,
     };
-    // contents 未处理
+    
     this.setSearchFilter({
       searchArgs: {
         assignUser: data.assignerId,
         executionStatus: data.executionStatus,
         summary: data.summary,
       },
-      contents: [],
+      contents: Array.isArray(data.contents) ? data.contents : ([data.contents] || []),
     });
   }
 
@@ -96,6 +96,7 @@ class ExecuteDetailStore {
       getDetailsData(id, this.detailParams, {
         ...this.getSearchFilter, 
         ...this.detailData ? {
+          contents: this.getSearchFilter.contents,
           searchArgs: {
             ...this.getSearchFilter.searchArgs,
             previousExecuteId: this.detailData.previousExecuteId,
