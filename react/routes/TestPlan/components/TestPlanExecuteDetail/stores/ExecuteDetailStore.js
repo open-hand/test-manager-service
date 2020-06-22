@@ -47,14 +47,13 @@ class ExecuteDetailStore {
       plan_id: data.plan_id,
       size: data.size,
     };
-    
     this.setSearchFilter({
       searchArgs: {
         assignUser: data.assignerId,
         executionStatus: data.executionStatus,
         summary: data.summary,
       },
-      contents: Array.isArray(data.contents) ? data.contents : ([data.contents] || []),
+      contents: Array.isArray(data.contents) ? data.contents : ([...data.contents] || []),
     });
   }
 

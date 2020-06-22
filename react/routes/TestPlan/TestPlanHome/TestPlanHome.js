@@ -133,7 +133,7 @@ function TestPlanHome({ history }) {
       cycle_id: cycleId,
       plan_id: testPlanStore.getCurrentPlanId,
       assignerId,
-      contents,
+      contents: contents.map(c => c),
       executionStatus,
       summary,
     };
