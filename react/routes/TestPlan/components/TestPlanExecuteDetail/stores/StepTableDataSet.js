@@ -46,7 +46,7 @@ function StepTableDataSet(projectId, orgId, intl, caseId, testStatusDataSet, exe
       },
       {
         name: 'stepStatus',
-        type: 'number',
+        type: 'string',
         label: stepStatus,
         textField: 'statusName',
         valueField: 'statusId',
