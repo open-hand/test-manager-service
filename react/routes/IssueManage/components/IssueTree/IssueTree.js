@@ -67,8 +67,13 @@ class IssueTree extends Component {
     const { treeData } = this.treeRef.current;
     const parent = treeData.items[destination.parentId];
     const { index = parent.children.length } = destination;
-    const lastId = parent.children[index - 1];
-    const nextId = parent.children[index];
+    let lastId = parent.children[index - 1];
+    let nextId = parent.children[index];
+    // 解决树的拖拽排序 无法从上往下拖拽排序
+    if (sourceItem.parentId === destination.parentId && sourceItem.index < index) {
+      lastId = parent.children[index];
+      nextId = parent.children.length !== index ? parent.children[index + 1] : null;
+    }
     const data = {
       folderId: sourceItem.id,
       lastRank: lastId ? treeData.items[lastId].data.rank : null,
