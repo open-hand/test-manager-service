@@ -47,13 +47,23 @@ class ExecuteDetailStore {
       plan_id: data.plan_id,
       size: data.size,
     };
+    // data.contents : ([...data.contents] || [])
+    const contents = [];
+    if (typeof (data.contents) !== 'undefined') {
+      if (Array.isArray(data.contents)) {
+        contents.push(...data.contents);
+      } else {
+        contents.push(data.contents);
+      }
+    }
+    // data.conete;
     this.setSearchFilter({
       searchArgs: {
         assignUser: data.assignerId,
         executionStatus: data.executionStatus,
         summary: data.summary,
       },
-      contents: Array.isArray(data.contents) ? data.contents : ([...data.contents] || []),
+      contents,
     });
   }
 
