@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import io.choerodon.core.iam.ResourceLevel;
-import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.swagger.annotations.ApiOperation;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +34,7 @@ public class TestCaseStepController {
     @GetMapping("/query/{caseId}")
     public ResponseEntity<List<TestCaseStepVO>> query(@PathVariable(name = "project_id") Long projectId,
                                                       @PathVariable(name = "caseId")
-                                                      @Encrypt(/**EncryptKeyConstants.TEST_CASE**/) Long caseId) {
+                                                      @Encrypt Long caseId) {
         TestCaseStepVO testCaseStepVO = new TestCaseStepVO();
         testCaseStepVO.setIssueId(caseId);
         return Optional.ofNullable(testCaseStepService.query(testCaseStepVO))

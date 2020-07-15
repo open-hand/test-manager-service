@@ -1,6 +1,5 @@
 package io.choerodon.test.manager.api.vo;
 
-import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.swagger.annotations.ApiModelProperty;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 
@@ -10,7 +9,7 @@ import org.hzero.starter.keyencrypt.core.Encrypt;
  */
 public class CaseCompareRepVO {
     @ApiModelProperty("用例Id")
-    @Encrypt(/**EncryptKeyConstants.TEST_CYCLE_CASE**/)
+    @Encrypt
     private Long caseId;
 
     @ApiModelProperty("测试执行Id")

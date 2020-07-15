@@ -7,7 +7,6 @@ import io.choerodon.swagger.annotation.Permission;
 
 import io.choerodon.test.manager.api.vo.IssueLinkVO;
 import io.choerodon.test.manager.app.service.TestCaseLinkService;
-import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.choerodon.test.manager.infra.dto.TestCaseLinkDTO;
 import io.swagger.annotations.ApiOperation;
 import org.hzero.starter.keyencrypt.core.Encrypt;
@@ -42,7 +41,7 @@ public class TestCaseLinkController {
     @DeleteMapping
     public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
                                  @RequestParam
-                                 @Encrypt(/**EncryptKeyConstants.TEST_CASE_LINK**/) Long linkId) {
+                                 @Encrypt Long linkId) {
         testCaseLinkService.delete(projectId, linkId);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
@@ -52,7 +51,7 @@ public class TestCaseLinkController {
     @GetMapping("/list_issue_info")
     public ResponseEntity<List<IssueLinkVO>> queryLinkIssues(@PathVariable(name = "project_id") Long projectId,
                                                              @RequestParam(name = "case_id")
-                                                             @Encrypt(/**EncryptKeyConstants.TEST_CASE**/) Long caseId) {
+                                                             @Encrypt Long caseId) {
         return new ResponseEntity<>(testCaseLinkService.queryLinkIssues(projectId, caseId), HttpStatus.OK);
     }
 }

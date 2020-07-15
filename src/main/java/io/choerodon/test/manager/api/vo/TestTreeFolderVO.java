@@ -1,6 +1,5 @@
 package io.choerodon.test.manager.api.vo;
 
-import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 
 import java.util.List;
@@ -11,9 +10,9 @@ import java.util.List;
  * @description:
  */
 public class TestTreeFolderVO {
-    @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/)
+    @Encrypt
     private Long id;
-    @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/)
+    @Encrypt
     private List<Long> children;
     private Boolean hasChildren;
     private Boolean isExpanded;
@@ -22,7 +21,7 @@ public class TestTreeFolderVO {
     private Boolean hasCase;
     private Boolean topLevel;
     private Long caseCount;
-    @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/)
+    @Encrypt
     private Long  planId;
 
     public Long getId() {

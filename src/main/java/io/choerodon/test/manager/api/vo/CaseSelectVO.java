@@ -1,6 +1,5 @@
 package io.choerodon.test.manager.api.vo;
 
-import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 
 import java.util.List;
@@ -13,10 +12,10 @@ public class CaseSelectVO {
 
     private Boolean custom;
 
-    @Encrypt(/**EncryptKeyConstants.TEST_CASE**/)
+    @Encrypt
     private List<Long> selected;
 
-    @Encrypt(/**EncryptKeyConstants.TEST_CASE**/)
+    @Encrypt
     private List<Long> unSelected;
 
     public Boolean getCustom() {

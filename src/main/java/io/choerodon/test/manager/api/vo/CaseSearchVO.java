@@ -1,6 +1,5 @@
 package io.choerodon.test.manager.api.vo;
 
-import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 
 import java.util.List;
@@ -35,7 +34,7 @@ public class CaseSearchVO {
 
         private String summary;
 
-        @Encrypt(/**EncryptKeyConstants.TEST_STATUS**/)
+        @Encrypt
         private Long executionStatus;
 
         private Long assignUser;

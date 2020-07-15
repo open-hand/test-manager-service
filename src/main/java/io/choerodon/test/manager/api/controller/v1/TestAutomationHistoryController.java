@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.mybatis.pagehelper.domain.Sort;
-import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -47,7 +46,7 @@ public class TestAutomationHistoryController {
     @GetMapping("/queryLog/{logId}")
     @Permission(level = ResourceLevel.ORGANIZATION)
     public ResponseEntity<String> queryLog(@PathVariable("logId")
-                                           @Encrypt(/**EncryptKeyConstants.TEST_APP_INSTANCE_LOG**/) Long logId, @PathVariable("project_id") Long projectId) {
+                                           @Encrypt Long logId, @PathVariable("project_id") Long projectId) {
         TestAppInstanceLogDTO logE = new TestAppInstanceLogDTO();
         logE.setId(logId);
 

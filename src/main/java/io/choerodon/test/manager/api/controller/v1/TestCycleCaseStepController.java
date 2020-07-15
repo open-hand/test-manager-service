@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.iam.ResourceLevel;
-import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.hzero.starter.keyencrypt.core.Encrypt;
@@ -56,7 +55,7 @@ public class TestCycleCaseStepController {
     public ResponseEntity<Page<TestCycleCaseStepVO>> querySubStep(@PathVariable(name = "project_id") Long projectId,
                                                                   @ApiParam(value = "cycleCaseId", required = true)
                                                                   @PathVariable(name = "cycleCaseId")
-                                                                  @Encrypt(/**EncryptKeyConstants.TEST_CYCLE_CASE**/) Long cycleCaseId,
+                                                                  @Encrypt Long cycleCaseId,
                                                                   @RequestParam Long organizationId,
                                                                   PageRequest pageRequest) {
         return Optional.ofNullable(testCycleCaseStepService.querySubStep(cycleCaseId, projectId, organizationId,pageRequest))
@@ -83,7 +82,7 @@ public class TestCycleCaseStepController {
     @DeleteMapping("/{execute_step_id}")
     public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
                                  @PathVariable(name = "execute_step_id")
-                                 @Encrypt(/**EncryptKeyConstants.TEST_CYCLE_CASE_STEP**/) Long executeStepId) {
+                                 @Encrypt Long executeStepId) {
         testCycleCaseStepService.delete(executeStepId);
         return new ResponseEntity<>(HttpStatus.OK);
     }

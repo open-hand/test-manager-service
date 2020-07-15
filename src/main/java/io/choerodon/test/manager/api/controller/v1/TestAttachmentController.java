@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import io.choerodon.core.iam.ResourceLevel;
-import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.swagger.annotations.ApiOperation;
 import org.apache.ibatis.annotations.Param;
 import org.hzero.starter.keyencrypt.core.Encrypt;
@@ -49,7 +48,7 @@ public class TestAttachmentController {
     @ApiOperation("删除附件")
     @DeleteMapping("/{attachId}")
     public ResponseEntity removeAttachment(@PathVariable(name = "attachId")
-                                           @Encrypt(/**EncryptKeyConstants.TEST_CYCLE_CASE_ATTACH_REL**/) Long attachId,
+                                           @Encrypt Long attachId,
                                            @PathVariable(name = "project_id") Long projectId) {
         testCycleCaseAttachmentRelService.deleteAttachmentRel(projectId, attachId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

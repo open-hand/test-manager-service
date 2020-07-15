@@ -3,7 +3,6 @@ package io.choerodon.test.manager.api.vo;
 import java.util.Date;
 import java.util.List;
 
-import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.swagger.annotations.ApiModelProperty;
 
 import io.choerodon.test.manager.infra.dto.UserMessageDTO;
@@ -16,7 +15,7 @@ import org.hzero.starter.keyencrypt.core.Encrypt;
  */
 public class TestCycleCaseInfoVO {
     @ApiModelProperty(value = "测试执行ID")
-    @Encrypt(/**EncryptKeyConstants.TEST_CYCLE_CASE**/)
+    @Encrypt
     private Long executeId;
 
     @ApiModelProperty(value = "caseNum")
@@ -73,11 +72,11 @@ public class TestCycleCaseInfoVO {
     private Date executorDate;
 
     @ApiModelProperty(value = "上一个执行")
-    @Encrypt(/**EncryptKeyConstants.TEST_CYCLE_CASE**/)
+    @Encrypt
     private Long previousExecuteId;
 
     @ApiModelProperty(value = "下一个执行")
-    @Encrypt(/**EncryptKeyConstants.TEST_CYCLE_CASE**/)
+    @Encrypt
     private Long nextExecuteId;
 
     @ApiModelProperty(value = "测试用例关联的附件信息")

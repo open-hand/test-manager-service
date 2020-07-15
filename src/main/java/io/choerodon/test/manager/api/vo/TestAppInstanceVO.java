@@ -1,6 +1,5 @@
 package io.choerodon.test.manager.api.vo;
 
-import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.swagger.annotations.ApiModelProperty;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 
@@ -10,7 +9,7 @@ import org.hzero.starter.keyencrypt.core.Encrypt;
 public class TestAppInstanceVO {
 
     @ApiModelProperty(value = "主键ID")
-    @Encrypt(/**EncryptKeyConstants.TEST_APP_INSTANCE**/)
+    @Encrypt
     private Long id;
 
     @ApiModelProperty(value = "应用code")

@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import io.choerodon.core.iam.ResourceLevel;
-import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.swagger.annotations.ApiOperation;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +35,7 @@ public class TestAutomationResultController {
     @GetMapping("/query/{id}")
     public ResponseEntity<Map<String, Object>> query(@PathVariable("project_id") Long projectId,
                                                      @PathVariable("id")
-                                                     @Encrypt(/**EncryptKeyConstants.TEST_AUTOMATION_RESULT**/) Long id) {
+                                                     @Encrypt Long id) {
         Map<String, Object> result = new HashMap<>(2);
         String framework = testAutomationHistoryService.queryFrameworkByResultId(projectId, id);
         TestAutomationResultVO testAutomationResultVO = new TestAutomationResultVO();

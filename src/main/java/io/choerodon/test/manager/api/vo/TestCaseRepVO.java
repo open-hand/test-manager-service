@@ -3,7 +3,6 @@ package io.choerodon.test.manager.api.vo;
 import java.util.Date;
 import java.util.List;
 
-import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
 import io.choerodon.test.manager.infra.dto.TestCaseLabelDTO;
 import io.choerodon.test.manager.infra.dto.UserMessageDTO;
@@ -16,7 +15,7 @@ import org.hzero.starter.keyencrypt.core.Encrypt;
  */
 public class TestCaseRepVO {
     @ApiModelProperty(value = "用例Id")
-    @Encrypt(/**EncryptKeyConstants.TEST_CASE**/)
+    @Encrypt
     private Long caseId;
 
     @ApiModelProperty(value = "用例编号")
@@ -32,7 +31,7 @@ public class TestCaseRepVO {
     private Long projectId;
 
     @ApiModelProperty(value = "文件夹Id")
-    @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/)
+    @Encrypt
     private Long folderId;
 
     @ApiModelProperty(value = "创建人")

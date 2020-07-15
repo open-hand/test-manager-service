@@ -11,7 +11,6 @@ import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.swagger.annotation.CustomPageRequest;
 import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.api.vo.agile.IssueNumDTO;
-import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.choerodon.test.manager.infra.util.VerifyUpdateUtil;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -117,7 +116,7 @@ public class TestCaseController {
     @GetMapping("/download/excel/folder")
     public ResponseEntity downLoadByFolder(@PathVariable(name = "project_id") Long projectId,
                                            @RequestParam(name = "folder_id")
-                                           @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/) Long folderId,
+                                           @Encrypt Long folderId,
                                            HttpServletRequest request,
                                            HttpServletResponse response,
                                            @RequestParam Long organizationId) {
@@ -139,7 +138,7 @@ public class TestCaseController {
     @GetMapping("/download/excel/fail")
     public ResponseEntity downExcelFail(@PathVariable(name = "project_id") Long projectId,
                                         @RequestParam(name = "historyId")
-                                        @Encrypt(/**EncryptKeyConstants.TEST_FILELOAD_HISTORY**/) Long historyId) {
+                                        @Encrypt Long historyId) {
         excelServiceHandler.exportFailCase(projectId, historyId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -161,7 +160,7 @@ public class TestCaseController {
     public ResponseEntity importIssues(@PathVariable("project_id") Long projectId,
                                        @RequestParam("file") MultipartFile excelFile,
                                        @RequestParam("folder_id")
-                                       @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/) Long folderId) {
+                                       @Encrypt Long folderId) {
         excelImportService.importIssueByExcel(projectId, folderId,
                 DetailsHelper.getUserDetails().getUserId(),
                 ExcelUtil.getWorkbookFromMultipartFile(ExcelUtil.Mode.XSSF, excelFile));
@@ -181,7 +180,7 @@ public class TestCaseController {
     @GetMapping("/{case_id}/info")
     public ResponseEntity<TestCaseInfoVO> queryCaseInfo(@PathVariable("project_id") Long projectId,
                                                         @PathVariable(name = "case_id")
-                                                        @Encrypt(/**EncryptKeyConstants.TEST_CASE**/) Long caseId) {
+                                                        @Encrypt Long caseId) {
         return new ResponseEntity<>(testCaseService.queryCaseInfo(projectId, caseId), HttpStatus.OK);
     }
 
@@ -190,7 +189,7 @@ public class TestCaseController {
     @DeleteMapping("/{case_id}/delete")
     public ResponseEntity deleteCase(@PathVariable("project_id") Long projectId,
                                      @PathVariable(name = "case_id")
-                                     @Encrypt(/**EncryptKeyConstants.TEST_CASE**/) Long caseId) {
+                                     @Encrypt Long caseId) {
         testCaseService.deleteCase(projectId, caseId);
         return new ResponseEntity(HttpStatus.OK);
     }
@@ -200,10 +199,10 @@ public class TestCaseController {
     @PostMapping("/list_by_folder_id")
     public ResponseEntity<Page<TestCaseRepVO>> listCaseByFolderId(@PathVariable("project_id") Long projectId,
                                                                   @RequestParam(name = "folder_id")
-                                                                  @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/) Long folderId,
+                                                                  @Encrypt Long folderId,
                                                                   @SortDefault PageRequest pageRequest,
                                                                   @RequestParam(name = "plan_id", required = false)
-                                                                  @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/) Long planId,
+                                                                  @Encrypt Long planId,
                                                                   @RequestBody(required = false) SearchDTO searchDTO) {
         return new ResponseEntity<>(testCaseService.listAllCaseByFolderId(projectId, folderId, pageRequest, searchDTO, planId), HttpStatus.OK);
     }
@@ -223,7 +222,7 @@ public class TestCaseController {
     @PostMapping("/batch_move")
     public ResponseEntity batchMoveCase(@PathVariable("project_id") Long projectId,
                                         @RequestParam(name = "folder_id")
-                                        @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/) Long folderId,
+                                        @Encrypt Long folderId,
                                         @RequestBody List<TestCaseRepVO> testCaseRepVOS) {
 
         testCaseService.batchMove(projectId, folderId, testCaseRepVOS);
@@ -235,7 +234,7 @@ public class TestCaseController {
     @PostMapping("/batch_clone")
     public ResponseEntity batchCloneCase(@PathVariable("project_id") Long projectId,
                                          @RequestParam(name = "folder_id")
-                                         @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/) Long folderId,
+                                         @Encrypt Long folderId,
                                          @RequestBody List<TestCaseRepVO> testCaseRepVOS) {
 
         testCaseService.batchCopy(projectId, folderId, testCaseRepVOS);
@@ -255,7 +254,7 @@ public class TestCaseController {
                                                                         @PathVariable(name = "project_id") Long projectId,
                                                                         @ApiParam(value = "issueId")
                                                                         @RequestParam(required = false)
-                                                                        @Encrypt(/**EncryptKeyConstants.TEST_CASE**/) Long issueId,
+                                                                        @Encrypt Long issueId,
                                                                         @ApiParam(value = "issueNum")
                                                                         @RequestParam(required = false) String issueNum,
                                                                         @ApiParam(value = "是否包含自身", required = true)

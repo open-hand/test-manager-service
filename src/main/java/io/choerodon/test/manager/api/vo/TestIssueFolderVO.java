@@ -2,7 +2,6 @@ package io.choerodon.test.manager.api.vo;
 
 import java.util.Date;
 
-import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.swagger.annotations.ApiModelProperty;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 
@@ -12,11 +11,11 @@ import org.hzero.starter.keyencrypt.core.Encrypt;
 public class TestIssueFolderVO {
 
     @ApiModelProperty(value = "文件夹ID")
-    @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/)
+    @Encrypt
     private Long folderId;
 
     @ApiModelProperty(value = "父级文件夹ID,无父级目录id传0")
-    @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/)
+    @Encrypt
     private Long parentId;
 
     private Boolean rootNode;

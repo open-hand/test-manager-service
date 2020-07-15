@@ -1,6 +1,5 @@
 package io.choerodon.test.manager.api.vo.devops;
 
-import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 
 import java.util.List;
@@ -19,7 +18,7 @@ public class InstanceValueVO {
     private List<Integer> newLines;
     private String deltaYaml;
     private String name;
-    @Encrypt(/**EncryptKeyConstants.INSTANCE_VALUE**/)
+    @Encrypt
     private Long id;
     private Long objectVersionNumber;
 

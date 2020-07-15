@@ -2,7 +2,6 @@ package io.choerodon.test.manager.api.vo;
 
 import java.util.List;
 
-import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.swagger.annotations.ApiModelProperty;
 
 import io.choerodon.test.manager.infra.dto.TestCycleCaseAttachmentRelDTO;
@@ -14,14 +13,14 @@ import org.hzero.starter.keyencrypt.core.Encrypt;
 public class TestCaseStepVO {
 
     @ApiModelProperty(value = "步骤id")
-    @Encrypt(/**EncryptKeyConstants.TEST_CASE_STEP**/)
+    @Encrypt
     private Long stepId;
 
     @ApiModelProperty(value = "排序值")
     private String rank;
 
     @ApiModelProperty(value = "用例issueID")
-    @Encrypt(/**EncryptKeyConstants.TEST_CASE**/)
+    @Encrypt
     private Long issueId;
 
     @ApiModelProperty(value = "测试步骤")

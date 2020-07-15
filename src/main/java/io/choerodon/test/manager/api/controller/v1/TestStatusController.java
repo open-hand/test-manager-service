@@ -7,7 +7,6 @@ import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.test.manager.api.vo.TestStatusVO;
 import io.choerodon.test.manager.app.service.TestStatusService;
-import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.swagger.annotations.ApiOperation;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +53,7 @@ public class TestStatusController {
     @DeleteMapping("/{statusId}")
     public ResponseEntity<Boolean> delete(@PathVariable(name = "project_id") Long projectId,
                                           @PathVariable(name = "statusId")
-                                          @Encrypt(/**EncryptKeyConstants.TEST_STATUS**/) Long statusId) {
+                                          @Encrypt Long statusId) {
         TestStatusVO dto = new TestStatusVO();
         dto.setStatusId(statusId);
         return Optional.ofNullable(testStatusService.delete(dto))

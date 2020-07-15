@@ -5,7 +5,6 @@ import javax.persistence.*;
 
 import io.choerodon.mybatis.annotation.ModifyAudit;
 import io.choerodon.mybatis.annotation.VersionAudit;
-import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.swagger.annotations.ApiModelProperty;
 
 import io.choerodon.mybatis.domain.AuditDomain;
@@ -22,7 +21,7 @@ import org.hzero.starter.keyencrypt.core.Encrypt;
 public class TestPlanDTO extends AuditDomain {
     @Id
     @GeneratedValue
-    @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/)
+    @Encrypt
     private Long planId;
 
     @ApiModelProperty(value = "计划名称")

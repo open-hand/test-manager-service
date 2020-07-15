@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.test.manager.api.vo.TestTreeIssueFolderVO;
-import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.swagger.annotations.ApiOperation;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +42,7 @@ public class TestIssueFolderController {
     @DeleteMapping("/{folderId}")
     public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
                                  @PathVariable(name = "folderId")
-                                 @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/) Long folderId) {
+                                 @Encrypt Long folderId) {
         testIssueFolderService.delete(projectId, folderId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -73,7 +72,7 @@ public class TestIssueFolderController {
     @PutMapping("/move")
     public ResponseEntity<String> moveFolder(@PathVariable(name = "project_id") Long projectId,
                                              @RequestParam(name = "targetFolderId", required = false)
-                                             @Encrypt(/**EncryptKeyConstants.TEST_ISSUE_FOLDER**/) Long targetFolderId,
+                                             @Encrypt Long targetFolderId,
                                              @RequestBody TestIssueFolderVO issueFolderVO) {
         return Optional.ofNullable(testIssueFolderService.moveFolder(projectId, targetFolderId, issueFolderVO))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))

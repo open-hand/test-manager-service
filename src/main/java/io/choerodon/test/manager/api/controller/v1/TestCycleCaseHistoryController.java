@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.mybatis.pagehelper.domain.Sort;
-import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.hzero.starter.keyencrypt.core.Encrypt;
@@ -47,7 +46,7 @@ public class TestCycleCaseHistoryController {
                                                               @SortDefault(value = "id", direction = Sort.Direction.DESC)
                                                                       PageRequest pageRequest,
                                                               @PathVariable(name = "cycleCaseId")
-                                                              @Encrypt(/**EncryptKeyConstants.TEST_CYCLE_CASE**/) Long cycleCaseId) {
+                                                              @Encrypt Long cycleCaseId) {
 
         return Optional.ofNullable(testCycleCaseHistoryService.query(cycleCaseId, pageRequest))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))

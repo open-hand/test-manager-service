@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.swagger.annotations.ApiModelProperty;
 
 import io.choerodon.test.manager.api.vo.agile.IssueLinkDTO;
@@ -20,7 +19,7 @@ import org.hzero.starter.keyencrypt.core.Encrypt;
 public class TestCycleCaseVO {
 
     @ApiModelProperty(value = "测试执行ID")
-    @Encrypt(/**EncryptKeyConstants.TEST_CYCLE_CASE**/)
+    @Encrypt
     private Long executeId;
 
     @ApiModelProperty(value = "循环ID")
@@ -36,7 +35,7 @@ public class TestCycleCaseVO {
     private String rank;
 
     @ApiModelProperty(value = "执行状态")
-    @Encrypt(/**EncryptKeyConstants.TEST_STATUS**/)
+    @Encrypt
     private Long executionStatus;
 
     @ApiModelProperty(value = "执行状态名")

@@ -2,7 +2,6 @@ package io.choerodon.test.manager.api.vo;
 
 import java.util.Date;
 
-import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.swagger.annotations.ApiModelProperty;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 
@@ -13,7 +12,7 @@ import org.hzero.starter.keyencrypt.core.Encrypt;
 
 public class DataLogVO {
     @ApiModelProperty(value = "日志主键id")
-    @Encrypt(/**EncryptKeyConstants.TEST_DATA_LOG**/)
+    @Encrypt
     private Long logId;
     @ApiModelProperty(value = "项目id")
     private Long projectId;

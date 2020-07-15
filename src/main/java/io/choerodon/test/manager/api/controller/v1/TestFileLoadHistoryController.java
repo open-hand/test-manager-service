@@ -6,7 +6,6 @@ import java.util.Optional;
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.test.manager.api.vo.agile.SearchDTO;
-import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.swagger.annotations.ApiOperation;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +56,7 @@ public class TestFileLoadHistoryController {
     @ApiOperation("将指定导入记录置为取消")
     @PutMapping("/cancel")
     public ResponseEntity cancelUpLoad(@PathVariable("project_id") Long projectId,
-                                       @Encrypt(/**EncryptKeyConstants.TEST_FILELOAD_HISTORY**/)
+                                       @Encrypt
                                        @RequestParam Long historyId) {
         excelImportService.cancelFileUpload(historyId);
         return new ResponseEntity(HttpStatus.OK);

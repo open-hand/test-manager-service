@@ -2,14 +2,13 @@ package io.choerodon.test.manager.api.vo;
 
 import java.util.Date;
 
-import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.swagger.annotations.ApiModelProperty;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 
 public class TestFileLoadHistoryVO {
 
     @ApiModelProperty(value = "主键ID")
-    @Encrypt(/**EncryptKeyConstants.TEST_FILELOAD_HISTORY**/)
+    @Encrypt
     private Long id;
 
     @ApiModelProperty(value = "项目ID")

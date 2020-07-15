@@ -3,7 +3,6 @@ package io.choerodon.test.manager.api.vo;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.swagger.annotations.ApiModelProperty;
 
 import io.choerodon.test.manager.api.vo.agile.IssueLinkDTO;
@@ -16,7 +15,7 @@ import org.hzero.starter.keyencrypt.core.Encrypt;
 public class TestCycleCaseStepVO {
 
     @ApiModelProperty(value = "执行步骤ID")
-    @Encrypt(/**EncryptKeyConstants.TEST_CYCLE_CASE_STEP**/)
+    @Encrypt
     private Long executeStepId;
 
     @ApiModelProperty(value = "测试执行ID")

@@ -9,7 +9,6 @@ import io.choerodon.swagger.annotation.Permission;
 
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.app.service.TestCaseAttachmentService;
-import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -37,7 +36,7 @@ public class TestCaseAttachmentController {
                                                                         @PathVariable(name = "project_id") Long projectId,
                                                                         @ApiParam(value = "issue id", required = true)
                                                                         @RequestParam
-                                                                        @Encrypt(/**EncryptKeyConstants.TEST_CASE**/) Long caseId,
+                                                                        @Encrypt Long caseId,
                                                                         HttpServletRequest request) {
         return Optional.ofNullable(testCaseAttachmentService.create(projectId, caseId, request))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
@@ -51,7 +50,7 @@ public class TestCaseAttachmentController {
                                            @PathVariable(name = "project_id") Long projectId,
                                            @ApiParam(value = "附件id", required = true)
                                            @PathVariable(name = "issueAttachment_id")
-                                           @Encrypt(/**EncryptKeyConstants.TEST_CASE_ATTACHMENT**/) Long issueAttachmentId) {
+                                           @Encrypt Long issueAttachmentId) {
         testCaseAttachmentService.delete(projectId, issueAttachmentId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

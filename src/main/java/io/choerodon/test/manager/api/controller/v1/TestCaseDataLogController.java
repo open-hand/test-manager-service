@@ -7,7 +7,6 @@ import io.choerodon.swagger.annotation.Permission;
 
 import io.choerodon.test.manager.api.vo.DataLogVO;
 import io.choerodon.test.manager.app.service.TestDataLogService;
-import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.swagger.annotations.ApiOperation;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +29,7 @@ public class TestCaseDataLogController {
     @GetMapping
     public ResponseEntity<List<DataLogVO>> queryByCaseId(@PathVariable(name = "project_id") Long projectId,
                                                          @RequestParam(name = "case_id")
-                                                         @Encrypt(/**EncryptKeyConstants.TEST_CASE**/) Long caseId){
+                                                         @Encrypt Long caseId){
         return  new ResponseEntity<>(dataLogService.queryByCaseId(projectId,caseId),HttpStatus.OK);
     }
 }

@@ -2,7 +2,6 @@ package io.choerodon.test.manager.api.vo;
 
 import java.util.Date;
 
-import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.swagger.annotations.ApiModelProperty;
 
 import io.choerodon.test.manager.infra.dto.UserMessageDTO;
@@ -15,7 +14,7 @@ import org.hzero.starter.keyencrypt.core.Encrypt;
  */
 public class TestFolderCycleCaseVO {
     @ApiModelProperty(value = "执行ID")
-    @Encrypt(/**EncryptKeyConstants.TEST_CYCLE_CASE**/)
+    @Encrypt
     private Long executeId;
 
     @ApiModelProperty(value = "循环Id")
@@ -29,7 +28,7 @@ public class TestFolderCycleCaseVO {
     @ApiModelProperty(value = "排序")
     private String rank;
     @ApiModelProperty(value = "执行状态")
-    @Encrypt(/**EncryptKeyConstants.TEST_STATUS**/)
+    @Encrypt
     private Long executionStatus;
 
     @ApiModelProperty(value = "项目ID")

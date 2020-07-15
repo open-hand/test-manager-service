@@ -1,6 +1,5 @@
 package io.choerodon.test.manager.api.vo;
 
-import io.choerodon.test.manager.infra.constant.EncryptKeyConstants;
 import io.swagger.annotations.ApiModelProperty;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 
@@ -11,7 +10,7 @@ import org.hzero.starter.keyencrypt.core.Encrypt;
 public class TestCycleCaseDefectRelVO {
 
     @ApiModelProperty(value = "主键id")
-    @Encrypt(/**EncryptKeyConstants.TEST_CYCLE_CASE_DEFECT_REL**/)
+    @Encrypt
     private Long id;
 
     @ApiModelProperty(value = "缺陷关联类型：测试执行，执行步骤")
