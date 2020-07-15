@@ -13,7 +13,7 @@ export default projectId => ({
   },
   fields: [
     { name: 'statusName', type: 'string' },
-    { name: 'statusId', type: 'number' },
+    { name: 'statusId', type: 'string' },
     { name: 'projectId', type: 'number' },
   ],
 });

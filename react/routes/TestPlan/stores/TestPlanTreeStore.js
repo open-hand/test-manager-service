@@ -63,20 +63,20 @@ class TestPlanTreeStore {
     if (!id) {
       return [id, ''];
     }
-    if (typeof id === 'number') {
+    if (id.split('%').length === 1) {
       return [id, ''];
-    } else if (id.split('-').length === 2) {
-      const [planId, folderId] = id.split('-');
-      return [Number(planId), Number(folderId)];
+    } else if (id.split('%').length === 2) {
+      const [planId, folderId] = id.split('%');
+      return [planId, folderId];
     } else {
       return [id, ''];
     }
   }
 
   isPlan(id) {
-    if (typeof id === 'number') {
+    if (id.split('%').length === 1) {
       return true;
-    } else if (id && id.split('-').length === 2) {
+    } else if (id && id.split('%').length === 2) {
       return false;
     }
     return false;
@@ -139,6 +139,8 @@ class TestPlanTreeStore {
     this.setTreeLoading(true);
     const treeData = await getPlanTree(this.testPlanStatus);
     this.setTreeData(treeData, defaultSelectId);
+    // console.log('loadIssueTree', treeData, defaultSelectId);
+
     this.setTreeLoading(false);
   }
 
@@ -154,7 +156,7 @@ class TestPlanTreeStore {
     // 选中之前选中的
     let selectedId = this.currentCycle ? this.currentCycle.id : undefined;
     if (!this.currentCycle.id && rootIds && rootIds.length > 0) {
-      selectedId = defaultSelectId ? Number(defaultSelectId) : firstRoot.id;
+      selectedId = defaultSelectId || firstRoot.id;
     }
     this.treeData = {
       rootIds: rootIds || [],
@@ -162,11 +164,12 @@ class TestPlanTreeStore {
         const {
           id, planId, issueFolderVO, expanded, children, ...other
         } = folder;
+        
         return {
-          id: planId ? `${planId}-${id}` : id,
-          children: children ? children.map(child => `${planId || id}-${child}`) : [],
+          id: planId ? `${planId}%${id}` : id,
+          children: children ? children.map(child => `${planId || id}%${child}`) : [],
           data: issueFolderVO,
-          isExpanded: (flattenedTreeIds && (flattenedTreeIds.includes(id) || flattenedTreeIds.includes(`${planId}-${id}`))) || expanded,
+          isExpanded: (flattenedTreeIds && (flattenedTreeIds.includes(id) || flattenedTreeIds.includes(`${planId}%${id}`))) || expanded,
           selected: folder.id === selectedId,
           ...other,
         };
