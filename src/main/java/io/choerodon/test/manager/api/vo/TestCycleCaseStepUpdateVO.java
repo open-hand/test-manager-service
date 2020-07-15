@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.api.vo;
 
 import io.swagger.annotations.ApiModelProperty;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
  * @author: 25499
@@ -9,9 +10,11 @@ import io.swagger.annotations.ApiModelProperty;
  */
 public class TestCycleCaseStepUpdateVO {
     @ApiModelProperty(value = "执行步骤ID")
+    @Encrypt
     private Long executeStepId;
 
     @ApiModelProperty(value = "测试执行ID")
+    @Encrypt
     private Long executeId;
 
     @ApiModelProperty(value = "测试步骤ID")

@@ -5,10 +5,10 @@ import java.util.List;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.swagger.annotation.Permission;
 
-import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.test.manager.api.vo.DataLogVO;
 import io.choerodon.test.manager.app.service.TestDataLogService;
 import io.swagger.annotations.ApiOperation;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +28,8 @@ public class TestCaseDataLogController {
     @ApiOperation("根据caseId 查询日志记录")
     @GetMapping
     public ResponseEntity<List<DataLogVO>> queryByCaseId(@PathVariable(name = "project_id") Long projectId,
-                                                         @RequestParam(name = "case_id") Long caseId){
+                                                         @RequestParam(name = "case_id")
+                                                         @Encrypt Long caseId){
         return  new ResponseEntity<>(dataLogService.queryByCaseId(projectId,caseId),HttpStatus.OK);
     }
 }

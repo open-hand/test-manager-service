@@ -6,6 +6,7 @@ import java.util.List;
 import io.swagger.annotations.ApiModelProperty;
 
 import io.choerodon.test.manager.api.vo.agile.IssueLinkDTO;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -14,6 +15,7 @@ import io.choerodon.test.manager.api.vo.agile.IssueLinkDTO;
 public class TestCycleCaseStepVO {
 
     @ApiModelProperty(value = "执行步骤ID")
+    @Encrypt
     private Long executeStepId;
 
     @ApiModelProperty(value = "测试执行ID")
@@ -29,6 +31,7 @@ public class TestCycleCaseStepVO {
     private Long objectVersionNumber;
 
     @ApiModelProperty(value = "步骤状态ID")
+    @Encrypt
     private Long stepStatus;
 
     @ApiModelProperty(value = "测试步骤")

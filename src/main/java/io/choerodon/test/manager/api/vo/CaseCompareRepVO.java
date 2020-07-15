@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.api.vo;
 
 import io.swagger.annotations.ApiModelProperty;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
  * @author zhaotianxin
@@ -8,9 +9,11 @@ import io.swagger.annotations.ApiModelProperty;
  */
 public class CaseCompareRepVO {
     @ApiModelProperty("用例Id")
+    @Encrypt
     private Long caseId;
 
     @ApiModelProperty("测试执行Id")
+    @Encrypt
     private Long executeId;
 
     @ApiModelProperty("是否测试信息改变")

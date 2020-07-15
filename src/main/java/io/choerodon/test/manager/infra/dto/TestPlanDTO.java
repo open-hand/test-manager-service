@@ -8,6 +8,7 @@ import io.choerodon.mybatis.annotation.VersionAudit;
 import io.swagger.annotations.ApiModelProperty;
 
 import io.choerodon.mybatis.domain.AuditDomain;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
  * @author: 25499
@@ -20,6 +21,7 @@ import io.choerodon.mybatis.domain.AuditDomain;
 public class TestPlanDTO extends AuditDomain {
     @Id
     @GeneratedValue
+    @Encrypt
     private Long planId;
 
     @ApiModelProperty(value = "计划名称")

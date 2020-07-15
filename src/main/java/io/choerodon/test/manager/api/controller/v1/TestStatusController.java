@@ -8,6 +8,7 @@ import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.test.manager.api.vo.TestStatusVO;
 import io.choerodon.test.manager.app.service.TestStatusService;
 import io.swagger.annotations.ApiOperation;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +32,7 @@ public class TestStatusController {
     @PostMapping("/query")
     public ResponseEntity<List<TestStatusVO>> query(@PathVariable(name = "project_id") Long projectId,
                                                     @RequestBody TestStatusVO testStatusVO) {
-        return Optional.ofNullable(testStatusService.query(projectId,testStatusVO))
+        return Optional.ofNullable(testStatusService.query(projectId, testStatusVO))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.testStatus.query"));
 
@@ -51,7 +52,8 @@ public class TestStatusController {
     @ApiOperation("删除状态")
     @DeleteMapping("/{statusId}")
     public ResponseEntity<Boolean> delete(@PathVariable(name = "project_id") Long projectId,
-                                 @PathVariable(name = "statusId") Long statusId) {
+                                          @PathVariable(name = "statusId")
+                                          @Encrypt Long statusId) {
         TestStatusVO dto = new TestStatusVO();
         dto.setStatusId(statusId);
         return Optional.ofNullable(testStatusService.delete(dto))

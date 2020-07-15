@@ -9,7 +9,6 @@ import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.oauth.CustomUserDetails;
 import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.test.manager.api.vo.*;
-import io.choerodon.test.manager.api.vo.agile.ProductVersionDTO;
 import io.choerodon.test.manager.api.vo.agile.UserDO;
 import io.choerodon.test.manager.app.assembler.TestCycleAssembler;
 import io.choerodon.test.manager.app.service.TestCaseService;
@@ -65,6 +64,10 @@ public class TestCycleServiceImpl implements TestCycleService {
      */
     @Override
     public TestCycleVO insert(Long projectId, TestCycleVO testCycleVO) {
+        Long parentCycleId = testCycleVO.getParentCycleId();
+        if (ObjectUtils.isEmpty(parentCycleId)){
+            testCycleVO.setParentCycleId(0L);
+        }
         testCycleVO.setType("folder");
         TestCycleDTO testCycleDTO = cycleMapper.selectByPrimaryKey(testCycleVO.getParentCycleId());
         // 给文件夹设置时间
@@ -248,6 +251,10 @@ public class TestCycleServiceImpl implements TestCycleService {
 
     @Override
     public String moveCycle(Long projectId, Long targetCycleId, TestCycleVO testCycleVO) {
+        //设置根节点
+        if (ObjectUtils.isEmpty(targetCycleId)) {
+            targetCycleId = 0L;
+        }
         TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
         testCycleCaseDTO.setCycleId(targetCycleId);
         List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.select(testCycleCaseDTO);

@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 import io.choerodon.test.manager.api.vo.agile.UserDO;
 import io.choerodon.mybatis.domain.AuditDomain;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 public class TestAutomationHistoryVO extends AuditDomain {
 
@@ -29,6 +30,7 @@ public class TestAutomationHistoryVO extends AuditDomain {
     @Id
     @GeneratedValue
     @ApiModelProperty(value = "主键id")
+    @Encrypt
     private Long id;
 
     @ApiModelProperty(value = "测试框架")

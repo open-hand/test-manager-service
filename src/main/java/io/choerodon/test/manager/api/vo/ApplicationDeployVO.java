@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.api.vo;
 
 import io.swagger.annotations.ApiModelProperty;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
  * Created by zongw.lee@gmail.com on 22/11/2018
@@ -20,6 +21,7 @@ public class ApplicationDeployVO {
     private Long projectVersionId;
 
     @ApiModelProperty(value = "历史记录ID")
+    @Encrypt
     private Long historyId;
 
     @ApiModelProperty(value = "应用code")

@@ -2,6 +2,7 @@ package io.choerodon.test.manager.api.vo;
 
 import io.choerodon.test.manager.api.vo.agile.UserDO;
 import io.swagger.annotations.ApiModelProperty;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 import java.util.Date;
 import java.util.List;
@@ -12,9 +13,11 @@ import java.util.List;
 public class TestCycleVO {
 
     @ApiModelProperty(value = "主键，循环ID")
+    @Encrypt
     private Long cycleId;
 
     @ApiModelProperty(value = "父循环ID")
+    @Encrypt
     private Long parentCycleId;
 
     @ApiModelProperty(value = "循环名")
@@ -75,6 +78,7 @@ public class TestCycleVO {
     private Long projectId;
 
     @ApiModelProperty(value = "计划Id")
+    @Encrypt
     private Long planId;
 
     public Long getCycleId() {

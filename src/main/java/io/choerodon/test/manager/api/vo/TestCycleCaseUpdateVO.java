@@ -1,5 +1,7 @@
 package io.choerodon.test.manager.api.vo;
 
+import org.hzero.starter.keyencrypt.core.Encrypt;
+
 import java.util.List;
 
 /**
@@ -8,6 +10,7 @@ import java.util.List;
  * @description:
  */
 public class TestCycleCaseUpdateVO {
+    @Encrypt
     private Long executeId;
 
     private String summary;
