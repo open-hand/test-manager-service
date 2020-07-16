@@ -80,6 +80,10 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
     @Override
     public TestIssueFolderVO create(Long projectId, TestIssueFolderVO testIssueFolderVO) {
         validateType(testIssueFolderVO);
+        Boolean isRootNode = testIssueFolderVO.getRootNode();
+        if (Boolean.TRUE.equals(isRootNode)) {
+            testIssueFolderVO.setParentId(0L);
+        }
         List<TestCaseDTO> testCaseDTOS = testCaseService.listCaseByFolderId(testIssueFolderVO.getParentId());
         if (!CollectionUtils.isEmpty(testCaseDTOS)) {
             throw new CommonException("error.issueFolder.has.case");
@@ -123,13 +127,17 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
 
 
     @Override
-    public String moveFolder(Long projectId, Long targetForderId, TestIssueFolderVO issueFolderVO) {
-        List<TestCaseDTO> testCaseDTOS = testCaseService.listCaseByFolderId(targetForderId);
+    public String moveFolder(Long projectId, Long targetFolderId, TestIssueFolderVO issueFolderVO) {
+        //移动到根目录下，targetFolderId为空，后端设置为0
+        if (ObjectUtils.isEmpty(targetFolderId)) {
+            targetFolderId = 0L;
+        }
+        List<TestCaseDTO> testCaseDTOS = testCaseService.listCaseByFolderId(targetFolderId);
         if (!CollectionUtils.isEmpty(testCaseDTOS)) {
             throw new CommonException("error.issueFolder.has.case");
         }
         TestIssueFolderDTO testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(issueFolderVO.getFolderId());
-        testIssueFolderDTO.setParentId(targetForderId);
+        testIssueFolderDTO.setParentId(targetFolderId);
         if (ObjectUtils.isEmpty(issueFolderVO.getLastRank()) && ObjectUtils.isEmpty(issueFolderVO.getNextRank())) {
             testIssueFolderDTO.setRank(RankUtil.Operation.INSERT.getRank(issueFolderVO.getLastRank(), issueFolderVO.getNextRank()));
         } else {

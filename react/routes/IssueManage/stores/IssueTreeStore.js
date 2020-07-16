@@ -63,7 +63,7 @@ class IssueTreeStore {
     // 选中之前选中的
     let selectedId = this.currentFolder ? this.currentFolder.id : undefined;
     if (!this.currentFolder.id && rootIds.length > 0) {
-      selectedId = defaultSelectId ? Number(defaultSelectId) : rootIds[0];
+      selectedId = defaultSelectId || rootIds[0];
     }
     this.treeData = {
       rootIds,

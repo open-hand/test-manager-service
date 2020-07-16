@@ -96,7 +96,7 @@ export function addItem(
 }
 export function getItemByPosition(tree, position) {
   const id = tree.items[position.parentId].children[position.index];
-  return tree.items[id];
+  return { ...tree.items[id], index: position.index, parentId: position.parentId };
 }
 // 更新自身，并且更新父元素的children里的id
 export function createItem(tree, path, item) {

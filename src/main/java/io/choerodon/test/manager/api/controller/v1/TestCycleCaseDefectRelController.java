@@ -7,6 +7,7 @@ import java.util.Optional;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
 import io.swagger.annotations.ApiOperation;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -56,7 +57,8 @@ public class TestCycleCaseDefectRelController {
     @ApiOperation("删除缺陷")
     @DeleteMapping("/delete/{defectId}")
     public ResponseEntity removeAttachment(@PathVariable(name = "project_id") Long projectId,
-                                           @PathVariable(name = "defectId") Long defectId,
+                                           @PathVariable(name = "defectId")
+                                           @Encrypt Long defectId,
                                            @RequestParam Long organizationId) {
         TestCycleCaseDefectRelVO testCycleCaseDefectRelVO = new TestCycleCaseDefectRelVO();
         testCycleCaseDefectRelVO.setId(defectId);

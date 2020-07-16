@@ -8,6 +8,7 @@ import javax.persistence.Table;
 import io.choerodon.mybatis.annotation.ModifyAudit;
 import io.choerodon.mybatis.annotation.VersionAudit;
 import io.choerodon.mybatis.domain.AuditDomain;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
  * @author zhaotianxin
@@ -19,6 +20,7 @@ import io.choerodon.mybatis.domain.AuditDomain;
 public class TestCaseLinkDTO extends AuditDomain {
     @Id
     @GeneratedValue
+    @Encrypt
     private Long linkId;
     private Long linkCaseId;
     private Long issueId;

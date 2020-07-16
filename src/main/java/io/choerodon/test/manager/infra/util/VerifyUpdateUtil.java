@@ -12,6 +12,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.infra.annotation.Update;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -19,6 +20,12 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class VerifyUpdateUtil {
+
+    @Autowired
+    private EncryptUtil encryptUtil;
+
+    public VerifyUpdateUtil() {
+    }
 
     /**
      * 根据前端数据进行部分更新
@@ -58,7 +65,7 @@ public class VerifyUpdateUtil {
         if (field.getType() == String.class) {
             field.set(objectUpdate, v);
         } else if (field.getType() == Long.class) {
-            field.set(objectUpdate, v == null ? null : Long.valueOf(v.toString()));
+            encryptUtil.decryptIfFieldEncrypted(field, objectUpdate, v);
         } else if (field.getType() == Date.class) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             field.set(objectUpdate, v != null ? sdf.parse(v.toString()) : null);

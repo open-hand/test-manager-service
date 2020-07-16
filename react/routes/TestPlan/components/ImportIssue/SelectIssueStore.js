@@ -22,6 +22,9 @@ class IssueTreeStore {
   // 使用map，方便查找访问
   treeMap = observable.map();
 
+  // 用于进行根目录判断
+  treeRootMap=observable.map();
+
   @action clearStore = () => {
     this.currentCycle = {};
     this.treeData = {
@@ -61,7 +64,11 @@ class IssueTreeStore {
   @action setTreeData(treeData, initCaseSelected) {
     const { rootIds, treeFolder } = treeData;
     // 选中之前选中的
-    const selectedId = this.currentCycle.id || rootIds[0];    
+    const selectedId = this.currentCycle.id || rootIds[0]; 
+    // 保存根目录 用于后续递归选择时判断根节点  
+    rootIds.forEach((r) => {
+      this.treeRootMap.set(r, true);
+    }); 
     this.treeData = {
       rootIds,
       treeFolder: treeFolder.map((folder) => {
@@ -92,7 +99,7 @@ class IssueTreeStore {
     // 数据初始化之后，设置选中的值
     if (initCaseSelected) {
       Object.keys(initCaseSelected).forEach((key) => {
-        const folderId = Number(key);
+        const folderId = key;
         this.handleCheckChange(true, folderId);
         const mapData = this.treeMap.get(folderId);
         if (mapData) {
@@ -133,7 +140,7 @@ class IssueTreeStore {
     // 处理子集
     this.autoHandleChildren(item, checked);
     // 处理父级      
-    if (parentId) {
+    if (!this.treeRootMap.get(folderId)) {
       this.autoHandleParent(parentId, checked);
     }
   }
@@ -164,7 +171,7 @@ class IssueTreeStore {
     // 如果有一个子没选中，就是中间态
     const isIndeterminate = item.checked ? children.some(childId => !this.treeMap.get(childId).checked) : false;
     item.isIndeterminate = isIndeterminate;
-    if (parentId) {
+    if (!this.treeRootMap.get(id)) {
       this.autoHandleParent(parentId, checked);
     }
   }
@@ -251,7 +258,7 @@ class IssueTreeStore {
   @computed get getSelectedIssueNum() {
     const selectedFolders = this.getSelectedFolders();   
     return Object.keys(selectedFolders).reduce((total, key) => {
-      const folderId = Number(key);
+      const folderId = key;
       const item = this.treeMap.get(folderId);
       if (item.selected) {
         total += item.selected.length;

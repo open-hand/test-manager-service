@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Map;
 import io.choerodon.test.manager.api.vo.agile.UserDO;
 import io.swagger.annotations.ApiModelProperty;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
  * @author zhaotianxin
@@ -12,6 +13,7 @@ import io.swagger.annotations.ApiModelProperty;
 public class TestPlanVO {
 
     @ApiModelProperty(value = "计划Id")
+    @Encrypt
     private Long planId;
 
     @ApiModelProperty(value = "计划名称")
@@ -41,6 +43,7 @@ public class TestPlanVO {
     @ApiModelProperty(value = "选中的用例是否有改变")
     private Boolean caseHasChange;
 
+    @Encrypt
     private Map<Long, CaseSelectVO> caseSelected;
 
     private Long objectVersionNumber;

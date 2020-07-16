@@ -1,5 +1,7 @@
 package io.choerodon.test.manager.api.vo;
 
+import org.hzero.starter.keyencrypt.core.Encrypt;
+
 import java.util.List;
 
 /**
@@ -10,8 +12,10 @@ public class CaseSelectVO {
 
     private Boolean custom;
 
+    @Encrypt
     private List<Long> selected;
 
+    @Encrypt
     private List<Long> unSelected;
 
     public Boolean getCustom() {

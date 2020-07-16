@@ -6,10 +6,10 @@ import java.util.Map;
 import java.util.Set;
 
 import io.choerodon.test.manager.api.vo.CaseCompareVO;
+import io.choerodon.test.manager.api.vo.CaseSearchVO;
 import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Param;
 
-import io.choerodon.test.manager.api.vo.agile.SearchDTO;
 import io.choerodon.mybatis.common.BaseMapper;
 import io.choerodon.test.manager.api.vo.FormStatusVO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
@@ -82,7 +82,7 @@ public interface TestCycleCaseMapper extends BaseMapper<TestCycleCaseDTO> {
      * 查询文件下的执行
      */
 
-    List<TestCycleCaseDTO> queryFolderCycleCase(@Param("planId") Long planId, @Param("cycleIds") Set<Long> cycleIds, @Param("searchDTO") SearchDTO searchDTO);
+    List<TestCycleCaseDTO> queryFolderCycleCase(@Param("planId") Long planId, @Param("cycleIds") Set<Long> cycleIds, @Param("searchDTO") CaseSearchVO caseSearchVO);
 
     void fixCycleCase();
 

@@ -1,8 +1,11 @@
 package io.choerodon.test.manager.api.controller.v1;
+
 import java.util.Optional;
 
 import io.choerodon.core.iam.ResourceLevel;
+import io.choerodon.test.manager.api.vo.TestTreeIssueFolderVO;
 import io.swagger.annotations.ApiOperation;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import io.choerodon.swagger.annotation.Permission;
 
 import io.choerodon.core.exception.CommonException;
-import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.test.manager.api.vo.TestIssueFolderVO;
 import io.choerodon.test.manager.app.service.TestIssueFolderService;
 
@@ -28,7 +30,7 @@ public class TestIssueFolderController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("查询文件夹，返回树结构")
     @GetMapping("/query")
-    public ResponseEntity query(@PathVariable(name = "project_id") Long projectId) {
+    public ResponseEntity<TestTreeIssueFolderVO> query(@PathVariable(name = "project_id") Long projectId) {
         return Optional.ofNullable(testIssueFolderService.queryTreeFolder(projectId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.testIssueFolder.query"));
@@ -39,7 +41,8 @@ public class TestIssueFolderController {
     @ApiOperation("删除文件夹")
     @DeleteMapping("/{folderId}")
     public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
-                                 @PathVariable(name = "folderId") Long folderId) {
+                                 @PathVariable(name = "folderId")
+                                 @Encrypt Long folderId) {
         testIssueFolderService.delete(projectId, folderId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -49,7 +52,7 @@ public class TestIssueFolderController {
     @PostMapping
     public ResponseEntity<TestIssueFolderVO> create(@PathVariable(name = "project_id") Long projectId,
                                                     @RequestBody TestIssueFolderVO testIssueFolderVO) {
-        return Optional.ofNullable(testIssueFolderService.create(projectId,testIssueFolderVO))
+        return Optional.ofNullable(testIssueFolderService.create(projectId, testIssueFolderVO))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.testIssueFolder.insert"));
     }
@@ -68,9 +71,10 @@ public class TestIssueFolderController {
     @ApiOperation("移动文件夹")
     @PutMapping("/move")
     public ResponseEntity<String> moveFolder(@PathVariable(name = "project_id") Long projectId,
-                                     @RequestParam(name = "targetFolderId") Long targetFolderId,
-                                     @RequestBody TestIssueFolderVO issueFolderVO) {
-        return Optional.ofNullable(testIssueFolderService.moveFolder(projectId,targetFolderId,issueFolderVO))
+                                             @RequestParam(name = "targetFolderId", required = false)
+                                             @Encrypt Long targetFolderId,
+                                             @RequestBody TestIssueFolderVO issueFolderVO) {
+        return Optional.ofNullable(testIssueFolderService.moveFolder(projectId, targetFolderId, issueFolderVO))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.testIssueFolder.move"));
     }
