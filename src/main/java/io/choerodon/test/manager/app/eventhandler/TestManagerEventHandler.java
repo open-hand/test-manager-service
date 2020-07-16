@@ -116,7 +116,7 @@ public class TestManagerEventHandler {
 
     @SagaTask(code = SagaTaskCodeConstants.TEST_MANAGER_CLONE_PLAN_TASK, description = "复制计划", sagaCode = SagaTopicCodeConstants.TEST_MANAGER_CLONE_PLAN, seq = 1)
     public void clonePlan(String message) {
-        Map<String, Integer> map = null ;
+        Map<String, Long> map = null ;
         try {
             map = JSONObject.parseObject(message,Map.class);
             testPlanServcie.sagaClonePlan(map);
