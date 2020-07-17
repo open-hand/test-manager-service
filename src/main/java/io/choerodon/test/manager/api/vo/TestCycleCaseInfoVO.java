@@ -31,6 +31,7 @@ public class TestCycleCaseInfoVO {
     private String source;
 
     @ApiModelProperty(value = "用例ID")
+    @Encrypt
     private Long caseId;
 
     @ApiModelProperty(value = "用例文件夹")

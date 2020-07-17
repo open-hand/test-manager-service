@@ -74,7 +74,7 @@ public class TestCycleCaseDefectRelController {
                                                              @RequestParam("applyType") String applyType,
                                                              @PathVariable("defectType") String defectType,
                                                              @RequestParam Long organizationId,
-                                                             @PathVariable("id") Long id) {
+                                                             @PathVariable("id") @Encrypt Long id) {
         IssueDTO issueDTO = testCaseService.createTest(issueCreateDTO, projectId, applyType);
         TestCycleCaseDefectRelVO defectRelDTO = new TestCycleCaseDefectRelVO();
         defectRelDTO.setIssueId(issueDTO.getIssueId());
