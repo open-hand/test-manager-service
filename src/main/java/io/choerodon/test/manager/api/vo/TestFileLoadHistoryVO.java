@@ -42,6 +42,7 @@ public class TestFileLoadHistoryVO {
     private Long objectVersionNumber;
 
     @ApiModelProperty(value = "创建人")
+    @Encrypt
     private Long createdBy;
 
     @ApiModelProperty(value = "创建日期")
