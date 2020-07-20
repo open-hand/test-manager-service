@@ -25,9 +25,9 @@ public class IssueCreateDTO {
     private Long reporterId;
 
     private Long projectId;
-    @Encrypt
+    @Encrypt(ignoreValue = "0")
     private Long epicId;
-    @Encrypt
+    @Encrypt(ignoreValue = "0")
     private Long sprintId;
     @Encrypt
     private Long priorityId;

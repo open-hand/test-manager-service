@@ -22,8 +22,11 @@ public class TestCaseLinkDTO extends AuditDomain {
     @GeneratedValue
     @Encrypt
     private Long linkId;
+    @Encrypt
     private Long linkCaseId;
+    @Encrypt
     private Long issueId;
+    @Encrypt
     private Long linkTypeId;
     private Long projectId;
 
