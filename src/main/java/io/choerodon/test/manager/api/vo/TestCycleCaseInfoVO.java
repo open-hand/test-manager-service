@@ -35,6 +35,7 @@ public class TestCycleCaseInfoVO {
     private Long caseId;
 
     @ApiModelProperty(value = "用例文件夹")
+    @Encrypt
     private Long caseFolderId;
 
     @ApiModelProperty(value = "用例case名称")
@@ -81,6 +82,7 @@ public class TestCycleCaseInfoVO {
     private Long nextExecuteId;
 
     @ApiModelProperty(value = "测试用例关联的附件信息")
+    @Encrypt
     private List<TestCycleCaseAttachmentRelVO> attachment;
 
     public Long getExecuteId() {

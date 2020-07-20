@@ -5,6 +5,7 @@ import javax.persistence.*;
 import io.choerodon.mybatis.annotation.ModifyAudit;
 import io.choerodon.mybatis.annotation.VersionAudit;
 import io.choerodon.mybatis.domain.AuditDomain;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -15,6 +16,7 @@ import io.choerodon.mybatis.domain.AuditDomain;
 public class TestCycleCaseAttachmentRelDTO extends AuditDomain {
     @Id
     @GeneratedValue
+    @Encrypt
     private Long id;
     private String attachmentType;
     private Long attachmentLinkId;

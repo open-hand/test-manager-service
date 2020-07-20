@@ -76,7 +76,8 @@ public class TestCycleCaseController {
                                                              @Encrypt Long cycleId,
                                                              @RequestParam(name = "plan_id")
                                                              @Encrypt Long planId,
-                                                             @RequestBody(required = false) CaseSearchVO caseSearchVO,
+                                                             @RequestBody(required = false)
+                                                             @Encrypt CaseSearchVO caseSearchVO,
                                                              @PathVariable(name = "executeId")
                                                              @Encrypt Long executeId) {
         return new ResponseEntity<>(testCycleCaseService.queryCycleCaseInfo(executeId, projectId, planId, cycleId, caseSearchVO), HttpStatus.OK);
