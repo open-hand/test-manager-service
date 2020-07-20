@@ -23,6 +23,7 @@ public class TestPlanVO {
     private String description;
 
     @ApiModelProperty(value = "管理员Id")
+    @Encrypt
     private Long managerId;
 
     @ApiModelProperty(value = "开始时间")
