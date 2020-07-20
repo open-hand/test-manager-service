@@ -11,7 +11,7 @@ import java.util.List;
 public class CaseSearchVO {
 
     private List<String> contents;
-
+    @Encrypt
     private SearchArgs searchArgs;
 
     public List<String> getContents() {
@@ -36,7 +36,7 @@ public class CaseSearchVO {
 
         @Encrypt
         private Long executionStatus;
-
+        @Encrypt
         private Long assignUser;
 
         @Encrypt

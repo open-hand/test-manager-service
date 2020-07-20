@@ -45,6 +45,7 @@ public class TestCaseStepVO {
     private IssueInfosVO issueInfosVO;
 
     @ApiModelProperty(value = "附件DTOList")
+    @Encrypt
     private List<TestCycleCaseAttachmentRelDTO> attachments;
 
     public IssueInfosVO getIssueInfosVO() {

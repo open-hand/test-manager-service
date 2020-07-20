@@ -76,7 +76,8 @@ public class TestCycleCaseController {
                                                              @Encrypt Long cycleId,
                                                              @RequestParam(name = "plan_id")
                                                              @Encrypt Long planId,
-                                                             @RequestBody(required = false) CaseSearchVO caseSearchVO,
+                                                             @RequestBody(required = false)
+                                                             @Encrypt CaseSearchVO caseSearchVO,
                                                              @PathVariable(name = "executeId")
                                                              @Encrypt Long executeId) {
         return new ResponseEntity<>(testCycleCaseService.queryCycleCaseInfo(executeId, projectId, planId, cycleId, caseSearchVO), HttpStatus.OK);
@@ -128,7 +129,8 @@ public class TestCycleCaseController {
                                                                          @RequestParam(name = "plan_id")
                                                                          @Encrypt Long planId,
                                                                          @SortDefault PageRequest pageRequest,
-                                                                         @RequestBody(required = false) CaseSearchVO caseSearchVO) {
+                                                                         @RequestBody(required = false)
+                                                                         @Encrypt CaseSearchVO caseSearchVO) {
         return new ResponseEntity<>(testCycleCaseService.listAllCaseByCycleId(projectId, planId, cycleId, pageRequest, caseSearchVO), HttpStatus.OK);
     }
 
