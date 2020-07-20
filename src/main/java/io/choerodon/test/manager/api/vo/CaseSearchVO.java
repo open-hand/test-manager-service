@@ -36,7 +36,7 @@ public class CaseSearchVO {
 
         @Encrypt
         private Long executionStatus;
-
+        @Encrypt
         private Long assignUser;
 
         @Encrypt

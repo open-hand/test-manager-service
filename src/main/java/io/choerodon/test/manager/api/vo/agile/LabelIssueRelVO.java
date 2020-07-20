@@ -5,6 +5,7 @@ import java.io.Serializable;
 import io.swagger.annotations.ApiModelProperty;
 
 import io.choerodon.test.manager.infra.util.StringUtil;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
  * 敏捷开发Issue标签关联
@@ -15,9 +16,11 @@ import io.choerodon.test.manager.infra.util.StringUtil;
 public class LabelIssueRelVO implements Serializable {
 
     @ApiModelProperty(value = "问题主键id")
+    @Encrypt
     private Long issueId;
 
     @ApiModelProperty(value = "标签id")
+    @Encrypt
     private Long labelId;
 
     @ApiModelProperty(value = "版本号")
