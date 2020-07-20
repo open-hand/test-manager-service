@@ -3,10 +3,12 @@ package io.choerodon.test.manager.api.vo;
 import java.util.Date;
 
 import io.swagger.annotations.ApiModelProperty;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 public class TestFileLoadHistoryWithRateVO {
 
     @ApiModelProperty(value = "主键ID")
+    @Encrypt
     private Long id;
 
     @ApiModelProperty(value = "项目ID")
@@ -40,6 +42,7 @@ public class TestFileLoadHistoryWithRateVO {
     private Long objectVersionNumber;
 
     @ApiModelProperty(value = "创建人")
+    @Encrypt
     private Long createdBy;
 
     @ApiModelProperty(value = "创建日期")

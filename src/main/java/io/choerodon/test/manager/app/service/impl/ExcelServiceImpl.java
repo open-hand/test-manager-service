@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import io.choerodon.test.manager.api.vo.agile.ProjectDTO;
 import io.choerodon.test.manager.infra.feign.BaseFeignClient;
@@ -70,6 +72,8 @@ public class ExcelServiceImpl implements ExcelService {
 
     @Autowired
     private TestCaseMapper testCaseMapper;
+    @Autowired
+    private ObjectMapper objectMapper;
 
 //    @Autowired
 //    private FileService fileService;
@@ -241,7 +245,12 @@ public class ExcelServiceImpl implements ExcelService {
             TestFileLoadHistoryDTO testIssueFolderRelDO = modelMapper.map(testFileLoadHistoryWithRateVO, TestFileLoadHistoryDTO.class);
             testFileLoadHistoryMapper.updateByPrimaryKey(testIssueFolderRelDO);
             //notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
-            messageClient.sendByUserId(userId,NOTIFYISSUECODE,JSON.toJSONString(testFileLoadHistoryWithRateVO));
+            try {
+                messageClient.sendByUserId(userId,NOTIFYISSUECODE,objectMapper.writeValueAsString(testFileLoadHistoryWithRateVO));
+            } catch (JsonProcessingException e) {
+                log.error("json convert fail,e:[{}]", e);
+                throw new CommonException(e);
+            }
             throw new CommonException("error.folder.no.has.case");
         }
         int sum = excelCaseVOS.size();
