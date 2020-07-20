@@ -35,13 +35,13 @@ public class IssueCreateDTO {
     private Long issueTypeId;
     @Encrypt
     private Long folderId;
-    @Encrypt
+
     private List<VersionIssueRelVO> versionIssueRelVOList;
-    @Encrypt
+
     private List<LabelIssueRelVO> labelIssueRelVOList;
-    @Encrypt
+
     private List<ComponentIssueRelVO> componentIssueRelVOList;
-    @Encrypt
+
     private List<TestCaseLinkDTO> testCaseLinkDTOList;
 
     private BigDecimal remainingTime;
