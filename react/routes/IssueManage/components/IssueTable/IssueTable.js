@@ -13,10 +13,12 @@ import CreateIssueTiny from '../CreateIssueTiny';
 import IssueStore from '../../stores/IssueStore';
 import TableDraggleItem from './TableDraggleItem';
 import IssueTreeStore from '../../stores/IssueTreeStore';
+import { getTask } from '../IssueTree/TreeNode';
 import {
   renderIssueNum, renderSummary, renderAction,
 } from './tags';
 import './IssueTable.less';
+
 
 export default observer((props) => {
   const [firstIndex, setFirstIndex] = useState(null);
@@ -144,6 +146,10 @@ export default observer((props) => {
   }, []);
 
   const onDragEnd = useAvoidClosure(() => {
+    const task = getTask();
+    if (task) {
+      task();
+    }
     IssueStore.setTableDraging(false);
     document.removeEventListener('keydown', enterCopy);
     document.removeEventListener('keyup', leaveCopy);
