@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.api.vo.agile;
 
 import io.choerodon.test.manager.infra.util.StringUtil;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 import java.util.Date;
 
@@ -9,189 +10,189 @@ import java.util.Date;
  * @since 2018/5/24
  */
 public class UserDO {
+    @Encrypt
+    private Long id;
 
-	private Long id;
+    private String loginName;
 
-	private String loginName;
+    private String email;
 
-	private String email;
+    private Long organizationId;
 
-	private Long organizationId;
+    private String password;
 
-	private String password;
+    private String realName;
 
-	private String realName;
+    private String phone;
 
-	private String phone;
+    private String imageUrl;
 
-	private String imageUrl;
+    private String profilePhoto;
 
-	private String profilePhoto;
+    private Boolean isEnabled;
 
-	private Boolean isEnabled;
+    private Boolean isLdap;
 
-	private Boolean isLdap;
+    private String language;
 
-	private String language;
+    private String timeZone;
 
-	private String timeZone;
+    private Date lastPasswordUpdatedAt;
 
-	private Date lastPasswordUpdatedAt;
+    private Date lastLoginAt;
 
-	private Date lastLoginAt;
+    private Boolean isLocked;
 
-	private Boolean isLocked;
+    private Date lockedUntilAt;
 
-	private Date lockedUntilAt;
+    private Integer passwordAttempt;
 
-	private Integer passwordAttempt;
+    public Long getId() {
+        return id;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public String getLoginName() {
+        return loginName;
+    }
 
-	public String getLoginName() {
-		return loginName;
-	}
+    public void setLoginName(String loginName) {
+        this.loginName = loginName;
+    }
 
-	public void setLoginName(String loginName) {
-		this.loginName = loginName;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public Long getOrganizationId() {
+        return organizationId;
+    }
 
-	public Long getOrganizationId() {
-		return organizationId;
-	}
+    public void setOrganizationId(Long organizationId) {
+        this.organizationId = organizationId;
+    }
 
-	public void setOrganizationId(Long organizationId) {
-		this.organizationId = organizationId;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public String getRealName() {
+        return realName;
+    }
 
-	public String getRealName() {
-		return realName;
-	}
+    public void setRealName(String realName) {
+        this.realName = realName;
+    }
 
-	public void setRealName(String realName) {
-		this.realName = realName;
-	}
+    public String getPhone() {
+        return phone;
+    }
 
-	public String getPhone() {
-		return phone;
-	}
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
+    public String getImageUrl() {
+        return imageUrl;
+    }
 
-	public String getImageUrl() {
-		return imageUrl;
-	}
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
-	public void setImageUrl(String imageUrl) {
-		this.imageUrl = imageUrl;
-	}
+    public String getProfilePhoto() {
+        return profilePhoto;
+    }
 
-	public String getProfilePhoto() {
-		return profilePhoto;
-	}
+    public void setProfilePhoto(String profilePhoto) {
+        this.profilePhoto = profilePhoto;
+    }
 
-	public void setProfilePhoto(String profilePhoto) {
-		this.profilePhoto = profilePhoto;
-	}
+    public Boolean getLdap() {
+        return isLdap;
+    }
 
-	public Boolean getLdap() {
-		return isLdap;
-	}
+    public void setLdap(Boolean ldap) {
+        isLdap = ldap;
+    }
 
-	public void setLdap(Boolean ldap) {
-		isLdap = ldap;
-	}
+    public String getLanguage() {
+        return language;
+    }
 
-	public String getLanguage() {
-		return language;
-	}
+    public void setLanguage(String language) {
+        this.language = language;
+    }
 
-	public void setLanguage(String language) {
-		this.language = language;
-	}
+    public String getTimeZone() {
+        return timeZone;
+    }
 
-	public String getTimeZone() {
-		return timeZone;
-	}
+    public void setTimeZone(String timeZone) {
+        this.timeZone = timeZone;
+    }
 
-	public void setTimeZone(String timeZone) {
-		this.timeZone = timeZone;
-	}
+    public Date getLastPasswordUpdatedAt() {
+        return lastPasswordUpdatedAt;
+    }
 
-	public Date getLastPasswordUpdatedAt() {
-		return lastPasswordUpdatedAt;
-	}
+    public void setLastPasswordUpdatedAt(Date lastPasswordUpdatedAt) {
+        this.lastPasswordUpdatedAt = lastPasswordUpdatedAt;
+    }
 
-	public void setLastPasswordUpdatedAt(Date lastPasswordUpdatedAt) {
-		this.lastPasswordUpdatedAt = lastPasswordUpdatedAt;
-	}
+    public Date getLastLoginAt() {
+        return lastLoginAt;
+    }
 
-	public Date getLastLoginAt() {
-		return lastLoginAt;
-	}
+    public void setLastLoginAt(Date lastLoginAt) {
+        this.lastLoginAt = lastLoginAt;
+    }
 
-	public void setLastLoginAt(Date lastLoginAt) {
-		this.lastLoginAt = lastLoginAt;
-	}
+    public Date getLockedUntilAt() {
+        return lockedUntilAt;
+    }
 
-	public Date getLockedUntilAt() {
-		return lockedUntilAt;
-	}
+    public void setLockedUntilAt(Date lockedUntilAt) {
+        this.lockedUntilAt = lockedUntilAt;
+    }
 
-	public void setLockedUntilAt(Date lockedUntilAt) {
-		this.lockedUntilAt = lockedUntilAt;
-	}
+    public Integer getPasswordAttempt() {
+        return passwordAttempt;
+    }
 
-	public Integer getPasswordAttempt() {
-		return passwordAttempt;
-	}
+    public void setPasswordAttempt(Integer passwordAttempt) {
+        this.passwordAttempt = passwordAttempt;
+    }
 
-	public void setPasswordAttempt(Integer passwordAttempt) {
-		this.passwordAttempt = passwordAttempt;
-	}
+    public Boolean getEnabled() {
+        return isEnabled;
+    }
 
-	public Boolean getEnabled() {
-		return isEnabled;
-	}
+    public Boolean getLocked() {
+        return isLocked;
+    }
 
-	public Boolean getLocked() {
-		return isLocked;
-	}
+    public void setEnabled(Boolean enabled) {
+        isEnabled = enabled;
+    }
 
-	public void setEnabled(Boolean enabled) {
-		isEnabled = enabled;
-	}
+    public void setLocked(Boolean locked) {
+        isLocked = locked;
+    }
 
-	public void setLocked(Boolean locked) {
-		isLocked = locked;
-	}
-
-	@Override
-	public String toString() {
-		return StringUtil.getToString(this);
-	}
+    @Override
+    public String toString() {
+        return StringUtil.getToString(this);
+    }
 }
