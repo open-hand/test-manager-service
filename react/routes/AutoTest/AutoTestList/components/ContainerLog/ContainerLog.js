@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Content } from '@choerodon/boot';
 import { Button, Select, Modal } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
-import uuidv1 from 'uuid';
 import _ from 'lodash';
 import CodeMirror from 'react-codemirror';
 import 'codemirror/lib/codemirror.css';
@@ -10,6 +9,8 @@ import 'codemirror/theme/base16-dark.css';
 import { getLog } from '../../../../../api/AutoTestApi';
 
 import './ContainerLog.less';
+
+const uuidv1 = require('uuid');
 
 const { Sidebar } = Modal;
 const { Option } = Select;
