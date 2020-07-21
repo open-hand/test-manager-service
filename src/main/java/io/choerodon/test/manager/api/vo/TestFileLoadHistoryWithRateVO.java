@@ -21,6 +21,7 @@ public class TestFileLoadHistoryWithRateVO {
     private Long sourceType;
 
     @ApiModelProperty(value = "数据源关联ID")
+    @Encrypt
     private Long linkedId;
 
     @ApiModelProperty(value = "文件minioURL")

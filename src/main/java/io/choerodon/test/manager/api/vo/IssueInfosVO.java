@@ -5,6 +5,7 @@ import java.util.List;
 
 import io.choerodon.test.manager.api.vo.agile.*;
 import io.swagger.annotations.ApiModelProperty;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
  * Created by 842767365@qq.com on 7/17/18.
@@ -18,6 +19,7 @@ public class IssueInfosVO {
     private String issueStatusName;
 
     @ApiModelProperty(value = "issueID")
+    @Encrypt
     private Long issueId;
 
     @ApiModelProperty(value = "issue颜色")
@@ -75,6 +77,7 @@ public class IssueInfosVO {
     private String issueNum;
 
     @ApiModelProperty(value = "报告人id")
+    @Encrypt
     private Long reporterId;
 
     @ApiModelProperty(value = "报告人工号+名字")

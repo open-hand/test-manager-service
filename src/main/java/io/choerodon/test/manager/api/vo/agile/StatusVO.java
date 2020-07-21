@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.api.vo.agile;
 
 import io.swagger.annotations.ApiModelProperty;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
  * @author shinan.chen
@@ -8,6 +9,7 @@ import io.swagger.annotations.ApiModelProperty;
  */
 public class StatusVO {
     @ApiModelProperty(value = "状态id")
+    @Encrypt
     private Long id;
     @ApiModelProperty(value = "名称")
     private String name;
