@@ -44,12 +44,14 @@ public class IssueInfosVO {
     private Long objectVersionNumber;
 
     @ApiModelProperty(value = "状态ID")
+    @Encrypt
     private Long statusId;
 
     @ApiModelProperty(value = "优先级码")
     private String priorityCode;
 
     @ApiModelProperty(value = "指派人id")
+    @Encrypt
     private Long assigneeId;
 
     @ApiModelProperty(value = "指派人工号+名字")

@@ -45,6 +45,7 @@ public class TestCycleCaseVO {
     private String statusColor;
 
     @ApiModelProperty(value = "指派人")
+    @Encrypt
     private Long assignedTo;
 
     @ApiModelProperty(value = "描述")
@@ -66,9 +67,11 @@ public class TestCycleCaseVO {
     private UserDO lastUpdateUser;
 
     @ApiModelProperty(value = "版本ID")
+    @Encrypt
     private Long versionId;
 
     @ApiModelProperty(value = "最后更新人ID")
+    @Encrypt
     private Long lastUpdatedBy;
 
     @ApiModelProperty(value = "最后更新日期")
@@ -87,6 +90,7 @@ public class TestCycleCaseVO {
     private String versionName;
 
     @ApiModelProperty(value = "上一位执行ID")
+    @Encrypt
     private Long lastExecuteId;
 
     @ApiModelProperty(value = "后一位执行ID")
@@ -117,6 +121,7 @@ public class TestCycleCaseVO {
     private Long projectId;
 
     @ApiModelProperty(value = "所属计划Id")
+    @Encrypt
     private Long planId;
 
     public Long getProjectId() {

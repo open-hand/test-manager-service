@@ -5,6 +5,7 @@ import java.io.Serializable;
 import io.swagger.annotations.ApiModelProperty;
 
 import io.choerodon.test.manager.infra.util.StringUtil;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
  * @author dinghuang123@gmail.com
@@ -19,6 +20,7 @@ public class IssueSprintDTO implements Serializable {
     private String statusCode;
 
     @ApiModelProperty(value = "冲刺id")
+    @Encrypt
     private Long sprintId;
 
     public String getSprintName() {
