@@ -269,7 +269,7 @@ public class ExcelServiceImpl implements ExcelService {
         downloadWorkBook(projectDTO.getOrganizationId(),workbook, fileName, testFileLoadHistoryWithRateVO, userId, sum, NOTIFYISSUECODE);
     }
 
-    private String objToString(Object obj){
+    private String objToString(TestFileLoadHistoryWithRateVO obj){
         try {
             return objectMapper.writeValueAsString(obj);
         } catch (JsonProcessingException e) {
@@ -354,7 +354,7 @@ public class ExcelServiceImpl implements ExcelService {
 
             testFileLoadHistoryWithRateVO.setRate(99.9);
             //notifyService.postWebSocket(code, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
-            messageClient.sendByUserId(userId,code,JSON.toJSONString(testFileLoadHistoryWithRateVO));
+            messageClient.sendByUserId(userId,code,objToString(testFileLoadHistoryWithRateVO));
             testFileLoadHistoryWithRateVO.setLastUpdateDate(new Date());
             testFileLoadHistoryWithRateVO.setFileStream(Arrays.toString(content));
 
@@ -384,7 +384,7 @@ public class ExcelServiceImpl implements ExcelService {
                 testFileLoadHistoryMapper.updateByPrimaryKey(testIssueFolderRelDO);
 
                 //notifyService.postWebSocket(code, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
-                messageClient.sendByUserId(userId,code,JSON.toJSONString(testFileLoadHistoryWithRateVO));
+                messageClient.sendByUserId(userId,code,objToString(testFileLoadHistoryWithRateVO));
                 workbook.close();
             } catch (IOException e) {
                 log.warn(EXPORT_ERROR_WORKBOOK_CLOSE, e);

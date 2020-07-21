@@ -55,6 +55,7 @@ public class TestCycleCaseInfoVO {
     private String executionStatusName;
 
     @ApiModelProperty(value = "执行人id")
+    @Encrypt
     private Long assignedTo;
 
     @ApiModelProperty(value = "执行人")

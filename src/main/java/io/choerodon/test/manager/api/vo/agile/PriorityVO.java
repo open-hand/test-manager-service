@@ -3,6 +3,7 @@ package io.choerodon.test.manager.api.vo.agile;
 import java.math.BigDecimal;
 
 import io.swagger.annotations.ApiModelProperty;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
  * @author cong.cheng
@@ -11,6 +12,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 public class PriorityVO {
     @ApiModelProperty(value = "优先级id")
+    @Encrypt
     private Long id;
     @ApiModelProperty(value = "名称")
     private String name;

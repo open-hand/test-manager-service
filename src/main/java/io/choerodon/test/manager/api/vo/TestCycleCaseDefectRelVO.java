@@ -21,6 +21,7 @@ public class TestCycleCaseDefectRelVO {
     private Long defectLinkId;
 
     @ApiModelProperty(value = "缺陷issueID")
+    @Encrypt
     private Long issueId;
 
     @ApiModelProperty(value = "乐观锁版本号")
