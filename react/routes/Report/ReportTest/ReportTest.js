@@ -17,7 +17,7 @@ import { getIssueTypes, getIssueStatus } from '../../../api/agileApi';
 import {
   issueLink, executeDetailLink, getProjectName,
 } from '../../../common/utils';
-import './ReportTest.scss';
+import './ReportTest.less';
 
 const { AppState } = stores;
 const { Panel } = Collapse;

@@ -12,7 +12,7 @@ import ReporterSwitcher from '../components';
 import { getProjectName } from '../../../common/utils';
 import EmptyPng from '../../../assets/empty.png';
 import Empty from '../../../components/Empty';
-import './ReportProgress.scss';
+import './ReportProgress.less';
 
 const { AppState } = stores;
 const { Option } = Select;

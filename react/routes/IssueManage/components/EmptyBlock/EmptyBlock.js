@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import './EmptyBlock.scss';
+import './EmptyBlock.less';
 
 const EmptyBlock = ({
   style,

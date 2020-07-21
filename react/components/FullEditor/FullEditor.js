@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal } from 'choerodon-ui/pro';
 import WYSIWYGEditor from '../WYSIWYGEditor';
-import './FullEditor.scss';
+import './FullEditor.less';
 
 const key = Modal.key();
 function formatValue(value) {

@@ -6,7 +6,7 @@ import { toJS } from 'mobx';
 import Moment from 'moment';
 import { extendMoment } from 'moment-range';
 import { DatePicker, Spin } from 'choerodon-ui';
-import './EventCalendar.scss';
+import './EventCalendar.less';
 import CalendarBackItem from './CalendarBackItem';
 import EventItem from './EventItem';
 import Store from '../../stores';
