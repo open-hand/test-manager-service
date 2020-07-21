@@ -1,7 +1,7 @@
 import React, { Component, createRef } from 'react';
 import { observer } from 'mobx-react';
 import { handleRequestFailed } from '@/common/utils';
-import './IssueTree.scss';
+import './IssueTree.less';
 import {
   addFolder, editFolder, deleteFolder, moveFolder,
 } from '@/api/IssueManageApi';

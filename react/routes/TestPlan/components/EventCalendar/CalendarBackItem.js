@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Tooltip } from 'choerodon-ui';
 
 import moment from 'moment';
-import './CalendarBackItem.scss';
+import './CalendarBackItem.less';
 
 class CalendarBackItem extends Component {  
   shouldComponentUpdate(nextProps, nextState) {

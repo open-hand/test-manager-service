@@ -6,7 +6,7 @@ import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import { Select, Form, Modal } from 'choerodon-ui';
 
-import './CreateLinkTask.scss';
+import './CreateLinkTask.less';
 import { createLink, loadIssuesInLink } from '../../../../api/IssueManageApi';
 import TypeTag from '../../../../components/TypeTag';
 

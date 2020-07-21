@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { Choerodon } from '@choerodon/boot';
 import Lightbox from 'react-image-lightbox';
-import './IssueDescription.scss';
+import './IssueDescription.less';
 
 const QuillDeltaToHtmlConverter = require('quill-delta-to-html');
 

@@ -4,7 +4,7 @@ import { Icon, Popconfirm, Popover } from 'choerodon-ui';
 import _ from 'lodash';
 import UserHead from '@/components/UserHead';
 import DatetimeAgo from '../../../../../components/DateTimeAgo';
-import './DataLog.scss';
+import './DataLog.less';
 
 const PROP = {
   summary: '问题概要',

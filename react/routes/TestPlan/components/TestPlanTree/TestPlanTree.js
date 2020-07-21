@@ -2,7 +2,7 @@ import React, { Component, createRef } from 'react';
 import { observer } from 'mobx-react';
 import { Menu, Icon } from 'choerodon-ui';
 import { handleRequestFailed } from '@/common/utils';
-import './TestPlanTree.scss';
+import './TestPlanTree.less';
 import {
   editPlan, deletePlan, addFolder, editFolder, deleteFolder,
 } from '@/api/TestPlanApi';

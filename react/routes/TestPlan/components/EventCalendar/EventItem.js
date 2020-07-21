@@ -10,7 +10,7 @@ import { extendMoment } from 'moment-range';
 import { Tooltip } from 'choerodon-ui';
 import Store from '../../stores';
 import { updateFoldRangeDate } from '../../../../api/TestPlanApi';
-import './EventItem.scss';
+import './EventItem.less';
 
 const types = {
   plan: '计划',

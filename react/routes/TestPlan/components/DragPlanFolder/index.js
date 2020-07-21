@@ -6,7 +6,7 @@ import { observer } from 'mobx-react-lite';
 import { handleRequestFailed } from '@/common/utils';
 import { getPlanTreeById, moveFolder } from '@/api/TestPlanApi';
 import Tree from '@/components/Tree';
-import './index.scss';
+import './index.less';
 
 const key = Modal.key();
 

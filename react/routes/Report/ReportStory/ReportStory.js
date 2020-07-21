@@ -20,7 +20,7 @@ import { getStatusList } from '../../../api/TestStatusApi';
 import {
   issueLink, executeDetailLink, getProjectName,
 } from '../../../common/utils';
-import './ReportStory.scss';
+import './ReportStory.less';
 
 export const STATUS = {
   todo: '#ffb100',
