@@ -2,6 +2,7 @@ package io.choerodon.test.manager.api.vo.agile;
 
 import io.choerodon.test.manager.api.vo.agile.IssueTypeVO;
 import io.swagger.annotations.ApiModelProperty;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
  * Created by jian_zhang02@163.com on 2018/6/5.
@@ -9,6 +10,7 @@ import io.swagger.annotations.ApiModelProperty;
 public class IssueNumDTO {
 
     @ApiModelProperty(value = "问题主键id")
+    @Encrypt
     private Long issueId;
 
     @ApiModelProperty(value = "问题编号")

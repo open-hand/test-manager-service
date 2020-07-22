@@ -38,6 +38,7 @@ public class IssueTypeVO {
     @ApiModelProperty(value = "状态机名称")
     private String stateMachineName;
     @ApiModelProperty(value = "状态机id")
+    @Encrypt
     private Long stateMachineId;
 
     public Long getId() {
