@@ -138,7 +138,8 @@ public class TestCycleCaseController {
     @ApiOperation("批量指派用例")
     @PostMapping("/batchAssign/cycleCase")
     public ResponseEntity batchAssignCase(@PathVariable("project_id") Long projectId,
-                                          @RequestParam(name = "assign_user_id") Long assignUserId,
+                                          @RequestParam(name = "assign_user_id")
+                                          @Encrypt Long assignUserId,
                                           @RequestBody
                                           @Encrypt List<Long> cycleCaseIds) {
         testCycleCaseService.batchAssignCycleCase(projectId, assignUserId, cycleCaseIds);
