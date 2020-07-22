@@ -17,12 +17,15 @@ import org.hzero.starter.keyencrypt.core.Encrypt;
 public class IssueLinkVO {
 
     @ApiModelProperty(value = "问题id")
+    @Encrypt
     private Long issueId;
 
     @ApiModelProperty(value = "问题链接类型id")
+    @Encrypt
     private Long linkTypeId;
 
     @ApiModelProperty(value = "被链接的问题id")
+    @Encrypt
     private Long linkCaseId;
 
     @ApiModelProperty(value = "问题链接类型名称")
@@ -44,6 +47,7 @@ public class IssueLinkVO {
     private Long linkId;
 
     @ApiModelProperty(value = "经办人id")
+    @Encrypt
     private Long assigneeId;
 
     @ApiModelProperty(value = "经办人名称")
