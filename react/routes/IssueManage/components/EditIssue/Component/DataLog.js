@@ -10,6 +10,7 @@ const PROP = {
   summary: '问题概要',
   labels: '标签',
   IssueNum: '测试用例',
+  'Folder Link': '文件夹'
 };
 const PROP_SIMPLE = {
   issue_test: '测试用例',
@@ -40,7 +41,7 @@ class DataLog extends Component {
       return '更新';
     } else if ((oldValue || oldValue === 0) && (newValue || newValue === 0)) {
       // xxx -> yyy
-      if (['summary', ].includes(field)) {
+      if (['summary',].includes(field)) {
         return '将';
       }
       if (['description',].includes(field)) {
@@ -49,6 +50,9 @@ class DataLog extends Component {
       // 自定义字段
       if (field && field.isCusLog) {
         return '将';
+      }
+      if (field === 'Folder Link') {
+        return '移动'
       }
     } else if ((oldValue || oldValue === 0) && (!newValue && newValue !== 0)) {
       // yyy -> null
@@ -116,13 +120,13 @@ class DataLog extends Component {
       if (field && field.isCusLog) {
         return '由';
       }
-      if (['summary', ].includes(field)) {
+      if (['summary',].includes(field)) {
         return '由';
       } else {
         return '';
       }
     } else if ((oldValue || oldValue === 0) && (!newValue && newValue !== 0)) {
-        return '';
+      return '';
     } else {
       if (field === 'summary') {
         return '由';
@@ -148,7 +152,7 @@ class DataLog extends Component {
       return '';
     } else if ((oldValue || oldValue === 0) && (newValue || newValue === 0)) {
       // xxx -> yyy
-      if (['summary', ].includes(field)) {
+      if (['summary',].includes(field)) {
         return ` 【${oldString}】 `;
       }
       if (['description'].includes(field)) {
@@ -197,7 +201,7 @@ class DataLog extends Component {
       return '';
     } else if ((oldValue || oldValue === 0) && (newValue || newValue === 0)) {
       // xxx -> yyy
-      if (['summary', ].includes(field)) {
+      if (['summary',].includes(field)) {
         return '改变为';
       }
       // 自定义字段
@@ -260,7 +264,7 @@ class DataLog extends Component {
       }
     } else if ((oldValue || oldValue === 0) && (!newValue && newValue !== 0)) {
       // yyy -> null
-        return '';
+      return '';
     } else {
       if (field === 'summary') {
         return ` 【${newString}】 `;
