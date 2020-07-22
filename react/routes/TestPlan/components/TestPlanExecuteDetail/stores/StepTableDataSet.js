@@ -28,6 +28,7 @@ function StepTableDataSet(projectId, orgId, intl, caseId, testStatusDataSet, exe
     autoQuery: true,
     selection: false,
     paging: true,
+    modifiedCheck: false,
     data: [{
       testData: 'testData', expectedResult: 'expectedResult', stepStatus: '3', stepAttachment: [], defects: [], comment: '2222',
     }],
