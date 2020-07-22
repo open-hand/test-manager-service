@@ -60,7 +60,7 @@ class EditIssueStore {
     try {
       const result = await promise;
       if (callback && typeof callback === 'function') {
-        callback();
+        await callback();
       }
       this.setLoading(false);
       return result;

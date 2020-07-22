@@ -14,7 +14,7 @@ function EditTestStepTable() {
   } = useContext(EditIssueContext);
   const { issueSteps } = store;
   const onUpdateStep = newData => store.loadWithLoading(
-    updateStep(newData),
+    updateStep(newData), store.loadIssueData,
   );
   const onCreateIssueStep = (newData) => {
     // eslint-disable-next-line no-param-reassign
@@ -23,7 +23,7 @@ function EditTestStepTable() {
       createIssueStep({
         issueId: caseId,
         ...newData,
-      }),
+      }), store.loadIssueData,
     );
   };
   const onCloneStep = async (newData) => {    
@@ -31,7 +31,7 @@ function EditTestStepTable() {
       cloneStep({
         caseId,
         ...newData,
-      }),
+      }), store.loadIssueData,
     ));
     return result;   
   };
