@@ -41,12 +41,12 @@ public class PageUtil {
      */
     public static <T> Page<T> createPageFromList(List<T> all, PageRequest pageRequest) {
         Page<T> result = new Page<>();
-        boolean queryAll = pageRequest.getPage() == 0 || pageRequest.getSize() == 0;
+        boolean queryAll = pageRequest.getPage() < 0 || pageRequest.getSize() == 0;
         result.setSize(queryAll ? all.size() : pageRequest.getSize());
         result.setNumber(pageRequest.getPage());
         result.setTotalElements(all.size());
-        result.setTotalPages(queryAll ? 1 : (int) (Math.ceil(all.size() / (pageRequest.getSize() * 1.0))));
-        int fromIndex = pageRequest.getSize() * (pageRequest.getPage() - 1);
+        result.setTotalPages(queryAll ? 0 : ((int) (Math.ceil(all.size() / (pageRequest.getSize() * 1.0))) - 1));
+        int fromIndex = pageRequest.getSize() * pageRequest.getPage();
         int size;
         if (all.size() >= fromIndex) {
             if (all.size() <= fromIndex + pageRequest.getSize()) {
@@ -54,8 +54,7 @@ public class PageUtil {
             } else {
                 size = pageRequest.getSize();
             }
-            result.setSize(queryAll ? all.size() : size);
-            result.setContent(queryAll ? all : all.subList(fromIndex, fromIndex + result.getSize()));
+            result.setContent(queryAll ? all : all.subList(fromIndex, fromIndex + size));
         } else {
             size = 0;
             result.setSize(queryAll ? all.size() : size);
