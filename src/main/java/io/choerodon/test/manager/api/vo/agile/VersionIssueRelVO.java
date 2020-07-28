@@ -5,6 +5,7 @@ import java.io.Serializable;
 import io.swagger.annotations.ApiModelProperty;
 
 import io.choerodon.test.manager.infra.util.StringUtil;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
  * @author dinghuang123@gmail.com
@@ -13,9 +14,11 @@ import io.choerodon.test.manager.infra.util.StringUtil;
 public class VersionIssueRelVO implements Serializable {
 
     @ApiModelProperty(value = "版本id")
+    @Encrypt
     private Long versionId;
 
     @ApiModelProperty(value = "问题id")
+    @Encrypt
     private Long issueId;
 
     @ApiModelProperty(value = "版本名称")

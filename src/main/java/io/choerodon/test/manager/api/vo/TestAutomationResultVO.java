@@ -3,10 +3,12 @@ package io.choerodon.test.manager.api.vo;
 import java.util.Date;
 
 import io.swagger.annotations.ApiModelProperty;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 public class TestAutomationResultVO {
 
     @ApiModelProperty(value = "主键ID")
+    @Encrypt
     private Long id;
 
     @ApiModelProperty(value = "测试结果")

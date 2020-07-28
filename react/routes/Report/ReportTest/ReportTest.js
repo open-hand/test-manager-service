@@ -15,9 +15,9 @@ import { getReportsFromDefect, getReportsFromDefectByIssueIds } from '../../../a
 import { getStatusList } from '../../../api/TestStatusApi';
 import { getIssueTypes, getIssueStatus } from '../../../api/agileApi';
 import {
-  issueLink, TestExecuteLink, executeDetailLink, getProjectName,
+  issueLink, executeDetailLink, getProjectName,
 } from '../../../common/utils';
-import './ReportTest.scss';
+import './ReportTest.less';
 
 const { AppState } = stores;
 const { Panel } = Collapse;
@@ -292,12 +292,16 @@ class ReportTest extends Component {
           } else {
             executeStatus[statusName] += 1;
           }
-
+          // 跳转到执行详情时所需要的参数
+          const filters = {
+            cycle_id: execute.cycleId || '', //  测试步骤关联的缺陷 无cycle_id，当无cycle_id将其置空，防止后端查询时出错.
+            plan_id: 999999999, // 错误的Plan id 导致无上下执行
+          };
           return (
             <div className="c7ntest-cycle-show-container">
               <div>
                 <Tooltip title={`${execute.cycleName}${execute.folderName ? `/${execute.folderName}` : ''}`}>
-                  <Link className="c7ntest-showId" style={{ display: 'inline-block' }} to={TestExecuteLink(execute.cycleId)}>
+                  <Link className="c7ntest-showId" style={{ display: 'inline-block' }} to={executeDetailLink(execute.executeId, filters)}>
                     {execute.cycleName}
                     {execute.folderName ? `/${execute.folderName}` : ''}
                   </Link>
@@ -311,7 +315,7 @@ class ReportTest extends Component {
               </div>
               <Link
                 style={{ lineHeight: '13px' }}
-                to={executeDetailLink(execute.executeId)}
+                to={executeDetailLink(execute.executeId, filters)}
               >
                 <Icon type="explicit" style={{ marginLeft: 10, color: 'black' }} />
               </Link>

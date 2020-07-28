@@ -47,14 +47,23 @@ class ExecuteDetailStore {
       plan_id: data.plan_id,
       size: data.size,
     };
-    // contents 未处理
+    // data.contents : ([...data.contents] || [])
+    const contents = [];
+    if (typeof (data.contents) !== 'undefined') {
+      if (Array.isArray(data.contents)) {
+        contents.push(...data.contents);
+      } else {
+        contents.push(data.contents);
+      }
+    }
+    // data.conete;
     this.setSearchFilter({
       searchArgs: {
         assignUser: data.assignerId,
         executionStatus: data.executionStatus,
         summary: data.summary,
       },
-      contents: [],
+      contents,
     });
   }
 
@@ -96,6 +105,7 @@ class ExecuteDetailStore {
       getDetailsData(id, this.detailParams, {
         ...this.getSearchFilter, 
         ...this.detailData ? {
+          contents: this.getSearchFilter.contents,
           searchArgs: {
             ...this.getSearchFilter.searchArgs,
             previousExecuteId: this.detailData.previousExecuteId,
@@ -160,7 +170,7 @@ class ExecuteDetailStore {
   }
 
   getStatusById = (status) => {
-    const statusId = Number(status);
+    const statusId = status;
     return {
       statusName: _.find(this.statusList, { statusId })
         && _.find(this.statusList, { statusId }).statusName,

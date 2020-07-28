@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { Icon } from 'choerodon-ui';
-import './TypeTag.scss';
+import './TypeTag.less';
 
 const TypeTag = ({
   data, showName, style, featureType,

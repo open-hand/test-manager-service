@@ -137,9 +137,9 @@ class AutoTestListContainer extends Component {
     this.props.history.push(commonLink(`/AutoTest/report/${resultId}`));
   }
 
-  toTestExecute = (cycleId) => {
-    this.props.history.push(TestExecuteLink(cycleId));
-  }
+  // toTestExecute = (cycleId) => {
+  //   this.props.history.push(TestExecuteLink(cycleId));
+  // }
 
   handleItemClick = (record, { item, key, keyPath }) => {
     const {

@@ -27,7 +27,7 @@ export default function DataSetFactory({ initValue = {} } = {}) {
       },
       {
         name: 'managerId',
-        type: 'number',
+        type: 'string',
         label: '负责人',
         required: true,
         dynamicProps: {

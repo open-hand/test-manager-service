@@ -2,7 +2,7 @@ import React, { Component, createRef } from 'react';
 import { observer } from 'mobx-react';
 import { Menu, Icon } from 'choerodon-ui';
 import { handleRequestFailed } from '@/common/utils';
-import './TestPlanTree.scss';
+import './TestPlanTree.less';
 import {
   editPlan, deletePlan, addFolder, editFolder, deleteFolder,
 } from '@/api/TestPlanApi';
@@ -90,7 +90,7 @@ class TestPlanTree extends Component {
     const [planId, folderId] = testPlanStore.getId(parentId);
     const data = {
       planId,
-      parentCycleId: isPlan ? 0 : folderId,
+      parentCycleId: isPlan ? null : folderId,
       cycleName: value,
     };
     const result = await handleRequestFailed(addFolder(data));

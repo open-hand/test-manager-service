@@ -2,6 +2,7 @@ package io.choerodon.test.manager.api.vo.agile;
 
 import io.choerodon.test.manager.infra.util.StringUtil;
 import io.choerodon.test.manager.infra.dto.TestCaseLinkDTO;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -18,21 +19,21 @@ public class IssueCreateDTO {
     private String priorityCode;
 
     private String description;
-
+    @Encrypt
     private Long assigneeId;
-
+    @Encrypt
     private Long reporterId;
 
     private Long projectId;
-
+    @Encrypt(ignoreValue = "0")
     private Long epicId;
-
+    @Encrypt(ignoreValue = "0")
     private Long sprintId;
-
+    @Encrypt
     private Long priorityId;
-
+    @Encrypt
     private Long issueTypeId;
-
+    @Encrypt
     private Long folderId;
 
     private List<VersionIssueRelVO> versionIssueRelVOList;

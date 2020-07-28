@@ -6,6 +6,7 @@ import java.util.List;
 import io.swagger.annotations.ApiModelProperty;
 
 import io.choerodon.test.manager.infra.dto.UserMessageDTO;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
  * @author: 25499
@@ -14,6 +15,7 @@ import io.choerodon.test.manager.infra.dto.UserMessageDTO;
  */
 public class TestCycleCaseInfoVO {
     @ApiModelProperty(value = "测试执行ID")
+    @Encrypt
     private Long executeId;
 
     @ApiModelProperty(value = "caseNum")
@@ -29,9 +31,11 @@ public class TestCycleCaseInfoVO {
     private String source;
 
     @ApiModelProperty(value = "用例ID")
+    @Encrypt
     private Long caseId;
 
     @ApiModelProperty(value = "用例文件夹")
+    @Encrypt
     private Long caseFolderId;
 
     @ApiModelProperty(value = "用例case名称")
@@ -44,12 +48,14 @@ public class TestCycleCaseInfoVO {
     private String planStatus;
 
     @ApiModelProperty(value = "执行状态")
+    @Encrypt
     private Long executionStatus;
 
     @ApiModelProperty(value = "执行状态名")
     private String executionStatusName;
 
     @ApiModelProperty(value = "执行人id")
+    @Encrypt
     private Long assignedTo;
 
     @ApiModelProperty(value = "执行人")
@@ -65,17 +71,19 @@ public class TestCycleCaseInfoVO {
     @ApiModelProperty(value = "原用例是否存在")
     private Boolean caseHasExist;
 
-
     @ApiModelProperty(value = "执行日期")
     private Date executorDate;
 
     @ApiModelProperty(value = "上一个执行")
+    @Encrypt
     private Long previousExecuteId;
 
     @ApiModelProperty(value = "下一个执行")
+    @Encrypt
     private Long nextExecuteId;
 
     @ApiModelProperty(value = "测试用例关联的附件信息")
+    @Encrypt
     private List<TestCycleCaseAttachmentRelVO> attachment;
 
     public Long getExecuteId() {

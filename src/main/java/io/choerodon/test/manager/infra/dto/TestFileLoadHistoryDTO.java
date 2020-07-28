@@ -5,6 +5,8 @@ import javax.persistence.*;
 import io.choerodon.mybatis.annotation.ModifyAudit;
 import io.choerodon.mybatis.annotation.VersionAudit;
 import io.choerodon.mybatis.domain.AuditDomain;
+import org.hzero.starter.keyencrypt.core.Encrypt;
+
 @VersionAudit
 @ModifyAudit
 @Table(name = "test_fileload_history")
@@ -12,6 +14,7 @@ public class TestFileLoadHistoryDTO extends AuditDomain {
 
     @Id
     @GeneratedValue
+    @Encrypt
     private Long id;
 
     private Long projectId;
@@ -19,7 +22,7 @@ public class TestFileLoadHistoryDTO extends AuditDomain {
     private Long actionType;
 
     private Long sourceType;
-
+    @Encrypt
     private Long linkedId;
 
     private String fileUrl;
@@ -31,7 +34,7 @@ public class TestFileLoadHistoryDTO extends AuditDomain {
     private Long failedCount;
 
     private byte[] fileStream;
-
+    @Encrypt
     private Long createdBy;
 
     @Transient

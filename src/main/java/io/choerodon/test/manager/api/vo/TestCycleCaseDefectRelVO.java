@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.api.vo;
 
 import io.swagger.annotations.ApiModelProperty;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -9,15 +10,18 @@ import io.swagger.annotations.ApiModelProperty;
 public class TestCycleCaseDefectRelVO {
 
     @ApiModelProperty(value = "主键id")
+    @Encrypt
     private Long id;
 
     @ApiModelProperty(value = "缺陷关联类型：测试执行，执行步骤")
     private String defectType;
 
     @ApiModelProperty(value = "缺陷关联对象id")
+    @Encrypt
     private Long defectLinkId;
 
     @ApiModelProperty(value = "缺陷issueID")
+    @Encrypt
     private Long issueId;
 
     @ApiModelProperty(value = "乐观锁版本号")

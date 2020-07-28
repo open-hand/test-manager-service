@@ -6,6 +6,7 @@ import io.choerodon.test.manager.api.vo.agile.PriorityVO;
 import io.choerodon.test.manager.api.vo.agile.StatusVO;
 import io.choerodon.test.manager.infra.util.StringUtil;
 import io.swagger.annotations.ApiModelProperty;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
  * 敏捷开发Issue链接
@@ -16,12 +17,15 @@ import io.swagger.annotations.ApiModelProperty;
 public class IssueLinkVO {
 
     @ApiModelProperty(value = "问题id")
+    @Encrypt
     private Long issueId;
 
     @ApiModelProperty(value = "问题链接类型id")
+    @Encrypt
     private Long linkTypeId;
 
     @ApiModelProperty(value = "被链接的问题id")
+    @Encrypt
     private Long linkCaseId;
 
     @ApiModelProperty(value = "问题链接类型名称")
@@ -39,9 +43,11 @@ public class IssueLinkVO {
     private String typeCode;
 
     @ApiModelProperty(value = "问题链接id")
+    @Encrypt
     private Long linkId;
 
     @ApiModelProperty(value = "经办人id")
+    @Encrypt
     private Long assigneeId;
 
     @ApiModelProperty(value = "经办人名称")

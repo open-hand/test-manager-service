@@ -47,7 +47,7 @@ function StepTableDataSet(projectId, orgId, intl, caseId, testStatusDataSet, exe
       },
       {
         name: 'stepStatus',
-        type: 'number',
+        type: 'string',
         label: stepStatus,
         textField: 'statusName',
         valueField: 'statusId',
@@ -103,7 +103,7 @@ function StepTableDataSet(projectId, orgId, intl, caseId, testStatusDataSet, exe
               break;
             }
             data.stepStatus = value;
-            const statusItem = testStatusDataSet.find(item => Number(item.get('statusId')) === Number(value));
+            const statusItem = testStatusDataSet.find(item => item.get('statusId') === value);
             data.statusName = statusItem.get('statusName');
             updateRecordData(data, dataSet, executeHistoryDataSet, record, name, oldValue);
             break;

@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.mybatis.pagehelper.domain.Sort;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,6 @@ import io.choerodon.core.domain.Page;
 
 
 import io.choerodon.core.exception.CommonException;
-import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.mybatis.pagehelper.annotation.SortDefault;
@@ -35,9 +35,9 @@ public class TestAutomationHistoryController {
     @PostMapping("/queryWithHistroy")
     @Permission(level = ResourceLevel.ORGANIZATION)
     public ResponseEntity<Page<TestAutomationHistoryVO>> queryWithInstance(@RequestBody(required = false) Map map,
-                                                                               @SortDefault(value = "id", direction = Sort.Direction.DESC)
-                                                                                       PageRequest pageRequest,
-                                                                               @PathVariable(name = "project_id") Long projectId) {
+                                                                           @SortDefault(value = "id", direction = Sort.Direction.DESC)
+                                                                                   PageRequest pageRequest,
+                                                                           @PathVariable(name = "project_id") Long projectId) {
         return Optional.ofNullable(testAutomationHistoryService.queryWithInstance(map, pageRequest, projectId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.queryWithInstance"));
@@ -45,7 +45,8 @@ public class TestAutomationHistoryController {
 
     @GetMapping("/queryLog/{logId}")
     @Permission(level = ResourceLevel.ORGANIZATION)
-    public ResponseEntity queryLog(@PathVariable("logId") Long logId, @PathVariable("project_id") Long projectId) {
+    public ResponseEntity<String> queryLog(@PathVariable("logId")
+                                           @Encrypt Long logId, @PathVariable("project_id") Long projectId) {
         TestAppInstanceLogDTO logE = new TestAppInstanceLogDTO();
         logE.setId(logId);
 

@@ -36,7 +36,8 @@ export function editFolder(data) {
   return request.put(`/test/v1/projects/${getProjectId()}/cycle`, data);
 }
 export function moveFolder(folderId, targetFolderId, lastRank, nextRank) {
-  return request.put(`/test/v1/projects/${getProjectId()}/cycle/move?target_cycle_id=${targetFolderId}`,
+  const requestParam = (targetFolderId && Number(targetFolderId) !== 0) ? `?target_cycle_id=${targetFolderId}` : '';
+  return request.put(`/test/v1/projects/${getProjectId()}/cycle/move${requestParam}`,
     {
       cycleId: folderId,
       lastRank,
@@ -47,7 +48,7 @@ export function deleteFolder(folderId) {
   return request.delete(`/test/v1/projects/${getProjectId()}/cycle/delete/${folderId}`);
 }
 export function importIssueToFolder(planId, folderId, data) {
-  return request.post(`/test/v1/projects/${getProjectId()}/cycle/case/import?plan_id=${planId}&cycle_id=${folderId}`, data);
+  return request.post(`/test/v1/projects/${getProjectId()}/cycle/case/import?plan_id=${planId}&cycle_id=${folderId}`, { caseSelected: data });
 }
 /**
  *  根据目录id和计划id获取执行

@@ -1,7 +1,9 @@
 package io.choerodon.test.manager.api.vo;
 
 import java.util.Date;
+
 import io.swagger.annotations.ApiModelProperty;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
  * Created by HuangFuqiang@choerodon.io on 2018/6/14.
@@ -10,6 +12,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 public class DataLogVO {
     @ApiModelProperty(value = "日志主键id")
+    @Encrypt
     private Long logId;
     @ApiModelProperty(value = "项目id")
     private Long projectId;

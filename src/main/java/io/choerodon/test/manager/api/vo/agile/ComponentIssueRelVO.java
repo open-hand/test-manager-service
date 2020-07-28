@@ -3,6 +3,7 @@ package io.choerodon.test.manager.api.vo.agile;
 import io.swagger.annotations.ApiModelProperty;
 
 import io.choerodon.test.manager.infra.util.StringUtil;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
  * @author dinghuang123@gmail.com
@@ -11,9 +12,11 @@ import io.choerodon.test.manager.infra.util.StringUtil;
 public class ComponentIssueRelVO {
 
     @ApiModelProperty(value = "模块id")
+    @Encrypt
     private Long componentId;
 
     @ApiModelProperty(value = "问题id")
+    @Encrypt
     private Long issueId;
 
     @ApiModelProperty(value = "模块名称")

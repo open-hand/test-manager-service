@@ -8,7 +8,7 @@ import IssueTable from './IssueTable';
 import CheckBox from './CheckBox';
 import { autoSelect } from './utils';
 
-import './SelectIssue.scss';
+import './SelectIssue.less';
 
 const prefix = 'c7ntest-TestPlan-SelectIssue';
 function SelectIssue() {

@@ -1,7 +1,9 @@
 package io.choerodon.test.manager.api.vo;
 
 import java.util.Date;
+
 import io.swagger.annotations.ApiModelProperty;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
  * Created by zongw.lee@gmail.com on 08/30/2018
@@ -9,10 +11,14 @@ import io.swagger.annotations.ApiModelProperty;
 public class TestIssueFolderVO {
 
     @ApiModelProperty(value = "文件夹ID")
+    @Encrypt
     private Long folderId;
 
     @ApiModelProperty(value = "父级文件夹ID,无父级目录id传0")
+    @Encrypt
     private Long parentId;
+
+    private Boolean rootNode;
 
     @ApiModelProperty(value = "文件夹名")
     private String name;
@@ -182,5 +188,13 @@ public class TestIssueFolderVO {
 
     public void setToDate(Date toDate) {
         this.toDate = toDate;
+    }
+
+    public Boolean getRootNode() {
+        return rootNode;
+    }
+
+    public void setRootNode(Boolean rootNode) {
+        this.rootNode = rootNode;
     }
 }

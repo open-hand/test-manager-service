@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>test-manager-service</artifactId>
-    <version>0.22.0.RELEASE</version>
+    <version>0.23.0.RELEASE</version>
 
     <!--加parent-->
     <parent>
@@ -39,8 +39,19 @@
 
         <dependency>
             <groupId>org.hzero.starter</groupId>
+            <artifactId>hzero-starter-keyencrypt</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hzero.starter</groupId>
             <artifactId>hzero-starter-feign-replay</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.hzero.starter</groupId>
+            <artifactId>hzero-starter-redis</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>

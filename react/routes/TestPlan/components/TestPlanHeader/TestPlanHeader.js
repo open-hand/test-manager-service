@@ -3,8 +3,8 @@ import { Choerodon } from '@choerodon/boot';
 import { observer } from 'mobx-react-lite';
 import { FormattedMessage } from 'react-intl';
 import { Button, Modal } from 'choerodon-ui/pro';
-import { openEditPlan } from '../TestPlanModal';
 import { updatePlanStatus } from '@/api/TestPlanApi';
+import { openEditPlan } from '../TestPlanModal';
 import ConfirmCompleteModalChildren from './components/ConfirmCompleteModalChildren';
 import Store from '../../stores';
 import './TestPlanHeader.less';
@@ -56,7 +56,7 @@ function TestPlanHeader() {
 
   const handleUpdatePlanStatus = (newStatus) => {
     const { getItem } = testPlanStore.treeRef.current || {};
-    const planItem = getItem(Number(testPlanStore.getCurrentPlanId)) || {};
+    const planItem = getItem(testPlanStore.getCurrentPlanId) || {};
     if (planItem.item && planItem.item.id) {
       if (newStatus === 'doing') {
         onUpdatePlanStatus(planItem, newStatus);

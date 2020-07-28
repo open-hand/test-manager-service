@@ -1,5 +1,7 @@
 package io.choerodon.test.manager.api.vo.devops;
 
+import org.hzero.starter.keyencrypt.core.Encrypt;
+
 import java.util.List;
 
 /**
@@ -16,6 +18,7 @@ public class InstanceValueVO {
     private List<Integer> newLines;
     private String deltaYaml;
     private String name;
+    @Encrypt
     private Long id;
     private Long objectVersionNumber;
 

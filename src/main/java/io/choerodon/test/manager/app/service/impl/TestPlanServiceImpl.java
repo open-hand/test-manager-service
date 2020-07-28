@@ -325,9 +325,9 @@ public class TestPlanServiceImpl implements TestPlanServcie {
     }
 
     @Override
-    public void sagaClonePlan(Map<String, Integer> map) {
-        Long copyPlanId = map.get("older").longValue();
-        Long newPlanId = map.get("new").longValue();
+    public void sagaClonePlan(Map<String, Long> map) {
+        Long copyPlanId = map.get("older");
+        Long newPlanId = map.get("new");
         TestPlanDTO testPlanDTO = testPlanMapper.selectByPrimaryKey(newPlanId);
         testCycleService.cloneCycleByPlanId(copyPlanId, newPlanId,testPlanDTO.getProjectId());
         testPlanDTO.setInitStatus(TestPlanInitStatus.SUCCESS);

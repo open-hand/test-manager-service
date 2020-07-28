@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import io.choerodon.core.iam.ResourceLevel;
 import io.swagger.annotations.ApiOperation;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 
 import io.choerodon.core.exception.CommonException;
-import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.test.manager.api.vo.TestCaseStepVO;
 import io.choerodon.test.manager.app.service.TestCaseStepService;
 import io.choerodon.swagger.annotation.Permission;
@@ -33,7 +33,8 @@ public class TestCaseStepController {
     @ApiOperation("查询")
     @GetMapping("/query/{caseId}")
     public ResponseEntity<List<TestCaseStepVO>> query(@PathVariable(name = "project_id") Long projectId,
-                                                      @PathVariable(name = "caseId") Long caseId) {
+                                                      @PathVariable(name = "caseId")
+                                                      @Encrypt Long caseId) {
         TestCaseStepVO testCaseStepVO = new TestCaseStepVO();
         testCaseStepVO.setIssueId(caseId);
         return Optional.ofNullable(testCaseStepService.query(testCaseStepVO))
@@ -67,7 +68,7 @@ public class TestCaseStepController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("克隆")
     @PostMapping("/clone")
-    public ResponseEntity clone(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity<TestCaseStepVO> clone(@PathVariable(name = "project_id") Long projectId,
                                 @RequestBody TestCaseStepVO testCaseStepVO) {
         return Optional.ofNullable(testCaseStepService.clone(testCaseStepVO, projectId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))

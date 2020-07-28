@@ -1,7 +1,6 @@
 package io.choerodon.test.manager.app.service;
 
 import io.choerodon.core.domain.Page;
-import io.choerodon.core.domain.Page;
 import io.choerodon.test.manager.api.vo.agile.*;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.api.vo.devops.AppServiceDeployVO;
@@ -73,6 +72,7 @@ public interface TestCaseService {
 
     /**
      * 创建用例
+     *
      * @param projectId
      * @param testCaseVO
      * @return
@@ -81,6 +81,7 @@ public interface TestCaseService {
 
     /**
      * 查询用例详情
+     *
      * @param projectId
      * @param caseId
      * @return
@@ -89,6 +90,7 @@ public interface TestCaseService {
 
     /**
      * 删除测试用例
+     *
      * @param projectId
      * @param caseId
      */
@@ -96,16 +98,18 @@ public interface TestCaseService {
 
     /**
      * 查询当前文件夹下面所有子文件夹的用例
+     *
      * @param projectId
      * @param folderId
      * @param pageRequest
      * @param searchDTO
      * @return
      */
-    Page<TestCaseRepVO> listAllCaseByFolderId(Long projectId, Long folderId, PageRequest pageRequest,SearchDTO searchDTO,Long planId);
+    Page<TestCaseRepVO> listAllCaseByFolderId(Long projectId, Long folderId, PageRequest pageRequest, SearchDTO searchDTO, Long planId);
 
     /**
      * 查询单个文件夹下的用例
+     *
      * @param folderId
      * @return
      */
@@ -113,30 +117,34 @@ public interface TestCaseService {
 
     /**
      * 修改测试用例的信息
+     *
      * @param projectId
      * @param testCaseRepVO
      * @return
      */
-    TestCaseRepVO  updateCase(Long projectId,TestCaseRepVO testCaseRepVO,String[] fieldList);
+    TestCaseRepVO updateCase(Long projectId, TestCaseRepVO testCaseRepVO, String[] fieldList);
 
     /**
      * 移动测试用例
+     *
      * @param projectId
      * @param folderId
      * @param testCaseRepVOS
      */
-    void batchMove(Long projectId,Long folderId,List<TestCaseRepVO> testCaseRepVOS);
+    void batchMove(Long projectId, Long folderId, List<TestCaseRepVO> testCaseRepVOS);
 
     /**
      * 克隆测试用例
+     *
      * @param projectId
      * @param folderId
      * @param testCaseRepVOS
      */
-    void batchCopy(Long projectId,Long folderId,List<TestCaseRepVO> testCaseRepVOS);
+    void batchCopy(Long projectId, Long folderId, List<TestCaseRepVO> testCaseRepVOS);
 
     /**
      * 更新version_num
+     *
      * @param caseId
      */
     void updateVersionNum(Long caseId);
@@ -146,6 +154,7 @@ public interface TestCaseService {
 
     /**
      * 查询文件夹下所有用例（不分页）
+     *
      * @param projectId
      * @param folderId
      * @return
@@ -155,13 +164,27 @@ public interface TestCaseService {
 
     /**
      * 根据caseIds 查询用例
+     *
      * @param projectId
      * @param caseIds
      * @return
      */
-    List<TestCaseDTO> listByCaseIds(Long projectId,List<Long> caseIds);
+    List<TestCaseDTO> listByCaseIds(Long projectId, List<Long> caseIds);
 
     TestCaseInfoVO queryCaseRep(Long caseId);
 
     TestCaseDTO baseUpdate(TestCaseDTO testCase);
+
+    /**
+     * 分页搜索查询issue列表
+     *
+     * @param projectId
+     * @param issueId
+     * @param issueNum
+     * @param self
+     * @param content
+     * @param pageRequest
+     * @return
+     */
+    Page<IssueNumDTO> queryIssueByOptionForAgile(Long projectId, Long issueId, String issueNum, Boolean self, String content, PageRequest pageRequest);
 }

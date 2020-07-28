@@ -11,6 +11,7 @@ import io.choerodon.test.manager.api.vo.agile.SearchDTO;
 import io.choerodon.test.manager.api.vo.agile.UserDO;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDefectRelDTO;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -18,6 +19,7 @@ import io.choerodon.test.manager.infra.dto.TestCycleCaseDefectRelDTO;
 public class TestCycleCaseVO {
 
     @ApiModelProperty(value = "测试执行ID")
+    @Encrypt
     private Long executeId;
 
     @ApiModelProperty(value = "循环ID")
@@ -33,6 +35,7 @@ public class TestCycleCaseVO {
     private String rank;
 
     @ApiModelProperty(value = "执行状态")
+    @Encrypt
     private Long executionStatus;
 
     @ApiModelProperty(value = "执行状态名")
@@ -42,6 +45,7 @@ public class TestCycleCaseVO {
     private String statusColor;
 
     @ApiModelProperty(value = "指派人")
+    @Encrypt
     private Long assignedTo;
 
     @ApiModelProperty(value = "描述")
@@ -63,9 +67,11 @@ public class TestCycleCaseVO {
     private UserDO lastUpdateUser;
 
     @ApiModelProperty(value = "版本ID")
+    @Encrypt
     private Long versionId;
 
     @ApiModelProperty(value = "最后更新人ID")
+    @Encrypt
     private Long lastUpdatedBy;
 
     @ApiModelProperty(value = "最后更新日期")
@@ -84,9 +90,11 @@ public class TestCycleCaseVO {
     private String versionName;
 
     @ApiModelProperty(value = "上一位执行ID")
+    @Encrypt
     private Long lastExecuteId;
 
     @ApiModelProperty(value = "后一位执行ID")
+    @Encrypt
     private Long nextExecuteId;
 
     private String description;
@@ -111,6 +119,10 @@ public class TestCycleCaseVO {
 
     @ApiModelProperty(value = "项目id")
     private Long projectId;
+
+    @ApiModelProperty(value = "所属计划Id")
+    @Encrypt
+    private Long planId;
 
     public Long getProjectId() {
         return projectId;
@@ -385,4 +397,11 @@ public class TestCycleCaseVO {
         this.description = description;
     }
 
+    public Long getPlanId() {
+        return planId;
+    }
+
+    public void setPlanId(Long planId) {
+        this.planId = planId;
+    }
 }

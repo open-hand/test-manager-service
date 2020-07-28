@@ -5,7 +5,6 @@ import io.choerodon.test.manager.api.vo.agile.ProjectInfoVO;
 import io.choerodon.swagger.annotation.Permission;
 
 import io.choerodon.core.exception.CommonException;
-import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.test.manager.app.service.TestProjectInfoService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;

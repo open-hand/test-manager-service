@@ -5,6 +5,7 @@ import java.util.List;
 import io.swagger.annotations.ApiModelProperty;
 
 import io.choerodon.test.manager.infra.dto.TestCycleCaseAttachmentRelDTO;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -12,12 +13,14 @@ import io.choerodon.test.manager.infra.dto.TestCycleCaseAttachmentRelDTO;
 public class TestCaseStepVO {
 
     @ApiModelProperty(value = "步骤id")
+    @Encrypt
     private Long stepId;
 
     @ApiModelProperty(value = "排序值")
     private String rank;
 
     @ApiModelProperty(value = "用例issueID")
+    @Encrypt
     private Long issueId;
 
     @ApiModelProperty(value = "测试步骤")
@@ -42,6 +45,7 @@ public class TestCaseStepVO {
     private IssueInfosVO issueInfosVO;
 
     @ApiModelProperty(value = "附件DTOList")
+    @Encrypt
     private List<TestCycleCaseAttachmentRelDTO> attachments;
 
     public IssueInfosVO getIssueInfosVO() {

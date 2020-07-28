@@ -24,7 +24,8 @@ export function CreateFolder({
     if (isValidate) {
       const [values] = dataSet.toData();
       const data = {
-        parentId: 0,
+        // parentId: 0,
+        rootNode: true,
         name: values.name,
         type: 'cycle',
       };

@@ -7,6 +7,7 @@ import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
 import io.choerodon.test.manager.infra.dto.TestCaseStepDTO;
 import io.choerodon.test.manager.infra.dto.UserMessageDTO;
 import io.swagger.annotations.ApiModelProperty;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
  * @author zhaotianxin
@@ -15,6 +16,7 @@ import io.swagger.annotations.ApiModelProperty;
 public class TestCaseInfoVO {
 
     @ApiModelProperty(value = "用例Id")
+    @Encrypt
     private Long caseId;
 
     @ApiModelProperty(value = "用例编号")
