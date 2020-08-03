@@ -31,7 +31,7 @@ public class TestCaseLinkController {
     @PostMapping
     public ResponseEntity<List<TestCaseLinkDTO>> create(@PathVariable(name = "project_id") Long projectId,
                                                         @RequestParam("case_id") @Encrypt Long caseId,
-                                                        @RequestBody List<Long> issueIds) {
+                                                        @RequestBody @Encrypt List<Long> issueIds) {
         return new ResponseEntity<>(testCaseLinkService.create(projectId, caseId, issueIds), HttpStatus.NO_CONTENT);
     }
 
