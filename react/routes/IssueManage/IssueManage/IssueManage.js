@@ -173,6 +173,7 @@ export default class IssueManage extends Component {
     const currentFolder = IssueTreeStore.getCurrentFolder;
     const { loading, rootIds } = IssueTreeStore;
     const noFolder = rootIds.length === 0;
+    const { tab, tabs } = this.props;
     return (
       <Page
         className="c7ntest-Issue c7ntest-region"
@@ -203,7 +204,7 @@ export default class IssueManage extends Component {
             </Button>]}
         </Header>
         <Breadcrumb />
-        <Content style={{ display: 'flex', padding: '0', borderTop: '0.01rem solid rgba(0,0,0,0.12)' }}>
+        <Content style={{ display: 'flex', padding: '0', borderTop: '0.01rem solid rgba(0,0,0,0.12)' }}>          
           {noFolder ? (
             <Empty
               loading={loading}
@@ -214,7 +215,10 @@ export default class IssueManage extends Component {
             />
           ) : (
             <Fragment>
-              <IssueTree />
+              <div>
+                {tabs.length > 0 && tab}
+                <IssueTree />
+              </div>              
               {currentFolder.id && (
               <div
                 className="c7ntest-content-issue"
