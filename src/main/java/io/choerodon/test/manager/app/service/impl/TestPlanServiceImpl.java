@@ -5,14 +5,16 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import io.choerodon.test.manager.app.assembler.TestCycleAssembler;
-import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
+import io.choerodon.test.manager.infra.mapper.*;
+import io.choerodon.test.manager.infra.util.AtomicRank;
+import io.choerodon.test.manager.infra.util.RankUtil;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import io.choerodon.test.manager.api.vo.agile.UserDO;
@@ -27,9 +29,6 @@ import io.choerodon.test.manager.infra.constant.SagaTopicCodeConstants;
 import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.enums.TestPlanInitStatus;
 import io.choerodon.test.manager.infra.enums.TestPlanStatus;
-import io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper;
-import io.choerodon.test.manager.infra.mapper.TestPlanMapper;
-import io.choerodon.test.manager.infra.mapper.TestStatusMapper;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
 
 /**
@@ -75,6 +74,8 @@ public class TestPlanServiceImpl implements TestPlanServcie {
 
     @Autowired
     private TestCycleAssembler testCycleAssembler;
+    @Autowired
+    private TestCycleMapper testCycleMapper;
 
     @Override
     public TestPlanVO update(Long projectId, TestPlanVO testPlanVO) {
@@ -104,6 +105,18 @@ public class TestPlanServiceImpl implements TestPlanServcie {
             testPlanVO.setObjectVersionNumber(testCycleVO.getObjectVersionNumber());
             update(projectId,testPlanVO);
         }
+    }
+
+    @Override
+    public void orderByFromDate(Long projectId, Long planId) {
+        List<TestCycleDTO> testCycleList = testCycleService.listByPlanIds(Collections.singletonList(planId),projectId);
+        if (CollectionUtils.isEmpty(testCycleList)){
+            return;
+        }
+        AtomicRank rank = new AtomicRank(RankUtil.mid());
+        testCycleList = testCycleList.stream().sorted(Comparator.comparing(TestCycleDTO::getFromDate))
+                .peek(testCycle -> testCycle.setRank(rank.getNext())).collect(Collectors.toList());
+        testCycleList.forEach(cycle -> testCycleMapper.updateOptional(cycle, "rank"));
     }
 
     @Override

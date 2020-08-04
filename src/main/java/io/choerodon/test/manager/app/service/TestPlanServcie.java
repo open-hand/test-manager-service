@@ -86,4 +86,11 @@ public interface TestPlanServcie {
      * @param isCycle
      */
     void operatePlanCalendar(Long projectId, TestCycleVO testCycleVO, Boolean isCycle);
+
+    /**
+     * 根据起始日期排序
+     * @param projectId 项目id
+     * @param planId 计划id
+     */
+    void orderByFromDate(Long projectId, Long planId);
 }
