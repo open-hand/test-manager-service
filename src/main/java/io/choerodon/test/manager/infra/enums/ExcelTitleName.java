@@ -10,7 +10,7 @@ public class ExcelTitleName {
 
     public static final String FOLDER = "文件夹*";
     public static final String CASE_SUMMARY = "用例概要*";
-    public static final String CASE_DESCRIPTION = "用例描述";
+    public static final String CASE_DESCRIPTION = "前置条件";
     public static final String CASE_CODE = "用例编号";
     public static final String ASSIGNER = "执行人";
     public static final String LINK_ISSUE = "关联的issue";

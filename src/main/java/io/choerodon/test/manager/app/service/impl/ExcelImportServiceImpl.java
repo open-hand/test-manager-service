@@ -58,7 +58,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
     static {
         README_OPTIONS[0] = new ExcelReadMeOptionVO("用例概要*", true);
-        README_OPTIONS[1] = new ExcelReadMeOptionVO("用例描述", false);
+        README_OPTIONS[1] = new ExcelReadMeOptionVO("前置条件", false);
         //README_OPTIONS[2] = new ExcelReadMeOptionVO("优先级", false);
 //        README_OPTIONS[2] = new ExcelReadMeOptionVO("被指定人", false);
         //README_OPTIONS[3] = new ExcelReadMeOptionVO("模块", false);
@@ -77,7 +77,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         for (int i = 0; i < EXAMPLE_ISSUES.length; i++) {
             EXAMPLE_ISSUES[i] = new IssueCreateDTO();
             EXAMPLE_ISSUES[i].setSummary("概要" + (i + 1));
-            EXAMPLE_ISSUES[i].setDescription("描述" + (i + 1));
+            EXAMPLE_ISSUES[i].setDescription("前置条件" + (i + 1));
         }
     }
 
@@ -107,7 +107,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
     @Autowired
     private ModelMapper modelMapper;
-    
+
     @Autowired
     private BaseFeignClient baseFeignClient;
 
