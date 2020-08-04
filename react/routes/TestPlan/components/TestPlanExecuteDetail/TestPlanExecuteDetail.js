@@ -16,8 +16,8 @@ import _ from 'lodash';
 import { Modal, Button, message } from 'choerodon-ui/pro';
 import queryString from 'query-string';
 import { uploadFile, deleteFile } from '@/api/FileApi';
-import { StatusTags } from '../../../../components';
-import { executeDetailLink, returnBeforeTextUpload } from '../../../../common/utils';
+import { StatusTags, RichTextShow } from '../../../../components';
+import { executeDetailLink, returnBeforeTextUpload, delta2Html } from '../../../../common/utils';
 import { updateDetail, updateSidebarDetail } from '../../../../api/ExecuteDetailApi';
 import './TestPlanExecuteDetail.less';
 import {
@@ -27,14 +27,16 @@ import Store from './stores';
 import EditExecuteIssue from './components/EditExecuteIssue';
 import StepTableDataSet from './stores/StepTableDataSet';
 
-const CardWrapper = ({ children, title, style }) => (
+const CardWrapper = ({
+  children, title, style, titleClassName,
+}) => (
   <Card
     title={null}
     style={style}
     bodyStyle={{ paddingBottom: 0 }}
     bordered={false}
   >
-    <span className="c7n-test-execute-detail-card-title">{title}</span>
+    <span className={`c7n-test-execute-detail-card-title ${titleClassName || ''}`}>{title}</span>
     {children}
   </Card>
 );
@@ -375,7 +377,19 @@ function TestPlanExecuteDetail(props) {
                 </div>
 
                 <CardWrapper
-                  title={[<FormattedMessage id="execute_testDetail" />, <span style={{ marginLeft: 5 }}>{`（${stepTableDataSet.totalCount}）`}</span>]}
+                  title={(
+                    <div className="c7n-test-execute-detail-card-title-description">
+                      <div className="c7n-test-execute-detail-card-title-description-head">
+                        <span className="c7n-test-execute-detail-card-title-description-head-label">前置条件</span>
+                        {detailData && <RichTextShow data={delta2Html(detailData.description)} /> }
+                      </div>
+                      {[
+                        <FormattedMessage id="execute_testDetail" />,
+                        <span style={{ marginLeft: 5 }}>{`（${stepTableDataSet.totalCount}）`}</span>,
+                      ]}
+                    </div>
+                  )}
+                // titleClassName="c7n-test-execute-detail-card-title-description"
                 >
                   <StepTable
                     dataSet={stepTableDataSet}
