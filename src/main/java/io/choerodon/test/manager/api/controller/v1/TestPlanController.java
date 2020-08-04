@@ -119,10 +119,9 @@ public class TestPlanController {
 
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("对计划内的文件夹进行日期排序")
-    @GetMapping("/{planId}/order_by_from_date")
+    @PostMapping("/{planId}/order_by_from_date")
     public ResponseEntity<Void> orderByFromDate(@PathVariable(name = "project_id") Long projectId,
-                                                @PathVariable(name = "planId")
-                                                @Encrypt Long planId) {
+                                                @PathVariable @Encrypt Long planId) {
         testPlanServcie.orderByFromDate(projectId, planId);
         return Results.success();
     }

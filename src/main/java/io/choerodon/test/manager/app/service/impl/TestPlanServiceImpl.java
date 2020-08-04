@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import io.choerodon.test.manager.app.assembler.TestCycleAssembler;
 import io.choerodon.test.manager.infra.mapper.*;
-import io.choerodon.test.manager.infra.util.AtomicRank;
 import io.choerodon.test.manager.infra.util.RankUtil;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -113,9 +112,9 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         if (CollectionUtils.isEmpty(testCycleList)){
             return;
         }
-        AtomicRank rank = new AtomicRank(RankUtil.mid());
+        final String[] rank = {RankUtil.mid()};
         testCycleList = testCycleList.stream().sorted(Comparator.comparing(TestCycleDTO::getFromDate))
-                .peek(testCycle -> testCycle.setRank(rank.getNext())).collect(Collectors.toList());
+                .peek(testCycle -> testCycle.setRank(rank[0] = RankUtil.genNext(rank[0]))).collect(Collectors.toList());
         testCycleList.forEach(cycle -> testCycleMapper.updateOptional(cycle, "rank"));
     }
 
