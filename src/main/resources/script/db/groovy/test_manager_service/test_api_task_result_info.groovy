@@ -5,7 +5,7 @@ package script.db.groovy.test_manager_service
  */
 databaseChangeLog(logicalFilePath: "script/db/test_api_task_result_assertion.groovy") {
     changeSet(author: 'lihao', id: '2020-08-04-init_table_test_api_task_result_info') {
-        createTable(tableName: "test_api_task_result_info", remarks: "执行结果断言") {
+        createTable(tableName: "test_api_task_result_info", remarks: "执行结果信息") {
             column(name: 'id', type: 'BIGINT UNSIGNED', autoIncrement: true, remarks: '表ID，主键，供其他表做外键，unsigned bigint、单表时自增、步长为 1') {
                 constraints(primaryKey: true)
             }

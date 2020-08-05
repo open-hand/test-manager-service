@@ -11,7 +11,7 @@ databaseChangeLog(logicalFilePath: "script/db/test_api_task_record.groovy") {
             }
             column(name: 'project_id', type: 'BIGINT UNSIGNED', remarks: '项目id')
             column(name: 'task_id', type: 'BIGINT UNSIGNED', remarks: '关联任务id')
-            column(name: 'status', type: 'TINYINT(1)', remarks: '状态')
+            column(name: 'status', type: 'VARCHAR(32)', remarks: '状态')
             column(name: 'start_time', type: 'DATETIME', remarks: '开始时间', defaultValueComputed: "CURRENT_TIMESTAMP")
             column(name: 'end_time', type: 'DATETIME', remarks: '结束时间')
             column(name: "created_by", type: "BIGINT UNSIGNED", defaultValue: "0")

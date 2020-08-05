@@ -11,7 +11,7 @@ databaseChangeLog(logicalFilePath: "script/db/test_api_task_config.groovy") {
             }
             column(name: 'name', type: "VARCHAR(32)", remarks: '测试用例名称')
             column(name: 'project_id', type: 'BIGINT UNSIGNED', remarks: '项目id')
-            column(name: 'protocol',type: 'tinyint(1)',remarks: '协议类型,0 http 1 https')
+            column(name: 'protocol',type: 'VARCHAR(32)',remarks: '协议类型,0 http 1 https')
             column(name: "created_by", type: "BIGINT UNSIGNED", defaultValue: "0")
             column(name: "creation_date", type: "DATETIME", defaultValueComputed: "CURRENT_TIMESTAMP")
             column(name: "last_updated_by", type: "BIGINT UNSIGNED", defaultValue: "0")
