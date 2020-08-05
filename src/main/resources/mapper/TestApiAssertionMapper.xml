@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="io.choerodon.test.manager.infra.mapper.TestApiAssertionMapper">
+    <select id="listByCaseIds" resultType="io.choerodon.test.manager.infra.dto.TestApiAssertionDTO">
+        SELECT * FROM test_api_assertion taa
+        WHERE taa.case_id IN
+        <foreach collection="caseIds" item="caseId" separator="," open="(" close=")">
+            #{caseId}
+        </foreach>
+    </select>
+</mapper>
+
+
