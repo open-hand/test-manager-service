@@ -11,11 +11,9 @@ databaseChangeLog(logicalFilePath: "script/db/test_api_assertion.groovy") {
             }
             column(name: 'name', type: "VARCHAR(32)", remarks: '断言名称')
             column(name: 'project_id', type: 'BIGINT UNSIGNED', remarks: '项目id')
-            column(name: 'test_api_case_id', type: "BIGINT UNSIGNED", remarks: '关联测试用例id')
+            column(name: 'case_id', type: "BIGINT UNSIGNED", remarks: '关联测试用例id')
             column(name: 'type', type: 'VARCHAR(32)', remarks: '断言类型')
-            column(name: 'symbol', type: 'VARCHAR(32)', remarks: '比较符')
-            column(name: 'comparison_key', type: 'VARCHAR(32)', remarks: '比较字段',defaultValue: "")
-            column(name: 'expect_value', type: 'VARCHAR(32)', remarks: '期望值')
+            column(name: 'config',type: 'text',remarks: '断言配置，json格式')
             column(name: "created_by", type: "BIGINT UNSIGNED", defaultValue: "0")
             column(name: "creation_date", type: "DATETIME", defaultValueComputed: "CURRENT_TIMESTAMP")
             column(name: "last_updated_by", type: "BIGINT UNSIGNED", defaultValue: "0")
@@ -28,7 +26,7 @@ databaseChangeLog(logicalFilePath: "script/db/test_api_assertion.groovy") {
             column(name: "project_id")
         }
         createIndex(tableName: "test_api_assertion", indexName: "idx_test_api_case_id") {
-            column(name: "test_api_case_id")
+            column(name: "case_id")
         }
     }
 }
