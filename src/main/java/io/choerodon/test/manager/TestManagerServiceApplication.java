@@ -17,6 +17,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableChoerodonResourceServer
 @Configuration
 public class TestManagerServiceApplication {
+    
     public static void main(String[] args) {
         SpringApplication.run(TestManagerServiceApplication.class, args);
     }
