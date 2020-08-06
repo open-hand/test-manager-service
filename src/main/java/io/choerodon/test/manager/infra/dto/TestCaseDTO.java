@@ -17,6 +17,9 @@ import io.choerodon.mybatis.domain.AuditDomain;
 @ModifyAudit
 @Table(name = "test_case")
 public class TestCaseDTO extends AuditDomain {
+
+    public static final String FIELD_FOLDER_ID = "folderId";
+
     @Id
     @GeneratedValue
     private Long caseId;

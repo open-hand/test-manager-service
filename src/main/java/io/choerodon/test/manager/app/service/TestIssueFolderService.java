@@ -2,6 +2,7 @@ package io.choerodon.test.manager.app.service;
 
 import java.util.List;
 
+import io.choerodon.core.oauth.CustomUserDetails;
 import io.choerodon.test.manager.api.vo.TestIssueFolderVO;
 import io.choerodon.test.manager.api.vo.TestTreeIssueFolderVO;
 import io.choerodon.test.manager.api.vo.event.ProjectEvent;
@@ -44,4 +45,18 @@ public interface TestIssueFolderService {
     void initializationFolderInfo(ProjectEvent projectEvent);
 
     List<TestIssueFolderDTO> listByProject(Long projectId);
+
+    /**
+     * 复制测试用例文件夹
+     * @param projectId 项目id
+     * @param folderId 文件夹id
+     * @return 复制后的文件夹对象
+     */
+    TestIssueFolderDTO cloneFolder(Long projectId, Long folderId);
+
+    TestIssueFolderDTO cloneCurrentFolder(Long projectId, Long folderId);
+
+    void wrapCloneFolder(Long projectId, TestIssueFolderDTO newFolder, CustomUserDetails userDetails);
+
+    void cloneChildrenFolderAndCase(Long projectId, TestIssueFolderDTO newFolder);
 }

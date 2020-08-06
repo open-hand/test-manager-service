@@ -4,13 +4,26 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import io.choerodon.core.oauth.CustomUserDetails;
+import io.choerodon.core.oauth.DetailsHelper;
+import io.choerodon.test.manager.api.vo.TestCaseRepVO;
 import io.choerodon.test.manager.api.vo.event.ProjectEvent;
-import org.apache.commons.lang.StringUtils;
+import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.hzero.boot.message.MessageClient;
+import org.hzero.core.base.AopProxy;
+import org.hzero.core.base.BaseConstants;
+import org.hzero.mybatis.domian.Condition;
+import org.hzero.mybatis.util.Sqls;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import io.choerodon.test.manager.infra.util.RankUtil;
@@ -28,7 +41,9 @@ import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class TestIssueFolderServiceImpl implements TestIssueFolderService {
+public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopProxy<TestIssueFolderService> {
+
+    public static final Logger log = LoggerFactory.getLogger(TestIssueFolderServiceImpl.class);
 
     public static final String TYPE_CYCLE = "cycle";
     public static final String TYPE_TEMP = "temp";
@@ -36,13 +51,18 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
     private TestCaseService testCaseService;
     private TestIssueFolderMapper testIssueFolderMapper;
     private ModelMapper modelMapper;
+    private TestCaseMapper testCaseMapper;
+    private MessageClient messageClient;
 
     public TestIssueFolderServiceImpl(TestCaseService testCaseService,
                                       TestIssueFolderMapper testIssueFolderMapper,
-                                      ModelMapper modelMapper) {
+                                      ModelMapper modelMapper, TestCaseMapper testCaseMapper,
+                                      MessageClient messageClient) {
         this.testCaseService = testCaseService;
         this.testIssueFolderMapper = testIssueFolderMapper;
         this.modelMapper = modelMapper;
+        this.testCaseMapper = testCaseMapper;
+        this.messageClient = messageClient;
     }
 
     @Override
@@ -199,6 +219,106 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
             return new ArrayList<>();
         }
         return testIssueFolderDTOS;
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    public TestIssueFolderDTO cloneFolder(Long projectId, Long folderId) {
+        TestIssueFolderDTO newFolder = this.self().cloneCurrentFolder(projectId, folderId);
+        this.self().wrapCloneFolder(projectId, newFolder, DetailsHelper.getUserDetails());
+        return newFolder;
+    }
+
+    @Override
+    public TestIssueFolderDTO cloneCurrentFolder(Long projectId, Long folderId) {
+        // 检查当前文件夹是否存在
+        TestIssueFolderDTO folder = new TestIssueFolderDTO();
+        folder.setProjectId(projectId);
+        folder.setFolderId(folderId);
+        TestIssueFolderDTO folderDTO = testIssueFolderMapper.selectOne(folder);
+        if (Objects.isNull(folderDTO)){
+            throw new CommonException(BaseConstants.ErrorCode.DATA_NOT_EXISTS);
+        }
+        // 复制当前文件夹
+        TestIssueFolderDTO newFolder = new TestIssueFolderDTO(folderDTO, folderDTO.getParentId(),0L);
+        newFolder.setName(newFolder.getName() + "-副本");
+        newFolder.setRank(RankUtil.genNext(newFolder.getRank()));
+        testIssueFolderMapper.insertSelective(newFolder);
+        newFolder.setOldFolderId(folderId);
+        return newFolder;
+    }
+
+    @Async
+    @Override
+    public void wrapCloneFolder(Long projectId, TestIssueFolderDTO newFolder, CustomUserDetails userDetails){
+        try {
+            this.cloneChildrenFolderAndCase(projectId, newFolder);
+            messageClient.sendByUserId(userDetails.getUserId(), TestIssueFolderDTO.MESSAGE_COPY_TEST_FOLDER, BaseConstants.FIELD_SUCCESS);
+            System.out.println("success");
+        }catch (Exception e){
+            log.error("case folder clone field, e: [{]]", e);
+            messageClient.sendByUserId(userDetails.getUserId(), TestIssueFolderDTO.MESSAGE_COPY_TEST_FOLDER, BaseConstants.FIELD_FAILED);
+            System.out.println("failed");
+        }
+    }
+
+    @Override
+    public void cloneChildrenFolderAndCase(Long projectId, TestIssueFolderDTO newFolder) {
+        // 查询文件夹下所有的目录
+        Set<Long> folderIdSet = testCaseService.selectFolderIds(projectId, newFolder.getOldFolderId());
+        folderIdSet.remove(newFolder.getOldFolderId());
+        // 复制文件夹
+        Map<Long, Long> oldNewMap = new HashMap<>();
+        oldNewMap.put(newFolder.getOldFolderId(), newFolder.getFolderId());
+        if (CollectionUtils.isNotEmpty(folderIdSet)){
+            List<TestIssueFolderDTO> folderList;
+            folderList = testIssueFolderMapper.selectByIds(StringUtils.join(folderIdSet, BaseConstants.Symbol.COMMA));
+            Map<Long, List<TestIssueFolderDTO>> parentMap =
+                    folderList.stream().collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
+            boolean breakFlag = false;
+            Iterator<Map.Entry<Long, List<TestIssueFolderDTO>>> iterator;
+            while (MapUtils.isNotEmpty(parentMap)){
+                if (breakFlag){
+                    break;
+                }
+                breakFlag = true;
+                iterator = parentMap.entrySet().iterator();
+                while (iterator.hasNext()){
+                    Map.Entry<Long, List<TestIssueFolderDTO>> temp = iterator.next();
+                    if (Objects.isNull(oldNewMap.get(temp.getKey()))){
+                        continue;
+                    }
+                    breakFlag = false;
+                    temp.getValue().stream().map(folder ->
+                            new TestIssueFolderDTO(folder, oldNewMap.get(temp.getKey()), 0L))
+                            .forEach(folderDTO -> {
+                                testIssueFolderMapper.insertSelective(folderDTO);
+                                oldNewMap.put(folderDTO.getOldFolderId(), folderDTO.getFolderId());
+                            });
+                    iterator.remove();
+                }
+            }
+        }
+        // 复制用例
+        List<TestCaseDTO> testCaseList = testCaseMapper.selectByCondition(Condition.builder(TestCaseDTO.class)
+                .andWhere(Sqls.custom().andIn(TestCaseDTO.FIELD_FOLDER_ID,
+                        CollectionUtils.isEmpty(folderIdSet) ? Collections.singleton(newFolder.getOldFolderId()) : folderIdSet)).build());
+        if (CollectionUtils.isEmpty(testCaseList)){
+            return;
+        }
+        Map<Long, List<TestCaseDTO>> folderMap =
+                testCaseList.stream().collect(Collectors.groupingBy(TestCaseDTO::getFolderId));
+        for (Map.Entry<Long, List<TestCaseDTO>> entry : folderMap.entrySet()) {
+            if (Objects.isNull(oldNewMap.get(entry.getKey()))){
+                continue;
+            }
+            testCaseService.batchCopy(projectId, oldNewMap.get(entry.getKey()), entry.getValue().stream().map(caseDTO -> {
+                TestCaseRepVO rep = new TestCaseRepVO();
+                rep.setCaseId(caseDTO.getCaseId());
+                return rep;
+            }).collect(Collectors.toList()));
+        }
+
     }
 
     private void bulidFolder(Long folderId, Map<Long, TestIssueFolderDTO> map, Map<Long, TestIssueFolderDTO> allFolderMap) {

@@ -5,6 +5,7 @@ import javax.persistence.*;
 import io.choerodon.mybatis.annotation.ModifyAudit;
 import io.choerodon.mybatis.annotation.VersionAudit;
 import io.choerodon.mybatis.domain.AuditDomain;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
  * Created by zongw.lee@gmail.com on 08/30/2018
@@ -14,8 +15,21 @@ import io.choerodon.mybatis.domain.AuditDomain;
 @Table(name = "test_issue_folder")
 public class TestIssueFolderDTO extends AuditDomain {
 
+    public static final String MESSAGE_COPY_TEST_FOLDER = "COPY_TEST_FOLDER";
+
+    public TestIssueFolderDTO(TestIssueFolderDTO source, Long parentId, Long versionId){
+        this.name = source.name;
+        this.versionId = versionId;
+        this.projectId = source.projectId;
+        this.type = source.type;
+        this.parentId = parentId;
+        this.rank = source.rank;
+        this.oldFolderId = source.folderId;
+    }
+
     @Id
     @GeneratedValue
+    @Encrypt
     private Long folderId;
 
     private String name;
@@ -34,6 +48,17 @@ public class TestIssueFolderDTO extends AuditDomain {
 
     @Transient
     private Long caseCount;
+    @Transient
+    @Encrypt
+    private Long oldFolderId;
+
+    public Long getOldFolderId() {
+        return oldFolderId;
+    }
+
+    public void setOldFolderId(Long oldFolderId) {
+        this.oldFolderId = oldFolderId;
+    }
 
     public Long getCaseCount() {
         return caseCount;
