@@ -18,6 +18,7 @@ import User from '../../../../components/User';
 import './TestPlanTable.less';
 
 import Store from '../../stores';
+import { getRankByDate } from '../../../../api/TestPlanApi';
 
 const { AppState } = stores;
 
@@ -336,6 +337,7 @@ const TestPlanTable = observer(({
             marginTop: '-55px', marginBottom: 10, flexDirection: 'row-reverse', alignItems: 'center', display: testPlanStore.mainActiveTab === 'testPlanTable' ? 'flex' : 'none',
           }}
           >
+  
             <SelectFocusLoad
               allowClear
               style={{ width: 180, zIndex: 100, marginLeft: 10 }}
