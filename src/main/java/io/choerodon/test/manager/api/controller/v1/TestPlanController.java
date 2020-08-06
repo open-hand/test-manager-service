@@ -11,7 +11,6 @@ import io.choerodon.test.manager.api.vo.TestTreeIssueFolderVO;
 import io.choerodon.test.manager.app.service.TestPlanServcie;
 import io.choerodon.test.manager.infra.dto.TestPlanDTO;
 import io.swagger.annotations.ApiOperation;
-import org.hzero.core.util.Results;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -74,7 +73,7 @@ public class TestPlanController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("改变计划的状态")
     @PostMapping("/update_status")
-    public ResponseEntity updateStatus(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity<Void> updateStatus(@PathVariable(name = "project_id") Long projectId,
                                        @RequestBody TestPlanDTO testPlanDTO) {
         testPlanServcie.updateStatusCode(projectId, testPlanDTO);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -83,7 +82,7 @@ public class TestPlanController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("删除测试计划")
     @DeleteMapping("/{plan_id}/delete")
-    public ResponseEntity deletePlan(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity<Void> deletePlan(@PathVariable(name = "project_id") Long projectId,
                                      @PathVariable(name = "plan_id")
                                      @Encrypt Long planId) {
         testPlanServcie.delete(projectId, planId);
@@ -115,14 +114,5 @@ public class TestPlanController {
                                                          @PathVariable(name = "plan_id")
                                                          @Encrypt Long planId) {
         return new ResponseEntity<>(testPlanServcie.planStatus(projectId, planId), HttpStatus.OK);
-    }
-
-    @Permission(level = ResourceLevel.ORGANIZATION)
-    @ApiOperation("对计划内的文件夹进行日期排序")
-    @PostMapping("/{planId}/order_by_from_date")
-    public ResponseEntity<Void> orderByFromDate(@PathVariable(name = "project_id") Long projectId,
-                                                @PathVariable @Encrypt Long planId) {
-        testPlanServcie.orderByFromDate(projectId, planId);
-        return Results.success();
     }
 }

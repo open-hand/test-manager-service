@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -187,4 +188,12 @@ public interface TestCaseService {
      * @return
      */
     Page<IssueNumDTO> queryIssueByOptionForAgile(Long projectId, Long issueId, String issueNum, Boolean self, String content, PageRequest pageRequest);
+
+    /**
+     * 获取文件夹下的所有文件夹id（包括传入的id）
+     * @param projectId 项目id
+     * @param folderId 当前文件夹
+     * @return idset
+     */
+    Set<Long> selectFolderIds(Long projectId, Long folderId);
 }

@@ -4,7 +4,9 @@ import java.util.Optional;
 
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.test.manager.api.vo.TestTreeIssueFolderVO;
+import io.choerodon.test.manager.infra.dto.TestIssueFolderDTO;
 import io.swagger.annotations.ApiOperation;
+import org.hzero.core.util.Results;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -77,5 +79,17 @@ public class TestIssueFolderController {
         return Optional.ofNullable(testIssueFolderService.moveFolder(projectId, targetFolderId, issueFolderVO))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.testIssueFolder.move"));
+    }
+
+    /**
+     * 复制计划文件夹
+     */
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @ApiOperation("复制计划文件夹")
+    @PostMapping("/folder/{folderId}/clone")
+    public ResponseEntity<TestIssueFolderDTO> cloneTestCaseFolder(@PathVariable(name = "project_id") Long projectId,
+                                                                  @PathVariable(name = "folderId")
+                                                                  @Encrypt Long folderId) {
+        return Results.success(testIssueFolderService.cloneFolder(projectId, folderId));
     }
 }

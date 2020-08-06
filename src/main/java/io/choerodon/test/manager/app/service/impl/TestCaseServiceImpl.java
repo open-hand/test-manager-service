@@ -372,7 +372,6 @@ public class TestCaseServiceImpl implements TestCaseService {
         List<TestIssueFolderDTO> testIssueFolderDTOS = testIssueFolderMapper.selectListByProjectId(projectId);
         Map<Long, TestIssueFolderDTO> folderMap = testIssueFolderDTOS.stream().collect(Collectors.toMap(TestIssueFolderDTO::getFolderId, Function.identity()));
         TestCaseRepVO testCaseRepVO1 = testCaseAssembler.dtoToRepVo(testCaseDTO1,folderMap);
-        
         return testCaseRepVO1;
     }
 
@@ -532,6 +531,17 @@ public class TestCaseServiceImpl implements TestCaseService {
                         pageRequest.getPage(),
                         pageRequest.getSize(),projectId,issueId,issueNum,self,content)
                 .getBody();
+    }
+
+    @Override
+    public Set<Long> selectFolderIds(Long projectId, Long folderId) {
+        // 查询文件夹下所有的目录
+        Set<Long> folderIds = new HashSet<>();
+        TestIssueFolderDTO testIssueFolder = new TestIssueFolderDTO();
+        testIssueFolder.setProjectId(projectId);
+        Map<Long, List<TestIssueFolderDTO>> folderMap = testIssueFolderMapper.select(testIssueFolder).stream().collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
+        queryAllFolderIds(folderId, folderIds, folderMap);
+        return folderIds;
     }
 
     private TestCaseDTO baseQuery(Long caseId) {
