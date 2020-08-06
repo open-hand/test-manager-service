@@ -198,8 +198,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
                 }).collect(Collectors.toMap(TestIssueFolderDTO::getFolderId, Function.identity()));
         Map<Long,TestIssueFolderDTO> map = new TreeMap<>();
         folderIds.forEach(v -> bulidFolder(v,map,allFolderMap));
-        List<TestIssueFolderDTO> collect = map.values().stream().collect(Collectors.toList());
-        return collect;
+        return new ArrayList<>(map.values());
     }
 
     @Override
@@ -254,11 +253,9 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
         try {
             this.cloneChildrenFolderAndCase(projectId, newFolder);
             messageClient.sendByUserId(userDetails.getUserId(), TestIssueFolderDTO.MESSAGE_COPY_TEST_FOLDER, BaseConstants.FIELD_SUCCESS);
-            System.out.println("success");
         }catch (Exception e){
-            log.error("case folder clone field, e: [{]]", e);
+            log.error("case folder clone field, e.message: [{}], trace: [{}]", e.getMessage(), e.getStackTrace());
             messageClient.sendByUserId(userDetails.getUserId(), TestIssueFolderDTO.MESSAGE_COPY_TEST_FOLDER, BaseConstants.FIELD_FAILED);
-            System.out.println("failed");
         }
     }
 
@@ -268,6 +265,34 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
         Set<Long> folderIdSet = testCaseService.selectFolderIds(projectId, newFolder.getOldFolderId());
         folderIdSet.remove(newFolder.getOldFolderId());
         // 复制文件夹
+        Map<Long, Long> oldNewMap = cloneChildrenFolder(newFolder, folderIdSet);
+        // 复制用例
+        cloneChildrenCase(projectId, newFolder, folderIdSet, oldNewMap);
+
+    }
+
+    private void cloneChildrenCase(Long projectId, TestIssueFolderDTO newFolder, Set<Long> folderIdSet, Map<Long, Long> oldNewMap) {
+        List<TestCaseDTO> testCaseList = testCaseMapper.selectByCondition(Condition.builder(TestCaseDTO.class)
+                .andWhere(Sqls.custom().andIn(TestCaseDTO.FIELD_FOLDER_ID,
+                        CollectionUtils.isEmpty(folderIdSet) ? Collections.singleton(newFolder.getOldFolderId()) : folderIdSet)).build());
+        if (CollectionUtils.isEmpty(testCaseList)){
+            return;
+        }
+        Map<Long, List<TestCaseDTO>> folderMap =
+                testCaseList.stream().collect(Collectors.groupingBy(TestCaseDTO::getFolderId));
+        for (Map.Entry<Long, List<TestCaseDTO>> entry : folderMap.entrySet()) {
+            if (Objects.isNull(oldNewMap.get(entry.getKey()))){
+                continue;
+            }
+            testCaseService.batchCopy(projectId, oldNewMap.get(entry.getKey()), entry.getValue().stream().map(caseDTO -> {
+                TestCaseRepVO rep = new TestCaseRepVO();
+                rep.setCaseId(caseDTO.getCaseId());
+                return rep;
+            }).collect(Collectors.toList()));
+        }
+    }
+
+    private Map<Long, Long> cloneChildrenFolder(TestIssueFolderDTO newFolder, Set<Long> folderIdSet) {
         Map<Long, Long> oldNewMap = new HashMap<>();
         oldNewMap.put(newFolder.getOldFolderId(), newFolder.getFolderId());
         if (CollectionUtils.isNotEmpty(folderIdSet)){
@@ -299,26 +324,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
                 }
             }
         }
-        // 复制用例
-        List<TestCaseDTO> testCaseList = testCaseMapper.selectByCondition(Condition.builder(TestCaseDTO.class)
-                .andWhere(Sqls.custom().andIn(TestCaseDTO.FIELD_FOLDER_ID,
-                        CollectionUtils.isEmpty(folderIdSet) ? Collections.singleton(newFolder.getOldFolderId()) : folderIdSet)).build());
-        if (CollectionUtils.isEmpty(testCaseList)){
-            return;
-        }
-        Map<Long, List<TestCaseDTO>> folderMap =
-                testCaseList.stream().collect(Collectors.groupingBy(TestCaseDTO::getFolderId));
-        for (Map.Entry<Long, List<TestCaseDTO>> entry : folderMap.entrySet()) {
-            if (Objects.isNull(oldNewMap.get(entry.getKey()))){
-                continue;
-            }
-            testCaseService.batchCopy(projectId, oldNewMap.get(entry.getKey()), entry.getValue().stream().map(caseDTO -> {
-                TestCaseRepVO rep = new TestCaseRepVO();
-                rep.setCaseId(caseDTO.getCaseId());
-                return rep;
-            }).collect(Collectors.toList()));
-        }
-
+        return oldNewMap;
     }
 
     private void bulidFolder(Long folderId, Map<Long, TestIssueFolderDTO> map, Map<Long, TestIssueFolderDTO> allFolderMap) {
