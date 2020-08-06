@@ -10,7 +10,7 @@ import {
 import { Icon, Tabs, Card } from 'choerodon-ui';
 import { Modal, Button } from 'choerodon-ui/pro';
 import {
-  deleteExecute, updateExecute, comfirmUpdate, ignoreUpdate,
+  deleteExecute, updateExecute, comfirmUpdate, ignoreUpdate, getRankByDate,
 } from '../../../api/TestPlanApi';
 import CreateAutoTest from '../components/CreateAutoTest';
 import TestPlanDetailCard from '../components/TestPlanDetailCard';
@@ -264,7 +264,11 @@ function TestPlanHome({ history }) {
     testPlanStore.setFilter(filter);
     testPlanStore.loadExecutes();
   };
-
+  const handleRankByDate = () => {
+    getRankByDate(testPlanStore.getCurrentPlanId).then((res) => {
+      testPlanStore.loadAllData();
+    });
+  };
   useEffect(() => {
     testPlanStore.loadAllData();
   }, [testPlanStore]);
@@ -297,6 +301,7 @@ function TestPlanHome({ history }) {
         <Button icon="refresh" onClick={handleRefresh}>
           <FormattedMessage id="refresh" />
         </Button>
+       
       </Header>
       <Breadcrumb />
       <Content style={{ display: 'flex', padding: '0', borderTop: '0.01rem solid rgba(0,0,0,0.12)' }}>
@@ -356,7 +361,7 @@ function TestPlanHome({ history }) {
                         {
                             testPlanStore.isPlan(currentCycle.id) ? (
                               <TabPane tab="计划日历" key="testPlanSchedule">
-                                <EventCalendar key={currentCycle.id} showMode="multi" times={times} calendarLoading={calendarLoading} />
+                                <EventCalendar key={currentCycle.id} showMode="multi" times={times} calendarLoading={calendarLoading} handleRankByDate={handleRankByDate} />
                               </TabPane>
                             ) : ''
                           }

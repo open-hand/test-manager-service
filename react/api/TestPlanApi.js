@@ -157,3 +157,10 @@ export function getPlanList() {
 export function updateFoldRangeDate(isCycle, data) {
   return request.post(`/test/v1/projects/${getProjectId()}/cycle/operate_calendar?isCycle=${isCycle}`, data);
 }
+/**
+ * 按时间排序
+ * @param {*} planId 
+ */
+export function getRankByDate(planId) {
+  return request.post(`/test//v1/projects/${getProjectId()}/plan/${planId}/order_by_from_date`);
+}

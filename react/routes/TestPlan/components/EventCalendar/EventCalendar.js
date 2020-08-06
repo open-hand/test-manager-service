@@ -7,6 +7,7 @@ import Moment from 'moment';
 import { extendMoment } from 'moment-range';
 import { DatePicker, Spin } from 'choerodon-ui';
 import './EventCalendar.less';
+import { Button } from 'choerodon-ui/pro/lib';
 import CalendarBackItem from './CalendarBackItem';
 import EventItem from './EventItem';
 import Store from '../../stores';
@@ -24,7 +25,9 @@ class EventCalendar extends Component {
     this.state = {
       baseDate, // 显示的开始时间
       endDate, // 显示的结束时间
+      // eslint-disable-next-line react/no-unused-state
       mode: 'month',
+      // eslint-disable-next-line react/no-unused-state
       width: 'auto',
     };
   }
@@ -166,9 +169,11 @@ class EventCalendar extends Component {
       this.currentDate = mode === 'pre' ? baseDate : endDate;
     }
   }
-  
+
   render() {
-    const { showMode, times, calendarLoading } = this.props;
+    const {
+      showMode, times, calendarLoading, handleRankByDate,
+    } = this.props;
     const { context: { testPlanStore } } = this.props;
     const { start, end } = this.calculateTime();
     const range = moment.range(start, end);
@@ -181,6 +186,14 @@ class EventCalendar extends Component {
           <div className="c7ntest-EventCalendar-header" style={{ marginTop: '-50px', flexDirection: 'row-reverse', display: testPlanStore.mainActiveTab === 'testPlanTable' ? 'none' : 'flex' }}>
             <div className="c7ntest-EventCalendar-header-title" style={{ zIndex: 100 }}>
               <div className="c7ntest-EventCalendar-header-skip">
+                <Button
+                  style={{ fontSize: 13 }}
+                  color="blue"
+                  icon="application_allocation"
+                  onClick={handleRankByDate}
+                >
+                  时间排序
+                </Button>
                 <RangePicker
                   // placement="bottomRight"
                   onChange={this.handleRangeChange}

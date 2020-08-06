@@ -65,7 +65,7 @@ const enUS = {
   execute_pre: 'last execute',
   execute_next: 'next execute',
   execute_cycle_execute: 'Test execution',
-  execute_description: 'Description',
+  execute_description: 'Precondition',
   execute_edit_fullScreen: 'Edit fullScreen',
   execute_status: 'Execute status',
   execute_assignedTo: 'Assigned to',
