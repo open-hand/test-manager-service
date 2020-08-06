@@ -3,9 +3,6 @@ import { Tabs } from 'choerodon-ui';
 import { find } from 'lodash';
 import IssueManage from './IssueManage';
 
-const ApiTestInject = C7NTryImport('@choerodon/testmanager-pro/lib/react/routes/api-test');
-// const ApiTestInject = C7NTryImport('../api-test');
-
 let tabs = [{
   name: '功能测试',
   key: 'functional',
@@ -14,9 +11,6 @@ let tabs = [{
 
 export function inject({ tabs: otherTab }) {
   tabs = [...tabs, ...otherTab];
-}
-if (ApiTestInject) {
-  ApiTestInject(inject);
 }
 
 const { TabPane } = Tabs;
