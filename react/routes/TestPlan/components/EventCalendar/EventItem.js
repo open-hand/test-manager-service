@@ -101,6 +101,7 @@ function findScroller(n) {
 const moment = extendMoment(Moment);
 const propTypes = {
   range: PropTypes.any.isRequired,
+  // eslint-disable-next-line react/no-unused-prop-types
   itemRange: PropTypes.any.isRequired,
   data: PropTypes.any.isRequired,
 };
@@ -111,6 +112,7 @@ let MouseUpTime = 0;
 class EventItem extends Component {
   state = {
     type: null,
+    // eslint-disable-next-line react/no-unused-state
     title: null,
     preFlex: 0,
     flex: 0,

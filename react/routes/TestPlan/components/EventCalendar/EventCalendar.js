@@ -172,7 +172,7 @@ class EventCalendar extends Component {
 
   render() {
     const {
-      showMode, times, calendarLoading, handleRankByDate,
+      showMode, times, calendarLoading,
     } = this.props;
     const { context: { testPlanStore } } = this.props;
     const { start, end } = this.calculateTime();
@@ -186,14 +186,6 @@ class EventCalendar extends Component {
           <div className="c7ntest-EventCalendar-header" style={{ marginTop: '-50px', flexDirection: 'row-reverse', display: testPlanStore.mainActiveTab === 'testPlanTable' ? 'none' : 'flex' }}>
             <div className="c7ntest-EventCalendar-header-title" style={{ zIndex: 100 }}>
               <div className="c7ntest-EventCalendar-header-skip">
-                <Button
-                  style={{ fontSize: 13 }}
-                  color="blue"
-                  icon="application_allocation"
-                  onClick={handleRankByDate}
-                >
-                  时间排序
-                </Button>
                 <RangePicker
                   // placement="bottomRight"
                   onChange={this.handleRangeChange}

@@ -3,7 +3,7 @@ import {
   observable, action, computed, toJS,
 } from 'mobx';
 import moment from 'moment';
-import { find, pull } from 'lodash';
+import { find, findIndex, pull } from 'lodash';
 import { getPlanTree } from '@/api/TestPlanApi';
 // import { getIssueTree } from '@/api/IssueManageApi';
 // 数据处理成tree形式，便于查看数据
@@ -29,6 +29,8 @@ class TestPlanTreeStore {
     rootIds: [],
     treeFolder: [],
   }
+
+  @observable treeFolderMaps = new Map();
 
   @observable selectedKeys = [];
 
@@ -111,7 +113,8 @@ class TestPlanTreeStore {
     this.setTimes(times);
   }
 
-  getAllChildren = parent => this.treeData.treeFolder.filter(item => parent.children.includes(item.id));
+  // this.treeData.treeFolder.filter(item => parent.children.includes(item.id));
+  getAllChildren = parent => parent.children.map(item => this.treeFolderMaps.get(item));
 
   generateTimes = (data, times, level = 0) => {
     for (let i = 0; i < data.length; i += 1) {
@@ -144,6 +147,7 @@ class TestPlanTreeStore {
     this.setTreeLoading(false);
   }
 
+
   @action setTreeData(treeData, defaultSelectId) {
     const { flattenedTree } = this.treeRef.current || {};
     let flattenedTreeIds;
@@ -160,24 +164,26 @@ class TestPlanTreeStore {
     }
     this.treeData = {
       rootIds: rootIds || [],
-      treeFolder: (treeFolder && treeFolder.map((folder) => {
+      treeFolder: (treeFolder && treeFolder.map((folder, index) => {
         const {
           id, planId, issueFolderVO, expanded, children, ...other
         } = folder;
-        
-        return {
+        const newFolder = {
           id: planId ? `${planId}%${id}` : id,
           children: children ? children.map(child => `${planId || id}%${child}`) : [],
           data: issueFolderVO,
           isExpanded: (flattenedTreeIds && (flattenedTreeIds.includes(id) || flattenedTreeIds.includes(`${planId}%${id}`))) || expanded,
           selected: folder.id === selectedId,
+          index,
           ...other,
         };
+        this.treeFolderMaps.set(newFolder.id, newFolder);
+        return newFolder;
       })) || [],
     };
     // window.console.log(makeTree(toJS(this.treeData.rootIds), toJS(this.treeData.treeFolder)));
     if (selectedId) {
-      const currentCycle = find(this.treeData.treeFolder, { id: selectedId }) || {};
+      const currentCycle = this.treeFolderMaps.get(selectedId) || {};
       this.setCurrentCycle(currentCycle);
       this.updateTimes([currentCycle]);
     }
@@ -188,7 +194,7 @@ class TestPlanTreeStore {
   }
 
   @action setCurrentCycleById(id) {
-    const data = find(this.treeData.treeFolder, { id });
+    const data = this.treeFolderMaps.get(id);
     if (data) {
       this.setCurrentCycle(data);
     }

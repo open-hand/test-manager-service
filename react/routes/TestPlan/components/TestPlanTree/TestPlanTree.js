@@ -84,6 +84,7 @@ class TestPlanTree extends Component {
     }
   }
 
+
   handleCreateFolder = async (value, parentId, item) => {
     const { context: { testPlanStore } } = this.props;
     const isPlan = testPlanStore.isPlan(parentId);
@@ -129,6 +130,7 @@ class TestPlanTree extends Component {
     testPlanStore.setCurrentCycle(item);
   }
 
+
   handleMenuClick = (key, nodeItem) => {
     const { context: { testPlanStore } } = this.props;
     switch (key) {
@@ -165,13 +167,17 @@ class TestPlanTree extends Component {
         testPlanStore.treeRef.current.trigger.delete(nodeItem);
         break;
       }
+      case 'rank': {
+        testPlanStore.RankByDate();
+        break;
+      }
       default: {
         break;
       }
     }
   }
 
-  handleUpdateItem=(item) => {
+  handleUpdateItem = (item) => {
     const { context: { testPlanStore } } = this.props;
     if (testPlanStore.getCurrentPlanId === item.id) {
       testPlanStore.setPlanInfo({ ...testPlanStore.planInfo, name: item.data.name });
@@ -198,6 +204,7 @@ class TestPlanTree extends Component {
 
   getMenuItems = (item) => {
     const isPlan = item.topLevel;
+    const { context: { testPlanStore } } = this.props;
     if (isPlan) {
       return [
         <Menu.Item key="copy">
@@ -205,6 +212,9 @@ class TestPlanTree extends Component {
         </Menu.Item>,
         <Menu.Item key="rename">
           重命名
+        </Menu.Item>,
+        <Menu.Item key="rank">
+          {testPlanStore.getIsFinishSort ? '返回排序前顺序' : '时间排序'}
         </Menu.Item>,
         <Menu.Item key="drag">
           调整结构
