@@ -57,4 +57,10 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             column(name: 'rank', type: 'VARCHAR(255)', remarks: 'rank')
         }
     }
+
+    changeSet(id: '2020-08-07-test-issue-folder-add-init-status', author: 'jiaxu.cui@hand-china.com') {
+        addColumn(tableName: 'test_issue_folder') {
+            column(name: 'init_status', type: 'VARCHAR(255)', remarks: 'init_status')
+        }
+    }
 }

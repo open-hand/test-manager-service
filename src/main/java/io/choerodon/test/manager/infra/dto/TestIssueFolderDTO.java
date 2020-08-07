@@ -46,11 +46,21 @@ public class TestIssueFolderDTO extends AuditDomain {
 
     private String rank;
 
+    private String initStatus;
+
     @Transient
     private Long caseCount;
     @Transient
     @Encrypt
     private Long oldFolderId;
+
+    public String getInitStatus() {
+        return initStatus;
+    }
+
+    public void setInitStatus(String initStatus) {
+        this.initStatus = initStatus;
+    }
 
     public Long getOldFolderId() {
         return oldFolderId;
