@@ -184,6 +184,7 @@ class TestPlanStore extends TestPlanTreeStore {
   @action clearStore = () => {
     this.tableLoading = false;
     this.treeData = {};
+    this.treeFolderMaps = new Map();
     this.testList = [];
     this.expandedKeys = ['0-0'];
     this.selectedKeys = [];
@@ -206,6 +207,7 @@ class TestPlanStore extends TestPlanTreeStore {
     this.statusRes = {};
     this.mainActiveTab = 'testPlanSchedule';
     this.times = [];
+    this.isFinishSort = false;
   }
 
   sortTreeData(root, children) {
