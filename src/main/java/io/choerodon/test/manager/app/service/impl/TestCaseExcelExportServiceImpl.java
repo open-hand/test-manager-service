@@ -4,6 +4,7 @@ import java.util.*;
 
 import io.choerodon.core.exception.CommonException;
 
+import java.util.stream.Collectors;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.xssf.usermodel.XSSFDataValidation;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import com.alibaba.fastjson.JSON;
+import org.springframework.util.StringUtils;
 
 import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.api.vo.agile.IssueStatusDTO;
@@ -262,7 +264,7 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
         TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO();
         testIssueFolderDTO.setProjectId(projectId);
 
-        List<TestIssueFolderVO> testIssueFolderVOS = modelMapper.map(testIssueFolderMapper.select(testIssueFolderDTO),
+        List<TestIssueFolderVO> testIssueFolderVOS = modelMapper.map(testIssueFolderMapper.select(testIssueFolderDTO).stream().filter(issueFolderDTO -> !"api".equals(issueFolderDTO.getType())).collect(Collectors.toList()),
                 new TypeToken<List<TestIssueFolderVO>>() {
         }.getType());
         List<IssueStatusDTO> issueStatusDTOS = testCaseService.listStatusByProjectId(projectId);

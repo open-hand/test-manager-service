@@ -9,12 +9,14 @@ import io.choerodon.mybatis.pagehelper.PageHelper;
 import io.choerodon.core.domain.Page;
 import io.choerodon.test.manager.api.vo.agile.*;
 import io.choerodon.test.manager.infra.feign.IssueFeignClient;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.mybatis.pagehelper.domain.Sort;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -270,7 +272,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         testProjectInfoMapper.updateByPrimaryKeySelective(testProjectInfo);
         List<TestIssueFolderDTO> testIssueFolderDTOS = testIssueFolderMapper.selectListByProjectId(projectId);
         Map<Long, TestIssueFolderDTO> folderMap = testIssueFolderDTOS.stream().collect(Collectors.toMap(TestIssueFolderDTO::getFolderId, Function.identity()));
-        TestCaseRepVO testCaseRepVO = testCaseAssembler.dtoToRepVo(testCaseDTO,folderMap);
+        TestCaseRepVO testCaseRepVO = testCaseAssembler.dtoToRepVo(testCaseDTO, folderMap);
         return testCaseRepVO;
     }
 
@@ -288,7 +290,7 @@ public class TestCaseServiceImpl implements TestCaseService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteCase(Long projectId, Long caseId) {
         // 删除测试用例步骤
-        testCaseStepService.removeStepByIssueId(projectId,caseId);
+        testCaseStepService.removeStepByIssueId(projectId, caseId);
         // 删除问题链接
         TestCaseLinkDTO testCaseLinkDTO = new TestCaseLinkDTO();
         testCaseLinkDTO.setLinkCaseId(caseId);
@@ -310,7 +312,7 @@ public class TestCaseServiceImpl implements TestCaseService {
 
         // 删除测试计划中选择自动同步的计划中的有关联的执行
         List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(projectId, caseId);
-        if(CollectionUtils.isEmpty(testCycleCaseDTOS)){
+        if (CollectionUtils.isEmpty(testCycleCaseDTOS)) {
             List<Long> executeIds = testCycleCaseDTOS.stream().map(TestCycleCaseDTO::getExecuteId).collect(Collectors.toList());
             testCycleCaseService.batchDeleteByExecuteIds(executeIds);
         }
@@ -323,17 +325,17 @@ public class TestCaseServiceImpl implements TestCaseService {
         Set<Long> folderIds = new HashSet<>();
         TestIssueFolderDTO testIssueFolder = new TestIssueFolderDTO();
         testIssueFolder.setProjectId(projectId);
-        Map<Long, List<TestIssueFolderDTO>> folderMap = testIssueFolderMapper.select(testIssueFolder).stream().collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
+        Map<Long, List<TestIssueFolderDTO>> folderMap = testIssueFolderMapper.select(testIssueFolder).stream().filter(issueFolderDTO -> !"api".equals(issueFolderDTO.getType())).collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
         queryAllFolderIds(folderId, folderIds, folderMap);
         // 查询文件夹下的的用例
-        Page<Long> longPageInfo = PageHelper.doPageAndSort(pageRequest,() -> testCaseMapper.listCaseIds(projectId, folderIds, searchDTO));
-        Page<TestCaseRepVO> pageRepList = PageUtil.buildPageInfoWithPageInfoList(longPageInfo,new ArrayList());
+        Page<Long> longPageInfo = PageHelper.doPageAndSort(pageRequest, () -> testCaseMapper.listCaseIds(projectId, folderIds, searchDTO));
+        Page<TestCaseRepVO> pageRepList = PageUtil.buildPageInfoWithPageInfoList(longPageInfo, new ArrayList());
         if (CollectionUtils.isEmpty(longPageInfo.getContent())) {
             pageRepList.setContent(new ArrayList<>());
             return pageRepList;
         }
-        List<TestCaseDTO> testCaseDTOS = testCaseMapper.listByCaseIds(projectId, longPageInfo.getContent(),true);
-        List<TestCaseRepVO> repVOS = testCaseAssembler.listDtoToRepVo(projectId,testCaseDTOS,planId);
+        List<TestCaseDTO> testCaseDTOS = testCaseMapper.listByCaseIds(projectId, longPageInfo.getContent(), true);
+        List<TestCaseRepVO> repVOS = testCaseAssembler.listDtoToRepVo(projectId, testCaseDTOS, planId);
         pageRepList.setContent(repVOS);
         return pageRepList;
     }
@@ -359,11 +361,10 @@ public class TestCaseServiceImpl implements TestCaseService {
         List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(testCaseDTO.getProjectId(), testCaseDTO.getCaseId());
         if (!CollectionUtils.isEmpty(testCycleCaseDTOS)) {
             List<TestCycleCaseDTO> collect = new ArrayList<>();
-            if(!ObjectUtils.isEmpty(testCaseRepVO.getExecuteId())){
+            if (!ObjectUtils.isEmpty(testCaseRepVO.getExecuteId())) {
                 List<TestCycleCaseDTO> collect1 = testCycleCaseDTOS.stream().filter(v -> !testCaseRepVO.getExecuteId().equals(v.getExecuteId())).collect(Collectors.toList());
                 collect.addAll(collect1);
-            }
-            else {
+            } else {
                 collect.addAll(testCycleCaseDTOS);
             }
             testCaseAssembler.autoAsyncCase(collect, true, false, false);
@@ -371,7 +372,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         TestCaseDTO testCaseDTO1 = testCaseMapper.selectByPrimaryKey(map.getCaseId());
         List<TestIssueFolderDTO> testIssueFolderDTOS = testIssueFolderMapper.selectListByProjectId(projectId);
         Map<Long, TestIssueFolderDTO> folderMap = testIssueFolderDTOS.stream().collect(Collectors.toMap(TestIssueFolderDTO::getFolderId, Function.identity()));
-        TestCaseRepVO testCaseRepVO1 = testCaseAssembler.dtoToRepVo(testCaseDTO1,folderMap);
+        TestCaseRepVO testCaseRepVO1 = testCaseAssembler.dtoToRepVo(testCaseDTO1, folderMap);
         return testCaseRepVO1;
     }
 
@@ -486,8 +487,8 @@ public class TestCaseServiceImpl implements TestCaseService {
     @Override
     public void batchDeleteIssues(Long projectId, List<Long> issueIds) {
         Assert.notNull(projectId, "error.TestCaseService.batchDeleteIssues.param.projectId.not.be.null");
-        if(!CollectionUtils.isEmpty(issueIds)){
-            testCaseStepMapper.deleteByCaseIds(projectId,issueIds);
+        if (!CollectionUtils.isEmpty(issueIds)) {
+            testCaseStepMapper.deleteByCaseIds(projectId, issueIds);
             testCaseMapper.batchDeleteCases(projectId, issueIds);
         }
     }
@@ -515,6 +516,7 @@ public class TestCaseServiceImpl implements TestCaseService {
             testIssueFolderDTOS.forEach(v -> queryAllFolderIds(v.getFolderId(), folderIds, folderMap));
         }
     }
+
     @Override
     public TestCaseDTO baseUpdate(TestCaseDTO testCaseDTO) {
         if (ObjectUtils.isEmpty(testCaseDTO) || ObjectUtils.isEmpty(testCaseDTO.getCaseId())) {
@@ -529,7 +531,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         return issueFeignClient
                 .queryIssueByOptionForAgile(
                         pageRequest.getPage(),
-                        pageRequest.getSize(),projectId,issueId,issueNum,self,content)
+                        pageRequest.getSize(), projectId, issueId, issueNum, self, content)
                 .getBody();
     }
 
@@ -539,7 +541,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         Set<Long> folderIds = new HashSet<>();
         TestIssueFolderDTO testIssueFolder = new TestIssueFolderDTO();
         testIssueFolder.setProjectId(projectId);
-        Map<Long, List<TestIssueFolderDTO>> folderMap = testIssueFolderMapper.select(testIssueFolder).stream().collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
+        Map<Long, List<TestIssueFolderDTO>> folderMap = testIssueFolderMapper.select(testIssueFolder).stream().filter(issueFolderDTO -> !"api".equals(issueFolderDTO.getType())).collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
         queryAllFolderIds(folderId, folderIds, folderMap);
         return folderIds;
     }
@@ -590,7 +592,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         Set<Long> folderIds = new HashSet<>();
         TestIssueFolderDTO testIssueFolder = new TestIssueFolderDTO();
         testIssueFolder.setProjectId(projectId);
-        Map<Long, List<TestIssueFolderDTO>> folderMap = testIssueFolderMapper.select(testIssueFolder).stream().collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
+        Map<Long, List<TestIssueFolderDTO>> folderMap = testIssueFolderMapper.select(testIssueFolder).stream().filter(issueFolderDTO -> !"api".equals(issueFolderDTO.getType())).collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
         queryAllFolderIds(folderId, folderIds, folderMap);
         // 查询文件夹下的的用例
         List<Long> caseIds = testCaseMapper.listCaseIds(projectId, folderIds, null);
@@ -598,22 +600,22 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
-    public List<TestCaseDTO> listByCaseIds(Long projectId,List<Long> caseIds) {
-        if(CollectionUtils.isEmpty(caseIds)){
+    public List<TestCaseDTO> listByCaseIds(Long projectId, List<Long> caseIds) {
+        if (CollectionUtils.isEmpty(caseIds)) {
             return new ArrayList<>();
         }
-        return testCaseMapper.listByCaseIds(projectId,caseIds,true);
+        return testCaseMapper.listByCaseIds(projectId, caseIds, true);
     }
 
     @Override
     public TestCaseInfoVO queryCaseRep(Long caseId) {
         TestCaseDTO testCaseDTO = testCaseMapper.selectByPrimaryKey(caseId);
-        if(ObjectUtils.isEmpty(testCaseDTO)){
+        if (ObjectUtils.isEmpty(testCaseDTO)) {
             return new TestCaseInfoVO();
         }
         TestCaseInfoVO testCaseInfoVO = testCaseAssembler.dtoToInfoVO(testCaseDTO);
         List<TestCaseStepDTO> testCaseStepDTOS = testCaseStepService.listByCaseIds(Arrays.asList(caseId));
-        if(!CollectionUtils.isEmpty(testCaseStepDTOS)){
+        if (!CollectionUtils.isEmpty(testCaseStepDTOS)) {
             testCaseInfoVO.setTestCaseStepS(testCaseStepDTOS);
         }
         return testCaseInfoVO;
