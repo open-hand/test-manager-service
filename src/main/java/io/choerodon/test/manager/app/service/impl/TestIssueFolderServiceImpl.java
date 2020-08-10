@@ -16,6 +16,7 @@ import io.choerodon.test.manager.api.vo.TestCaseRepVO;
 import io.choerodon.test.manager.api.vo.event.ProjectEvent;
 import io.choerodon.test.manager.infra.constant.SagaTaskCodeConstants;
 import io.choerodon.test.manager.infra.constant.SagaTopicCodeConstants;
+import io.choerodon.test.manager.infra.enums.TestPlanInitStatus;
 import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -269,6 +270,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
         TestIssueFolderDTO newFolder = new TestIssueFolderDTO(folderDTO, folderDTO.getParentId(),0L);
         newFolder.setName(newFolder.getName() + "-副本");
         newFolder.setRank(RankUtil.genNext(newFolder.getRank()));
+        newFolder.setInitStatus(TestPlanInitStatus.CREATING);
         testIssueFolderMapper.insertSelective(newFolder);
         newFolder.setOldFolderId(folderId);
         return newFolder;
@@ -287,17 +289,21 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
                     objectMapper.getTypeFactory().constructParametricType(Map.class, String.class, Object.class));
             newFolder = (TestIssueFolderDTO) map.get("newFolder");
             userId = (Long) map.get("userId");
+            Assert.notNull(userId, BaseConstants.ErrorCode.DATA_INVALID);
+            Assert.notNull(newFolder, BaseConstants.ErrorCode.DATA_INVALID);
         } catch (IOException e) {
             log.error("[{}] payload convert failed, e.message: [{}], trace: [{}]",
                     SagaTaskCodeConstants.TEST_MANAGER_CLONE_TEST_ISSUE_FOLDER_TASK, e.getMessage(), e.getStackTrace());
         }
         // 复制子文件夹
         try {
-            Assert.notNull(userId, BaseConstants.ErrorCode.DATA_INVALID);
-            Assert.notNull(newFolder, BaseConstants.ErrorCode.DATA_INVALID);
             this.cloneChildrenFolderAndCase(newFolder.getProjectId(), newFolder);
+            newFolder.setInitStatus(TestPlanInitStatus.SUCCESS);
+            testIssueFolderMapper.updateOptional(newFolder, "initStatus");
             messageClient.sendByUserId(userId, TestIssueFolderDTO.MESSAGE_COPY_TEST_FOLDER, BaseConstants.FIELD_SUCCESS);
         }catch (Exception e){
+            newFolder.setInitStatus(TestPlanInitStatus.FAIL);
+            testIssueFolderMapper.updateOptional(newFolder, "initStatus");
             log.error("case folder clone field, e.message: [{}], trace: [{}]", e.getMessage(), e.getStackTrace());
             messageClient.sendByUserId(userId, TestIssueFolderDTO.MESSAGE_COPY_TEST_FOLDER, BaseConstants.FIELD_FAILED);
         }
