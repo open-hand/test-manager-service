@@ -260,8 +260,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         List<Long> caseIds = new ArrayList<>();
         // 是否自选
         if (Boolean.FALSE.equals(testPlanVO.getCustom())) {
-            testIssueFolderDTOS.addAll(Optional.ofNullable(testIssueFolderService.listByProject(testPlanVO.getProjectId()))
-                    .orElse(Collections.emptyList()).stream()
+            testIssueFolderDTOS.addAll(testIssueFolderService.listByProject(testPlanVO.getProjectId()).stream()
                     .filter(dto -> StringUtils.isBlank(dto.getInitStatus()) || StringUtils.equals(TestPlanInitStatus.SUCCESS, dto.getInitStatus()))
                     .collect(Collectors.toList()));
         } else {
