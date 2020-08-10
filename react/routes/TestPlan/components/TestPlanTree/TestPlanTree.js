@@ -145,6 +145,7 @@ class TestPlanTree extends Component {
       }
       case 'drag': {
         openDragPlanFolder({
+          beforeOpen: plantIds => testPlanStore.returnDefaultRank(plantIds),
           planId: nodeItem.id,
           handleOk: () => {
             testPlanStore.loadAllData();
@@ -214,7 +215,7 @@ class TestPlanTree extends Component {
           重命名
         </Menu.Item>,
         <Menu.Item key="rank">
-          {testPlanStore.getIsFinishSort ? '返回排序前顺序' : '时间排序'}
+          {testPlanStore.getFolderDataById(item.id).isSort ? '默认排序' : '时间排序'}
         </Menu.Item>,
         <Menu.Item key="drag">
           调整结构

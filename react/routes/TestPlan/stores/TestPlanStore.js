@@ -21,16 +21,6 @@ class TestPlanStore extends TestPlanTreeStore {
     return this.loading;
   }
 
-  @observable isFinishSort = false;
-
-  @action setIsFinishSort = (data) => {
-    this.isFinishSort = data;
-  }
-
-  @computed get getIsFinishSort() {
-    return this.isFinishSort;
-  }
-
   // @observable mainActiveTab = this.isPlan(this.currentCycle.id) ? 'testPlanSchedule' : 'testPlanTable';
   @observable mainActiveTab = 'testPlanSchedule';
 
@@ -184,6 +174,7 @@ class TestPlanStore extends TestPlanTreeStore {
   @action clearStore = () => {
     this.tableLoading = false;
     this.treeData = {};
+    this.treeFolderMaps = new Map();
     this.testList = [];
     this.expandedKeys = ['0-0'];
     this.selectedKeys = [];
@@ -224,37 +215,81 @@ class TestPlanStore extends TestPlanTreeStore {
         return 1;
       }
     });
+    this.treeData.treeFolder[root.index] = {
+      ...root, isSort: true, oldChildren: root.children, children: newChildren,
+    };
+    // this.treeData.treeFolder[root.index].isSort = true;
+    // this.treeData.treeFolder[root.index].children = newChildren;
     // eslint-disable-next-line no-param-reassign
-    root.children = newChildren;
+    this.treeFolderMaps.set(root.id, {
+      ...root, isSort: true, oldChildren: root.children, children: newChildren,
+    });
+    // root.children = newChildren;
     children.forEach((item) => {
       const itemData = this.treeFolderMaps.get(item);
       this.sortTreeData(itemData, itemData.children);
     });
   }
 
+  @action('返回默认排序顺序')
+  returnDefaultRank(planIds) {
+    this.setCalendarLoading(true);
+    this.setTreeLoading(true);
+    new Promise((resolve) => {
+      planIds.forEach((planId) => {
+        const sortData = this.treeFolderMaps.get(planId);
+        // 返回原顺序
+        if (sortData && sortData.isSort) {
+          const stackChildren = [];
+          stackChildren.push(...sortData.children);
+          this.treeFolderMaps.set(sortData.id, {
+            ...sortData, children: sortData.oldChildren, oldChildren: [], isSort: false,
+          });
+          while (stackChildren.length > 0) {
+            const id = stackChildren.pop();
+            const tempData = this.treeFolderMaps.get(id);
+            stackChildren.push(...tempData.children);
+            this.treeData.treeFolder[tempData.index].isSort = false;
+            this.treeData.treeFolder[tempData.index].children = tempData.oldChildren;
+            this.treeFolderMaps.set(tempData.id, {
+              ...tempData, children: tempData.oldChildren, oldChildren: [], isSort: false,
+            });
+          }
+          this.updateTimes([sortData]);
+          resolve(true);
+        }
+      });
+    }).then(() => {
+      this.setTreeLoading(false);
+      this.setCalendarLoading(false);
+    }).catch((err) => {
+      this.setTreeLoading(false);
+      this.setCalendarLoading(false);
+      Choerodon.prompt(err);
+    });
+  }
+
   @action('通过时间对树及日历进行排序')
   RankByDate(planId = this.getCurrentPlanId) {
-    // const treeData = this.getTreeData;
-    if (this.getIsFinishSort) {
-      this.loadAllData().then(() => this.setIsFinishSort(false));
+    const sortData = this.treeFolderMaps.get(planId);
+    if (sortData.isSort) {
+      this.returnDefaultRank([planId]);
       return;
     }
-    const sortData = this.treeFolderMaps.get(planId);
     if (sortData) {
+      this.setCalendarLoading(true);
+      this.setTreeLoading(true);
       new Promise((resolve) => {
-        this.setCalendarLoading(true);
-        this.setTreeLoading(true);
+        // this.treeFolderMaps.set(planId, sortData);
         this.sortTreeData(sortData, sortData.children);
         this.updateTimes([sortData]);
         resolve(true);
       }).then(() => {
         this.setTreeLoading(false);
         this.setCalendarLoading(false);
-        this.setIsFinishSort(true);
       }).catch((err) => {
         this.setTreeLoading(false);
         this.setCalendarLoading(false);
-        this.setIsFinishSort(false);
         Choerodon.prompt(err);
       });
     }

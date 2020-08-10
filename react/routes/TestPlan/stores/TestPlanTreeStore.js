@@ -147,6 +147,9 @@ class TestPlanTreeStore {
     this.setTreeLoading(false);
   }
 
+  getFolderDataById(id) {
+    return this.treeFolderMaps.get(id);
+  }
 
   @action setTreeData(treeData, defaultSelectId) {
     const { flattenedTree } = this.treeRef.current || {};
@@ -171,10 +174,12 @@ class TestPlanTreeStore {
         const newFolder = {
           id: planId ? `${planId}%${id}` : id,
           children: children ? children.map(child => `${planId || id}%${child}`) : [],
+          oldChildren: [], // 初始顺序
           data: issueFolderVO,
           isExpanded: (flattenedTreeIds && (flattenedTreeIds.includes(id) || flattenedTreeIds.includes(`${planId}%${id}`))) || expanded,
           selected: folder.id === selectedId,
           index,
+          isSort: false,
           ...other,
         };
         this.treeFolderMaps.set(newFolder.id, newFolder);

@@ -56,7 +56,8 @@ function DragPlanFolder({
 }
 DragPlanFolder.propTypes = propTypes;
 const ObserverDragPlanFolder = observer(DragPlanFolder);
-export default async function openDragPlanFolder({ planId, handleOk }) {
+export default async function openDragPlanFolder({ planId, handleOk, beforeOpen }) {
+  beforeOpen([planId]);
   const planTree = await getPlanTreeById(planId);
   const { rootIds, treeFolder } = planTree;
   const data = {

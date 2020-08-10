@@ -290,6 +290,13 @@ export function cancelImport(historyId) {
   return request.put(`/test/v1/projects/${getProjectId()}/test/fileload/history/cancel?historyId=${historyId}`);
 }
 /**
+ * 复制一个用例文件夹（包括里面用例）
+ * @param {*} folderId 
+ */
+export function copyFolder(folderId) {
+  return request.post(`/test/v1/projects/${getProjectId()}/issueFolder/folder/${folderId}/clone`);
+}
+/**
  * 克隆一个步骤
  *
  * @export
