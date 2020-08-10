@@ -1,13 +1,21 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import io.choerodon.core.oauth.CustomUserDetails;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.choerodon.asgard.saga.annotation.Saga;
+import io.choerodon.asgard.saga.annotation.SagaTask;
+import io.choerodon.asgard.saga.producer.StartSagaBuilder;
+import io.choerodon.asgard.saga.producer.TransactionalProducer;
+import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.test.manager.api.vo.TestCaseRepVO;
 import io.choerodon.test.manager.api.vo.event.ProjectEvent;
+import io.choerodon.test.manager.infra.constant.SagaTaskCodeConstants;
+import io.choerodon.test.manager.infra.constant.SagaTopicCodeConstants;
 import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -21,9 +29,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
 import io.choerodon.test.manager.infra.util.RankUtil;
@@ -53,16 +61,21 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
     private ModelMapper modelMapper;
     private TestCaseMapper testCaseMapper;
     private MessageClient messageClient;
+    private TransactionalProducer producer;
+    private ObjectMapper objectMapper;
 
     public TestIssueFolderServiceImpl(TestCaseService testCaseService,
                                       TestIssueFolderMapper testIssueFolderMapper,
                                       ModelMapper modelMapper, TestCaseMapper testCaseMapper,
-                                      MessageClient messageClient) {
+                                      MessageClient messageClient, TransactionalProducer producer,
+                                      ObjectMapper objectMapper) {
         this.testCaseService = testCaseService;
         this.testIssueFolderMapper = testIssueFolderMapper;
         this.modelMapper = modelMapper;
         this.testCaseMapper = testCaseMapper;
         this.messageClient = messageClient;
+        this.producer = producer;
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -221,10 +234,24 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
     }
 
     @Override
-    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    @Saga(code = SagaTopicCodeConstants.TEST_MANAGER_CLONE_TEST_ISSUE_FOLDER,
+            description = "test-manager 复制用例文件夹", inputSchema = "{}")
     public TestIssueFolderDTO cloneFolder(Long projectId, Long folderId) {
         TestIssueFolderDTO newFolder = this.self().cloneCurrentFolder(projectId, folderId);
-        this.self().wrapCloneFolder(projectId, newFolder, DetailsHelper.getUserDetails());
+        Map<String, Object> map = new HashMap<>();
+        map.put("newFolder", newFolder);
+        map.put("userId", DetailsHelper.getUserDetails().getUserId());
+        producer.apply(
+                StartSagaBuilder
+                        .newBuilder()
+                        .withLevel(ResourceLevel.PROJECT)
+                        .withRefType("")
+                        .withSagaCode(SagaTopicCodeConstants.TEST_MANAGER_CLONE_TEST_ISSUE_FOLDER)
+                        .withPayloadAndSerialize(map)
+                        .withRefId("")
+                        .withSourceId(projectId),
+                builder -> {
+                });
         return newFolder;
     }
 
@@ -247,15 +274,32 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
         return newFolder;
     }
 
-    @Async
     @Override
-    public void wrapCloneFolder(Long projectId, TestIssueFolderDTO newFolder, CustomUserDetails userDetails){
+    @SagaTask(code = SagaTaskCodeConstants.TEST_MANAGER_CLONE_TEST_ISSUE_FOLDER_TASK, description = "复制用例文件夹",
+            sagaCode = SagaTopicCodeConstants.TEST_MANAGER_CLONE_TEST_ISSUE_FOLDER, seq = 1)
+    public void wrapCloneFolder(String payload){
+        // 读取payload
+        Map<String, Object> map;
+        TestIssueFolderDTO newFolder = null;
+        Long userId = null;
         try {
-            this.cloneChildrenFolderAndCase(projectId, newFolder);
-            messageClient.sendByUserId(userDetails.getUserId(), TestIssueFolderDTO.MESSAGE_COPY_TEST_FOLDER, BaseConstants.FIELD_SUCCESS);
+            map = objectMapper.readValue(payload,
+                    objectMapper.getTypeFactory().constructParametricType(Map.class, String.class, Object.class));
+            newFolder = (TestIssueFolderDTO) map.get("newFolder");
+            userId = (Long) map.get("userId");
+        } catch (IOException e) {
+            log.error("[{}] payload convert failed, e.message: [{}], trace: [{}]",
+                    SagaTaskCodeConstants.TEST_MANAGER_CLONE_TEST_ISSUE_FOLDER_TASK, e.getMessage(), e.getStackTrace());
+        }
+        // 复制子文件夹
+        try {
+            Assert.notNull(userId, BaseConstants.ErrorCode.DATA_INVALID);
+            Assert.notNull(newFolder, BaseConstants.ErrorCode.DATA_INVALID);
+            this.cloneChildrenFolderAndCase(newFolder.getProjectId(), newFolder);
+            messageClient.sendByUserId(userId, TestIssueFolderDTO.MESSAGE_COPY_TEST_FOLDER, BaseConstants.FIELD_SUCCESS);
         }catch (Exception e){
             log.error("case folder clone field, e.message: [{}], trace: [{}]", e.getMessage(), e.getStackTrace());
-            messageClient.sendByUserId(userDetails.getUserId(), TestIssueFolderDTO.MESSAGE_COPY_TEST_FOLDER, BaseConstants.FIELD_FAILED);
+            messageClient.sendByUserId(userId, TestIssueFolderDTO.MESSAGE_COPY_TEST_FOLDER, BaseConstants.FIELD_FAILED);
         }
     }
 
