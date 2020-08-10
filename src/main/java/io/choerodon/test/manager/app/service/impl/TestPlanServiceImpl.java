@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import io.choerodon.test.manager.app.assembler.TestCycleAssembler;
 import io.choerodon.test.manager.infra.mapper.*;
 import io.choerodon.test.manager.infra.util.RankUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -259,7 +260,9 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         List<Long> caseIds = new ArrayList<>();
         // 是否自选
         if (Boolean.FALSE.equals(testPlanVO.getCustom())) {
-            testIssueFolderDTOS.addAll(testIssueFolderService.listByProject(testPlanVO.getProjectId()));
+            testIssueFolderDTOS.addAll(testIssueFolderService.listByProject(testPlanVO.getProjectId()).stream()
+                    .filter(dto -> StringUtils.isBlank(dto.getInitStatus()) || StringUtils.equals(TestPlanInitStatus.SUCCESS, dto.getInitStatus()))
+                    .collect(Collectors.toList()));
         } else {
             createPlanCustomCase(testPlanVO, testIssueFolderDTOS, caseIds);
         }

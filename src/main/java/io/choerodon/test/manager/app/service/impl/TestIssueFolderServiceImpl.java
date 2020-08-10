@@ -242,16 +242,13 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
             description = "test-manager 复制用例文件夹", inputSchema = "{}")
     public TestIssueFolderDTO cloneFolder(Long projectId, Long folderId) {
         TestIssueFolderDTO newFolder = this.self().cloneCurrentFolder(projectId, folderId);
-        Map<String, Object> map = new HashMap<>();
-        map.put("newFolder", newFolder);
-        map.put("userId", DetailsHelper.getUserDetails().getUserId());
         producer.apply(
                 StartSagaBuilder
                         .newBuilder()
                         .withLevel(ResourceLevel.PROJECT)
                         .withRefType("")
                         .withSagaCode(SagaTopicCodeConstants.TEST_MANAGER_CLONE_TEST_ISSUE_FOLDER)
-                        .withPayloadAndSerialize(map)
+                        .withPayloadAndSerialize(newFolder)
                         .withRefId("")
                         .withSourceId(projectId),
                 builder -> {
@@ -284,15 +281,10 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
             sagaCode = SagaTopicCodeConstants.TEST_MANAGER_CLONE_TEST_ISSUE_FOLDER, seq = 1)
     public void wrapCloneFolder(String payload){
         // 读取payload
-        Map<String, Object> map;
         TestIssueFolderDTO newFolder = null;
-        Long userId = null;
+        Long userId = DetailsHelper.getUserDetails().getUserId();
         try {
-            map = objectMapper.readValue(payload,
-                    objectMapper.getTypeFactory().constructParametricType(Map.class, String.class, Object.class));
-            newFolder = (TestIssueFolderDTO) map.get("newFolder");
-            userId = (Long) map.get("userId");
-            Assert.notNull(userId, BaseConstants.ErrorCode.DATA_INVALID);
+            newFolder = objectMapper.readValue(payload, TestIssueFolderDTO.class);
             Assert.notNull(newFolder, BaseConstants.ErrorCode.DATA_INVALID);
         } catch (IOException e) {
             log.error("[{}] payload convert failed, e.message: [{}], trace: [{}]",
