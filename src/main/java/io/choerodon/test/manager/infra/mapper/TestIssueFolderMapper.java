@@ -22,7 +22,7 @@ public interface TestIssueFolderMapper extends BaseMapper<TestIssueFolderDTO> {
 
     List<TestIssueFolderDTO> selectListByProjectId(@Param("projectId") Long projectId);
 
-    void updateByVersionId(@Param("projectId") Long projectId,@Param("versionId") Long versionId,@Param("parentId") Long parentId);
+    void updateByVersionId(@Param("projectId") Long projectId, @Param("versionId") Long versionId, @Param("parentId") Long parentId);
 
     List<TestIssueFolderDTO> listFolderByFolderIds(@Param("folderIds") List<Long> folderIds);
 
