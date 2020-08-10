@@ -60,7 +60,7 @@ public interface TestIssueFolderService {
 
     TestIssueFolderDTO cloneCurrentFolder(Long projectId, Long folderId);
 
-    void wrapCloneFolder(Long projectId, TestIssueFolderDTO newFolder, CustomUserDetails userDetails);
+    void wrapCloneFolder(String payload);
 
     void cloneChildrenFolderAndCase(Long projectId, TestIssueFolderDTO newFolder);
 }
