@@ -6,7 +6,7 @@
   &-header {
     display: flex;
     justify-content: space-between;
-    margin: 0 .24rem
+    margin: 0 .24rem;
   }
 
   &-card {
@@ -15,11 +15,70 @@
       margin-bottom: .18rem;
       font-family: PingFangSC-Medium;
       font-size: 16px;
-      color: #000000;
+      color: #000;
+
+      &-description {
+        width: 100%;
+
+        &-head {
+          position: relative;
+          // align-items: center;
+          display: inline-flex;
+          width: 100%;
+          padding: .15rem .2rem;
+          padding-right: .4rem;
+          margin-bottom: .2rem;
+          background: rgba(255, 251, 221, 1);
+          font-size: 14px;
+          font-family: PingFangSC-Medium, PingFang SC;
+          font-weight: 500;
+          &-label {
+            position: absolute;
+            width: .7rem;
+            display: inline-block;
+            line-height: 20px;
+
+            &::after {
+              content: '\ff1a';
+            }
+          }
+          &-content {
+            p {
+              color: #000;
+            }
+            &-ellipsis {
+              height: 20px;
+              overflow: hidden;
+              .c7ntest-read-delta {
+                & >div {
+                  float: left;
+                }
+                &::after {
+                  float: right;
+                  content: "...";
+                  height: 20px;
+                  line-height: 20px;
+                  width: 3em;
+                  position: relative;
+                  left: 0;
+                  top: 0;
+                  color: #000;
+                  padding-right: 5px;
+                  background-color: #fffbdd;
+              }
+              }
+            }
+          }
+          &-more {
+            position: absolute;
+            top: .13rem;
+            right: .2rem;
+            float: right;
+          }
+        }
+      }
     }
   }
-
-
 
   .page-breadcrumb {
     margin-bottom: 0;

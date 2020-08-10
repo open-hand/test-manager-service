@@ -28,7 +28,8 @@
         "allowBind": true
       }
     ],
-    "react/prefer-stateless-function": ["off",
+    "react/prefer-stateless-function": [
+      "off",
       {
         "ignorePureComponents": true
       }
@@ -52,11 +53,11 @@
     "jsx-a11y/href-no-hash": "off",
     "react/require-default-props": "off",
     "no-console": "error",
-    "no-unused-vars":"warn",
-    "no-restricted-syntax":"off",
-    "react/forbid-prop-types":"off",
-    "react/sort-comp":"off",
-    "react/destructuring-assignment":"warn",
+    "no-unused-vars": "warn",
+    "no-restricted-syntax": "off",
+    "react/forbid-prop-types": "off",
+    "react/sort-comp": "off",
+    "react/destructuring-assignment": "warn",
     "jsx-a11y/anchor-is-valid": [
       "warn",
       {
@@ -67,5 +68,8 @@
     ],
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn"
+  },
+  "globals": {
+    "C7NTryImport": true
   }
 }

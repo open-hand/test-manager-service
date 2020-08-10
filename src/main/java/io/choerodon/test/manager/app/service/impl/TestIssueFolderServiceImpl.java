@@ -18,6 +18,7 @@ import io.choerodon.test.manager.infra.constant.SagaTaskCodeConstants;
 import io.choerodon.test.manager.infra.constant.SagaTopicCodeConstants;
 import io.choerodon.test.manager.infra.enums.TestPlanInitStatus;
 import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
+
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hzero.boot.message.MessageClient;
@@ -56,6 +57,8 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
 
     public static final String TYPE_CYCLE = "cycle";
     public static final String TYPE_TEMP = "temp";
+    private static final String API_TYPE = "api";
+
 
     private TestCaseService testCaseService;
     private TestIssueFolderMapper testIssueFolderMapper;
@@ -97,7 +100,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
             folderVO.setChildrenLoading(false);
             folderVO.setCaseCount(testIssueFolderDTO.getCaseCount());
             // 判断是否有case
-            Boolean hasCase = testIssueFolderDTO.getCaseCount()==0 ? Boolean.FALSE : Boolean.TRUE;
+            Boolean hasCase = testIssueFolderDTO.getCaseCount() == 0 ? Boolean.FALSE : Boolean.TRUE;
             folderVO.setHasCase(hasCase);
             if (CollectionUtils.isEmpty(childrenIds)) {
                 folderVO.setHasChildren(false);
@@ -127,7 +130,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
         }
         testIssueFolderVO.setProjectId(projectId);
         TestIssueFolderDTO testIssueFolderDTO = modelMapper.map(testIssueFolderVO, TestIssueFolderDTO.class);
-        testIssueFolderDTO.setRank(RankUtil.Operation.INSERT.getRank(null,testIssueFolderMapper.projectLastRank(projectId)));
+        testIssueFolderDTO.setRank(RankUtil.Operation.INSERT.getRank(null, testIssueFolderMapper.projectLastRank(projectId)));
         if (testIssueFolderMapper.insert(testIssueFolderDTO) != 1) {
             throw new CommonException("error.issueFolder.insert");
         }
@@ -201,17 +204,17 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
     }
 
     @Override
-    public List<TestIssueFolderDTO> listFolderByFolderIds(Long projectId,List<Long> folderIds) {
+    public List<TestIssueFolderDTO> listFolderByFolderIds(Long projectId, List<Long> folderIds) {
         List<TestIssueFolderDTO> testIssueFolderDTOS = testIssueFolderMapper.selectListByProjectId(projectId);
         Map<Long, TestIssueFolderDTO> allFolderMap = testIssueFolderDTOS.stream()
                 .map(v -> {
-                    if(ObjectUtils.isEmpty(v.getParentId())){
+                    if (ObjectUtils.isEmpty(v.getParentId())) {
                         v.setParentId(v.getParentId());
                     }
                     return v;
                 }).collect(Collectors.toMap(TestIssueFolderDTO::getFolderId, Function.identity()));
-        Map<Long,TestIssueFolderDTO> map = new TreeMap<>();
-        folderIds.forEach(v -> bulidFolder(v,map,allFolderMap));
+        Map<Long, TestIssueFolderDTO> map = new TreeMap<>();
+        folderIds.forEach(v -> bulidFolder(v, map, allFolderMap));
         return new ArrayList<>(map.values());
     }
 
@@ -222,7 +225,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
         testIssueFolderVO.setParentId(0L);
         testIssueFolderVO.setVersionId(0L);
         testIssueFolderVO.setType(TYPE_CYCLE);
-        create(projectEvent.getProjectId(),testIssueFolderVO);
+        create(projectEvent.getProjectId(), testIssueFolderVO);
     }
 
     @Override
@@ -263,11 +266,11 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
         folder.setProjectId(projectId);
         folder.setFolderId(folderId);
         TestIssueFolderDTO folderDTO = testIssueFolderMapper.selectOne(folder);
-        if (Objects.isNull(folderDTO)){
+        if (Objects.isNull(folderDTO)) {
             throw new CommonException(BaseConstants.ErrorCode.DATA_NOT_EXISTS);
         }
         // 复制当前文件夹
-        TestIssueFolderDTO newFolder = new TestIssueFolderDTO(folderDTO, folderDTO.getParentId(),0L);
+        TestIssueFolderDTO newFolder = new TestIssueFolderDTO(folderDTO, folderDTO.getParentId(), 0L);
         newFolder.setName(newFolder.getName() + "-副本");
         newFolder.setRank(RankUtil.genNext(newFolder.getRank()));
         newFolder.setInitStatus(TestPlanInitStatus.CREATING);
@@ -325,13 +328,13 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
         List<TestCaseDTO> testCaseList = testCaseMapper.selectByCondition(Condition.builder(TestCaseDTO.class)
                 .andWhere(Sqls.custom().andIn(TestCaseDTO.FIELD_FOLDER_ID,
                         CollectionUtils.isEmpty(folderIdSet) ? Collections.singleton(newFolder.getOldFolderId()) : folderIdSet)).build());
-        if (CollectionUtils.isEmpty(testCaseList)){
+        if (CollectionUtils.isEmpty(testCaseList)) {
             return;
         }
         Map<Long, List<TestCaseDTO>> folderMap =
                 testCaseList.stream().collect(Collectors.groupingBy(TestCaseDTO::getFolderId));
         for (Map.Entry<Long, List<TestCaseDTO>> entry : folderMap.entrySet()) {
-            if (Objects.isNull(oldNewMap.get(entry.getKey()))){
+            if (Objects.isNull(oldNewMap.get(entry.getKey()))) {
                 continue;
             }
             testCaseService.batchCopy(projectId, oldNewMap.get(entry.getKey()), entry.getValue().stream().map(caseDTO -> {
@@ -345,22 +348,22 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
     private Map<Long, Long> cloneChildrenFolder(TestIssueFolderDTO newFolder, Set<Long> folderIdSet) {
         Map<Long, Long> oldNewMap = new HashMap<>();
         oldNewMap.put(newFolder.getOldFolderId(), newFolder.getFolderId());
-        if (CollectionUtils.isNotEmpty(folderIdSet)){
+        if (CollectionUtils.isNotEmpty(folderIdSet)) {
             List<TestIssueFolderDTO> folderList;
             folderList = testIssueFolderMapper.selectByIds(StringUtils.join(folderIdSet, BaseConstants.Symbol.COMMA));
             Map<Long, List<TestIssueFolderDTO>> parentMap =
                     folderList.stream().collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
             boolean breakFlag = false;
             Iterator<Map.Entry<Long, List<TestIssueFolderDTO>>> iterator;
-            while (MapUtils.isNotEmpty(parentMap)){
-                if (breakFlag){
+            while (MapUtils.isNotEmpty(parentMap)) {
+                if (breakFlag) {
                     break;
                 }
                 breakFlag = true;
                 iterator = parentMap.entrySet().iterator();
-                while (iterator.hasNext()){
+                while (iterator.hasNext()) {
                     Map.Entry<Long, List<TestIssueFolderDTO>> temp = iterator.next();
-                    if (Objects.isNull(oldNewMap.get(temp.getKey()))){
+                    if (Objects.isNull(oldNewMap.get(temp.getKey()))) {
                         continue;
                     }
                     breakFlag = false;
@@ -379,15 +382,15 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
 
     private void bulidFolder(Long folderId, Map<Long, TestIssueFolderDTO> map, Map<Long, TestIssueFolderDTO> allFolderMap) {
         TestIssueFolderDTO testIssueFolderDTO = map.get(folderId);
-        if(ObjectUtils.isEmpty(testIssueFolderDTO)){
-           TestIssueFolderDTO testIssueFolder = allFolderMap.get(folderId);
-           if(!ObjectUtils.isEmpty(testIssueFolder)){
-               map.put(folderId,testIssueFolder);
-               if(testIssueFolder.getParentId() != 0){
-                   bulidFolder(testIssueFolder.getParentId(),map,allFolderMap);
-               }
-           }
-         }
+        if (ObjectUtils.isEmpty(testIssueFolderDTO)) {
+            TestIssueFolderDTO testIssueFolder = allFolderMap.get(folderId);
+            if (!ObjectUtils.isEmpty(testIssueFolder)) {
+                map.put(folderId, testIssueFolder);
+                if (testIssueFolder.getParentId() != 0) {
+                    bulidFolder(testIssueFolder.getParentId(), map, allFolderMap);
+                }
+            }
+        }
     }
 
     // 递归查询最底层文件夹

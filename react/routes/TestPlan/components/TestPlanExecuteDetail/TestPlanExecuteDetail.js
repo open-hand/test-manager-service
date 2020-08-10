@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useContext, useState,
+  useEffect, useContext, useState, useRef, useReducer,
 } from 'react';
 import {
   Icon, Card, Spin, Tooltip,
@@ -16,8 +16,8 @@ import _ from 'lodash';
 import { Modal, Button, message } from 'choerodon-ui/pro';
 import queryString from 'query-string';
 import { uploadFile, deleteFile } from '@/api/FileApi';
-import { StatusTags } from '../../../../components';
-import { executeDetailLink, returnBeforeTextUpload } from '../../../../common/utils';
+import { StatusTags, RichTextShow } from '../../../../components';
+import { executeDetailLink, returnBeforeTextUpload, delta2Html } from '../../../../common/utils';
 import { updateDetail, updateSidebarDetail } from '../../../../api/ExecuteDetailApi';
 import './TestPlanExecuteDetail.less';
 import {
@@ -27,14 +27,16 @@ import Store from './stores';
 import EditExecuteIssue from './components/EditExecuteIssue';
 import StepTableDataSet from './stores/StepTableDataSet';
 
-const CardWrapper = ({ children, title, style }) => (
+const CardWrapper = ({
+  children, title, style, titleClassName,
+}) => (
   <Card
     title={null}
     style={style}
-    bodyStyle={{ paddingBottom: 0 }}
+    bodyStyle={{ paddingBottom: 0, paddingTop: 20 }}
     bordered={false}
   >
-    <span className="c7n-test-execute-detail-card-title">{title}</span>
+    <span className={`c7n-test-execute-detail-card-title ${titleClassName || ''}`}>{title}</span>
     {children}
   </Card>
 );
@@ -44,6 +46,44 @@ function TestPlanExecuteDetail(props) {
     ExecuteDetailStore, stepTableDataSet, executeHistoryDataSet, testStatusDataSet,
   } = context;
   const [syncLoading, setSyncLoading] = useState(false);
+  const [preconditionState, setPreconditionState] = useReducer((state, action) => {
+    switch (action.type) {
+      case 'init':
+        return ({
+          loaded: true,
+          iconVisible: action.desHeight > 52,
+          desVisible: !(action.desHeight > 52),
+          desHeight: action.desHeight,
+        });
+      case 'uHeight':
+        return ({
+          ...state,
+          iconVisible: action.desHeight > 52,
+          desHeight: action.desHeight,
+        });
+      case 'visible':
+        return ({
+          ...state,
+          iconVisible: action.desHeight ? action.desHeight > 52 : state.iconVisible,
+          desVisible: !state.desVisible,
+        });
+      case 'destroy':
+        return ({
+          loaded: false,
+          iconVisible: false,
+          desVisible: true,
+          desHeight: 0,
+        });
+      default:
+        return state;
+    }
+  }, {
+    loaded: false,
+    iconVisible: false,
+    desVisible: true,
+    desHeight: 0,
+  });
+  const preconditionRef = useRef(null);
   useEffect(() => {
     const { executeId } = context;
     ExecuteDetailStore.setDetailParams(queryString.parse(context.location.search.replace(/%253D/g, '%3D'))); // 全局替换 id加密后 防止有% 被转义
@@ -278,6 +318,11 @@ function TestPlanExecuteDetail(props) {
       okText: '保存',
     });
   };
+  useEffect(() => {
+    if (preconditionRef.current) {
+      setPreconditionState({ type: 'init', desHeight: preconditionRef.current.offsetHeight });
+    }
+  }, [preconditionRef]);
 
   // 默认只显示15个字其余用... 进行省略
   const renderBreadcrumbTitle = (text) => {
@@ -285,6 +330,16 @@ function TestPlanExecuteDetail(props) {
     const textArr = [...text];
     return textArr.length > 15 ? <Tooltip title={text}>{`${textArr.slice(0, 15).join('') + ellipsis}`}</Tooltip> : text;
   };
+  function renderRichText(text, isEllipsis = false) {
+    const textArr = [{ insert: '前置条件：' }];
+    if (text && text !== '') {
+      if (Array.isArray(JSON.parse(text))) {
+        textArr.push(...JSON.parse(text));
+      }
+    }
+    return <div className={`c7n-test-execute-detail-card-title-description-head-content${isEllipsis ? '-ellipsis' : ''}`}><RichTextShow data={delta2Html(JSON.stringify(textArr))} /></div>;
+  }
+
   function render() {
     // disabled 用于禁止action列
     const { disabled } = props;
@@ -375,7 +430,24 @@ function TestPlanExecuteDetail(props) {
                 </div>
 
                 <CardWrapper
-                  title={[<FormattedMessage id="execute_testDetail" />, <span style={{ marginLeft: 5 }}>{`（${stepTableDataSet.totalCount}）`}</span>]}
+                  title={(
+                    <div className="c7n-test-execute-detail-card-title-description">
+                      <div className="c7n-test-execute-detail-card-title-description-head" ref={preconditionRef}>
+                        {/* <span className="c7n-test-execute-detail-card-title-description-head-label">
+                          前置条件
+                        </span> */}
+                        {renderRichText(detailData.description, preconditionState.iconVisible && !preconditionState.desVisible)}
+                        <span className="c7n-test-execute-detail-card-title-description-head-more">
+                          <Icon style={{ cursor: 'pointer ' }} type={`expand_${preconditionState.desVisible ? 'less' : 'more'}`} onClick={() => { setPreconditionState({ type: 'visible', desHeight: preconditionRef.current.offsetHeight }); }} />
+                        </span>
+                      </div>
+                      {[
+                        <FormattedMessage id="execute_testDetail" />,
+                        <span style={{ marginLeft: 5 }}>{`（${stepTableDataSet.totalCount}）`}</span>,
+                      ]}
+                    </div>
+                  )}
+                // titleClassName="c7n-test-execute-detail-card-title-description"
                 >
                   <StepTable
                     dataSet={stepTableDataSet}

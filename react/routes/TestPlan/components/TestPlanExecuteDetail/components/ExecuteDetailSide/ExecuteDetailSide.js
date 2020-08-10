@@ -272,7 +272,7 @@ function ExecuteDetailSide(props) {
                 <Section
                   id="des"
                   icon="subject"
-                  title="描述"
+                  title="前置条件"
                   style={{ padding: '0 15px 0 0' }}
                 >
                   <RichTextShow data={delta2Html(description)} />

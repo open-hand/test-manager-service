@@ -10,7 +10,7 @@ import {
 import { Icon, Tabs, Card } from 'choerodon-ui';
 import { Modal, Button } from 'choerodon-ui/pro';
 import {
-  deleteExecute, updateExecute, comfirmUpdate, ignoreUpdate,
+  deleteExecute, updateExecute, comfirmUpdate, ignoreUpdate, getRankByDate,
 } from '../../../api/TestPlanApi';
 import CreateAutoTest from '../components/CreateAutoTest';
 import TestPlanDetailCard from '../components/TestPlanDetailCard';
@@ -297,6 +297,7 @@ function TestPlanHome({ history }) {
         <Button icon="refresh" onClick={handleRefresh}>
           <FormattedMessage id="refresh" />
         </Button>
+
       </Header>
       <Breadcrumb />
       <Content style={{ display: 'flex', padding: '0', borderTop: '0.01rem solid rgba(0,0,0,0.12)' }}>

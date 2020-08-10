@@ -13,18 +13,19 @@ import io.choerodon.test.manager.infra.dto.TestIssueFolderDTO;
  */
 public interface TestIssueFolderService {
 
-    TestIssueFolderVO create(Long projectId,TestIssueFolderVO testIssueFolderVO);
+    TestIssueFolderVO create(Long projectId, TestIssueFolderVO testIssueFolderVO);
 
     void delete(Long projectId, Long folderId);
 
     TestIssueFolderVO update(TestIssueFolderVO testIssueFolderVO);
 
-    String moveFolder(Long projectId, Long targetFolderId,TestIssueFolderVO issueFolderVO);
+    String moveFolder(Long projectId, Long targetFolderId, TestIssueFolderVO issueFolderVO);
 
     TestTreeIssueFolderVO queryTreeFolder(Long projectId);
 
     /**
      * 根据某一级文件夹查询下面所有的最低层文件夹
+     *
      * @param folderId
      * @return
      */
@@ -32,14 +33,16 @@ public interface TestIssueFolderService {
 
     /**
      * 查询所有项目id
+     *
      * @return
      */
     List<Long> queryProjectIdList();
 
-    List<TestIssueFolderDTO> listFolderByFolderIds(Long projectId,List<Long> folderIds);
+    List<TestIssueFolderDTO> listFolderByFolderIds(Long projectId, List<Long> folderIds);
 
     /**
      * 创建项目时,用例库初始化文件夹
+     *
      * @param projectEvent
      */
     void initializationFolderInfo(ProjectEvent projectEvent);
@@ -48,8 +51,9 @@ public interface TestIssueFolderService {
 
     /**
      * 复制测试用例文件夹
+     *
      * @param projectId 项目id
-     * @param folderId 文件夹id
+     * @param folderId  文件夹id
      * @return 复制后的文件夹对象
      */
     TestIssueFolderDTO cloneFolder(Long projectId, Long folderId);
