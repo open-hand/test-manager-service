@@ -216,7 +216,7 @@ class TestPlanStore extends TestPlanTreeStore {
       }
     });
 
-    // this.treeData.treeFolder[root.index].isSort = true;
+    this.treeData.treeFolder[root.index].isSort = true;
     this.treeData.treeFolder[root.index].children = newChildren;
     // eslint-disable-next-line no-param-reassign
     this.treeFolderMaps.set(root.id, {
