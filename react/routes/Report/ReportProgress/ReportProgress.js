@@ -41,7 +41,7 @@ class ReportProgress extends Component {
         loading: false,
       });
       if (res && res.length > 0) {
-        const latestPlanId = Math.max.apply(null, res.map(item => item.planId));
+        const latestPlanId = res[res.length - 1];
         if (latestPlanId !== -Infinity) {
           this.loadProgressByPlan(latestPlanId, latestPlanId);
         }
