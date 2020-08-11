@@ -63,4 +63,6 @@ public interface TestIssueFolderService {
     void wrapCloneFolder(String payload);
 
     void cloneChildrenFolderAndCase(Long projectId, TestIssueFolderDTO newFolder);
+
+    void changeFloderStatus(TestIssueFolderDTO newFolder, Long userId);
 }

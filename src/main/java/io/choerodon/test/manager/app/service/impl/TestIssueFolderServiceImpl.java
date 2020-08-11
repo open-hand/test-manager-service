@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.util.Assert;
@@ -281,7 +282,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
             sagaCode = SagaTopicCodeConstants.TEST_MANAGER_CLONE_TEST_ISSUE_FOLDER, seq = 1)
     public void wrapCloneFolder(String payload){
         // 读取payload
-        TestIssueFolderDTO newFolder = null;
+        TestIssueFolderDTO newFolder;
         Long userId = DetailsHelper.getUserDetails().getUserId();
         try {
             newFolder = objectMapper.readValue(payload, TestIssueFolderDTO.class);
@@ -289,18 +290,34 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
         } catch (IOException e) {
             log.error("[{}] payload convert failed, e.message: [{}], trace: [{}]",
                     SagaTaskCodeConstants.TEST_MANAGER_CLONE_TEST_ISSUE_FOLDER_TASK, e.getMessage(), e.getStackTrace());
+            throw new CommonException(e);
+        }
+        // 防止父文件夹被删除或者复制成成功后子文件夹继续复制
+        newFolder = testIssueFolderMapper.selectByPrimaryKey(newFolder.getFolderId());
+        if (Objects.isNull(newFolder) || StringUtils.equals(newFolder.getInitStatus(), TestPlanInitStatus.SUCCESS)){
+            return;
         }
         // 复制子文件夹
         try {
             this.cloneChildrenFolderAndCase(newFolder.getProjectId(), newFolder);
             newFolder.setInitStatus(TestPlanInitStatus.SUCCESS);
-            testIssueFolderMapper.updateOptional(newFolder, "initStatus");
-            messageClient.sendByUserId(userId, TestIssueFolderDTO.MESSAGE_COPY_TEST_FOLDER, BaseConstants.FIELD_SUCCESS);
         }catch (Exception e){
             newFolder.setInitStatus(TestPlanInitStatus.FAIL);
-            testIssueFolderMapper.updateOptional(newFolder, "initStatus");
             log.error("case folder clone field, e.message: [{}], trace: [{}]", e.getMessage(), e.getStackTrace());
+            throw new CommonException(e);
+        }finally {
+            this.self().changeFloderStatus(newFolder, userId);
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
+    public void changeFloderStatus(TestIssueFolderDTO newFolder, Long userId) {
+        testIssueFolderMapper.updateOptional(newFolder, TestIssueFolderDTO.FIELD_INIT_STATUS);
+        if (StringUtils.equals(newFolder.getInitStatus(), TestPlanInitStatus.FAIL)){
             messageClient.sendByUserId(userId, TestIssueFolderDTO.MESSAGE_COPY_TEST_FOLDER, BaseConstants.FIELD_FAILED);
+        }else {
+            messageClient.sendByUserId(userId, TestIssueFolderDTO.MESSAGE_COPY_TEST_FOLDER, BaseConstants.FIELD_SUCCESS);
         }
     }
 
