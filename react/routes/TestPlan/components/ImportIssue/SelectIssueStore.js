@@ -69,9 +69,12 @@ class IssueTreeStore {
     rootIds.forEach((r) => {
       this.treeRootMap.set(r, true);
     }); 
-    this.treeData = {
-      rootIds,
-      treeFolder: treeFolder.map((folder) => {
+    const newTreeFolder = [];
+    for (let index = 0; index < treeFolder.length; index += 1) {
+      const folder = treeFolder[index];
+      if (folder.issueFolderVO.initStatus === 'creating' || folder.issueFolderVO.initStatus === 'fail') {
+        this.treeRootMap.delete(folder.id);
+      } else {
         const {
           issueFolderVO, expanded, children, caseCount, ...other
         } = folder;
@@ -79,19 +82,23 @@ class IssueTreeStore {
           children: children || [],
           data: issueFolderVO,
           isExpanded: expanded,
-          selected: folder.id === selectedId,          
+          selected: folder.id === selectedId,
           ...other,
         };
         this.treeMap.set(folder.id, {
           id: folder.id,
           children: children || [],
           data: issueFolderVO,
+          caseCount,
           checked: false,
           isIndeterminate: false,
-          caseCount: caseCount || 0,     
-        });       
-        return result;
-      }),
+        });
+        newTreeFolder.push(result);
+      }
+    }
+    this.treeData = {
+      rootIds: [...this.treeRootMap.keys()],
+      treeFolder: newTreeFolder,
     };
     if (selectedId) {
       this.setCurrentCycle(find(this.treeData.treeFolder, { id: selectedId }) || {});

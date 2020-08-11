@@ -23,7 +23,7 @@ class IssueTreeStore {
   treeMap = observable.map();
 
   // 用于进行根目录判断
-  treeRootMap=observable.map();
+  treeRootMap = observable.map();
 
   @action clearStore = () => {
     this.currentCycle = {};
@@ -69,9 +69,12 @@ class IssueTreeStore {
     rootIds.forEach((r) => {
       this.treeRootMap.set(r, true);
     });
-    this.treeData = {
-      rootIds,
-      treeFolder: treeFolder.map((folder) => {
+    const newTreeFolder = [];
+    for (let index = 0; index < treeFolder.length; index += 1) {
+      const folder = treeFolder[index];
+      if (folder.issueFolderVO.initStatus === 'creating' || folder.issueFolderVO.initStatus === 'fail') {
+        this.treeRootMap.delete(folder.id);
+      } else {
         const {
           issueFolderVO, expanded, children, caseCount, ...other
         } = folder;
@@ -90,8 +93,12 @@ class IssueTreeStore {
           checked: false,
           isIndeterminate: false,
         });
-        return result;
-      }),
+        newTreeFolder.push(result);
+      }
+    }
+    this.treeData = {
+      rootIds: [...this.treeRootMap.keys()],
+      treeFolder: newTreeFolder,
     };
     if (selectedId) {
       this.setCurrentCycle(find(this.treeData.treeFolder, { id: selectedId }) || {});
