@@ -273,6 +273,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
         newFolder.setRank(RankUtil.genNext(newFolder.getRank()));
         newFolder.setInitStatus(TestPlanInitStatus.CREATING);
         testIssueFolderMapper.insertSelective(newFolder);
+        newFolder = testIssueFolderMapper.selectByPrimaryKey(newFolder.getFolderId());
         newFolder.setOldFolderId(folderId);
         return newFolder;
     }
@@ -293,8 +294,8 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
             throw new CommonException(e);
         }
         // 防止父文件夹被删除或者复制成成功后子文件夹继续复制
-        newFolder = testIssueFolderMapper.selectByPrimaryKey(newFolder.getFolderId());
-        if (Objects.isNull(newFolder) || StringUtils.equals(newFolder.getInitStatus(), TestPlanInitStatus.SUCCESS)){
+        TestIssueFolderDTO exist = testIssueFolderMapper.selectByPrimaryKey(newFolder.getFolderId());
+        if (Objects.isNull(exist) || StringUtils.equals(exist.getInitStatus(), TestPlanInitStatus.SUCCESS)){
             return;
         }
         // 复制子文件夹
