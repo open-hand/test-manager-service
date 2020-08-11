@@ -169,7 +169,7 @@ class TestPlanTree extends Component {
         break;
       }
       case 'rank': {
-        testPlanStore.RankByDate();
+        testPlanStore.RankByDate(nodeItem.id);
         break;
       }
       default: {
