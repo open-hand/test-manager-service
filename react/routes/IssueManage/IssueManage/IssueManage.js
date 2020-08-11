@@ -85,6 +85,10 @@ export default class IssueManage extends Component {
     this[name] = ref;
   }
 
+  handleRefresh=() => {
+    IssueTreeStore.loadIssueTree();
+  }
+
   handleClose = (issueInfo) => {
     const { issues } = IssueStore;
     const index = issues.findIndex(item => item.caseId === issueInfo.caseId);
@@ -202,9 +206,12 @@ export default class IssueManage extends Component {
               <Icon type="archive" />
               <FormattedMessage id="issue_import" />
             </Button>]}
+          <Button icon="refresh" onClick={this.handleRefresh}>
+            <FormattedMessage id="refresh" />
+          </Button>
         </Header>
         <Breadcrumb />
-        <Content style={{ display: 'flex', padding: '0', borderTop: '0.01rem solid rgba(0,0,0,0.12)' }}>          
+        <Content style={{ display: 'flex', padding: '0', borderTop: '0.01rem solid rgba(0,0,0,0.12)' }}>
           {noFolder ? (
             <Empty
               loading={loading}
@@ -218,7 +225,7 @@ export default class IssueManage extends Component {
               <div>
                 {tabs.length > 0 && tab}
                 <IssueTree />
-              </div>              
+              </div>
               {currentFolder.id && (
               <div
                 className="c7ntest-content-issue"

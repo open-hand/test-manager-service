@@ -113,20 +113,32 @@ class IssueTree extends Component {
     switch (key) {
       case 'copy':
         copyFolder(nodeItem.id).then((res) => {
-          IssueTreeStore.loadIssueTree(res.id);
+          IssueTreeStore.loadIssueTree(nodeItem.id);
         });
         break;
-
+      case 'delete':
+        IssueTreeStore.treeRef.current.trigger.delete(nodeItem);
+        break;
       default:
         break;
     }
   }
 
-  handleMessage = (data) => {
-    // console.log('data', data);
+  handleMessage = (data) => { // 暂时废弃
+    if (data && data === 'success') {
+      IssueTreeStore.loadIssueTree(IssueStore.getCurrentFolder);
+    }
   }
 
-  renderTreeNode = (node, { item }) => <TreeNode item={item}>{node}</TreeNode>
+  renderTreeNode = (node, { item }) => (
+    <TreeNode
+      nodeProps={node.props}
+      item={item}
+      onMenuClick={this.handleMenuClick}
+    >
+      {node}
+    </TreeNode>
+  )
 
 
   getMenuItems = () => ([
@@ -135,7 +147,7 @@ class IssueTree extends Component {
       重命名
     </Menu.Item>,
     <Menu.Item key="copy">
-      复制此用例
+      复制
     </Menu.Item>,
     <Menu.Item key="delete">
       删除
