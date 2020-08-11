@@ -215,11 +215,9 @@ class TestPlanStore extends TestPlanTreeStore {
         return 1;
       }
     });
-    this.treeData.treeFolder[root.index] = {
-      ...root, isSort: true, oldChildren: root.children, children: newChildren,
-    };
+
     // this.treeData.treeFolder[root.index].isSort = true;
-    // this.treeData.treeFolder[root.index].children = newChildren;
+    this.treeData.treeFolder[root.index].children = newChildren;
     // eslint-disable-next-line no-param-reassign
     this.treeFolderMaps.set(root.id, {
       ...root, isSort: true, oldChildren: root.children, children: newChildren,
@@ -255,7 +253,9 @@ class TestPlanStore extends TestPlanTreeStore {
               ...tempData, children: tempData.oldChildren, oldChildren: [], isSort: false,
             });
           }
-          this.updateTimes([sortData]);
+          if (planId === this.getCurrentPlanId) {
+            this.updateTimes([sortData]);
+          }
           resolve(true);
         }
       });
@@ -282,7 +282,9 @@ class TestPlanStore extends TestPlanTreeStore {
       new Promise((resolve) => {
         // this.treeFolderMaps.set(planId, sortData);
         this.sortTreeData(sortData, sortData.children);
-        this.updateTimes([sortData]);
+        if (planId === this.getCurrentPlanId) {
+          this.updateTimes([sortData]);
+        }
         resolve(true);
       }).then(() => {
         this.setTreeLoading(false);
