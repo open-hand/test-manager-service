@@ -16,6 +16,7 @@ import org.hzero.starter.keyencrypt.core.Encrypt;
 public class TestIssueFolderDTO extends AuditDomain {
 
     public static final String MESSAGE_COPY_TEST_FOLDER = "COPY_TEST_FOLDER";
+    public static final String FIELD_INIT_STATUS = "initStatus";
 
     public TestIssueFolderDTO(TestIssueFolderDTO source, Long parentId, Long versionId){
         this.name = source.name;
