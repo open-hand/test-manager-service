@@ -145,7 +145,7 @@ class TestPlanTree extends Component {
       }
       case 'drag': {
         openDragPlanFolder({
-          beforeOpen: plantIds => testPlanStore.returnDefaultRank(plantIds),
+          beforeOpen: plantIds => testPlanStore.getFolderDataById(nodeItem.id).isSort && testPlanStore.returnDefaultRank(plantIds),
           planId: nodeItem.id,
           handleOk: () => {
             testPlanStore.loadAllData();
