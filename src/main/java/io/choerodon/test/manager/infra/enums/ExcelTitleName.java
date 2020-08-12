@@ -17,4 +17,6 @@ public class ExcelTitleName {
     public static final String TEST_STEP = "测试步骤";
     public static final String TEST_DATA = "测试数据";
     public static final String EXPECT_RESULT = "预期结果";
+
+    public static final String[] EXCEL_HEADERS = new String[]{CASE_SUMMARY, CASE_DESCRIPTION, TEST_STEP, TEST_DATA, EXPECT_RESULT};
 }

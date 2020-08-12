@@ -25,13 +25,13 @@ import io.choerodon.test.manager.infra.util.MultipartExcel;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.hzero.boot.file.FileClient;
 import org.hzero.boot.message.MessageClient;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -139,7 +139,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         TestFileLoadHistoryEnums.Status status = TestFileLoadHistoryEnums.Status.SUCCESS;
         List<Long> issueIds = new ArrayList<>();
 
-        if(ObjectUtils.isEmpty(testCasesSheet)){
+        if(ObjectUtils.isEmpty(testCasesSheet) || isOldExcel(issuesWorkbook, ExcelTitleName.EXCEL_HEADERS)){
             logger.info("错误的模板文件");
             // 更新创建历史记录
             testFileLoadHistoryDTO.setMessage("错误的模板文件");
@@ -206,6 +206,30 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         }
 
         finishImport(testFileLoadHistoryDTO, userId, status);
+    }
+
+    private boolean isOldExcel(Workbook workbook, String[] headers) {
+        //判断是否为旧模版
+        Sheet sheet = workbook.getSheetAt(1);
+        Row headerRow = sheet.getRow(0);
+        if (headerRow == null) {
+            return true;
+        }
+        for (int i = 0; i < headers.length; i++) {
+            String header = headers[i];
+            Cell cell = headerRow.getCell(i);
+            if (isCellEmpty(cell)) {
+                return true;
+            }
+            if (!header.equals(cell.toString())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected boolean isCellEmpty(Cell cell) {
+        return cell == null || cell.toString().equals("") || cell.getCellType() == XSSFCell.CELL_TYPE_BLANK;
     }
 
     @Transactional(rollbackFor = Exception.class)
