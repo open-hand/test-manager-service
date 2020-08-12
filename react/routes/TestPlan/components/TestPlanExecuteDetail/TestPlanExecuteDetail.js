@@ -17,7 +17,9 @@ import { Modal, Button, message } from 'choerodon-ui/pro';
 import queryString from 'query-string';
 import { uploadFile, deleteFile } from '@/api/FileApi';
 import { StatusTags, RichTextShow } from '../../../../components';
-import { executeDetailLink, returnBeforeTextUpload, delta2Html } from '../../../../common/utils';
+import {
+  executeDetailLink, returnBeforeTextUpload, delta2Html, text2Delta,
+} from '../../../../common/utils';
 import { updateDetail, updateSidebarDetail } from '../../../../api/ExecuteDetailApi';
 import './TestPlanExecuteDetail.less';
 import {
@@ -333,8 +335,11 @@ function TestPlanExecuteDetail(props) {
   function renderRichText(text, isEllipsis = false) {
     const textArr = [{ insert: '前置条件：' }];
     if (text && text !== '') {
-      if (Array.isArray(JSON.parse(text))) {
-        textArr.push(...JSON.parse(text));
+      const tempText = text2Delta(text);
+      if (Array.isArray(tempText)) {
+        textArr.push(...tempText);
+      } else {
+        textArr.push({ insert: tempText });
       }
     }
     return <div className={`c7n-test-execute-detail-card-title-description-head-content${isEllipsis ? '-ellipsis' : ''}`}><RichTextShow data={delta2Html(JSON.stringify(textArr))} /></div>;
