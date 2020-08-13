@@ -18,6 +18,7 @@ public class IssueLinkDTO {
     @Encrypt
     private Long linkTypeId;
 
+    @Encrypt
     private Long linkedIssueId;
 
     private String linkTypeName;
