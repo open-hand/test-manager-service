@@ -19,9 +19,11 @@ public class TestCycleCaseStepVO {
     private Long executeStepId;
 
     @ApiModelProperty(value = "测试执行ID")
+    @Encrypt
     private Long executeId;
 
     @ApiModelProperty(value = "测试步骤ID")
+    @Encrypt
     private Long stepId;
 
     @ApiModelProperty(value = "描述")
@@ -50,6 +52,7 @@ public class TestCycleCaseStepVO {
     private List<TestCycleCaseAttachmentRelVO> stepAttachment;
 
     @ApiModelProperty(value = "用例issueID")
+    @Encrypt
     private Long caseId;
 
     @ApiModelProperty(value = "缺陷DTOList")

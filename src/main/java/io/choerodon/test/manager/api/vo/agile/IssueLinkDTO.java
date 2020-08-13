@@ -2,6 +2,7 @@ package io.choerodon.test.manager.api.vo.agile;
 
 
 import io.choerodon.test.manager.infra.util.StringUtil;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
  * 敏捷开发Issue链接
@@ -11,129 +12,132 @@ import io.choerodon.test.manager.infra.util.StringUtil;
  */
 public class IssueLinkDTO {
 
-	private Long issueId;
+    @Encrypt
+    private Long issueId;
 
-	private Long linkTypeId;
+    @Encrypt
+    private Long linkTypeId;
 
-	private Long linkedIssueId;
+    private Long linkedIssueId;
 
-	private String linkTypeName;
+    private String linkTypeName;
 
-	private String ward;
+    private String ward;
 
-	private String issueNum;
+    private String issueNum;
 
-	private String summary;
+    private String summary;
 
-	private String typeCode;
+    private String typeCode;
 
-	private Long linkId;
+    @Encrypt
+    private Long linkId;
 
-	private IssueTypeVO issueTypeVO;
+    private IssueTypeVO issueTypeVO;
 
-	private StatusVO statusVO;
+    private StatusVO statusVO;
 
-	private PriorityVO priorityVO;
+    private PriorityVO priorityVO;
 
-	public Long getIssueId() {
-		return issueId;
-	}
+    public Long getIssueId() {
+        return issueId;
+    }
 
-	public void setIssueId(Long issueId) {
-		this.issueId = issueId;
-	}
+    public void setIssueId(Long issueId) {
+        this.issueId = issueId;
+    }
 
-	public Long getLinkTypeId() {
-		return linkTypeId;
-	}
+    public Long getLinkTypeId() {
+        return linkTypeId;
+    }
 
-	public void setLinkTypeId(Long linkTypeId) {
-		this.linkTypeId = linkTypeId;
-	}
+    public void setLinkTypeId(Long linkTypeId) {
+        this.linkTypeId = linkTypeId;
+    }
 
-	public Long getLinkedIssueId() {
-		return linkedIssueId;
-	}
+    public Long getLinkedIssueId() {
+        return linkedIssueId;
+    }
 
-	public void setLinkedIssueId(Long linkedIssueId) {
-		this.linkedIssueId = linkedIssueId;
-	}
+    public void setLinkedIssueId(Long linkedIssueId) {
+        this.linkedIssueId = linkedIssueId;
+    }
 
-	public String getSummary() {
-		return summary;
-	}
+    public String getSummary() {
+        return summary;
+    }
 
-	public void setSummary(String summary) {
-		this.summary = summary;
-	}
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
 
-	public String getLinkTypeName() {
-		return linkTypeName;
-	}
+    public String getLinkTypeName() {
+        return linkTypeName;
+    }
 
-	public void setLinkTypeName(String linkTypeName) {
-		this.linkTypeName = linkTypeName;
-	}
+    public void setLinkTypeName(String linkTypeName) {
+        this.linkTypeName = linkTypeName;
+    }
 
-	public String getWard() {
-		return ward;
-	}
+    public String getWard() {
+        return ward;
+    }
 
-	public void setWard(String ward) {
-		this.ward = ward;
-	}
+    public void setWard(String ward) {
+        this.ward = ward;
+    }
 
-	public String getIssueNum() {
-		return issueNum;
-	}
+    public String getIssueNum() {
+        return issueNum;
+    }
 
-	public void setIssueNum(String issueNum) {
-		this.issueNum = issueNum;
-	}
+    public void setIssueNum(String issueNum) {
+        this.issueNum = issueNum;
+    }
 
-	public String getTypeCode() {
-		return typeCode;
-	}
+    public String getTypeCode() {
+        return typeCode;
+    }
 
-	public void setTypeCode(String typeCode) {
-		this.typeCode = typeCode;
-	}
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
+    }
 
-	public IssueTypeVO getIssueTypeVO() {
-		return issueTypeVO;
-	}
+    public IssueTypeVO getIssueTypeVO() {
+        return issueTypeVO;
+    }
 
-	public void setIssueTypeVO(IssueTypeVO issueTypeVO) {
-		this.issueTypeVO = issueTypeVO;
-	}
+    public void setIssueTypeVO(IssueTypeVO issueTypeVO) {
+        this.issueTypeVO = issueTypeVO;
+    }
 
-	public StatusVO getStatusMapDTO() {
-		return statusVO;
-	}
+    public StatusVO getStatusMapDTO() {
+        return statusVO;
+    }
 
-	public void setStatusMapDTO(StatusVO statusVO) {
-		this.statusVO = statusVO;
-	}
+    public void setStatusMapDTO(StatusVO statusVO) {
+        this.statusVO = statusVO;
+    }
 
-	public PriorityVO getPriorityVO() {
-		return priorityVO;
-	}
+    public PriorityVO getPriorityVO() {
+        return priorityVO;
+    }
 
-	public void setPriorityVO(PriorityVO priorityVO) {
-		this.priorityVO = priorityVO;
-	}
+    public void setPriorityVO(PriorityVO priorityVO) {
+        this.priorityVO = priorityVO;
+    }
 
-	public Long getLinkId() {
-		return linkId;
-	}
+    public Long getLinkId() {
+        return linkId;
+    }
 
-	public void setLinkId(Long linkId) {
-		this.linkId = linkId;
-	}
+    public void setLinkId(Long linkId) {
+        this.linkId = linkId;
+    }
 
-	@Override
-	public String toString() {
-		return StringUtil.getToString(this);
-	}
+    @Override
+    public String toString() {
+        return StringUtil.getToString(this);
+    }
 
 }
