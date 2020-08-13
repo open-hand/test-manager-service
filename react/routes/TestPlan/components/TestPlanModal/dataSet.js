@@ -1,4 +1,5 @@
 import { getProjectId } from '@/common/utils';
+import { toJS } from 'mobx';
 
 export default function DataSetFactory({ initValue = {} } = {}) {
   const {
@@ -21,6 +22,13 @@ export default function DataSetFactory({ initValue = {} } = {}) {
         range: true,
         label: '持续时间',
         required: true,
+        validator: (value) => {
+          if (!value || (value && toJS(value).some(item => !item))) {
+            return '请输入持续时间';
+          } else {
+            return true;
+          }
+        },
       },
       {
         name: 'description', type: 'string', label: '描述',
@@ -41,7 +49,7 @@ export default function DataSetFactory({ initValue = {} } = {}) {
               url: `/iam/choerodon/v1/projects/${getProjectId()}/users${managerId && managerId === initValue.managerId ? `?id=${managerId}` : ''}`,
             };
           },
-        },   
+        },
         textField: 'realName',
         valueField: 'id',
       },
