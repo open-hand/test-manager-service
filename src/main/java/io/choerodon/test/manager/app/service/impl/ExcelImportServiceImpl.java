@@ -54,6 +54,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     private static final TestCaseStepDTO[] EXAMPLE_TEST_CASE_STEPS = new TestCaseStepDTO[3];
     private static final IssueCreateDTO[] EXAMPLE_ISSUES = new IssueCreateDTO[3];
     private static final String TYPE_CYCLE = "cycle";
+    public static final int EXCEL_WIDTH_PX = 256;
 
 
     static {
@@ -291,7 +292,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
         cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
         cellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
-        sheet.setDefaultColumnWidth(32);
+        sheet.setDefaultColumnWidth(16);
         for (Row row : sheet) {
             for (Cell cell : row) {
                 cell.setCellStyle(cellStyle);
@@ -302,6 +303,12 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     // 设置测试用例页样式
     private void setTestCaseSheetStyle(Sheet testCaseSheet) {
         setSheetBaseStyle(testCaseSheet);
+        // 设置列宽度
+        testCaseSheet.setColumnWidth(0,EXCEL_WIDTH_PX * 48);
+        testCaseSheet.setColumnWidth(1,EXCEL_WIDTH_PX * 32);
+        testCaseSheet.setColumnWidth(2,EXCEL_WIDTH_PX * 48);
+        testCaseSheet.setColumnWidth(3,EXCEL_WIDTH_PX * 16);
+        testCaseSheet.setColumnWidth(4,EXCEL_WIDTH_PX * 48);
 
         CellStyle cellStyle = testCaseSheet.getWorkbook().createCellStyle();
         cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
