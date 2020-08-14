@@ -254,10 +254,7 @@ public class TestCaseServiceImpl implements TestCaseService {
     public TestCaseRepVO createTestCase(Long projectId, TestCaseVO testCaseVO, boolean isOutSideCount) {
         TestProjectInfoDTO testProjectInfoDTO = new TestProjectInfoDTO();
         testProjectInfoDTO.setProjectId(projectId);
-        TestProjectInfoDTO testProjectInfo = new TestProjectInfoDTO();
-        if (!isOutSideCount){
-            testProjectInfo = testProjectInfoMapper.selectOne(testProjectInfoDTO);
-        }
+        TestProjectInfoDTO testProjectInfo = testProjectInfoMapper.selectOne(testProjectInfoDTO);
         if (ObjectUtils.isEmpty(testProjectInfo)) {
             throw new CommonException("error.query.project.info.null");
         }
