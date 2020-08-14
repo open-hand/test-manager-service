@@ -311,6 +311,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
             log.error("case folder clone field, e.message: [{}], trace: [{}]", e.getMessage(), e.getStackTrace());
             throw new CommonException(e);
         }finally {
+            log.info("current folder copy status, folder name: [{}], folder.status: [{}]", newFolder.getName(), newFolder.getInitStatus());
             this.self().changeFloderStatus(newFolder, userId);
         }
     }
