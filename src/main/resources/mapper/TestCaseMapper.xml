@@ -274,7 +274,7 @@
     <select id="listUnSelectCaseId" resultType="long">
        select case_id from test_case
        <where>
-           project_id = #{project_id}
+           project_id = #{projectId}
            and
            folder_id in
            <foreach collection="folderIds" item="folderId" separator="," open="(" close=")">
