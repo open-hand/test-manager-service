@@ -291,7 +291,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
         cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
         cellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
-        sheet.setDefaultColumnWidth(16);
+        sheet.setDefaultColumnWidth(32);
         for (Row row : sheet) {
             for (Cell cell : row) {
                 cell.setCellStyle(cellStyle);
