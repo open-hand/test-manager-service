@@ -2,6 +2,7 @@ package io.choerodon.test.manager.app.service.impl;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -319,6 +320,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
     public void changeFloderStatus(TestIssueFolderDTO newFolder, Long userId) {
+        newFolder.setObjectVersionNumber(testIssueFolderMapper.selectByPrimaryKey(newFolder.getFolderId()).getObjectVersionNumber());
         testIssueFolderMapper.updateOptional(newFolder, TestIssueFolderDTO.FIELD_INIT_STATUS);
         if (StringUtils.equals(newFolder.getInitStatus(), TestPlanInitStatus.FAIL)){
             messageClient.sendByUserId(userId, TestIssueFolderDTO.MESSAGE_COPY_TEST_FOLDER, BaseConstants.FIELD_FAILED);
@@ -348,25 +350,24 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
         }
         Map<Long, List<TestCaseDTO>> folderMap =
                 testCaseList.stream().collect(Collectors.groupingBy(TestCaseDTO::getFolderId));
-        long count = 0;
+        TestProjectInfoDTO testProjectInfo = new TestProjectInfoDTO();
+        testProjectInfo.setProjectId(projectId);
+        testProjectInfo = testProjectInfoMapper.selectOne(testProjectInfo);
+        AtomicLong outsideCount = new AtomicLong(testProjectInfo.getCaseMaxNum());
         for (Map.Entry<Long, List<TestCaseDTO>> entry : folderMap.entrySet()) {
             if (Objects.isNull(oldNewMap.get(entry.getKey()))) {
                 continue;
             }
-            List<TestCaseDTO> result = testCaseService.batchCopy(projectId, oldNewMap.get(entry.getKey()),
+            testCaseService.batchCopy(projectId, oldNewMap.get(entry.getKey()),
                     entry.getValue().stream().map(caseDTO -> {
                 TestCaseRepVO rep = new TestCaseRepVO();
                 rep.setCaseId(caseDTO.getCaseId());
                 return rep;
-            }).collect(Collectors.toList()), true);
-            count += result.size();
+            }).collect(Collectors.toList()), outsideCount);
         }
-
         // 修改最大用例数
-        TestProjectInfoDTO testProjectInfo = new TestProjectInfoDTO();
-        testProjectInfo.setProjectId(projectId);
         testProjectInfo = testProjectInfoMapper.selectOne(testProjectInfo);
-        testProjectInfo.setCaseMaxNum(testProjectInfo.getCaseMaxNum() + count);
+        testProjectInfo.setCaseMaxNum(outsideCount.get());
         testProjectInfoMapper.updateByPrimaryKeySelective(testProjectInfo);
     }
 
