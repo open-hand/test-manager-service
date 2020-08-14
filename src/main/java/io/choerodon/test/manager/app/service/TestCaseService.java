@@ -81,6 +81,16 @@ public interface TestCaseService {
     TestCaseRepVO createTestCase(Long projectId, TestCaseVO testCaseVO);
 
     /**
+     * 创建用例
+     *
+     * @param projectId
+     * @param testCaseVO
+     * @param isOutSideCount 是否启用外部计数，若不启用，则每复制一个用例计数一次，启用则交给外部独立计数
+     * @return
+     */
+    TestCaseRepVO createTestCase(Long projectId, TestCaseVO testCaseVO, boolean isOutSideCount);
+
+    /**
      * 查询用例详情
      *
      * @param projectId
@@ -141,7 +151,17 @@ public interface TestCaseService {
      * @param folderId
      * @param testCaseRepVOS
      */
-    void batchCopy(Long projectId, Long folderId, List<TestCaseRepVO> testCaseRepVOS);
+    List<TestCaseDTO> batchCopy(Long projectId, Long folderId, List<TestCaseRepVO> testCaseRepVOS);
+
+    /**
+     * 克隆测试用例
+     *
+     * @param projectId
+     * @param folderId
+     * @param testCaseRepVOS
+     * @param isOutSideCount 是否使用外部计数
+     */
+    List<TestCaseDTO> batchCopy(Long projectId, Long folderId, List<TestCaseRepVO> testCaseRepVOS, boolean isOutSideCount);
 
     /**
      * 更新version_num
