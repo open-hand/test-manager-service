@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.app.service.impl;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -247,19 +248,26 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     @Override
     public TestCaseRepVO createTestCase(Long projectId, TestCaseVO testCaseVO){
-        return this.createTestCase(projectId, testCaseVO, false);
+        return this.createTestCase(projectId, testCaseVO, null);
     }
 
     @Override
-    public TestCaseRepVO createTestCase(Long projectId, TestCaseVO testCaseVO, boolean isOutSideCount) {
-        TestProjectInfoDTO testProjectInfoDTO = new TestProjectInfoDTO();
-        testProjectInfoDTO.setProjectId(projectId);
-        TestProjectInfoDTO testProjectInfo = testProjectInfoMapper.selectOne(testProjectInfoDTO);
-        if (ObjectUtils.isEmpty(testProjectInfo)) {
-            throw new CommonException("error.query.project.info.null");
+    public TestCaseRepVO createTestCase(Long projectId, TestCaseVO testCaseVO, AtomicLong outsideCount) {
+        Long caseNum;
+        if (Objects.isNull(outsideCount)){
+            TestProjectInfoDTO testProjectInfoDTO = new TestProjectInfoDTO();
+            testProjectInfoDTO.setProjectId(projectId);
+            TestProjectInfoDTO testProjectInfo = testProjectInfoMapper.selectOne(testProjectInfoDTO);
+            if (ObjectUtils.isEmpty(testProjectInfo)) {
+                throw new CommonException("error.query.project.info.null");
+            }
+            testCaseVO.setProjectId(projectId);
+            caseNum = testProjectInfo.getCaseMaxNum() + 1;
+            testProjectInfo.setCaseMaxNum(caseNum);
+            testProjectInfoMapper.updateByPrimaryKeySelective(testProjectInfo);
+        }else {
+            caseNum = outsideCount.incrementAndGet();
         }
-        testCaseVO.setProjectId(projectId);
-        Long caseNum = testProjectInfo.getCaseMaxNum() + 1;
         testCaseVO.setCaseNum(caseNum.toString());
         TestCaseDTO testCaseDTO = baseInsert(testCaseVO);
         // 创建测试步骤
@@ -270,13 +278,7 @@ public class TestCaseServiceImpl implements TestCaseService {
                 testCaseStepService.changeStep(v, projectId, false);
             });
         }
-
-
         // 返回数据
-        testProjectInfo.setCaseMaxNum(caseNum);
-        if (!isOutSideCount){
-            testProjectInfoMapper.updateByPrimaryKeySelective(testProjectInfo);
-        }
         List<TestIssueFolderDTO> testIssueFolderDTOS = testIssueFolderMapper.selectListByProjectId(projectId);
         Map<Long, TestIssueFolderDTO> folderMap = testIssueFolderDTOS.stream().collect(Collectors.toMap(TestIssueFolderDTO::getFolderId, Function.identity()));
         TestCaseRepVO testCaseRepVO = testCaseAssembler.dtoToRepVo(testCaseDTO, folderMap);
@@ -409,11 +411,11 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     @Override
     public List<TestCaseDTO> batchCopy(Long projectId, Long folderId, List<TestCaseRepVO> testCaseRepVOS) {
-        return this.batchCopy(projectId, folderId, testCaseRepVOS, false);
+        return this.batchCopy(projectId, folderId, testCaseRepVOS, null);
     }
 
     @Override
-    public List<TestCaseDTO> batchCopy(Long projectId, Long folderId, List<TestCaseRepVO> testCaseRepVOS, boolean isOutSideCount) {
+    public List<TestCaseDTO> batchCopy(Long projectId, Long folderId, List<TestCaseRepVO> testCaseRepVOS, AtomicLong outsideCount) {
         if (CollectionUtils.isEmpty(testCaseRepVOS)) {
             return Collections.emptyList();
         }
@@ -432,7 +434,7 @@ public class TestCaseServiceImpl implements TestCaseService {
             testCaseDTO.setVersionNum(1L);
             testCaseDTO.setFolderId(folderId);
             testCaseDTO.setObjectVersionNumber(null);
-            TestCaseRepVO testCase = createTestCase(projectId, modelMapper.map(testCaseDTO, TestCaseVO.class), isOutSideCount);
+            TestCaseRepVO testCase = createTestCase(projectId, modelMapper.map(testCaseDTO, TestCaseVO.class), outsideCount);
             // 复制用例步骤
             TestCaseStepVO testCaseStepVO = new TestCaseStepVO();
             testCaseStepVO.setIssueId(oldCaseId);

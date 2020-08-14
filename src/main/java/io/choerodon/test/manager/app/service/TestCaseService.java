@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -85,10 +86,10 @@ public interface TestCaseService {
      *
      * @param projectId
      * @param testCaseVO
-     * @param isOutSideCount 是否启用外部计数，若不启用，则每复制一个用例计数一次，启用则交给外部独立计数
+     * @param outsideCount 是否使用外部计数，若为null则不使用， 使用则交给外部独立计数
      * @return
      */
-    TestCaseRepVO createTestCase(Long projectId, TestCaseVO testCaseVO, boolean isOutSideCount);
+    TestCaseRepVO createTestCase(Long projectId, TestCaseVO testCaseVO, AtomicLong outsideCount);
 
     /**
      * 查询用例详情
@@ -159,9 +160,9 @@ public interface TestCaseService {
      * @param projectId
      * @param folderId
      * @param testCaseRepVOS
-     * @param isOutSideCount 是否使用外部计数
+     * @param outsideCount 使用外部计数
      */
-    List<TestCaseDTO> batchCopy(Long projectId, Long folderId, List<TestCaseRepVO> testCaseRepVOS, boolean isOutSideCount);
+    List<TestCaseDTO> batchCopy(Long projectId, Long folderId, List<TestCaseRepVO> testCaseRepVOS, AtomicLong outsideCount);
 
     /**
      * 更新version_num
