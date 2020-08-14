@@ -68,9 +68,9 @@ public class TestCycleCaseStepController {
     @ApiOperation("查询循环步骤")
     @GetMapping("/query_list/{execute_id}")
     public ResponseEntity<Page<TestCycleCaseStepVO>> queryCaseStep(@PathVariable(name = "project_id") Long projectId,
-                                                                       @ApiParam(value = "execute_id", required = true)
-                                                                       @PathVariable(name = "execute_id") Long execute_id,
-                                                                       PageRequest pageRequest) {
+                                                                   @ApiParam(value = "execute_id", required = true)
+                                                                   @PathVariable(name = "execute_id") @Encrypt Long execute_id,
+                                                                   PageRequest pageRequest) {
         return Optional.ofNullable(testCycleCaseStepService.queryCaseStep(execute_id, projectId, pageRequest))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.testCycleCaseStep.query"));
