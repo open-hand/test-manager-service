@@ -17,6 +17,7 @@ public class TestCycleCaseAttachmentRelVO {
     private String attachmentType;
 
     @ApiModelProperty(value = "附件关联对象id")
+    @Encrypt
     private Long attachmentLinkId;
 
     @ApiModelProperty(value = "附件名")

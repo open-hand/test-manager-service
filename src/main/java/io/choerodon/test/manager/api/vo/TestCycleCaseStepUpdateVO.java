@@ -18,9 +18,11 @@ public class TestCycleCaseStepUpdateVO {
     private Long executeId;
 
     @ApiModelProperty(value = "测试步骤ID")
+    @Encrypt
     private Long stepId;
 
     @ApiModelProperty(value = "cycleId")
+    @Encrypt
     private String cycleId;
 
     @ApiModelProperty(value = "描述")
