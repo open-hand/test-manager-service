@@ -16,9 +16,11 @@ import io.choerodon.test.manager.api.vo.TestCaseRepVO;
 import io.choerodon.test.manager.api.vo.event.ProjectEvent;
 import io.choerodon.test.manager.infra.constant.SagaTaskCodeConstants;
 import io.choerodon.test.manager.infra.constant.SagaTopicCodeConstants;
+import io.choerodon.test.manager.infra.dto.TestProjectInfoDTO;
 import io.choerodon.test.manager.infra.enums.TestPlanInitStatus;
 import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
 
+import io.choerodon.test.manager.infra.mapper.TestProjectInfoMapper;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hzero.boot.message.MessageClient;
@@ -68,12 +70,13 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
     private MessageClient messageClient;
     private TransactionalProducer producer;
     private ObjectMapper objectMapper;
+    private TestProjectInfoMapper testProjectInfoMapper;
 
     public TestIssueFolderServiceImpl(TestCaseService testCaseService,
                                       TestIssueFolderMapper testIssueFolderMapper,
                                       ModelMapper modelMapper, TestCaseMapper testCaseMapper,
                                       MessageClient messageClient, TransactionalProducer producer,
-                                      ObjectMapper objectMapper) {
+                                      ObjectMapper objectMapper, TestProjectInfoMapper testProjectInfoMapper) {
         this.testCaseService = testCaseService;
         this.testIssueFolderMapper = testIssueFolderMapper;
         this.modelMapper = modelMapper;
@@ -81,6 +84,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
         this.messageClient = messageClient;
         this.producer = producer;
         this.objectMapper = objectMapper;
+        this.testProjectInfoMapper = testProjectInfoMapper;
     }
 
     @Override
@@ -307,6 +311,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
             log.error("case folder clone field, e.message: [{}], trace: [{}]", e.getMessage(), e.getStackTrace());
             throw new CommonException(e);
         }finally {
+            log.info("current folder copy status, folder name: [{}], folder.status: [{}]", newFolder.getName(), newFolder.getInitStatus());
             this.self().changeFloderStatus(newFolder, userId);
         }
     }
@@ -343,16 +348,26 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
         }
         Map<Long, List<TestCaseDTO>> folderMap =
                 testCaseList.stream().collect(Collectors.groupingBy(TestCaseDTO::getFolderId));
+        long count = 0;
         for (Map.Entry<Long, List<TestCaseDTO>> entry : folderMap.entrySet()) {
             if (Objects.isNull(oldNewMap.get(entry.getKey()))) {
                 continue;
             }
-            testCaseService.batchCopy(projectId, oldNewMap.get(entry.getKey()), entry.getValue().stream().map(caseDTO -> {
+            List<TestCaseDTO> result = testCaseService.batchCopy(projectId, oldNewMap.get(entry.getKey()),
+                    entry.getValue().stream().map(caseDTO -> {
                 TestCaseRepVO rep = new TestCaseRepVO();
                 rep.setCaseId(caseDTO.getCaseId());
                 return rep;
-            }).collect(Collectors.toList()));
+            }).collect(Collectors.toList()), true);
+            count += result.size();
         }
+
+        // 修改最大用例数
+        TestProjectInfoDTO testProjectInfo = new TestProjectInfoDTO();
+        testProjectInfo.setProjectId(projectId);
+        testProjectInfo = testProjectInfoMapper.selectOne(testProjectInfo);
+        testProjectInfo.setCaseMaxNum(testProjectInfo.getCaseMaxNum() + count);
+        testProjectInfoMapper.updateByPrimaryKeySelective(testProjectInfo);
     }
 
     private Map<Long, Long> cloneChildrenFolder(TestIssueFolderDTO newFolder, Set<Long> folderIdSet) {

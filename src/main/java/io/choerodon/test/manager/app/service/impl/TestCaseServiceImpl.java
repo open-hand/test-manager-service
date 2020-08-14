@@ -246,10 +246,18 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
-    public TestCaseRepVO createTestCase(Long projectId, TestCaseVO testCaseVO) {
+    public TestCaseRepVO createTestCase(Long projectId, TestCaseVO testCaseVO){
+        return this.createTestCase(projectId, testCaseVO, false);
+    }
+
+    @Override
+    public TestCaseRepVO createTestCase(Long projectId, TestCaseVO testCaseVO, boolean isOutSideCount) {
         TestProjectInfoDTO testProjectInfoDTO = new TestProjectInfoDTO();
         testProjectInfoDTO.setProjectId(projectId);
-        TestProjectInfoDTO testProjectInfo = testProjectInfoMapper.selectOne(testProjectInfoDTO);
+        TestProjectInfoDTO testProjectInfo = new TestProjectInfoDTO();
+        if (!isOutSideCount){
+            testProjectInfo = testProjectInfoMapper.selectOne(testProjectInfoDTO);
+        }
         if (ObjectUtils.isEmpty(testProjectInfo)) {
             throw new CommonException("error.query.project.info.null");
         }
@@ -269,7 +277,9 @@ public class TestCaseServiceImpl implements TestCaseService {
 
         // 返回数据
         testProjectInfo.setCaseMaxNum(caseNum);
-        testProjectInfoMapper.updateByPrimaryKeySelective(testProjectInfo);
+        if (!isOutSideCount){
+            testProjectInfoMapper.updateByPrimaryKeySelective(testProjectInfo);
+        }
         List<TestIssueFolderDTO> testIssueFolderDTOS = testIssueFolderMapper.selectListByProjectId(projectId);
         Map<Long, TestIssueFolderDTO> folderMap = testIssueFolderDTOS.stream().collect(Collectors.toMap(TestIssueFolderDTO::getFolderId, Function.identity()));
         TestCaseRepVO testCaseRepVO = testCaseAssembler.dtoToRepVo(testCaseDTO, folderMap);
@@ -401,9 +411,14 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
-    public void batchCopy(Long projectId, Long folderId, List<TestCaseRepVO> testCaseRepVOS) {
+    public List<TestCaseDTO> batchCopy(Long projectId, Long folderId, List<TestCaseRepVO> testCaseRepVOS) {
+        return this.batchCopy(projectId, folderId, testCaseRepVOS, false);
+    }
+
+    @Override
+    public List<TestCaseDTO> batchCopy(Long projectId, Long folderId, List<TestCaseRepVO> testCaseRepVOS, boolean isOutSideCount) {
         if (CollectionUtils.isEmpty(testCaseRepVOS)) {
-            return;
+            return Collections.emptyList();
         }
         if (ObjectUtils.isEmpty(testIssueFolderMapper.selectByPrimaryKey(folderId))) {
             throw new CommonException("error.query.folder.not.exist");
@@ -411,7 +426,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         // 复制用例
         List<Long> collect = testCaseRepVOS.stream().map(TestCaseRepVO::getCaseId).collect(Collectors.toList());
         if (CollectionUtils.isEmpty(collect)) {
-            return;
+            return Collections.emptyList();
         }
         List<TestCaseDTO> testCaseDTOS = testCaseMapper.listCopyCase(projectId, collect);
         for (TestCaseDTO testCaseDTO : testCaseDTOS) {
@@ -420,7 +435,7 @@ public class TestCaseServiceImpl implements TestCaseService {
             testCaseDTO.setVersionNum(1L);
             testCaseDTO.setFolderId(folderId);
             testCaseDTO.setObjectVersionNumber(null);
-            TestCaseRepVO testCase = createTestCase(projectId, modelMapper.map(testCaseDTO, TestCaseVO.class));
+            TestCaseRepVO testCase = createTestCase(projectId, modelMapper.map(testCaseDTO, TestCaseVO.class), isOutSideCount);
             // 复制用例步骤
             TestCaseStepVO testCaseStepVO = new TestCaseStepVO();
             testCaseStepVO.setIssueId(oldCaseId);
@@ -430,7 +445,7 @@ public class TestCaseServiceImpl implements TestCaseService {
             // 复制附件
             testCaseAttachmentService.cloneAttachmentByCaseId(projectId, testCase.getCaseId(), oldCaseId);
         }
-
+        return testCaseDTOS;
     }
 
     @Override
