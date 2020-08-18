@@ -22,8 +22,8 @@ public class PageUtil {
         }
     }
 
-    public static Page buildPageInfoWithPageInfoList(Page pageInfo, List list) {
-        Page page = new Page<>();
+    public static <T> Page<T> buildPageInfoWithPageInfoList(Page<?> pageInfo, List<T> list) {
+        Page<T> page = new Page<>();
         page.setNumber(pageInfo.getNumber());
         page.setSize(pageInfo.getSize());
         page.setNumberOfElements(pageInfo.getNumberOfElements());

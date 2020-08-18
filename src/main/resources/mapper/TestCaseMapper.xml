@@ -301,6 +301,37 @@
         </where>
     </select>
 
+    <select id="listCase" resultType="io.choerodon.test.manager.infra.dto.TestCaseDTO">
+        SELECT
+            *
+        FROM
+        (
+            SELECT
+                tc.case_id,
+                tc.summary,
+                tc.folder_id,
+                tc.project_id,
+                CONCAT_WS( '-', tpi.project_code, tc.case_num ) as case_num,
+                tc.created_by,
+                tc.last_updated_by,
+                tc.creation_date,
+                tc.last_update_date,
+                tc.object_version_number
+            FROM
+                test_case tc
+            JOIN test_project_info tpi on tpi.project_id = tc.project_id
+            WHERE
+                tc.project_id = #{projectId}
+            AND tc.folder_id IN
+            <foreach collection="folderIds" item="folderId" open="(" separator="," close=")">
+                #{folderId}
+            </foreach>
+        ) as tci
+        <where>
+            <include refid="sqlParam"/>
+        </where>
+    </select>
+
     <delete id="batchDeleteCases">
         delete from test_case where project_id=#{projectId}
         <if test="caseIds != null and caseIds.size > 0">

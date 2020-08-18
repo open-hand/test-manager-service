@@ -28,6 +28,8 @@ public interface TestCaseMapper extends BaseMapper<TestCaseDTO> {
 
     List<Long> listCaseIds(@Param("projectId") Long projectId, @Param("folderIds") Set<Long> folderIds, @Param("searchDTO") SearchDTO searchDTO);
 
+    List<TestCaseDTO> listCase(@Param("projectId") Long projectId, @Param("folderIds") Set<Long> folderIds, @Param("searchDTO") SearchDTO searchDTO);
+
     List<Long> queryFolderId(@Param("projectId") Long projectId);
 
     List<TestCaseDTO> listByCaseIds(@Param("projectId") Long projectId ,@Param("caseIds") List<Long> caseIds,@Param("isDesc")Boolean isDesc);
