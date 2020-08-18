@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { toJS } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import {
-  Spin, Table, Pagination, Tooltip,
+  Spin, Table, Pagination, Tooltip, Icon,
 } from 'choerodon-ui';
 import { Droppable, DragDropContext } from 'react-beautiful-dnd';
 import UserHead from '@/components/UserHead';
@@ -35,13 +35,29 @@ export default observer((props) => {
     }
     return filteredColumns.length === 0 ? true : filteredColumns.includes(column.dataIndex);
   });
-
+  const handleSortByField = (key) => {
+    let orderType = 'ASC';
+    if (IssueStore.order.orderField === key && IssueStore.order.orderType === 'ASC') {
+      orderType = 'DESC';
+    }
+    IssueStore.setOrder({
+      orderField: key,
+      orderType,
+    });
+    IssueStore.loadIssues();
+  };
   const renderThead = (columns) => {
     const Columns = columns.filter(column => shouldColumnShow(column));
     const ths = Columns.map(column => (
       // <th style={{ flex: column.flex || 1 }} >
-      <th key={column.key} style={{ width: column.width, flex: column.width ? 'unset' : (column.flex || 1) }}>
-        {column.title}
+      <th
+        className={IssueStore.order.orderField === column.key && `c7ntest-issuetable-sorter-${IssueStore.order.orderType}`}
+        key={column.key}
+        style={{ width: column.width, flex: column.width ? 'unset' : (column.flex || 1) }}
+        onClick={column.sorter && handleSortByField.bind(this, column.key)}
+      >
+        <span>{column.title}</span>
+        {column.sorter && <Icon type="arrow_upward" className="c7ntest-issuetable-sorter-icon" />}
         {' '}
       </th>
     ));
@@ -55,7 +71,7 @@ export default observer((props) => {
           const start = Math.min(firstIndex, index);
           const end = Math.max(firstIndex, index);
           //
-          const draggingTableItems = IssueStore.getIssues.slice(start, end + 1); 
+          const draggingTableItems = IssueStore.getIssues.slice(start, end + 1);
           IssueStore.setDraggingTableItems(draggingTableItems);
         }
       } else {
@@ -79,7 +95,7 @@ export default observer((props) => {
   });
 
 
-  const renderTbody = (data, columns) => {   
+  const renderTbody = (data, columns) => {
     const {
       disabled, onRow,
     } = props;
@@ -197,7 +213,7 @@ export default observer((props) => {
 
   const transformFilters = (filters) => {
     const transformedFilters = Object.entries(filters).filter(item => item[1].length > 0);
-    const res = {}; 
+    const res = {};
     transformedFilters.forEach((item) => {
       if (item[0] === 'summary') {
         // eslint-disable-next-line prefer-destructuring
@@ -239,11 +255,11 @@ export default observer((props) => {
         onColumnFilterChange={handleColumnFilterChange}
         pagination={false}
         filters={IssueStore.getBarFilters || []}
-        filterBarPlaceholder="过滤表"        
+        filterBarPlaceholder="过滤表"
       />
     </div>
   );
-  
+
 
   const handlePaginationChange = (page, pageSize) => {
     IssueStore.loadIssues(page, pageSize);
@@ -278,6 +294,7 @@ export default observer((props) => {
       title: '用例编号',
       dataIndex: 'caseNum',
       key: 'caseNum',
+      sorter: true,
       filters: [],
       render: caseNum => renderIssueNum(caseNum),
     },
@@ -292,19 +309,21 @@ export default observer((props) => {
       title: '创建时间',
       dataIndex: 'creationDate',
       key: 'creationDate',
+      sorter: true,
       render: creationDate => <Tooltip title={creationDate}><span style={{ color: 'rgba(0, 0, 0, 0.65)' }}>{creationDate}</span></Tooltip>,
     },
     {
       title: '更新人',
       dataIndex: 'lastUpdateUser',
       key: 'lastUpdateUser',
-      render: lastUpdateUser => lastUpdateUser && <UserHead user={lastUpdateUser} />,     
+      render: lastUpdateUser => lastUpdateUser && <UserHead user={lastUpdateUser} />,
       width: '1rem',
     },
     {
       title: '更新时间',
       dataIndex: 'lastUpdateDate',
       key: 'lastUpdateDate',
+      sorter: true,
       render: lastUpdateDate => <Tooltip title={lastUpdateDate}><span style={{ color: 'rgba(0, 0, 0, 0.65)' }}>{lastUpdateDate}</span></Tooltip>,
     },
   ]);

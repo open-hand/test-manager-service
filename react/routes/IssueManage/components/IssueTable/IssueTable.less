@@ -1,7 +1,7 @@
 .c7ntest-issueArea {
 
-  .c7n-table-thead > tr > th:focus,
-  .c7n-table-tbody > tr > td:focus {
+  .c7n-table-thead >tr >th:focus,
+  .c7n-table-tbody >tr >td:focus {
     background-color: transparent;
   }
 
@@ -38,17 +38,40 @@
   .c7ntest-table-item.selected {
     background: #eee;
   }
+
   .c7n-select-selection__rendered {
     margin-bottom: -4px !important;
   }
 
   .c7ntest-issuetable {
     user-select: none;
+
     .c7n-table-filter-bar {
       padding-right: 90px;
       padding-top: 4px;
       padding-bottom: 3px;
       height: 0.4rem;
+    }
+
+    &-sorter-ASC {
+      .c7ntest-issuetable-sorter-icon {
+        opacity: 1;
+        color: rgba(0, 0, 0, 1);
+      }
+    }
+
+    &-sorter-DESC {
+      .c7ntest-issuetable-sorter-icon {
+        opacity: 1;
+        color: rgba(0, 0, 0, 1);
+        transform: rotate(180deg);
+      }
+    }
+
+    &-sorter-icon {
+      opacity: 0;
+      color: rgba(0, 0, 0, 0.45);
+      margin-bottom: 3px;
     }
 
     .c7n-table-filter-select {
@@ -67,7 +90,7 @@
       .icon-view_column {
         font-size: 14px;
       }
-    }    
+    }
 
     table {
       table-layout: fixed;
@@ -90,6 +113,12 @@
             overflow: hidden;
             text-overflow: ellipsis;
             display: inline-block; //fix ie11
+
+            &:hover {
+              .c7ntest-issuetable-sorter-icon {
+                opacity: 1;
+              }
+            }
           }
         }
       }
@@ -103,6 +132,7 @@
           // box-shadow: 0 1px 0 0 #e8e8e8, 0 1px 0 0 #e8e8e8 inset;
           border-bottom: 1px solid rgba(0, 0, 0, 0.12);
           outline: none;
+
           .c7ntest-table-item {
             width: 100%;
             min-height: 33px;
@@ -120,7 +150,8 @@
             overflow: hidden;
             text-overflow: ellipsis;
             display: inline-block; //fix ie11
-            .c7n-table-issueTreeTtile-table-p:hover{
+
+            .c7n-table-issueTreeTtile-table-p:hover {
               color: #3F51B5;
               text-decoration: underline;
             }
