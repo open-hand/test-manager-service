@@ -6,11 +6,13 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import io.choerodon.core.utils.PageableHelper;
+import io.choerodon.mybatis.domain.AuditDomain;
 import io.choerodon.mybatis.pagehelper.PageHelper;
 import io.choerodon.core.domain.Page;
 import io.choerodon.test.manager.api.vo.agile.*;
 import io.choerodon.test.manager.infra.feign.IssueFeignClient;
 
+import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -329,24 +331,41 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     @Override
     public Page<TestCaseRepVO> listAllCaseByFolderId(Long projectId, Long folderId, PageRequest pageRequest, SearchDTO searchDTO, Long planId) {
-
         // 查询文件夹下所有的目录
         Set<Long> folderIds = new HashSet<>();
         TestIssueFolderDTO testIssueFolder = new TestIssueFolderDTO();
         testIssueFolder.setProjectId(projectId);
         Map<Long, List<TestIssueFolderDTO>> folderMap = testIssueFolderMapper.select(testIssueFolder).stream().filter(issueFolderDTO -> !"api".equals(issueFolderDTO.getType())).collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
         queryAllFolderIds(folderId, folderIds, folderMap);
+        // 处理排序
+        checkPageRequest(pageRequest);
         // 查询文件夹下的的用例
-        Page<Long> longPageInfo = PageHelper.doPageAndSort(pageRequest, () -> testCaseMapper.listCaseIds(projectId, folderIds, searchDTO));
-        Page<TestCaseRepVO> pageRepList = PageUtil.buildPageInfoWithPageInfoList(longPageInfo, new ArrayList());
+        Page<TestCaseDTO> longPageInfo = PageHelper.doPageAndSort(pageRequest, () -> testCaseMapper.listCase(projectId, folderIds, searchDTO));
+        Page<TestCaseRepVO> pageRepList;
         if (CollectionUtils.isEmpty(longPageInfo.getContent())) {
-            pageRepList.setContent(new ArrayList<>());
+            pageRepList = PageUtil.buildPageInfoWithPageInfoList(longPageInfo, new ArrayList<>());
             return pageRepList;
         }
-        List<TestCaseDTO> testCaseDTOS = testCaseMapper.listByCaseIds(projectId, longPageInfo.getContent(), true);
-        List<TestCaseRepVO> repVOS = testCaseAssembler.listDtoToRepVo(projectId, testCaseDTOS, planId);
-        pageRepList.setContent(repVOS);
+        List<TestCaseRepVO> repVOS = testCaseAssembler.listDtoToRepVo(projectId, longPageInfo.getContent(), planId);
+        pageRepList = PageUtil.buildPageInfoWithPageInfoList(longPageInfo, repVOS);
         return pageRepList;
+    }
+
+    private void checkPageRequest(PageRequest pageRequest) {
+        Sort sort = pageRequest.getSort();
+        if (Objects.isNull(sort)){
+            pageRequest.setSort(new Sort(new Sort.Order(Sort.Direction.DESC, TestCaseDTO.FIELD_CASE_ID)));
+            return;
+        }
+        Iterator<Sort.Order> iterator = sort.iterator();
+        Sort.Order t;
+        while (iterator.hasNext()){
+            t = iterator.next();
+            if (!StringUtils.equalsAny(t.getProperty(),
+                    TestCaseDTO.FIELD_CASE_NUM, AuditDomain.FIELD_CREATION_DATE, AuditDomain.FIELD_LAST_UPDATE_DATE)){
+                pageRequest.setSort(new Sort(new Sort.Order(Sort.Direction.DESC, TestCaseDTO.FIELD_CASE_ID)));
+            }
+        }
     }
 
     @Override

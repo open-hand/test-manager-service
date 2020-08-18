@@ -13,8 +13,8 @@ import io.choerodon.test.manager.app.service.TestCycleCaseService;
 import io.choerodon.test.manager.app.service.UserService;
 import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.mapper.*;
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.poi.ss.formula.functions.T;
+import org.apache.commons.lang3.StringUtils;
+import org.hzero.core.base.BaseConstants;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.modelmapper.convention.MatchingStrategies;
@@ -163,8 +163,10 @@ public class TestCaseAssembler {
         TestProjectInfoDTO testProjectInfoDTO = new TestProjectInfoDTO();
         testProjectInfoDTO.setProjectId(projectId);
         TestProjectInfoDTO testProjectInfo = testProjectInfoMapper.selectOne(testProjectInfoDTO);
-        String issue = String.format("%s-%s", testProjectInfo.getProjectCode(), caseNum);
-        return issue;
+        if (StringUtils.startsWith(caseNum,testProjectInfo.getProjectCode() + BaseConstants.Symbol.MIDDLE_LINE)){
+            return caseNum;
+        }
+        return String.format("%s-%s", testProjectInfo.getProjectCode(), caseNum);
     }
 
     public <T> Map<Long, UserMessageDTO> getUserMap(T t, List<T> list) {
