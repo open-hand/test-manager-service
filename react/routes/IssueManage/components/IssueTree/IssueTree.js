@@ -102,6 +102,10 @@ class IssueTree extends Component {
       pageSize: 10,
       total: IssueStore.pagination.total,
     });
+    IssueStore.setOrder({
+      orderField: '',
+      orderType: '',
+    });
     IssueStore.loadIssues();
   }
 
