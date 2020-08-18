@@ -222,8 +222,8 @@ export default class IssueManage extends Component {
             />
           ) : (
             <Fragment>
-              <div>
-                {tabs.length > 0 && tab}
+              <div className="c7ntest-Issue-content-left">
+                {tabs.length > 1 && tab}
                 <IssueTree />
               </div>
               {currentFolder.id && (
