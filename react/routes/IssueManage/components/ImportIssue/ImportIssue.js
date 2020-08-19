@@ -219,6 +219,7 @@ function ImportIssue(props) {
   };
 
   const debounceSetImportRecord = _.debounce((e) => {
+    dispatch({ type: 'process' });
     setImportRecord(e);
     // wsRef.current.context.ws.destroySocketByPath(wsRef.current.props.path);
   }, 250, { maxWait: 1300 });
@@ -308,7 +309,7 @@ function ImportIssue(props) {
               showInfo={false}
             />
             <span className="c7ntest-ImportIssue-progress-area-text">正在导入中</span>
-            <span className="c7ntest-ImportIssue-progress-area-prompt">( 本次导入耗时较长，您可先返回进行其他操作）</span>
+            <span className="c7ntest-ImportIssue-progress-area-prompt">（本次导入耗时较长，您可先返回进行其他操作）</span>
           </div>
         </WSHandler>
       );

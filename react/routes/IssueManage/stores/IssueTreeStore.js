@@ -11,7 +11,7 @@ class IssueTreeStore {
     treeFolder: [],
   }
 
-  @observable rootIds=[]
+  @observable rootIds = []
 
   @observable selectedKeys = [];
 
@@ -86,6 +86,10 @@ class IssueTreeStore {
     }
   }
 
+  @action addTreeFolder(item) {
+    this.treeData.treeFolder.push(item);
+  }
+
   @action addRootItem(folderId) {
     this.rootIds.push(folderId);
   }
@@ -128,7 +132,7 @@ class IssueTreeStore {
     if (target && target.children) {
       target.children.push(folderId);
     }
-  }  
+  }
 }
 
 export default new IssueTreeStore();
