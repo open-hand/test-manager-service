@@ -1,0 +1,120 @@
+package io.choerodon.test.manager.domain.entity;
+
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+import javax.validation.constraints.NotBlank;
+import io.choerodon.mybatis.domain.AuditDomain;
+import java.math.BigDecimal;
+import io.choerodon.mybatis.annotation.ModifyAudit;
+import io.choerodon.mybatis.annotation.VersionAudit;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+/**
+ *
+ *
+ * @author jiaxu.cui@hand-china.com 2020-08-19 17:25:29
+ */
+@ApiModel("测试用例优先级")
+@VersionAudit
+@ModifyAudit
+@JsonInclude(value = JsonInclude.Include.NON_NULL)
+@Table(name = "test_priority")
+public class TestPriority extends AuditDomain {
+
+    public static final String FIELD_ID = "id";
+
+    @ApiModelProperty("主键id")
+    @Id
+    @GeneratedValue
+    private Long id;
+    @ApiModelProperty(value = "优先级名称",required = true)
+    @NotBlank
+    private String name;
+    @ApiModelProperty(value = "描述")
+    private String description;
+    @ApiModelProperty(value = "颜色",required = true)
+    @NotBlank
+    private String colour;
+    @ApiModelProperty(value = "组织id",required = true)
+    @NotNull
+    private Long organizationId;
+    @ApiModelProperty(value = "是否默认",required = true)
+    @NotNull
+    private Integer isDefault;
+    @ApiModelProperty(value = "排序",required = true)
+    @NotNull
+    private BigDecimal sequence;
+    @ApiModelProperty(value = "是否启用",required = true)
+    @NotNull
+    private Integer isEnable;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getColour() {
+        return colour;
+    }
+
+    public void setColour(String colour) {
+        this.colour = colour;
+    }
+
+    public Long getOrganizationId() {
+        return organizationId;
+    }
+
+    public void setOrganizationId(Long organizationId) {
+        this.organizationId = organizationId;
+    }
+
+    public Integer getIsDefault() {
+        return isDefault;
+    }
+
+    public void setIsDefault(Integer isDefault) {
+        this.isDefault = isDefault;
+    }
+
+    public BigDecimal getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(BigDecimal sequence) {
+        this.sequence = sequence;
+    }
+
+    public Integer getIsEnable() {
+        return isEnable;
+    }
+
+    public void setIsEnable(Integer isEnable) {
+        this.isEnable = isEnable;
+    }
+}

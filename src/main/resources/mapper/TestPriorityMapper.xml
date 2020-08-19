@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="io.choerodon.test.manager.infra.mapper.TestPriorityMapper">
+    <resultMap id="BaseResultMap" type="io.choerodon.test.manager.domain.entity.TestPriority">
+        <result column="id" property="id" jdbcType="DECIMAL"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="colour" property="colour" jdbcType="VARCHAR"/>
+        <result column="organization_id" property="organizationId" jdbcType="DECIMAL"/>
+        <result column="is_default" property="isDefault" jdbcType="DECIMAL"/>
+        <result column="sequence" property="sequence" jdbcType="DECIMAL"/>
+        <result column="OBJECT_VERSION_NUMBER" property="objectVersionNumber" jdbcType="DECIMAL"/>
+        <result column="CREATED_BY" property="createdBy" jdbcType="DECIMAL"/>
+        <result column="CREATION_DATE" property="creationDate" jdbcType="DATE"/>
+        <result column="LAST_UPDATED_BY" property="lastUpdatedBy" jdbcType="DECIMAL"/>
+        <result column="LAST_UPDATE_DATE" property="lastUpdateDate" jdbcType="DATE"/>
+        <result column="is_enable" property="isEnable" jdbcType="DECIMAL"/>
+    </resultMap>
+</mapper>
