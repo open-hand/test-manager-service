@@ -26,6 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.hzero.boot.file.FileClient;
 import org.hzero.boot.message.MessageClient;
 import org.modelmapper.ModelMapper;
@@ -39,6 +40,7 @@ import org.springframework.util.ObjectUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.*;
 
 import static org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING;
@@ -117,6 +119,9 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
     @Autowired
     private MessageClient messageClient;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -582,15 +587,24 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         if(TestFileLoadHistoryEnums.Status.FAILURE.getTypeValue().equals(testFileLoadHistoryWithRateVO.getStatus())){
             testFileLoadHistoryWithRateVO.setCode(IMPORT_ERROR);
             //notifyService.postWebSocket(IMPORT_NOTIFY_CODE, userId.toString(), JSON.toJSONString(testFileLoadHistoryWithRateVO));
-            messageClient.sendByUserId(userId,IMPORT_NOTIFY_CODE,JSON.toJSONString(testFileLoadHistoryWithRateVO));
+            messageClient.sendByUserId(userId,IMPORT_NOTIFY_CODE,toJson(testFileLoadHistoryWithRateVO));
         }else {
             //notifyService.postWebSocket(IMPORT_NOTIFY_CODE, userId.toString(), JSON.toJSONString(testFileLoadHistoryWithRateVO));
-            messageClient.sendByUserId(userId,IMPORT_NOTIFY_CODE,JSON.toJSONString(testFileLoadHistoryWithRateVO));
+            messageClient.sendByUserId(userId,IMPORT_NOTIFY_CODE,toJson(testFileLoadHistoryWithRateVO));
         }
 
         logger.info("导入进度：{}", rate);
         if (rate == 100.) {
             logger.info("完成");
+        }
+    }
+
+    private String toJson(TestFileLoadHistoryWithRateVO testFileLoadHistoryWithRateVO){
+        try {
+            return objectMapper.writeValueAsString(testFileLoadHistoryWithRateVO);
+        } catch (IOException e) {
+            logger.error("json convert fail");
+            throw new CommonException(e);
         }
     }
 
