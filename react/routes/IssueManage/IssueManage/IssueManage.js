@@ -85,7 +85,7 @@ export default class IssueManage extends Component {
     this[name] = ref;
   }
 
-  handleRefresh=() => {
+  handleRefresh = () => {
     IssueTreeStore.loadIssueTree();
   }
 
@@ -212,41 +212,43 @@ export default class IssueManage extends Component {
         </Header>
         <Breadcrumb />
         <Content style={{ display: 'flex', padding: '0', borderTop: '0.01rem solid rgba(0,0,0,0.12)' }}>
-          {noFolder ? (
-            <Empty
-              loading={loading}
-              pic={empty}
-              title="暂无目录"
-              description="当前项目下无目录，请创建"
-              extra={<Button type="primary" funcType="raised" onClick={this.handleAddFolderClick}>创建一级目录</Button>}
-            />
-          ) : (
+          <Fragment>
+            <div className="c7ntest-Issue-content-left">
+              {tabs.length > 1 && tab}
+              <IssueTree />
+            </div>
             <Fragment>
-              <div className="c7ntest-Issue-content-left">
-                {tabs.length > 1 && tab}
-                <IssueTree />
-              </div>
-              {currentFolder.id && (
-              <div
-                className="c7ntest-content-issue"
-                style={{
-                  flex: 1,
-                  display: 'block',
-                  overflowY: 'auto',
-                  overflowX: 'hidden',
-                  padding: '0 20px',
-                }}
-              >
-                <div className="c7ntest-content-issueFolderName">
-                  {currentFolder.data.name}
-                </div>
-                <IssueTable
-                  onClick={this.handleTableRowClick}
-                />
-              </div>
-              )}
+              {
+                noFolder ? (
+                  <Empty
+                    loading={loading}
+                    pic={empty}
+                    title="暂无目录"
+                    description="当前项目下无目录，请创建"
+                    extra={<Button type="primary" funcType="raised" onClick={this.handleAddFolderClick}>创建一级目录</Button>}
+                  />
+                ) : currentFolder.id && (
+                  <div
+                    className="c7ntest-content-issue"
+                    style={{
+                      flex: 1,
+                      display: 'block',
+                      overflowY: 'auto',
+                      overflowX: 'hidden',
+                      padding: '0 20px',
+                    }}
+                  >
+                    <div className="c7ntest-content-issueFolderName">
+                      {currentFolder.data.name}
+                    </div>
+                    <IssueTable
+                      onClick={this.handleTableRowClick}
+                    />
+                  </div>
+                )
+              }
             </Fragment>
-          )}
+          </Fragment>
           <TestCaseDetail visible={clickIssue && clickIssue.caseId} onClose={this.handleClose} />
         </Content>
       </Page>
