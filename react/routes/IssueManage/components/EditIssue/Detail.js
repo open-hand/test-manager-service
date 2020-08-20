@@ -7,16 +7,16 @@ import { FormattedMessage } from 'react-intl';
 import {
   Button, Tooltip, Icon,
 } from 'choerodon-ui';
-import { UploadButtonNow, FileList } from '../UploadButtonNow/UploadButtonNow';
-import IssueDescription from './Component/IssueDescription';
 import {
   delta2Html, text2Delta,
 } from '@/common/utils';
 import Timeago from '@/components/DateTimeAgo/DateTimeAgo';
 import { uploadFile } from '@/api/IssueManageApi';
 import { openFullEditor, WYSIWYGEditor } from '@/components';
-import CreateLinkTask from '../CreateLinkTask';
 import UserHead from '@/components/UserHead';
+import CreateLinkTask from '../CreateLinkTask';
+import IssueDescription from './Component/IssueDescription';
+import { UploadButtonNow, FileList } from '../UploadButtonNow/UploadButtonNow';
 import Divider from './Component/Divider';
 import EditIssueContext from './stores';
 import EditDetailWrap from './Component/EditDetailWrap';
@@ -192,26 +192,7 @@ function Detail({
           </Button>
         </section>
         <Divider />
-        {/** 描述 */}
-        <section id="des">
-          <TitleWrap title={<FormattedMessage id="execute_description" />}>
-            <div style={{ marginLeft: '14px', display: 'flex' }}>
-              <Tooltip title="全屏编辑" getPopupContainer={triggerNode => triggerNode.parentNode}>
-                <Button icon="zoom_out_map" onClick={handleOpenFullEditor} />
-              </Tooltip>
-              <Tooltip title="编辑" getPopupContainer={triggerNode => triggerNode.parentNode.parentNode}>
-                <Button
-                  icon="mode_edit mlr-3"
-                  onClick={() => {
-                    setEditDescriptionShow(true);
-                  }}
-                />
-              </Tooltip>
-            </div>
-          </TitleWrap>
-          {renderDescription()}
-        </section>
-        <Divider />
+ 
         {/** 附件 */}
         <section id="attachment">
           <TitleWrap title={<FormattedMessage id="attachment" />}>
