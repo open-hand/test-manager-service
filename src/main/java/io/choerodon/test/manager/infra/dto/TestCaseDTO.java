@@ -19,7 +19,7 @@ import io.choerodon.mybatis.domain.AuditDomain;
 public class TestCaseDTO extends AuditDomain {
 
     public static final String FIELD_FOLDER_ID = "folderId";
-    public static final String FIELD_CASE_NUM = "caseNum";
+    public static final String FIELD_SOURCE_CASE_NUM = "sourceCaseNum";
     public static final String FIELD_CASE_ID = "caseId";
 
     @Id
