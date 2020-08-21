@@ -35,6 +35,7 @@ export default observer((props) => {
     }
     return filteredColumns.length === 0 ? true : filteredColumns.includes(column.dataIndex);
   });
+
   const handleSortByField = (key) => {
     let orderType = 'ASC';
     if (IssueStore.order.orderField === key && IssueStore.order.orderType === 'ASC') {
@@ -293,7 +294,7 @@ export default observer((props) => {
     {
       title: '用例编号',
       dataIndex: 'caseNum',
-      key: 'caseNum',
+      key: 'sourceCaseNum',
       sorter: true,
       filters: [],
       render: caseNum => renderIssueNum(caseNum),
