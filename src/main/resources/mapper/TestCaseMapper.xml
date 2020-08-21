@@ -312,6 +312,7 @@
                 tc.folder_id,
                 tc.project_id,
                 CONCAT_WS( '-', tpi.project_code, tc.case_num ) as case_num,
+                tc.case_num AS source_case_num,
                 tc.created_by,
                 tc.last_updated_by,
                 tc.creation_date,
