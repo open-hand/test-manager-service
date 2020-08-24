@@ -2,6 +2,7 @@ package io.choerodon.test.manager.app.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.api.vo.agile.*;
@@ -612,6 +613,15 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         int i = 0;
         while (i < errorRowIndexes.size()) {
             shiftRow(sheet, errorRowIndexes.get(i), ++i);
+        }
+    }
+
+    private String toJson(TestFileLoadHistoryWithRateVO testFileLoadHistoryWithRateVO){
+        try {
+            return objectMapper.writeValueAsString(testFileLoadHistoryWithRateVO);
+        } catch (IOException e) {
+            logger.error("json convert fail");
+            throw new CommonException(e);
         }
     }
 

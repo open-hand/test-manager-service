@@ -28,7 +28,7 @@ function EditIssue() {
   const {
     store, caseId, prefixCls, announcementHeight, onUpdate, IssueStore,
   } = useContext(EditIssueContext);
-  const { issueInfo, dataLogs, loading } = store; 
+  const { issueInfo, dataLogs, loading } = store;
   const setQuery = (width = container.current.clientWidth) => {
     if (width <= 600) {
       container.current.setAttribute('max-width', '600px');
@@ -54,10 +54,10 @@ function EditIssue() {
    */
   const renderDataLogs = () => {
     const {
-      createUser, creationDate, 
+      createUser, creationDate,
     } = issueInfo || {};
     const {
-      email, imageUrl, loginName, name, realName, 
+      email, imageUrl, loginName, name, realName,
     } = createUser || {};
 
     const createLog = {
@@ -105,7 +105,7 @@ function EditIssue() {
     switch (key) {
       case 'description': {
         if (value) {
-          await returnBeforeTextUpload(value, issue, updateIssue, 'description');            
+          await returnBeforeTextUpload(value, issue, updateIssue, 'description');
           store.loadIssueData();
         }
         break;
@@ -117,7 +117,7 @@ function EditIssue() {
           break;
         }
         issue = { ...issue, ...newValue };
-        await updateIssue(issue); 
+        await updateIssue(issue);
         await store.loadIssueData();
         onUpdate();
         done(); // done() 为了更新完之后用服务器数据替换之前选中的数据，因此应该等待前边数据加载完再更新       
@@ -161,10 +161,10 @@ function EditIssue() {
           }
           <div className={`${prefixCls}-content`}>
             <Header onUpdate={handleUpdate} />
-            <div className={`${prefixCls}-content-bottom`} id="scroll-area" style={{ position: 'relative' }}>              
+            <div className={`${prefixCls}-content-bottom`} id="scroll-area" style={{ position: 'relative' }}>
               <Tabs onChange={handleTabChange}>
                 <TabPane tab="步骤" key="test">
-                  <EditTestStepTable />
+                  <EditTestStepTable onUpdateDetail={handleUpdate} />
                 </TabPane>
                 <TabPane tab="详情" key="detail">
                   <Detail
@@ -175,7 +175,7 @@ function EditIssue() {
                 <TabPane tab="记录" key="log">
                   {renderDataLogs()}
                 </TabPane>
-              </Tabs>                
+              </Tabs>
             </div>
           </div>
         </div>

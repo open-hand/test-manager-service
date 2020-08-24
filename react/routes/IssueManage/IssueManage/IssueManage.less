@@ -13,4 +13,21 @@
       display: none;
     }
   }
+
+  &-content-left {
+    border-right: 1px solid rgba(0, 0, 0, 0.12);
+  }
+
+  .c7ntest-IssueTree-tab {
+    text-align: center;
+    padding-top: .16rem;
+
+    .@{c7n-prefix}-tabs-bar {
+      margin: 0;
+    }
+
+    & + .c7ntest-IssueTree {
+      height: calc(100% - 0.6rem);
+    }
+  }
 }

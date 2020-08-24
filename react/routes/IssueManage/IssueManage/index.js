@@ -18,7 +18,7 @@ const Test = (props) => {
   const [activeKey, setActiveKey] = useState(tabs[0].key);
   const Component = find(tabs, { key: activeKey }).component;
   const tabComponent = (
-    <Tabs activeKey={activeKey} onChange={setActiveKey}>
+    <Tabs activeKey={activeKey} onChange={setActiveKey} className="c7ntest-IssueTree-tab">
       {tabs.map(tab => <TabPane key={tab.key} tab={tab.name} />)}
     </Tabs>
   );

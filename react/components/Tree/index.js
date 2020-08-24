@@ -1,5 +1,5 @@
 import React, {
-  useState, useEffect, useCallback, useMemo, useImperativeHandle, forwardRef,
+  useState, useEffect, useCallback, useMemo, useImperativeHandle, forwardRef, Fragment,
 } from 'react';
 import PropTypes from 'prop-types';
 import { find } from 'lodash';
@@ -112,11 +112,11 @@ function PureTree({
     };
     setTree(oldTree => addItem(oldTree, getRootNode(oldTree), item || newChild));
   };
-  const updateTree = useCallback((itemId, attrs) => {   
+  const updateTree = useCallback((itemId, attrs) => {
     setTree(oldTree => mutateTree(oldTree, itemId, attrs));
   }, []);
   const getItem = useCallback(itemId => getItemById(flattenedTree, itemId), [flattenedTree]);
-  const handleDelete = useCallback((item) => {   
+  const handleDelete = useCallback((item) => {
     Modal.confirm({
       title: getDeleteTitle ? callFunction(getDeleteTitle, item).split('|')[0] : '确认删除目录',
       children: getDeleteTitle ? callFunction(getDeleteTitle, item).split('|')[1] : undefined,
@@ -127,7 +127,7 @@ function PureTree({
           setTree(oldTree => removeItem(oldTree, item.path));
           if (selected.id === item.id) {
             // 这里取旧的tree数据
-            setSelected(getSiblingOrParent(tree, item));          
+            setSelected(getSiblingOrParent(tree, item));
           }
         } catch (error) {
           Choerodon.prompt(error.message);
@@ -167,7 +167,7 @@ function PureTree({
     if (!destination) {
       return;
     }
-    const sourceItem = getItemByPosition(tree, source);    
+    const sourceItem = getItemByPosition(tree, source);
     const destinationParent = tree.items[destination.parentId];
     // 不能拖动到已经有issue的目录下
     if (destinationParent.hasCase) {
@@ -175,8 +175,8 @@ function PureTree({
     }
     try {
       const parent = getItemById(flattenedTree, destinationParent.id);
-      if (parent && parent.path.length >= 9) {        
-        return;  
+      if (parent && parent.path.length >= 9) {
+        return;
       }
 
       setTree(oldTree => moveItemOnTree(oldTree, source, destination));
@@ -211,7 +211,7 @@ function PureTree({
           },
         };
         if (find(tree.items, { id: 'new' })) {
-          return; 
+          return;
         }
         setTree(oldTree => addItem(oldTree, node, newChild));
         break;
@@ -226,7 +226,7 @@ function PureTree({
       try {
         const newItem = await onCreate(value, item.parentId, item);
         setTree(oldTree => createItem(oldTree, path, {
-          ...newItem,  
+          ...newItem,
           children: [],
           hasChildren: false,
           isExpanded: false,
@@ -252,7 +252,7 @@ function PureTree({
       setTree(oldTree => mutateTree(oldTree, item.id, { isEditing: false }));
     } else {
       try {
-        const newItem = await onEdit(value, item);     
+        const newItem = await onEdit(value, item);
         setTree(oldTree => mutateTree(oldTree, item.id, { ...item, ...newItem, isEditing: false }));
         setTree((newTree) => {
           if (updateItem && selected.id === item.id) {
@@ -287,26 +287,36 @@ function PureTree({
     );
     return renderTreeNode ? renderTreeNode(treeNode, { item: { ...item, path } }) : treeNode;
   };
+
+  const isEmpty = flattenedTree.length === 0;
   return (
     <div className={prefix}>
-      <div className={`${prefix}-top`}>
-        <FilterInput
-          onChange={filterTree}
-        />
-      </div>
-      <div className={`${prefix}-scroll`}>
-        <Tree
-          tree={tree}
-          renderItem={renderItem}
-          onExpand={onExpand}
-          onCollapse={onCollapse}
-          onDragEnd={onDragEnd}
-          offsetPerLevel={PADDING_PER_LEVEL}
-          isDragEnabled
-          isNestingEnabled
-          {...restProps}
-        />
-      </div>
+      {isEmpty ? (
+        <div className={`${prefix}-empty`}>
+          暂无数据
+        </div>
+      ) : (
+        <Fragment>
+          <div className={`${prefix}-top`}>
+            <FilterInput
+              onChange={filterTree}
+            />
+          </div>
+          <div className={`${prefix}-scroll`}>
+            <Tree
+              tree={tree}
+              renderItem={renderItem}
+              onExpand={onExpand}
+              onCollapse={onCollapse}
+              onDragEnd={onDragEnd}
+              offsetPerLevel={PADDING_PER_LEVEL}
+              isDragEnabled
+              isNestingEnabled
+              {...restProps}
+            />
+          </div>
+        </Fragment>
+      )}
     </div>
   );
 }

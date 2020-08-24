@@ -32,6 +32,14 @@ class IssueTree extends Component {
     if (parentId === 0) {
       IssueTreeStore.addRootItem(result.folderId);
     }
+    
+    const newData = {
+      id: result.folderId,
+      children: [],
+      data: result,
+    };
+    // 增添至数组内，防止导入后对树内数据搜索无数据
+    IssueTreeStore.addTreeFolder(newData);
     return {
       id: result.folderId,
       data: {
@@ -101,6 +109,10 @@ class IssueTree extends Component {
       current: 1,
       pageSize: 10,
       total: IssueStore.pagination.total,
+    });
+    IssueStore.setOrder({
+      orderField: '',
+      orderType: '',
     });
     IssueStore.loadIssues();
   }
