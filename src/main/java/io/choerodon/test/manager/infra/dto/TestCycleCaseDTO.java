@@ -70,6 +70,16 @@ public class TestCycleCaseDTO extends AuditDomain {
 
     private Date lastUpdateDate;
 
+    private Long priorityId;
+
+    public Long getPriorityId() {
+        return priorityId;
+    }
+
+    public void setPriorityId(Long priorityId) {
+        this.priorityId = priorityId;
+    }
+
     @Override
     public Date getCreationDate() {
         return creationDate;
