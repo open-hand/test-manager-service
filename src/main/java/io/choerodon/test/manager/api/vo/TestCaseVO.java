@@ -39,7 +39,17 @@ public class TestCaseVO {
     private List<TestCaseAttachmentDTO> attachment;
     @ApiModelProperty(value = "文件夹名字")
     private String folderName;
+    @ApiModelProperty(value = "优先级")
+    @Encrypt
+    private Long priorityId;
 
+    public Long getPriorityId() {
+        return priorityId;
+    }
+
+    public void setPriorityId(Long priorityId) {
+        this.priorityId = priorityId;
+    }
 
     public Long getCaseId() {
         return caseId;
