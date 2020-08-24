@@ -8,9 +8,13 @@ import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.oauth.CustomUserDetails;
 import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.test.manager.api.vo.agile.ProjectDTO;
+import io.choerodon.test.manager.app.service.TestCaseService;
+import io.choerodon.test.manager.app.service.TestCycleCaseService;
 import io.choerodon.test.manager.app.service.TestPriorityService;
 import io.choerodon.test.manager.infra.dto.TestPriorityDTO;
 import io.choerodon.test.manager.infra.feign.BaseFeignClient;
+import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
+import io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper;
 import io.choerodon.test.manager.infra.mapper.TestPriorityMapper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -31,6 +35,14 @@ public class TestPriorityServiceImpl implements TestPriorityService {
     private static final String DELETE_ILLEGAL = "error.priority.deleteIllegal";
     private static final String LAST_ILLEGAL = "error.priority.lastIllegal";
 
+    @Autowired
+    private TestCaseService testCaseService;
+    @Autowired
+    private TestCycleCaseService testCycleCaseService;
+    @Autowired
+    private TestCaseMapper testCaseMapper;
+    @Autowired
+    private TestCycleCaseMapper testCycleCaseMapper;
     @Autowired
     private TestPriorityMapper testPriorityMapper;
     @Autowired
@@ -123,8 +135,8 @@ public class TestPriorityServiceImpl implements TestPriorityService {
     @Override
     public void batchChangeIssuePriority(Long organizationId, Long priorityId, Long changePriorityId, Long userId, List<Long> projectIds) {
         if (CollectionUtils.isNotEmpty(projectIds)) {
-            // FIXME 将用例优先级移动到指定优先级
-//            issueAccessDataService.batchUpdateIssuePriority(organizationId, priorityId, changePriorityId, userId, projectIds);
+            testCaseService.batchUpdateCasePriority(organizationId, priorityId, changePriorityId, userId, projectIds);
+            testCycleCaseService.batchUpdateCycleCasePriority(organizationId, priorityId, changePriorityId, userId, projectIds);
         }
     }
 
@@ -133,9 +145,9 @@ public class TestPriorityServiceImpl implements TestPriorityService {
         if (projectIds == null || projectIds.isEmpty()) {
             return 0L;
         } else {
-            // FIXME 检查是否有case或cycleCase在使用优先级
-            return 1L;
-//                    issueMapper.checkPriorityDelete(priorityId, projectIds);
+            long count = testCaseMapper.checkPriorityDelete(priorityId, projectIds);
+            count += testCycleCaseMapper.checkPriorityDelete(priorityId, projectIds);
+            return count;
         }
     }
 

@@ -63,7 +63,6 @@ public class TestPriorityController extends BaseController {
     @DeleteMapping
     public ResponseEntity<Void> remove(@PathVariable("organization_id") Long organizationId,
                                         @RequestBody TestPriorityDTO testPriorityDTO) {
-
         testPriorityService.delete(organizationId, testPriorityDTO);
         return Results.success();
     }
