@@ -257,6 +257,7 @@ export default observer((props) => {
         pagination={false}
         filters={IssueStore.getBarFilters || []}
         filterBarPlaceholder="过滤表"
+        noFilter
       />
     </div>
   );

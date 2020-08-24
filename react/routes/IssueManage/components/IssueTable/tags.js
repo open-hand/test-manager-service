@@ -87,13 +87,16 @@ export function renderSummary(summary, record, onClick) {
         <p
           role="none"
           style={{
-            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, maxWidth: 'unset', cursor: 'pointer',
+            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, maxWidth: 'unset',
           }}
           className="c7n-table-issueTreeTtile-table-p"
-          onClick={() => onClick(record)}
         >
-
-          {summary}
+          <span
+            onClick={() => onClick(record)}
+            className="c7n-table-issueTreeTtile-table-p-span"
+          >
+            {summary}
+          </span>
         </p>
       </Tooltip>
     </span>
