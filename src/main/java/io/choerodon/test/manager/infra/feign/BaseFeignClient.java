@@ -32,5 +32,13 @@ public interface BaseFeignClient {
 
     @GetMapping(value = "/choerodon/v1/projects/{project_id}")
     ResponseEntity<ProjectDTO> queryProject(@PathVariable(name = "project_id") Long id);
+    /**
+     * 根据组织id查询所有项目
+     *
+     * @param organizationId
+     * @return
+     */
+    @GetMapping(value = "/choerodon/v1/organizations/{organization_id}/projects/all")
+    ResponseEntity<List<ProjectDTO>> listProjectsByOrgId(@PathVariable("organization_id") Long organizationId);
 }
 

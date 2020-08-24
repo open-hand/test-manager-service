@@ -1,8 +1,6 @@
-package io.choerodon.test.manager.domain.entity;
+package io.choerodon.test.manager.infra.dto;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -14,6 +12,8 @@ import io.choerodon.mybatis.annotation.ModifyAudit;
 import io.choerodon.mybatis.annotation.VersionAudit;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.hzero.starter.keyencrypt.core.Encrypt;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *
@@ -25,13 +25,15 @@ import io.swagger.annotations.ApiModelProperty;
 @ModifyAudit
 @JsonInclude(value = JsonInclude.Include.NON_NULL)
 @Table(name = "test_priority")
-public class TestPriority extends AuditDomain {
+public class TestPriorityDTO extends AuditDomain {
 
     public static final String FIELD_ID = "id";
+    public static final String FIELD_ENABLE_FLAG = "enableFlag";
 
     @ApiModelProperty("主键id")
     @Id
     @GeneratedValue
+    @Encrypt
     private Long id;
     @ApiModelProperty(value = "优先级名称",required = true)
     @NotBlank
@@ -46,13 +48,35 @@ public class TestPriority extends AuditDomain {
     private Long organizationId;
     @ApiModelProperty(value = "是否默认",required = true)
     @NotNull
-    private Integer isDefault;
+    @Column(name = "is_default")
+    private Boolean defaultFlag;
     @ApiModelProperty(value = "排序",required = true)
     @NotNull
     private BigDecimal sequence;
     @ApiModelProperty(value = "是否启用",required = true)
     @NotNull
-    private Integer isEnable;
+    @Column(name = "is_enable")
+    private Boolean enableFlag;
+    @Transient
+    private String param;
+    @Transient
+    private Long changePriorityId;
+
+    public Long getChangePriorityId() {
+        return changePriorityId;
+    }
+
+    public void setChangePriorityId(Long changePriorityId) {
+        this.changePriorityId = changePriorityId;
+    }
+
+    public String getParam() {
+        return param;
+    }
+
+    public void setParam(String param) {
+        this.param = param;
+    }
 
     public Long getId() {
         return id;
@@ -94,12 +118,12 @@ public class TestPriority extends AuditDomain {
         this.organizationId = organizationId;
     }
 
-    public Integer getIsDefault() {
-        return isDefault;
+    public Boolean getDefaultFlag() {
+        return defaultFlag;
     }
 
-    public void setIsDefault(Integer isDefault) {
-        this.isDefault = isDefault;
+    public void setDefaultFlag(Boolean defaultFlag) {
+        this.defaultFlag = defaultFlag;
     }
 
     public BigDecimal getSequence() {
@@ -110,11 +134,11 @@ public class TestPriority extends AuditDomain {
         this.sequence = sequence;
     }
 
-    public Integer getIsEnable() {
-        return isEnable;
+    public Boolean getEnableFlag() {
+        return enableFlag;
     }
 
-    public void setIsEnable(Integer isEnable) {
-        this.isEnable = isEnable;
+    public void setEnableFlag(Boolean enableFlag) {
+        this.enableFlag = enableFlag;
     }
 }
