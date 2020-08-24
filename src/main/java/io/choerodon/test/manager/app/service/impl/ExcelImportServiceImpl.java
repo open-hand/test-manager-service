@@ -27,7 +27,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.hzero.boot.file.FileClient;
 import org.hzero.boot.message.MessageClient;
 import org.modelmapper.ModelMapper;
@@ -597,15 +596,6 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         logger.info("导入进度：{}", rate);
         if (rate == 100.) {
             logger.info("完成");
-        }
-    }
-
-    private String toJson(TestFileLoadHistoryWithRateVO testFileLoadHistoryWithRateVO){
-        try {
-            return objectMapper.writeValueAsString(testFileLoadHistoryWithRateVO);
-        } catch (IOException e) {
-            logger.error("json convert fail");
-            throw new CommonException(e);
         }
     }
 
