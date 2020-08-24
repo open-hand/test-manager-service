@@ -48,8 +48,6 @@
 
     .c7n-table-filter-bar {
       padding-right: 90px;
-      padding-top: 4px;
-      padding-bottom: 3px;
       height: 0.4rem;
     }
 
@@ -80,10 +78,12 @@
 
     .c7n-select-selection__rendered {
       padding-left: 0;
+      padding-top: .1rem;
     }
 
     .c7n-select-selection__placeholder {
-      padding-left: 0.01rem;
+      padding-left: 0.04rem;
+      left: 0;
     }
 
     .c7n-table-columns-chooser {
@@ -151,10 +151,14 @@
             text-overflow: ellipsis;
             display: inline-block; //fix ie11
 
-            .c7n-table-issueTreeTtile-table-p:hover {
-              color: #3F51B5;
-              text-decoration: underline;
-            }
+            .c7n-table-issueTreeTtile-table-p-span {
+              cursor: pointer;
+             }
+
+            .c7n-table-issueTreeTtile-table-p-span:hover {
+               color: #3F51B5;
+               text-decoration: underline;
+             }
           }
         }
       }
