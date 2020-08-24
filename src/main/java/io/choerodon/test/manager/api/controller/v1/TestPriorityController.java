@@ -2,7 +2,6 @@ package io.choerodon.test.manager.api.controller.v1;
 
 import java.util.List;
 
-import io.choerodon.test.manager.api.vo.agile.PriorityVO;
 import io.choerodon.test.manager.app.service.TestPriorityService;
 import io.swagger.annotations.ApiParam;
 import org.hzero.core.util.Results;
@@ -10,10 +9,8 @@ import org.hzero.core.base.BaseController;
 import io.choerodon.test.manager.infra.dto.TestPriorityDTO;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.hzero.mybatis.helper.SecurityTokenHelper;
 
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.swagger.annotation.Permission;
@@ -45,6 +42,7 @@ public class TestPriorityController extends BaseController {
     public ResponseEntity<TestPriorityDTO> create(@PathVariable("organization_id") Long organizationId,
                                                   @RequestBody TestPriorityDTO testPriorityDTO) {
         validObject(testPriorityDTO);
+        testPriorityDTO.setOrganizationId(organizationId);
         return Results.success(testPriorityService.create(organizationId, testPriorityDTO));
     }
 
