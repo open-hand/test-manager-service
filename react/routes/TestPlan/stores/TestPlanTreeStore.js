@@ -139,8 +139,12 @@ class TestPlanTreeStore {
   }
 
   async loadIssueTree(defaultSelectId) {
+    const { testPlanStatus } = this;
     this.setTreeLoading(true);
     const treeData = await getPlanTree(this.testPlanStatus);
+    if (testPlanStatus !== this.testPlanStatus) {
+      return;
+    }
     this.setTreeData(treeData, defaultSelectId);
     // console.log('loadIssueTree', treeData, defaultSelectId);
 
