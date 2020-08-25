@@ -91,7 +91,7 @@ public class TestPriorityServiceImpl implements TestPriorityService {
                 throw new CommonException("error.priority.illegal");
             }
         }
-        int isUpdate = testPriorityMapper.updateByPrimaryKeySelective(testPriorityDTO);
+        int isUpdate = testPriorityMapper.updateOptional(testPriorityDTO, TestPriorityDTO.UPDATE_FIELDS);
         if (isUpdate != 1) {
             throw new CommonException("error.priority.update");
         }

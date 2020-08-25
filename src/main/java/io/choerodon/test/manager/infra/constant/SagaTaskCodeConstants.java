@@ -12,17 +12,22 @@ public class SagaTaskCodeConstants {
      * 复制计划
      */
     public final static String TEST_MANAGER_CLONE_PLAN_TASK = "test-manager-clone-plan-task";
-
-
     /**
      * 改变计划状态
      */
     public final static String TEST_MANAGER_PLAN_FAIL_TASK = "test-manager-status-fail-task";
-
     /**
      * 复制用例文件夹
      */
     public final static String TEST_MANAGER_CLONE_TEST_ISSUE_FOLDER_TASK = "test-manager-clone-test-issue-folder-task";
 
+    /**
+     * 创建组织SagaCode
+     */
+    public static final String ORG_CREATE = "org-create-organization";
+    /**
+     * 创建项目SagaTaskCode
+     */
+    public static final String TASK_ORG_CREATE = "agile-create-organization";
 
 }
