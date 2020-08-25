@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import io.choerodon.test.manager.api.vo.agile.*;
+import io.choerodon.test.manager.api.vo.agile.PriorityVO;
 import io.swagger.annotations.ApiModelProperty;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 
