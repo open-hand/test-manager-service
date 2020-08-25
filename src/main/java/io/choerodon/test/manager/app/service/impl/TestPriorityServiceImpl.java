@@ -107,14 +107,9 @@ public class TestPriorityServiceImpl implements TestPriorityService {
         }
         checkLastPriority(organizationId, priorityId);
         TestPriorityDTO priority = testPriorityMapper.selectByPrimaryKey(priorityId);
+        Long count = checkDelete(organizationId, priorityId);
         List<ProjectDTO> projectVOS = baseFeignClient.listProjectsByOrgId(organizationId).getBody();
         List<Long> projectIds = projectVOS.stream().map(ProjectDTO::getId).collect(Collectors.toList());
-        Long count;
-        if (CollectionUtils.isEmpty(projectIds)) {
-            count = 0L;
-        } else {
-            count = this.checkPriorityDelete(organizationId, priorityId, projectIds);
-        }
         //执行优先级转换
         if (!count.equals(0L)) {
             if (changePriorityId == null) {
@@ -168,6 +163,22 @@ public class TestPriorityServiceImpl implements TestPriorityService {
         }
     }
 
+    @Override
+    public List<TestPriorityDTO> updateByList(List<TestPriorityDTO> list, Long organizationId) {
+        int seq = 1;
+        for (TestPriorityDTO priorityDTO : list) {
+            priorityDTO.setSequence(new BigDecimal(seq));
+            seq++;
+            int isUpdate = testPriorityMapper.updateOptional(priorityDTO, TestPriorityDTO.FIELD_SEQUENCE);
+            if (isUpdate != 1) {
+                throw new CommonException("error.priority.update");
+            }
+        }
+        TestPriorityDTO priorityDTO = new TestPriorityDTO();
+        priorityDTO.setOrganizationId(organizationId);
+        return testPriorityMapper.fulltextSearch(priorityDTO);
+    }
+
     /**
      * 当执行失效/删除时，若当前是默认优先级，则取消当前默认优先级，并设置第一个为默认优先级，要放在方法最后执行
      *
@@ -201,11 +212,26 @@ public class TestPriorityServiceImpl implements TestPriorityService {
         return res != null && !priorityId.equals(res.getId());
     }
 
+    @Override
     public Boolean checkName(Long organizationId, String name) {
         TestPriorityDTO priority = new TestPriorityDTO();
         priority.setOrganizationId(organizationId);
         priority.setName(name);
         TestPriorityDTO res = testPriorityMapper.selectOne(priority);
         return res != null;
+    }
+
+    @Override
+    public Long checkDelete(Long organizationId, Long id) {
+        //查询出组织下的所有项目
+        List<ProjectDTO> projectVOS = baseFeignClient.listProjectsByOrgId(organizationId).getBody();
+        List<Long> projectIds = projectVOS.stream().map(ProjectDTO::getId).collect(Collectors.toList());
+        Long count;
+        if (CollectionUtils.isEmpty(projectIds)) {
+            count = 0L;
+        } else {
+            count = this.checkPriorityDelete(organizationId, id, projectIds);
+        }
+        return count;
     }
 }

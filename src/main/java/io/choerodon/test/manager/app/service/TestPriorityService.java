@@ -2,7 +2,6 @@ package io.choerodon.test.manager.app.service;
 
 import java.util.List;
 
-import io.choerodon.core.domain.Page;
 import io.choerodon.test.manager.infra.dto.TestPriorityDTO;
 
 /**
@@ -25,4 +24,10 @@ public interface TestPriorityService {
     Long checkPriorityDelete(Long organizationId, Long priorityId, List<Long> projectIds);
 
     void changePriorityEnabled(Long organizationId, Long id, boolean enableFlag);
+
+    List<TestPriorityDTO> updateByList(List<TestPriorityDTO> list, Long organizationId);
+
+    Boolean checkName(Long organizationId, String name);
+
+    Long checkDelete(Long organizationId, Long id);
 }
