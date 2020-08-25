@@ -119,4 +119,12 @@ public interface TestCycleCaseMapper extends BaseMapper<TestCycleCaseDTO> {
     Integer countByCycleIds(@Param("list") List<Long> cycIds);
 
     int updateExecuteStatus(@Param("executeId") Long executeId);
+
+    void batchUpdateCycleCasePriority(@Param("priorityId") Long priorityId, @Param("changePriorityId") Long changePriorityId, @Param("userId") Long userId, @Param("projectIds") List<Long> projectIds);
+
+    long checkPriorityDelete(@Param("priorityId") Long priorityId, @Param("projectIds") List<Long> projectIds);
+
+    List<Long> selectALLProjectId();
+
+    void updatePriorityByProject(@Param("projectIds") List<Long> projectIds, @Param("priorityId") Long priorityId);
 }

@@ -270,6 +270,24 @@
             #{item}
         </foreach>
     </update>
+    <update id="batchUpdateCasePriority">
+        update test_case
+        set priority_id = #{changePriorityId},last_updated_by = #{userId}
+        where priority_id = #{priorityId}
+        AND project_id IN
+        <foreach collection="projectIds" item="index" open="(" separator="," close=")">
+            #{index}
+        </foreach>
+    </update>
+    <update id="updatePriorityByProject">
+        UPDATE test_case
+        SET priority_id = #{priorityId}
+        WHERE priority_id = 0
+        AND project_id IN
+        <foreach collection="projectIds" item="index" open="(" separator="," close=")">
+            #{index}
+        </foreach>
+    </update>
 
     <select id="listUnSelectCaseId" resultType="long">
        select case_id from test_case
@@ -331,6 +349,18 @@
         <where>
             <include refid="sqlParam"/>
         </where>
+    </select>
+    <select id="checkPriorityDelete" resultType="java.lang.Long">
+        select count(tc.issue_id)
+        from test_case tc
+        where tc.priority_id = #{priorityId}
+        AND tc.project_id IN
+        <foreach collection="projectIds" item="index" open="(" separator="," close=")">
+            #{index}
+        </foreach>
+    </select>
+    <select id="selectALLProjectId" resultType="java.lang.Long">
+        SELECT project_id FROM test_case WHERE priority_id = 0 GROUP BY project_id
     </select>
 
     <delete id="batchDeleteCases">

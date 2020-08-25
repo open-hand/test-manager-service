@@ -1,15 +1,18 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import io.choerodon.core.domain.Page;
 import io.choerodon.core.oauth.CustomUserDetails;
 import io.choerodon.core.oauth.DetailsHelper;
+import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.infra.enums.TestPlanInitStatus;
 
+import io.choerodon.test.manager.infra.feign.BaseFeignClient;
+import io.choerodon.test.manager.infra.util.ConvertUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,16 +21,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 
 import io.choerodon.test.manager.api.vo.agile.DataLogFixVO;
 import io.choerodon.test.manager.api.vo.agile.ProductVersionDTO;
 import io.choerodon.test.manager.api.vo.agile.ProjectInfoFixVO;
 import io.choerodon.test.manager.api.vo.agile.TestVersionFixVO;
 import io.choerodon.test.manager.infra.util.RankUtil;
-import io.choerodon.test.manager.api.vo.IssueLinkFixVO;
-import io.choerodon.test.manager.api.vo.TestCaseMigrateDTO;
-import io.choerodon.test.manager.api.vo.TestIssueFolderVO;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.feign.DataFixFeignClient;
@@ -86,6 +86,15 @@ public class DataMigrationServiceImpl implements DataMigrationService {
     @Autowired
     private TestStatusMapper testStatusMapper;
 
+    @Autowired
+    private TestPriorityService testPriorityService;
+
+    @Autowired
+    private TestPriorityMapper testPriorityMapper;
+
+    @Autowired
+    private BaseFeignClient baseFeignClient;
+
     @Async
     @Override
     public void fixData() {
@@ -121,6 +130,113 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         //15 fixCycleCaseFolderRank
         fixCycleCaseFolderRank();
         logger.info("==========================>>>>>>>> Data Migrate Succeed!!! FINISHED!!! <<<<<<<<============================");
+    }
+
+    @Async
+    @Override
+    public void fixDataTestCasePriority() {
+        logger.info("==============================>>>>>>>> test case proority Start <<<<<<<<=================================");
+        // 为所有组织修复优先级
+        List<TenantVO> body = getAllOrg();
+        // 为所有组织创建优先级
+        Map<Long, Long> orgMap = body.stream().collect(Collectors.toMap(TenantVO::getTenantId,
+                (tenant -> this.createDefaultPriority(tenant.getTenantId()))));
+        // 修复用例优先级数据
+        List<Long> caseProjectIdList = Optional.ofNullable(testCaseMapper.selectALLProjectId()).orElse(Collections.emptyList());
+        List<Long> cycleCaseProjectIdList =
+                Optional.ofNullable(testCycleCaseMapper.selectALLProjectId()).orElse(Collections.emptyList());
+        Set<Long> projectIdSet = new HashSet<>();
+        projectIdSet.addAll(caseProjectIdList);
+        projectIdSet.addAll(cycleCaseProjectIdList);
+        Map<Long, List<Long>> projectMap = projectIdSet.stream().collect(Collectors.toMap(ConvertUtils::getOrganizationId,
+                projectId ->{
+                    List<Long> list = new ArrayList<>();
+                    list.add(projectId);
+                    return list;
+                }, (v1, v2) -> {
+                    v1.addAll(v2);
+                    return v1;
+                }));
+        Long defaultPriority;
+        List<Long> failList = new ArrayList<>();
+        long successCount = 0;
+        for (Map.Entry<Long, List<Long>> entry : projectMap.entrySet()) {
+            // 如果不存在则创建默认三条高中低，并返回默认优先级id
+            defaultPriority = orgMap.get(entry.getKey());
+            if (Objects.isNull(defaultPriority)){
+                failList.add(entry.getKey());
+                continue;
+            }
+            if (caseProjectIdList.contains(entry.getKey())){
+                testCaseMapper.updatePriorityByProject(entry.getValue(), defaultPriority);
+            }
+            if (cycleCaseProjectIdList.contains(entry.getKey())){
+                testCycleCaseMapper.updatePriorityByProject(entry.getValue(), defaultPriority);
+            }
+            successCount++;
+        }
+        logger.info("organiztion priority fix: success count: [{}], fail list: [{}]", successCount, failList);
+        logger.info("==============================>>>>>>>> test case proority end <<<<<<<<=================================");
+    }
+
+    private List<TenantVO> getAllOrg() {
+        int currentPage = 0;
+        int size = 9999;
+        Page<TenantVO> body = baseFeignClient.getAllOrgs(currentPage, size).getBody();
+        if (org.apache.commons.collections4.CollectionUtils.isEmpty(body)){
+            return Collections.emptyList();
+        }
+        List<TenantVO> result = new ArrayList<>(body.getContent());
+        long page = body.getTotalElements() / body.getNumberOfElements();
+        if (page > 0){
+            for (int i = 1; i <= page; i++) {
+                Page<TenantVO> temp = baseFeignClient.getAllOrgs(i, size).getBody();
+                if (CollectionUtils.isEmpty(temp)){
+                    break;
+                }
+                result.addAll(temp);
+            }
+        }
+        return result;
+    }
+
+    private Long createDefaultPriority(Long organizationId){
+        Long defaultPriorityId;
+        TestPriorityDTO orgExist = new TestPriorityDTO();
+        orgExist.setOrganizationId(organizationId);
+        List<TestPriorityDTO> priorityDTOList = testPriorityMapper.select(orgExist);
+        if (CollectionUtils.isNotEmpty(priorityDTOList)){
+            defaultPriorityId = priorityDTOList.stream().filter(TestPriorityDTO::getDefaultFlag)
+                    .findFirst().map(TestPriorityDTO::getId)
+                    .orElseGet(() -> {
+                        TestPriorityDTO priorityDTO = priorityDTOList.get(0);
+                        priorityDTO.setDefaultFlag(true);
+                        testPriorityMapper.updateOptional(priorityDTO, TestPriorityDTO.FIELD_DEFAULT_FLAG);
+                        return priorityDTO.getId();
+                    });
+            return defaultPriorityId;
+        }
+        // 创建优先级
+        TestPriorityDTO priority = new TestPriorityDTO();
+        priority.setOrganizationId(organizationId);
+        priority.setEnableFlag(true);
+        priority.setColour("#FFB100");
+        priority.setName("高");
+        priority.setSequence(BigDecimal.ZERO);
+        testPriorityService.create(organizationId, priority);
+        priority.setId(null);
+        priority.setColour("#3575DF");
+        priority.setName("中");
+        priority.setSequence(BigDecimal.ONE);
+        priority.setDefaultFlag(true);
+        testPriorityService.create(organizationId, priority);
+        defaultPriorityId = priority.getId();
+        priority.setId(null);
+        priority.setColour("#3575DF");
+        priority.setName("低");
+        priority.setSequence(new BigDecimal("2"));
+        testPriorityService.create(organizationId, priority);
+        return defaultPriorityId;
     }
 
     private void migrateFolder() {

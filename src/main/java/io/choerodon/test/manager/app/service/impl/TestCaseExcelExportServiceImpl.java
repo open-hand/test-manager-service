@@ -74,8 +74,9 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
     private static final String USERS = "users";
 
     private enum CaseHeader {
-        COLUMN1("文件夹*"), COLUMN2("用例概要*"), COLUMN3("用例编号"), COLUMN5("前置条件"),
-        COLUMN6("执行人"), COLUMN8("测试步骤"), COLUMN9("测试数据"), COLUMN10("预期结果");
+        COLUMN1("文件夹*"), COLUMN2("用例概要*"), COLUMN11("用例优先级*"), COLUMN3("用例编号"),
+        COLUMN5("前置条件"), COLUMN6("执行人"), COLUMN8("测试步骤"), COLUMN9("测试数据"),
+        COLUMN10("预期结果");
         private String chinese;
 
         CaseHeader(String chinese) {

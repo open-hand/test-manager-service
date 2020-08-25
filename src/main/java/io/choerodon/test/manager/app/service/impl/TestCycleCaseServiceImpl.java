@@ -851,6 +851,12 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         return testCycleCaseDTO;
     }
 
+    @Override
+    public void batchUpdateCycleCasePriority(Long organizationId, Long priorityId, Long changePriorityId, Long userId
+            , List<Long> projectIds) {
+        testCycleCaseMapper.batchUpdateCycleCasePriority(priorityId, changePriorityId, userId, projectIds);
+    }
+
     private void queryAllCycleIds(Long cycleId, Set<Long> folderIds, Map<Long, List<TestCycleDTO>> folderMap) {
         folderIds.add(cycleId);
         List<TestCycleDTO> testCycleDTOS = folderMap.get(cycleId);

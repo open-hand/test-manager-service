@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.infra.feign;
 
 import io.choerodon.core.domain.Page;
+import io.choerodon.test.manager.api.vo.TenantVO;
 import io.choerodon.test.manager.api.vo.agile.ProjectDTO;
 import io.choerodon.test.manager.api.vo.agile.UserDO;
 import io.choerodon.test.manager.api.vo.agile.UserDTO;
@@ -32,5 +33,22 @@ public interface BaseFeignClient {
 
     @GetMapping(value = "/choerodon/v1/projects/{project_id}")
     ResponseEntity<ProjectDTO> queryProject(@PathVariable(name = "project_id") Long id);
+    /**
+     * 根据组织id查询所有项目
+     *
+     * @param organizationId
+     * @return
+     */
+    @GetMapping(value = "/choerodon/v1/organizations/{organization_id}/projects/all")
+    ResponseEntity<List<ProjectDTO>> listProjectsByOrgId(@PathVariable("organization_id") Long organizationId);
+
+    /**
+     * 分页查询所有组织
+     * @param pageRequest
+     * @return
+     */
+    @GetMapping("/choerodon/v1/organizations/all")
+    ResponseEntity<Page<TenantVO>> getAllOrgs(@RequestParam("page") int page,
+                                              @RequestParam("size") int size);
 }
 

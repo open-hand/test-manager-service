@@ -32,6 +32,15 @@ public class TestCaseDTO extends AuditDomain {
     private Long folderId;
     private Long versionNum;
     private Long projectId;
+    private Long priorityId;
+
+    public Long getPriorityId() {
+        return priorityId;
+    }
+
+    public void setPriorityId(Long priorityId) {
+        this.priorityId = priorityId;
+    }
 
     public Long getCaseId() {
         return caseId;

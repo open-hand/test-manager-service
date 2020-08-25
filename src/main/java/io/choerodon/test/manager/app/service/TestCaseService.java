@@ -217,4 +217,6 @@ public interface TestCaseService {
      * @return idset
      */
     Set<Long> selectFolderIds(Long projectId, Long folderId);
+
+    void batchUpdateCasePriority(Long organizationId, Long priorityId, Long changePriorityId, Long userId, List<Long> projectIds);
 }

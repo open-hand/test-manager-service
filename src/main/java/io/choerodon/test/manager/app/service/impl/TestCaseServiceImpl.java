@@ -1,5 +1,7 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import static io.choerodon.test.manager.infra.constant.DataLogConstants.BATCH_UPDATE_CASE_PRIORITY;
+
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
@@ -577,6 +579,13 @@ public class TestCaseServiceImpl implements TestCaseService {
         Map<Long, List<TestIssueFolderDTO>> folderMap = testIssueFolderMapper.select(testIssueFolder).stream().filter(issueFolderDTO -> !"api".equals(issueFolderDTO.getType())).collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
         queryAllFolderIds(folderId, folderIds, folderMap);
         return folderIds;
+    }
+
+    @Override
+    @DataLog(type = BATCH_UPDATE_CASE_PRIORITY, single = false)
+    public void batchUpdateCasePriority(Long organizationId, Long priorityId, Long changePriorityId, Long userId,
+                                         List<Long> projectIds) {
+        testCaseMapper.batchUpdateCasePriority(priorityId, changePriorityId, userId, projectIds);
     }
 
     private TestCaseDTO baseQuery(Long caseId) {

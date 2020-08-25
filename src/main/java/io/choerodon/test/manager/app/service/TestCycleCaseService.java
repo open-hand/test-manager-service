@@ -137,4 +137,6 @@ public interface TestCycleCaseService {
 
 
     TestCycleCaseDTO baseInsert(TestCycleCaseDTO testCycleCaseDTO);
+
+    void batchUpdateCycleCasePriority(Long organizationId, Long priorityId, Long changePriorityId, Long userId, List<Long> projectIds);
 }

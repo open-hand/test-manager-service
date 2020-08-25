@@ -87,4 +87,12 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
     changeSet(id: '2019-12-11-test-cycle_drop_uk_cycle_id_rank', author: 'lizhaozhong') {
         dropIndex(tableName: 'test_cycle_case', indexName: 'uk_cycle_id_rank')
     }
+
+    changeSet(id: '2020-08-24-test-cycle-case-add-column-priority-id', author: 'jiaxu.cui@gmail.com') {
+        addColumn(tableName: 'test_cycle_case') {
+            column(name: 'priority_id', type: 'BIGINT UNSIGNED', remarks: 'priority id'){
+                constraints(nullable: false)
+            }
+        }
+    }
 }

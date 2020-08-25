@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="io.choerodon.test.manager.infra.mapper.TestPriorityMapper">
+    <resultMap id="BaseResultMap" type="io.choerodon.test.manager.infra.dto.TestPriorityDTO">
+        <result column="id" property="id" jdbcType="DECIMAL"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="colour" property="colour" jdbcType="VARCHAR"/>
+        <result column="organization_id" property="organizationId" jdbcType="DECIMAL"/>
+        <result column="is_default" property="isDefault" jdbcType="DECIMAL"/>
+        <result column="sequence" property="sequence" jdbcType="DECIMAL"/>
+        <result column="OBJECT_VERSION_NUMBER" property="objectVersionNumber" jdbcType="DECIMAL"/>
+        <result column="CREATED_BY" property="createdBy" jdbcType="DECIMAL"/>
+        <result column="CREATION_DATE" property="creationDate" jdbcType="DATE"/>
+        <result column="LAST_UPDATED_BY" property="lastUpdatedBy" jdbcType="DECIMAL"/>
+        <result column="LAST_UPDATE_DATE" property="lastUpdateDate" jdbcType="DATE"/>
+        <result column="is_enable" property="isEnable" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <update id="updateMinSeqAsDefault">
+        UPDATE test_priority SET is_default = 1
+        WHERE id = (
+            select
+               t.id
+            from(
+                select p.id as id from test_priority p
+                WHERE p.organization_id = #{organizationId}
+                  AND p.is_enable = 1 order by p.sequence asc LIMIT 1
+            ) t)
+    </update>
+
+    <delete id="cancelDefaultPriority">
+        UPDATE test_priority SET is_default = 0
+        WHERE organization_id=#{organizationId} AND is_default = 1
+    </delete>
+    <select id="fulltextSearch" resultType="io.choerodon.test.manager.infra.dto.TestPriorityDTO">
+        SELECT P.*
+        FROM test_priority P
+        WHERE 1=1
+        <if test="priority.organizationId != null">
+            AND P.organization_id = #{organizationId}
+        </if>
+        <if test="priority.name != null">
+            AND P.name LIKE concat('%',#{name},'%')
+        </if>
+        <if test="priority.description != null">
+            AND P.description LIKE concat('%',#{description},'%')
+        </if>
+        <if test="priority.colour != null">
+            AND P.colour LIKE concat('%',#{colour},'%')
+        </if>
+        <if test="param != null">
+            AND ( P.name LIKE concat('%',#{param},'%')
+            OR P.description LIKE concat('%',#{param},'%')
+            OR P.colour LIKE concat('%',#{param},'%')
+            )
+        </if>
+        ORDER BY P.is_enable DESC,P.sequence
+    </select>
+    <select id="getNextSequence" resultType="java.math.BigDecimal">
+        SELECT IFNULL(MAX(P.sequence),0) FROM test_priority P WHERE P.organization_id = #{organizationId}
+    </select>
+</mapper>

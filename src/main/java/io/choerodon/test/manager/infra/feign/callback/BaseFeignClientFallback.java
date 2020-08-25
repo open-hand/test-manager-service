@@ -3,6 +3,7 @@ package io.choerodon.test.manager.infra.feign.callback;
 import java.util.List;
 
 import io.choerodon.core.domain.Page;
+import io.choerodon.test.manager.api.vo.TenantVO;
 import io.choerodon.test.manager.api.vo.agile.ProjectDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -34,6 +35,16 @@ public class BaseFeignClientFallback implements BaseFeignClient {
 
     @Override
     public ResponseEntity<ProjectDTO> queryProject(Long id) {
+        throw new CommonException(QUERY_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<List<ProjectDTO>> listProjectsByOrgId(Long organizationId) {
+        throw new CommonException("error.iamServiceFeignFallback.listProjectsByOrgId");
+    }
+
+    @Override
+    public ResponseEntity<Page<TenantVO>> getAllOrgs(int page, int size) {
         throw new CommonException(QUERY_ERROR);
     }
 }

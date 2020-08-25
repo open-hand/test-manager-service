@@ -2,14 +2,20 @@ package io.choerodon.test.manager.infra.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
+import io.choerodon.test.manager.api.vo.agile.ProjectDTO;
+import io.choerodon.test.manager.infra.feign.BaseFeignClient;
 import org.springframework.beans.BeanUtils;
 
 public class ConvertUtils {
+
+    private static final Map<Long, ProjectDTO> ORGANIZATION_MAP = new ConcurrentHashMap<>();
 
     private ConvertUtils() {
     }
@@ -137,5 +143,24 @@ public class ConvertUtils {
             result.add(value);
         }
         return result;
+    }
+
+    public static Long getOrganizationId(Long projectId) {
+        return queryProject(projectId).getOrganizationId();
+    }
+
+    private static ProjectDTO queryProject(Long projectId) {
+        ProjectDTO projectVO = ORGANIZATION_MAP.get(projectId);
+        if (projectVO != null) {
+            return projectVO;
+        } else {
+            projectVO = SpringBeanUtil.getBean(BaseFeignClient.class).queryProject(projectId).getBody();
+            if (projectVO != null) {
+                ORGANIZATION_MAP.put(projectId, projectVO);
+                return projectVO;
+            } else {
+                throw new CommonException("error.queryProject.notFound");
+            }
+        }
     }
 }

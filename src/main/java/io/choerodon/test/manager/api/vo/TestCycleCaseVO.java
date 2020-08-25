@@ -123,6 +123,17 @@ public class TestCycleCaseVO {
     @ApiModelProperty(value = "所属计划Id")
     @Encrypt
     private Long planId;
+    @ApiModelProperty(value = "优先级")
+    @Encrypt
+    private Long priorityId;
+
+    public Long getPriorityId() {
+        return priorityId;
+    }
+
+    public void setPriorityId(Long priorityId) {
+        this.priorityId = priorityId;
+    }
 
     public Long getProjectId() {
         return projectId;
