@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 import io.choerodon.swagger.annotation.Permission;
 
-import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.test.manager.app.service.DataMigrationService;
 
 /**
@@ -30,6 +29,14 @@ public class TestDataFixController {
     public ResponseEntity fix() {
         dataMigrationService.fixData();
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @Permission(level = ResourceLevel.SITE)
+    @ApiOperation("【0.24】修复测试用例数据数据")
+    @GetMapping("/fix_data_test_case")
+    public ResponseEntity<Void> fixDataTestCasePriority() {
+        dataMigrationService.fixDataTestCasePriority();
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

@@ -7,4 +7,9 @@ public interface DataMigrationService {
 
     void fixData();
 
+    /**
+     * 修复测试用例优先级
+     */
+    void fixDataTestCasePriority();
+
 }
