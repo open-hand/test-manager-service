@@ -40,15 +40,14 @@ public class TestCaseVO {
     @ApiModelProperty(value = "文件夹名字")
     private String folderName;
     @ApiModelProperty(value = "优先级")
-    @Encrypt
-    private Long priorityId;
+    private PriorityVO priorityVO;
 
-    public Long getPriorityId() {
-        return priorityId;
+    public PriorityVO getPriorityVO() {
+        return priorityVO;
     }
 
-    public void setPriorityId(Long priorityId) {
-        this.priorityId = priorityId;
+    public void setPriorityVO(PriorityVO priorityVO) {
+        this.priorityVO = priorityVO;
     }
 
     public Long getCaseId() {

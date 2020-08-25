@@ -3,6 +3,7 @@ package io.choerodon.test.manager.app.eventhandler;
 import java.io.IOException;
 import java.util.*;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -134,6 +135,15 @@ public class TestManagerEventHandler {
         TestPlanVO testPlanVO = JSONObject.parseObject(message, TestPlanVO.class);
         testPlanVO.setInitStatus(TestPlanInitStatus.FAIL);
         testPlanServcie.update(testPlanVO.getProjectId(),testPlanVO);
+    }
+
+    @SagaTask(code = SagaTaskCodeConstants.ORG_CREATE,
+            description = "创建组织事件",
+            sagaCode = SagaTaskCodeConstants.ORG_CREATE,
+            seq = 1)
+    public String handleOrgaizationCreateByConsumeSagaTask(String data) {
+        LOGGER.info("消费创建组织消息{}", data);
+        return data;
     }
 
 }

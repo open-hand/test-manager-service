@@ -1,7 +1,9 @@
 package io.choerodon.test.manager.api.controller.v1;
 
 import java.util.List;
+import java.util.Optional;
 
+import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.app.service.TestPriorityService;
 import io.swagger.annotations.ApiParam;
 import org.hzero.core.util.Results;
@@ -9,6 +11,7 @@ import org.hzero.core.base.BaseController;
 import io.choerodon.test.manager.infra.dto.TestPriorityDTO;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,6 +36,7 @@ public class TestPriorityController extends BaseController {
     @GetMapping
     public ResponseEntity<List<TestPriorityDTO>> list(@PathVariable("organization_id") Long organizationId,
                                                       TestPriorityDTO testPriorityDTO) {
+        testPriorityDTO.setOrganizationId(organizationId);
         return Results.success(testPriorityService.list(organizationId, testPriorityDTO));
     }
 
@@ -83,5 +87,33 @@ public class TestPriorityController extends BaseController {
                                                 @PathVariable @Encrypt Long id) {
         testPriorityService.changePriorityEnabled(organizationId, id, false);
         return Results.success();
+    }
+
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @ApiOperation(value = "更新展示顺序")
+    @PutMapping(value = "/sequence")
+    public ResponseEntity<List<TestPriorityDTO>> updateByList(@PathVariable("organization_id") Long organizationId,
+                                                              @RequestBody List<TestPriorityDTO> list) {
+
+        return new ResponseEntity<>(testPriorityService.updateByList(list, organizationId), HttpStatus.OK);
+    }
+
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @ApiOperation(value = "校验优先级名字是否未被使用")
+    @GetMapping(value = "/check_name")
+    public ResponseEntity<Boolean> checkName(@PathVariable("organization_id") Long organizationId,
+                                             @RequestParam("name") String name) {
+        return Optional.ofNullable(testPriorityService.checkName(organizationId, name))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.priorityName.check"));
+    }
+
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @ApiOperation(value = "校验删除优先级")
+    @GetMapping("/check_delete/{id}")
+    public ResponseEntity<Long> checkDelete(@PathVariable("organization_id") Long organizationId,
+                                            @ApiParam(value = "id", required = true)
+                                            @PathVariable @Encrypt Long id) {
+        return new ResponseEntity<>(testPriorityService.checkDelete(organizationId, id), HttpStatus.OK);
     }
 }
