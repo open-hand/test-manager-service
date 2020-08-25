@@ -29,6 +29,7 @@ public class TestPriorityDTO extends AuditDomain {
 
     public static final String FIELD_ID = "id";
     public static final String FIELD_ENABLE_FLAG = "enableFlag";
+    public static final String FIELD_DEFAULT_FLAG = "defaultFlag";
 
     @ApiModelProperty("主键id")
     @Id
