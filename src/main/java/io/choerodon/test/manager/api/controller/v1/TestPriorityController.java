@@ -33,6 +33,7 @@ public class TestPriorityController extends BaseController {
     @GetMapping
     public ResponseEntity<List<TestPriorityDTO>> list(@PathVariable("organization_id") Long organizationId,
                                                       TestPriorityDTO testPriorityDTO) {
+        testPriorityDTO.setOrganizationId(organizationId);
         return Results.success(testPriorityService.list(organizationId, testPriorityDTO));
     }
 
