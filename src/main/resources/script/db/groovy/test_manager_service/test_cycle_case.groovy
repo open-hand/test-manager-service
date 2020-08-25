@@ -90,7 +90,9 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
 
     changeSet(id: '2020-08-24-test-cycle-case-add-column-priority-id', author: 'jiaxu.cui@gmail.com') {
         addColumn(tableName: 'test_cycle_case') {
-            column(name: 'priority_id', type: 'BIGINT UNSIGNED', remarks: 'priority id')
+            column(name: 'priority_id', type: 'BIGINT UNSIGNED', remarks: 'priority id'){
+                constraints(nullable: false)
+            }
         }
     }
 }

@@ -775,6 +775,10 @@
         </foreach>
     </select>
 
+    <select id="selectALLProjectId" resultType="java.lang.Long">
+        SELECT project_id FROM test_cycle_case WHERE priority_id = 0 GROUP BY project_id
+    </select>
+
     <update id="updateExecuteStatus">
          UPDATE test_cycle_case
         SET execution_status = (
@@ -798,6 +802,13 @@
         <foreach collection="projectIds" item="index" open="(" separator="," close=")">
             #{index}
         </foreach>
+    </update>
+
+    <update id="updatePriorityByProject">
+        UPDATE test_cycle_case
+        SET priority_id = #{priorityId}
+        WHERE project_id = #{projectId}
+        AND priority_id = 0
     </update>
 </mapper>
 

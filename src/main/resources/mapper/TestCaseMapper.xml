@@ -279,6 +279,12 @@
             #{index}
         </foreach>
     </update>
+    <update id="updatePriorityByProject">
+        UPDATE test_case
+        SET priority_id = #{priorityId}
+        WHERE project_id = #{projectId}
+        AND priority_id = 0
+    </update>
 
     <select id="listUnSelectCaseId" resultType="long">
        select case_id from test_case
@@ -349,6 +355,9 @@
         <foreach collection="projectIds" item="index" open="(" separator="," close=")">
             #{index}
         </foreach>
+    </select>
+    <select id="selectALLProjectId" resultType="java.lang.Long">
+        SELECT project_id FROM test_case WHERE priority_id = 0 GROUP BY project_id
     </select>
 
     <delete id="batchDeleteCases">

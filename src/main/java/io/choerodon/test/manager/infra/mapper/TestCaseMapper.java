@@ -52,4 +52,8 @@ public interface TestCaseMapper extends BaseMapper<TestCaseDTO> {
     void batchUpdateCasePriority(@Param("priorityId") Long priorityId, @Param("changePriorityId") Long changePriorityId, @Param("userId") Long userId, @Param("projectIds") List<Long> projectIds);
 
     long checkPriorityDelete(@Param("priorityId") Long priorityId, @Param("projectIds") List<Long> projectIds);
+
+    List<Long> selectALLProjectId();
+
+    void updatePriorityByProject(@Param("projectId") Long projectId, @Param("priorityId") Long priorityId);
 }
