@@ -148,23 +148,30 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         Set<Long> projectIdSet = new HashSet<>();
         projectIdSet.addAll(caseProjectIdList);
         projectIdSet.addAll(cycleCaseProjectIdList);
-        Map<Long, Long> projectMap = projectIdSet.stream().collect(Collectors.toMap(Function.identity(),
-                ConvertUtils::getOrganizationId));
+        Map<Long, List<Long>> projectMap = projectIdSet.stream().collect(Collectors.toMap(ConvertUtils::getOrganizationId,
+                projectId ->{
+                    List<Long> list = new ArrayList<>();
+                    list.add(projectId);
+                    return list;
+                }, (v1, v2) -> {
+                    v1.addAll(v2);
+                    return v1;
+                }));
         Long defaultPriority;
         List<Long> failList = new ArrayList<>();
         long successCount = 0;
-        for (Map.Entry<Long, Long> entry : projectMap.entrySet()) {
+        for (Map.Entry<Long, List<Long>> entry : projectMap.entrySet()) {
             // 如果不存在则创建默认三条高中低，并返回默认优先级id
-            defaultPriority = orgMap.get(entry.getValue());
+            defaultPriority = orgMap.get(entry.getKey());
             if (Objects.isNull(defaultPriority)){
-                failList.add(entry.getValue());
+                failList.add(entry.getKey());
                 continue;
             }
             if (caseProjectIdList.contains(entry.getKey())){
-                testCaseMapper.updatePriorityByProject(entry.getKey(), defaultPriority);
+                testCaseMapper.updatePriorityByProject(entry.getValue(), defaultPriority);
             }
             if (cycleCaseProjectIdList.contains(entry.getKey())){
-                testCycleCaseMapper.updatePriorityByProject(entry.getKey(), defaultPriority);
+                testCycleCaseMapper.updatePriorityByProject(entry.getValue(), defaultPriority);
             }
             successCount++;
         }

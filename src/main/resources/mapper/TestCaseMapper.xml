@@ -282,8 +282,11 @@
     <update id="updatePriorityByProject">
         UPDATE test_case
         SET priority_id = #{priorityId}
-        WHERE project_id = #{projectId}
-        AND priority_id = 0
+        WHERE priority_id = 0
+        AND project_id IN
+        <foreach collection="projectIds" item="index" open="(" separator="," close=")">
+            #{index}
+        </foreach>
     </update>
 
     <select id="listUnSelectCaseId" resultType="long">
