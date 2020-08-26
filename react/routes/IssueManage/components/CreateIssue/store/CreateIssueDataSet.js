@@ -1,12 +1,24 @@
 import { stores } from '@choerodon/boot';
-import { message } from 'choerodon-ui/pro';
-import { getProjectId, beforeTextUpload } from '../../../../../common/utils';
+import { message, DataSet } from 'choerodon-ui/pro';
+import { getProjectId, beforeTextUpload, getOrganizationId } from '../../../../../common/utils';
 
 const { AppState } = stores;
-
+function priorityOptionDataSet() {
+  return new DataSet({
+    autoQuery: true,
+    paging: false,
+    transport: {
+      read: {
+        url: `/test/v1/organizations/${getOrganizationId()}/test_priority`,
+        method: 'get',
+      },
+    },
+  });
+}
 function CreateIssueDataSet(intlPrefix, intl) {
   const summary = intl.formatMessage({ id: `${intlPrefix}_issueFilterBySummary` });
   const description = '描述';
+  const priority = intl.formatMessage({ id: `${intlPrefix}_issueFilterByPriority` });
   const folderId = intl.formatMessage({ id: `${intlPrefix}_folder` });
   const Issuelabel = intl.formatMessage({ id: 'summary_label' });
   return {
@@ -20,6 +32,10 @@ function CreateIssueDataSet(intlPrefix, intl) {
         name: 'summary', type: 'string', label: summary, required: true,
       },
       { name: 'description', type: 'object', label: description },
+      {
+        name: 'priority', type: 'string', label: priority, options: priorityOptionDataSet(),
+      },
+
       {
         name: 'fileList',
         type: 'object',

@@ -323,6 +323,7 @@ const zhCN = {
   issue_edit_manager: '被指定人',
   issue_edit_updater: '更新人',
   issue_edit_date: '日期',
+  issue_edit_priority: '优先级',
   issue_edit_createDate: '创建时间',
   issue_edit_updateDate: '更新时间',
   issue_edit_testDetail: '测试详细信息',
@@ -526,6 +527,31 @@ const zhCN = {
   'container.term.log': '日志',
   'container.log.header.title': '查看容器日志',
   'container.chooseEnv': '选择环境',
+
+  // 优先级
+  'priority.title': '优先级',
+  'priority.create': '创建优先级',
+  'priority.edit': '编辑优先级',
+  'priority.name': '名称',
+  'priority.des': '描述',
+  'priority.color': '颜色',
+  'priority.list.tip': '以下列表显示了你当前使用的优先级，按照从高到低的顺序排列，你也可以通过上下拖拽改变显示顺序。',
+  'priority.create.name.placeholder': '请输入优先级名称',
+  'priority.create.des.placeholder': '请输入此优先级的详细描述',
+  'priority.create.color.error': '颜色已经存在',
+  'priority.create.name.error': '名称已经存在',
+  'priority.delete.title': '删除优先级',
+  'priority.delete.unused.notice': '注意：将会从所有使用的事件单中删除这个优先级。',
+  'priority.delete.used,notice':
+      '注意：将会从所有使用的事件单中删除这个优先级。请你为受影响的事件单选择一个新的优先级。',
+  'priority.delete.chooseNewPriority.placeholder': '请选择一个新的优先级',
+  'priority.default': '（默认）',
+  'priority.delete.notice': '注意：将会从所有使用的问题中删除这个优先级。',
+  'priority.delete.used.notice': '请你为受影响的问题选择一个新的优先级。',
+  'priority.delete.used.tip.prefix': '当前有 ',
+  'priority.delete.used.tip.suffix': ' 个问题正在使用此优先级。',
+  'priority.disable.title': '停用优先级',
+  'priority.disable.notice': '注意：停用后你的问题将无法选择到此优先级。',
 
 };
 

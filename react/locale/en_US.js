@@ -301,6 +301,7 @@ const enUS = {
   issue_edit_manager: 'Manager',
   issue_edit_updater: 'updater',
   issue_edit_date: 'Date',
+  issue_edit_priority: 'Priority',
   issue_edit_createDate: 'Create at',
   issue_edit_updateDate: 'Update at',
   issue_edit_testDetail: 'Test detail',
@@ -380,5 +381,30 @@ const enUS = {
   createBug_field_component: 'component',
   createBug_field_label: 'label',
   createBug_field_annex: 'annex',
+
+  // 优先级
+  'priority.title': 'Priority',
+  'priority.create': 'Add Priority',
+  'priority.edit': 'Edit Priority',
+  'priority.name': 'Name',
+  'priority.des': 'Description',
+  'priority.color': 'Color',
+  'priority.list.tip': 'The following list shows the priority you are currently using, in order of highest to lowest, you can also change the display order by dragging up and down.',
+  'priority.create.name.placeholder': 'Please Input Name',
+  'priority.create.des.placeholder': 'Please Input Description',
+  'priority.create.color.error': 'color exist',
+  'priority.create.name.error': 'name exist',
+  'priority.delete.title': 'Delete Priority',
+  'priority.delete.unused.notice': 'Note：This priority will be removed from all used tickets.。',
+  'priority.delete.used,notice': 'Note: This priority will be removed from all used event tickets.Please select a new priority for the affected event list.',
+  'priority.delete.chooseNewPriority.placeholder': 'Please choose a new priority',
+  'priority.default': '(Default)',
+  'priority.delete.notice': 'Note: This priority will be removed from all used issues.',
+  'priority.delete.used.notice': 'Please choose a new priority for the affected issue.',
+  'priority.delete.used.tip.prefix': 'There are currently ',
+  'priority.delete.used.tip.suffix': ' issues that are using this priority.',
+  'priority.disable.title': 'Disable Priority',
+  'priority.disable.notice': 'Note: Your issue will not be able to choose this priority after disable.',
+ 
 };
 export default enUS;
