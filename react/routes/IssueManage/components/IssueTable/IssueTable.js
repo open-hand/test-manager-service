@@ -18,6 +18,7 @@ import {
   renderIssueNum, renderSummary, renderAction,
 } from './tags';
 import './IssueTable.less';
+import PriorityTag from '../../../../components/PriorityTag';
 
 
 export default observer((props) => {
@@ -292,6 +293,7 @@ export default observer((props) => {
       render: (text, record) => renderAction(record, history, reLoadTable),
       width: '0.6rem',
     },
+
     {
       title: '用例编号',
       dataIndex: 'caseNum',
@@ -299,6 +301,14 @@ export default observer((props) => {
       sorter: true,
       filters: [],
       render: caseNum => renderIssueNum(caseNum),
+    },
+    {
+      title: '优先级',
+      dataIndex: 'priorityId',
+      key: 'priorityId',
+      sorter: true,
+      width: '1rem',
+      render: (priorityId, record) => priorityId && <PriorityTag priority={record} />,
     },
     {
       title: '创建人',

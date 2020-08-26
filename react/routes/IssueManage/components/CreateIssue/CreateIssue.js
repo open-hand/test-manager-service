@@ -3,7 +3,7 @@ import React, {
 } from 'react';
 import { withRouter } from 'react-router-dom';
 import {
-  Form, DataSet, Icon, message,
+  Form, DataSet, Icon, message, Select,
 } from 'choerodon-ui/pro';
 import { PromptInput } from '@/components';
 import UploadButton from './UploadButton';
@@ -75,6 +75,7 @@ function CreateIssue(props) {
     <Form dataSet={createDataset} className={`test-create-issue-form ${visibleDetail ? '' : 'test-create-issue-form-hidden'}`}>
       <PromptInput name="summary" maxLength={44} />
       <SelectTree name="folder" parentDataSet={createDataset} defaultValue={defaultFolderValue.id} />
+      <Select name="priority" />
       <div role="none" style={{ cursor: 'pointer' }} onClick={() => setVisibleDetail(!visibleDetail)}>
         <div className="test-create-issue-line" />
         <span className="test-create-issue-head">
