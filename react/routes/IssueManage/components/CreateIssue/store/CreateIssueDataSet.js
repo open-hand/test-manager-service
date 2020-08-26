@@ -7,6 +7,10 @@ function priorityOptionDataSet() {
   return new DataSet({
     autoQuery: true,
     paging: false,
+    fields: [
+      { name: 'id', type: 'string' },
+      { name: 'name', type: 'string' },
+    ],
     transport: {
       read: {
         url: `/test/v1/organizations/${getOrganizationId()}/test_priority`,
@@ -33,7 +37,7 @@ function CreateIssueDataSet(intlPrefix, intl) {
       },
       { name: 'description', type: 'object', label: description },
       {
-        name: 'priority', type: 'string', label: priority, options: priorityOptionDataSet(),
+        name: 'priority', type: 'string', label: priority, options: priorityOptionDataSet(), textField: 'name', valueField: 'id',
       },
 
       {

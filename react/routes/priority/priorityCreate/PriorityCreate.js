@@ -44,6 +44,7 @@ class PriorityCreate extends Component {
             description: des,
             defaultFlag: !!isDefault,
             colour: priorityColor,
+            enableFlag: true,
             // objectVersionNumber: 1,
           });
           message.success('添加成功');
@@ -137,7 +138,7 @@ class PriorityCreate extends Component {
                   rules: [
                     {
                       required: true,
-                      message: intl.formatMessage({ id: 'required' }),
+                      message: intl.formatMessage({ id: 'priority.name.required.error' }),
                     },
                     {
                       validator: this.checkName,
