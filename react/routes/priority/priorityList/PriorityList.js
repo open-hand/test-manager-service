@@ -331,7 +331,7 @@ class PriorityList extends Component {
 
     return (
       <Page
-        className="c7nagile-priority"
+        className="c7ntest-priority"
         service={[
           'choerodon.code.organization.setting.issue.priority.ps.default',
         ]}

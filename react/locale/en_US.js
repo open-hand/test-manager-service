@@ -77,16 +77,16 @@ const enUS = {
   execute_testStep: 'Execute Step',
   execute_testData: 'Test Data',
   execute_expectedOutcome: 'Expected outcome',
-  execute_stepAttachment: 'Step attachment', 
+  execute_stepAttachment: 'Step attachment',
   execute_stepStatus: 'Status',
-  execute_comment: 'Comment',    
+  execute_comment: 'Comment',
   execute_copy: 'Copy',
   execute_move: 'Move',
   excute_save: 'Save',
   excute_cancel: 'Cancel',
   // 执行历史记录表格
   execute_history_oldValue: 'Old value',
-  execute_history_newValue: 'New value',  
+  execute_history_newValue: 'New value',
   // 编辑步骤详情侧边栏
   execute_stepDetail: 'Step detail',
   execute_stepEditTitle: 'Edit the info of test step“{testStep}”',
@@ -107,7 +107,7 @@ const enUS = {
   summary_totalNotPlan_tip: 'Number of test cases without test execution added',
   summary_testSummary: 'Test Summary',
   summary_summaryByVersion: 'By Version',
-  summary_summaryByComponent: 'By Component',  
+  summary_summaryByComponent: 'By Component',
   summary_summaryByLabel: 'By Label',
   summary_noVersion: 'Not Plan',
   summary_noComponent: 'No Component',
@@ -145,7 +145,7 @@ const enUS = {
   report_dropDown_defect: 'defect to demand',
   report_dropDown_progress: 'execute progress',
   report_dropDown_home: 'home',
-  report_demandToDefect: 'demand -> test -> execute -> defect', 
+  report_demandToDefect: 'demand -> test -> execute -> defect',
   report_defectToDemand: 'defect -> execute -> test -> demand',
   report_defectToProgress: 'execute progress',
   report_demandToDefect_description: 'Search for requirements or defects from the Type field, then select the appropriate version to narrow the scope, and finally click Generate to create a traceability report.',
@@ -383,6 +383,8 @@ const enUS = {
   createBug_field_annex: 'annex',
 
   // 优先级
+  disable: 'disable',
+  enable: 'enable',
   'priority.title': 'Priority',
   'priority.create': 'Add Priority',
   'priority.edit': 'Edit Priority',
@@ -390,6 +392,7 @@ const enUS = {
   'priority.des': 'Description',
   'priority.color': 'Color',
   'priority.list.tip': 'The following list shows the priority you are currently using, in order of highest to lowest, you can also change the display order by dragging up and down.',
+  'priority.name.required.error': 'name is required',
   'priority.create.name.placeholder': 'Please Input Name',
   'priority.create.des.placeholder': 'Please Input Description',
   'priority.create.color.error': 'color exist',
@@ -405,6 +408,6 @@ const enUS = {
   'priority.delete.used.tip.suffix': ' issues that are using this priority.',
   'priority.disable.title': 'Disable Priority',
   'priority.disable.notice': 'Note: Your issue will not be able to choose this priority after disable.',
- 
+
 };
 export default enUS;

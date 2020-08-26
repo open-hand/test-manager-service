@@ -441,7 +441,7 @@ const zhCN = {
   'yaml.modify': '当前修改',
   'yaml.yaml.error': '格式错误',
   'yaml.error.tooltip': 'Values文件yaml格式错误，请在应用代码中修改错误并重新生成正确的应用版本。',
-  
+
   // 任务明细
   'taskdetail.header.title': '任务明细',
   'taskdetail.create': '创建任务',
@@ -511,7 +511,7 @@ const zhCN = {
   'container.term.title': '在容器组"{name}"中运行命令',
   'container.log.description': '您可在此查看该容器的日志进行错误定位和状态监控。',
   'container.term.description': '您可在此选择容器组下的Pod运行命令进行相关信息实时查看。',
-  
+
   // container
   'container.header.title': '容器',
   'container.status': '状态',
@@ -529,6 +529,8 @@ const zhCN = {
   'container.chooseEnv': '选择环境',
 
   // 优先级
+  disable: '停用',
+  enable: '启用',
   'priority.title': '优先级',
   'priority.create': '创建优先级',
   'priority.edit': '编辑优先级',
@@ -536,6 +538,7 @@ const zhCN = {
   'priority.des': '描述',
   'priority.color': '颜色',
   'priority.list.tip': '以下列表显示了你当前使用的优先级，按照从高到低的顺序排列，你也可以通过上下拖拽改变显示顺序。',
+  'priority.name.required.error': '优先级名称为必输项',
   'priority.create.name.placeholder': '请输入优先级名称',
   'priority.create.des.placeholder': '请输入此优先级的详细描述',
   'priority.create.color.error': '颜色已经存在',
@@ -543,7 +546,7 @@ const zhCN = {
   'priority.delete.title': '删除优先级',
   'priority.delete.unused.notice': '注意：将会从所有使用的事件单中删除这个优先级。',
   'priority.delete.used,notice':
-      '注意：将会从所有使用的事件单中删除这个优先级。请你为受影响的事件单选择一个新的优先级。',
+    '注意：将会从所有使用的事件单中删除这个优先级。请你为受影响的事件单选择一个新的优先级。',
   'priority.delete.chooseNewPriority.placeholder': '请选择一个新的优先级',
   'priority.default': '（默认）',
   'priority.delete.notice': '注意：将会从所有使用的问题中删除这个优先级。',

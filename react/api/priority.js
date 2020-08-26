@@ -5,16 +5,24 @@ class PriorityApi {
     return `/test/v1/organizations/${getOrganizationId()}`;
   }
 
+  load() {
+    return request.get(`${this.getPrefix}/test_priority`);
+  }
+
   create(data) {
-    request.post(`${this.getPrefix}/test_priority`, data);
+    return request.post(`${this.getPrefix}/test_priority`, { ...data, organizationId: getOrganizationId() });
   }
 
   update(data) {
-    request.put(`${this.getPrefix}/test_priority`, data);
+    return request.put(`${this.getPrefix}/test_priority`, data);
+  }
+
+  updateStatus(priorityId, enable) {
+    return request.post(`${this.getPrefix}/test_priority/${priorityId}/${enable ? 'enabled' : 'disabled'}`);
   }
 
   delete(data) {
-    request.delete(`${this.getPrefix}/test_priority`, data);
+    return request.delete(`${this.getPrefix}/test_priority`, data);
   }
 
   /**
@@ -22,7 +30,7 @@ class PriorityApi {
    * @param priorityId 
    */
   checkBeforeDel(priorityId) {
-    return request.get(`${this.getPrefix}/priority/check_delete/${priorityId}`);
+    return request.get(`${this.getPrefix}/test_priority/check_delete/${priorityId}`);
   }
 
   /**
@@ -30,15 +38,15 @@ class PriorityApi {
      * @param name 
      */
   checkName(name) {
-    return request.get(`${this.getPrefix}/priority/check_name`, name);
+    return request.get(`${this.getPrefix}/test_priority/check_name?name=${name}`);
   }
-  
+
   /**
    * 优先级排序
    * @param sequences 
    */
   sort(sequences) {
-    return request.put(`${this.getPrefix}/priority/sequence`, sequences);
+    return request.put(`${this.getPrefix}/test_priority/sequence`, sequences);
   }
 }
 export default new PriorityApi();
