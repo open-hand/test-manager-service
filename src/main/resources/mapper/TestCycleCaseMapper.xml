@@ -522,10 +522,14 @@
         tcc.version_num,
         tcc.last_updated_by,
         tcc.last_update_date,
+        tcc.priority_id,
+        tpy.name AS priority_name,
+        tpy.sequence,
         ts.status_color AS statusColor,
         ts.status_name AS executionStatusName
         FROM
             `test_cycle_case` tcc
+        JOIN test_priority tpy ON tcc.priority_id = tpy.id
         LEFT JOIN test_cycle tc ON tc.cycle_id = tcc.cycle_id
         LEFT JOIN test_status ts ON ts.status_id=tcc.execution_status
         LEFT JOIN test_plan tp ON tp.plan_id = tc.plan_id
