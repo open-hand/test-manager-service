@@ -359,7 +359,7 @@
         </foreach>
     </select>
     <select id="selectALLProjectId" resultType="java.lang.Long">
-        SELECT project_id FROM test_case WHERE priority_id = 0 GROUP BY project_id
+        SELECT project_id FROM test_case GROUP BY project_id
     </select>
 
     <delete id="batchDeleteCases">
