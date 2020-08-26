@@ -328,8 +328,11 @@
                 tc.summary,
                 tc.folder_id,
                 tc.project_id,
-                CONCAT_WS( '-', tpi.project_code, tc.case_num ) as case_num,
+                CONCAT_WS( '-', tpi.project_code, tc.case_num ) AS case_num,
                 tc.case_num AS source_case_num,
+                tc.priority_id,
+                tp.name AS priority_name,
+                tp.sequence,
                 tc.created_by,
                 tc.last_updated_by,
                 tc.creation_date,
@@ -338,6 +341,7 @@
             FROM
                 test_case tc
             JOIN test_project_info tpi on tpi.project_id = tc.project_id
+            JOIN test_priority tp ON tc.priority_id = tp.id
             WHERE
                 tc.project_id = #{projectId}
             AND tc.folder_id IN
