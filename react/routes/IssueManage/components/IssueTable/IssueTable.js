@@ -308,7 +308,7 @@ export default observer((props) => {
       key: 'sequence',
       sorter: true,
       width: '1rem',
-      render: (priorityId, record) => priorityId && <PriorityTag priority={record} />,
+      render: (priorityId, record) => priorityId && <PriorityTag priority={record.priorityVO} />,
     },
     {
       title: '创建人',
