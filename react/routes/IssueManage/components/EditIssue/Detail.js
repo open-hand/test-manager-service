@@ -23,6 +23,7 @@ import EditDetailWrap from './Component/EditDetailWrap';
 import './Detail.less';
 import LinkIssues from './link-issues';
 import PriorityTag from '../../../../components/PriorityTag';
+import FieldPriority from './Component/FieldPriority';
 
 const { TitleWrap, ContentWrap, PropertyWrap } = EditDetailWrap;
 /**
@@ -39,7 +40,7 @@ function Detail({
   } = useContext(EditIssueContext);
   const { issueInfo, linkIssues } = store;
   const {
-    folder, attachment, createUser,
+    folder, attachment, createUser, priorityVO,
     lastUpdateUser, creationDate, lastUpdateDate, description, caseId: issueId,
   } = issueInfo;
 
@@ -173,7 +174,7 @@ function Detail({
             </PropertyWrap>
             {/* 优先级 */}
             <PropertyWrap valueStyle={{ marginLeft: 6 }} label={<FormattedMessage id="issue_edit_priority" />}>
-              <PriorityTag priority={{ color: 'red', name: '紧急' }} />
+              <FieldPriority priority={priorityVO || {}} onUpdate={onUpdate} />
             </PropertyWrap>
             {showMore ? (
               <Fragment>

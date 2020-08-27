@@ -44,7 +44,7 @@ class PriorityCreate extends Component {
             description: des,
             defaultFlag: !!isDefault,
             colour: priorityColor,
-            enableFlag: true,
+            // enableFlag: true,
             // objectVersionNumber: 1,
           });
           message.success('添加成功');
