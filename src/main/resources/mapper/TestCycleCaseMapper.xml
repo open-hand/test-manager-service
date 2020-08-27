@@ -771,7 +771,7 @@
         order by tccs.rank
     </select>
     <select id="checkPriorityDelete" resultType="java.lang.Long">
-        select count(tcc.issue_id)
+        select count(tcc.case_id)
         from test_cycle_case tcc
         where tcc.priority_id = #{priorityId}
         AND tcc.project_id IN

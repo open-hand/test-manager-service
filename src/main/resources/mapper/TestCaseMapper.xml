@@ -355,7 +355,7 @@
         </where>
     </select>
     <select id="checkPriorityDelete" resultType="java.lang.Long">
-        select count(tc.issue_id)
+        select count(tc.case_id)
         from test_case tc
         where tc.priority_id = #{priorityId}
         AND tc.project_id IN
