@@ -4,6 +4,7 @@ import {
 import { Choerodon, stores } from '@choerodon/boot';
 import moment from 'moment';
 import { getStatusList } from '@/api/TestStatusApi';
+import priorityApi from '@/api/priority';
 import {
   getExecutesByFolder, getStatusByFolder, getPlanDetail, executesAssignTo,
 } from '@/api/TestPlanApi';
@@ -62,6 +63,12 @@ class TestPlanStore extends TestPlanTreeStore {
 
   @action setStatusList(statusList) {
     this.statusList = statusList;
+  }
+
+  @observable priorityList = [];
+
+  @action setPriorityList(priorityList) {
+    this.priorityList = priorityList;
   }
 
   @observable testList = [];
@@ -305,11 +312,12 @@ class TestPlanStore extends TestPlanTreeStore {
   loadAllData = () => {
     const { testPlanStatus } = this;
     this.setLoading(true);
-    return Promise.all([getStatusList('CYCLE_CASE'), this.loadIssueTree()]).then(([statusList]) => {
+    return Promise.all([getStatusList('CYCLE_CASE'), priorityApi.load(), this.loadIssueTree()]).then(([statusList, priorityList]) => {
       if (testPlanStatus !== this.testPlanStatus) {
         return;
       }
       this.setLoading(false);
+      this.setPriorityList(priorityList);
       this.setStatusList(statusList);
       if (this.getCurrentPlanId) {
         this.loadPlanDetail();

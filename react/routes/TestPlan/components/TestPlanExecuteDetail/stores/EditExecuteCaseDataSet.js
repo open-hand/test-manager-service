@@ -1,7 +1,8 @@
 import { getProjectId } from '@/common/utils';
 
-function EditExecuteCaseDataSet(executeId, intlPrefix, intl) {
+function EditExecuteCaseDataSet(executeId, intlPrefix, intl, priorityOptionDataSet) {
   const summary = intl.formatMessage({ id: `${intlPrefix}_issueFilterBySummary` });
+  const priority = intl.formatMessage({ id: `${intlPrefix}_issueFilterByPriority` });
   const description = '描述';
 
   return {
@@ -15,6 +16,16 @@ function EditExecuteCaseDataSet(executeId, intlPrefix, intl) {
         name: 'summary', type: 'string', label: summary, required: true,
       },
       { name: 'description', type: 'any', label: description },
+      {
+        name: 'priorityId',
+        type: 'string',
+        label: priority,
+        required: true,
+        textField: 'name',
+        valueField: 'id',
+        options: priorityOptionDataSet,
+
+      },
 
       // 读取的原始附件列表
       {

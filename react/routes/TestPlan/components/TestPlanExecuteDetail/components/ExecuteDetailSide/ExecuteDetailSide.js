@@ -19,6 +19,7 @@ import './ExecuteDetailSide.less';
 import UploadButtonExecuteDetail from './UploadButtonExecuteDetail';
 import LinkIssues from './link-issues';
 import { getIssueInfos } from '../../../../../../api/ExecuteDetailApi';
+import PriorityTag from '../../../../../../components/PriorityTag';
 
 const { HeaderStore } = stores;
 
@@ -160,7 +161,7 @@ function ExecuteDetailSide(props) {
     } = props;
     const { statusColor, statusName } = status;
     const {
-      executor, description, executorDate, summary, caseId, caseFolderId, caseNum, caseHasExist,
+      executor, description, executorDate, summary, caseId, caseFolderId, caseNum, caseHasExist, priorityVO,
     } = detailData;
     // 默认18个字启动省略
     const renderIssueSummary = (text) => {
@@ -248,6 +249,18 @@ function ExecuteDetailSide(props) {
                           }}
                           color={statusColor}
                           name={statusName}
+                        />
+                      )}
+                    </div>
+                  </div>
+                  {/* 优先级 */}
+                  <div className="c7ntest-item-one-line">
+                    <div className="c7ntest-item-one-line-left">优先级：</div>
+                    <div className="c7ntest-item-one-line-right">
+                      {priorityVO && (
+                        <PriorityTag
+                          priority={priorityVO}
+                  
                         />
                       )}
                     </div>

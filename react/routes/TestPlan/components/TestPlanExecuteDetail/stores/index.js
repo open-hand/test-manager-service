@@ -8,6 +8,7 @@ import StepTableDataSet from './StepTableDataSet';
 import ExecuteHistoryDataSet from './ExecuteHistoryDataSet';
 import EditExecuteCaseDataSet from './EditExecuteCaseDataSet';
 import TestStatusDataSet from './TestStatusDataSet';
+import PriorityOptionDataSet from './PriorityOptionDataSet';
 
 const Store = createContext();
 
@@ -22,8 +23,8 @@ export const StoreProvider = withRouter(injectIntl(inject('AppState')(
     const ExecuteDetailStore = useMemo(() => new ExecuteDetailStoreObject(), []);
     const executeHistoryDataSet = useMemo(() => new DataSet(ExecuteHistoryDataSet(id, intl, caseId)), [caseId, id, intl]);
     const stepTableDataSet = useMemo(() => new DataSet(StepTableDataSet(id, orgId, intl, caseId, testStatusDataSet, executeHistoryDataSet)), [caseId, executeHistoryDataSet, id, intl, orgId, testStatusDataSet]);
-    const editExecuteCaseDataSet = useMemo(() => new DataSet(EditExecuteCaseDataSet(caseId, 'issue', intl)), [caseId, intl]);
-
+    const priorityOptionDataSet = useMemo(() => new DataSet(PriorityOptionDataSet(orgId)), [orgId]);
+    const editExecuteCaseDataSet = useMemo(() => new DataSet(EditExecuteCaseDataSet(caseId, 'issue', intl, priorityOptionDataSet)), [caseId, intl]);
     const value = {
       ...props,
       testStatusDataSet,
@@ -32,6 +33,7 @@ export const StoreProvider = withRouter(injectIntl(inject('AppState')(
       stepTableDataSet,
       executeHistoryDataSet,
       editExecuteCaseDataSet,
+      priorityOptionDataSet,
     };
     return (
       <Store.Provider value={value}>

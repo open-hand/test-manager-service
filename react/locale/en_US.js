@@ -60,6 +60,7 @@ const enUS = {
   done: 'done',
   next: 'next step',
   previous: 'pre step',
+  priority: 'priority',
   // 测试执行
   execute_detail: 'Execution details',
   execute_pre: 'last execute',

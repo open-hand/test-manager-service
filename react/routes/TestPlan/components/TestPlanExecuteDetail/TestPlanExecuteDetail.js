@@ -292,7 +292,7 @@ function TestPlanExecuteDetail(props) {
     const textArr = [...text];
     return textArr.length > 15 ? <Tooltip title={text}>{`${textArr.slice(0, 15).join('') + ellipsis}`}</Tooltip> : text;
   };
- 
+
   function render() {
     // disabled 用于禁止action列
     const { disabled } = props;
