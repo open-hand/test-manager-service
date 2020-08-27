@@ -34,8 +34,12 @@
         WHERE organization_id=#{organizationId} AND is_default = 1
     </delete>
     <select id="fulltextSearch" resultType="io.choerodon.test.manager.infra.dto.TestPriorityDTO">
-        SELECT P.*
-        FROM test_priority P
+        SELECT
+           P.*,
+           p.is_default AS defaultFlag,
+           p.is_enable AS enableFlag
+        FROM
+           test_priority P
         WHERE 1=1
         <if test="organizationId != null">
             AND P.organization_id = #{organizationId}

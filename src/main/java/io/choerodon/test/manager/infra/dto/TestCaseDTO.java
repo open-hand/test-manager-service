@@ -1,9 +1,7 @@
 package io.choerodon.test.manager.infra.dto;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import java.math.BigDecimal;
+import javax.persistence.*;
 
 import io.choerodon.mybatis.annotation.ModifyAudit;
 import io.choerodon.mybatis.annotation.VersionAudit;
@@ -33,6 +31,26 @@ public class TestCaseDTO extends AuditDomain {
     private Long versionNum;
     private Long projectId;
     private Long priorityId;
+    @Transient
+    private String priorityName;
+    @Transient
+    private BigDecimal sequence;
+
+    public BigDecimal getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(BigDecimal sequence) {
+        this.sequence = sequence;
+    }
+
+    public String getPriorityName() {
+        return priorityName;
+    }
+
+    public void setPriorityName(String priorityName) {
+        this.priorityName = priorityName;
+    }
 
     public Long getPriorityId() {
         return priorityId;

@@ -364,7 +364,8 @@ public class TestCaseServiceImpl implements TestCaseService {
         while (iterator.hasNext()){
             t = iterator.next();
             if (!StringUtils.equalsAny(t.getProperty(),
-                    TestCaseDTO.FIELD_SOURCE_CASE_NUM, AuditDomain.FIELD_CREATION_DATE, AuditDomain.FIELD_LAST_UPDATE_DATE)){
+                    TestCaseDTO.FIELD_SOURCE_CASE_NUM, TestPriorityDTO.FIELD_SEQUENCE,
+                    AuditDomain.FIELD_CREATION_DATE, AuditDomain.FIELD_LAST_UPDATE_DATE)){
                 pageRequest.setSort(new Sort(new Sort.Order(Sort.Direction.DESC, TestCaseDTO.FIELD_CASE_ID)));
             }
         }

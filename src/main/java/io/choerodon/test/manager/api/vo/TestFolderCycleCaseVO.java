@@ -1,6 +1,9 @@
 package io.choerodon.test.manager.api.vo;
 
+import java.math.BigDecimal;
 import java.util.Date;
+
+import javax.persistence.Transient;
 
 import io.swagger.annotations.ApiModelProperty;
 
@@ -72,6 +75,36 @@ public class TestFolderCycleCaseVO {
     private Boolean changeStep;
 
     private Boolean changeAttach;
+
+    private Long priorityId;
+
+    private String priorityName;
+
+    private BigDecimal sequence;
+
+    public Long getPriorityId() {
+        return priorityId;
+    }
+
+    public void setPriorityId(Long priorityId) {
+        this.priorityId = priorityId;
+    }
+
+    public String getPriorityName() {
+        return priorityName;
+    }
+
+    public void setPriorityName(String priorityName) {
+        this.priorityName = priorityName;
+    }
+
+    public BigDecimal getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(BigDecimal sequence) {
+        this.sequence = sequence;
+    }
 
     public Long getVersionNum() {
         return versionNum;

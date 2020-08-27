@@ -58,10 +58,8 @@ public class TestPriorityDTO extends AuditDomain {
     @Column(name = "is_default")
     private Boolean defaultFlag;
     @ApiModelProperty(value = "排序",required = true)
-    @NotNull
     private BigDecimal sequence;
     @ApiModelProperty(value = "是否启用",required = true)
-    @NotNull
     @Column(name = "is_enable")
     private Boolean enableFlag;
     @Transient

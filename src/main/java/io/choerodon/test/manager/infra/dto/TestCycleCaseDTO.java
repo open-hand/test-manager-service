@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.infra.dto;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.*;
@@ -71,6 +72,28 @@ public class TestCycleCaseDTO extends AuditDomain {
     private Date lastUpdateDate;
 
     private Long priorityId;
+
+    @Transient
+    private String priorityName;
+
+    @Transient
+    private BigDecimal sequence;
+
+    public String getPriorityName() {
+        return priorityName;
+    }
+
+    public void setPriorityName(String priorityName) {
+        this.priorityName = priorityName;
+    }
+
+    public BigDecimal getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(BigDecimal sequence) {
+        this.sequence = sequence;
+    }
 
     public Long getPriorityId() {
         return priorityId;
