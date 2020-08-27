@@ -67,6 +67,10 @@ public class TestCaseInfoVO {
     @ApiModelProperty(value = "测试步骤")
     private List<TestCaseStepDTO> testCaseStepS;
 
+    @ApiModelProperty(value = "优先级id")
+    @Encrypt
+    private Long priorityId;
+
     @ApiModelProperty(value = "优先级")
     private PriorityVO priorityVO;
 
@@ -76,6 +80,14 @@ public class TestCaseInfoVO {
 
     public void setPriorityVO(PriorityVO priorityVO) {
         this.priorityVO = priorityVO;
+    }
+
+    public Long getPriorityId() {
+        return priorityId;
+    }
+
+    public void setPriorityId(Long priorityId) {
+        this.priorityId = priorityId;
     }
 
     public Long getCaseId() {

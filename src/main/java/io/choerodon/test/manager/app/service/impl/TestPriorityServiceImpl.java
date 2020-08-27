@@ -59,7 +59,7 @@ public class TestPriorityServiceImpl implements TestPriorityService {
             throw new CommonException("error.priority.create.name.same");
         }
         testPriorityDTO.setSequence((testPriorityMapper.getNextSequence(organizationId)).add(new BigDecimal(1)));
-        testPriorityDTO.setOrganizationId(organizationId);
+        testPriorityDTO.setEnableFlag(true);
         //若设置为默认值，则清空其他默认值
         if (BooleanUtils.isTrue(testPriorityDTO.getDefaultFlag())) {
             testPriorityMapper.cancelDefaultPriority(organizationId);

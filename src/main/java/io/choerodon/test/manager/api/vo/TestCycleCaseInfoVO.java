@@ -82,9 +82,32 @@ public class TestCycleCaseInfoVO {
     @Encrypt
     private Long nextExecuteId;
 
+    @ApiModelProperty(value = "优先级id")
+    @Encrypt
+    private Long priorityId;
+
+    @ApiModelProperty(value = "优先级")
+    private PriorityVO priorityVO;
+
     @ApiModelProperty(value = "测试用例关联的附件信息")
     @Encrypt
     private List<TestCycleCaseAttachmentRelVO> attachment;
+
+    public Long getPriorityId() {
+        return priorityId;
+    }
+
+    public void setPriorityId(Long priorityId) {
+        this.priorityId = priorityId;
+    }
+
+    public PriorityVO getPriorityVO() {
+        return priorityVO;
+    }
+
+    public void setPriorityVO(PriorityVO priorityVO) {
+        this.priorityVO = priorityVO;
+    }
 
     public Long getExecuteId() {
         return executeId;
