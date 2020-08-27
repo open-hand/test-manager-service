@@ -3,14 +3,14 @@ import React, {
 } from 'react';
 import { withRouter } from 'react-router-dom';
 import {
-  Form, TextField, Icon, Spin, message,
+  Form, TextField, Icon, Spin, message, Select,
 } from 'choerodon-ui/pro';
 import { observer } from 'mobx-react-lite';
-import UploadButton from './UploadButton';
 import { WYSIWYGEditor } from '@/components';
-import EditTestStepTable from './EditTestStepTable';
 import { text2Delta } from '@/common/utils';
 import { PromptInput } from '@/components';
+import UploadButton from './UploadButton';
+import EditTestStepTable from './EditTestStepTable';
 import './EditExecuteIssue.less';
 
 function EditExecuteIssue(props) {
@@ -72,6 +72,7 @@ function EditExecuteIssue(props) {
     <Spin dataSet={editDataset}>
       <Form dataSet={editDataset} className={`test-edit-execute-issue-form ${visibleDetail ? '' : 'test-edit-execute-issue-form-hidden'}`}>
         <PromptInput name="summary" maxLength={44} />
+        <Select name="priorityId" />
         <div role="none" style={{ cursor: 'pointer' }} onClick={() => setVisibleDetail(!visibleDetail)}>
           <div className="test-edit-execute-issue-line" />
           <span className="test-edit-execute-issue-head">

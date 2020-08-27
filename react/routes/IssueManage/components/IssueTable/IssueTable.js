@@ -305,7 +305,7 @@ export default observer((props) => {
     {
       title: '优先级',
       dataIndex: 'priorityId',
-      key: 'priorityId',
+      key: 'sequence',
       sorter: true,
       width: '1rem',
       render: (priorityId, record) => priorityId && <PriorityTag priority={record} />,

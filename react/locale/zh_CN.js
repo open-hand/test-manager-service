@@ -527,7 +527,7 @@ const zhCN = {
   'container.term.log': '日志',
   'container.log.header.title': '查看容器日志',
   'container.chooseEnv': '选择环境',
-
+  priority: '优先级',
   // 优先级
   disable: '停用',
   enable: '启用',

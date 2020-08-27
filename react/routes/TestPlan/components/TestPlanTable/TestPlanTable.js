@@ -1,5 +1,5 @@
 import React, {
-  useContext, useRef, useEffect, useState, 
+  useContext, useRef, useEffect, useState,
 } from 'react';
 import PropTypes from 'prop-types';
 import { toJS } from 'mobx';
@@ -19,6 +19,7 @@ import './TestPlanTable.less';
 
 import Store from '../../stores';
 import { getRankByDate } from '../../../../api/TestPlanApi';
+import PriorityTag from '../../../../components/PriorityTag';
 
 const { AppState } = stores;
 
@@ -49,7 +50,7 @@ const TestPlanTable = observer(({
   } = useContext(Store);
 
   const {
-    tableLoading, statusList, executePagination, mineExecutePagination, testList, checkIdMap, testPlanStatus,
+    tableLoading, statusList, executePagination, mineExecutePagination, testList, checkIdMap, testPlanStatus, priorityList,
   } = testPlanStore;
 
   const divRef = useRef();
@@ -64,14 +65,14 @@ const TestPlanTable = observer(({
           e.preventDefault();
         }
       }, true);
-  
+
       divRef.current.addEventListener('click', (e) => {
         if (!checkIdMap.size) {
           e.stopPropagation();
           setTipVisible(true);
         }
       }, true);
-  
+
       return () => {
         if (divRef.current) {
           divRef.current.removeEventListener('mousedown', (e) => {
@@ -174,6 +175,13 @@ const TestPlanTable = observer(({
       return testPlanStore.mineFilter && testPlanStore.mineFilter.executionStatus ? [testPlanStore.mineFilter.executionStatus] : [];
     }
   };
+  const getPriorityFilteredValue = () => {
+    if (!isMine) {
+      return testPlanStore.filter && testPlanStore.filter.priorityId ? [testPlanStore.filter.priorityId] : [];
+    } else {
+      return testPlanStore.mineFilter && testPlanStore.mineFilter.priorityId ? [testPlanStore.mineFilter.priorityId] : [];
+    }
+  };
   const columns = [{
     title: <span>用例名</span>,
     dataIndex: 'summary',
@@ -223,7 +231,25 @@ const TestPlanTable = observer(({
         </div>
       );
     },
-  }, {
+  },
+  {
+    title: <FormattedMessage id="priority" />,
+    dataIndex: 'priorityId',
+    key: 'priorityId',
+    filters: priorityList && priorityList.map(priorityVO => ({ text: priorityVO.name, value: priorityVO.id })),
+    filteredValue: getPriorityFilteredValue(),
+    flex: 1,
+    width: 100,
+    render(priorityId) {
+      const priorityVO = _.find(priorityList, { id: priorityId }) || {};
+      return (
+        <PriorityTag
+          priority={priorityVO}
+        />
+      );
+    },
+  },
+  {
     title: <FormattedMessage id="status" />,
     dataIndex: 'executionStatus',
     key: 'executionStatus',
@@ -327,7 +353,7 @@ const TestPlanTable = observer(({
   //     render: (text, record) => renderSource(text),
   //   });
   // }
-  
+
   const data = isMine ? testList.filter(item => Number(item.assignedTo) === Number(AppState.userInfo.id)) : testList;
   return (
     <div className={`c7ntest-testPlanTable ${isMine ? 'c7ntest-mineTestPlanTable' : ''}`}>
@@ -337,7 +363,7 @@ const TestPlanTable = observer(({
             marginTop: '-55px', marginBottom: 10, flexDirection: 'row-reverse', alignItems: 'center', display: testPlanStore.mainActiveTab === 'testPlanTable' ? 'flex' : 'none',
           }}
           >
-  
+
             <SelectFocusLoad
               allowClear
               style={{ width: 180, zIndex: 100, marginLeft: 10 }}
@@ -356,8 +382,8 @@ const TestPlanTable = observer(({
               getPopupContainer={trigger => trigger.parentNode}
             >
               <div
-                ref={divRef} 
-                role="none" 
+                ref={divRef}
+                role="none"
                 style={{ width: 180, zIndex: 100, display: `${testPlanStatus === 'done' ? 'none' : 'unset'}` }}
               >
                 <SelectFocusLoad
