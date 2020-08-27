@@ -234,4 +234,44 @@ public class TestPriorityServiceImpl implements TestPriorityService {
         }
         return count;
     }
+
+    @Override
+    public Long createDefaultPriority(Long organizationId) {
+        Long defaultPriorityId;
+        TestPriorityDTO orgExist = new TestPriorityDTO();
+        orgExist.setOrganizationId(organizationId);
+        List<TestPriorityDTO> priorityDTOList = testPriorityMapper.select(orgExist);
+        if (CollectionUtils.isNotEmpty(priorityDTOList)){
+            defaultPriorityId = priorityDTOList.stream().filter(TestPriorityDTO::getDefaultFlag)
+                    .findFirst().map(TestPriorityDTO::getId)
+                    .orElseGet(() -> {
+                        TestPriorityDTO priorityDTO = priorityDTOList.get(0);
+                        priorityDTO.setDefaultFlag(true);
+                        testPriorityMapper.updateOptional(priorityDTO, TestPriorityDTO.FIELD_DEFAULT_FLAG);
+                        return priorityDTO.getId();
+                    });
+            return defaultPriorityId;
+        }
+        // 创建优先级
+        TestPriorityDTO priority = new TestPriorityDTO();
+        priority.setOrganizationId(organizationId);
+        priority.setEnableFlag(true);
+        priority.setColour("#FFB100");
+        priority.setName("高");
+        priority.setSequence(BigDecimal.ZERO);
+        this.create(organizationId, priority);
+        priority.setId(null);
+        priority.setColour("#3575DF");
+        priority.setName("中");
+        priority.setSequence(BigDecimal.ONE);
+        priority.setDefaultFlag(true);
+        this.create(organizationId, priority);
+        defaultPriorityId = priority.getId();
+        priority.setId(null);
+        priority.setColour("#3575DF");
+        priority.setName("低");
+        priority.setSequence(new BigDecimal("2"));
+        this.create(organizationId, priority);
+        return defaultPriorityId;
+    }
 }
