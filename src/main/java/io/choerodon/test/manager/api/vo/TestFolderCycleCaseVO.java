@@ -76,11 +76,22 @@ public class TestFolderCycleCaseVO {
 
     private Boolean changeAttach;
 
+    @Encrypt
     private Long priorityId;
 
     private String priorityName;
 
+    private String priorityColour;
+
     private BigDecimal sequence;
+
+    public String getPriorityColour() {
+        return priorityColour;
+    }
+
+    public void setPriorityColour(String priorityColour) {
+        this.priorityColour = priorityColour;
+    }
 
     public Long getPriorityId() {
         return priorityId;

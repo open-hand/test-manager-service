@@ -524,6 +524,7 @@
         tcc.last_update_date,
         tcc.priority_id,
         tpy.name AS priority_name,
+        tpy.colour AS priority_colour,
         tpy.sequence,
         ts.status_color AS statusColor,
         ts.status_name AS executionStatusName
