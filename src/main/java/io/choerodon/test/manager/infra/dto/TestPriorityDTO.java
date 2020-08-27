@@ -34,8 +34,8 @@ public class TestPriorityDTO extends AuditDomain {
     public static final String FIELD_DESCRIPTION = "description";
     public static final String FIELD_COLOUR = "colour";
     public static final String FIELD_SEQUENCE = "sequence";
-    public static final String[] UPDATE_FIELDS = new String[]{FIELD_ENABLE_FLAG, FIELD_DEFAULT_FLAG, FIELD_NAME,
-            FIELD_DESCRIPTION, FIELD_COLOUR, FIELD_SEQUENCE};
+    public static final String[] UPDATE_FIELDS = new String[]{FIELD_DEFAULT_FLAG, FIELD_NAME,
+            FIELD_DESCRIPTION, FIELD_COLOUR};
 
     @ApiModelProperty("主键id")
     @Id

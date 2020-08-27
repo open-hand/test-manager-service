@@ -94,7 +94,6 @@ public class TestPriorityController extends BaseController {
     @PutMapping(value = "/sequence")
     public ResponseEntity<List<TestPriorityDTO>> updateByList(@PathVariable("organization_id") Long organizationId,
                                                               @RequestBody List<TestPriorityDTO> list) {
-
         return new ResponseEntity<>(testPriorityService.updateByList(list, organizationId), HttpStatus.OK);
     }
 
