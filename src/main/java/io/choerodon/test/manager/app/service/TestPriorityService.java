@@ -30,4 +30,12 @@ public interface TestPriorityService {
     Boolean checkName(Long organizationId, String name);
 
     Long checkDelete(Long organizationId, Long id);
+
+
+    /**
+     * 为组织创建默认优先级数据
+     * @param organizationId 组织id
+     * @return 默认优先级id
+     */
+    Long createDefaultPriority(Long organizationId);
 }

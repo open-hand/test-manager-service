@@ -3,17 +3,18 @@ package io.choerodon.test.manager.app.eventhandler;
 import java.io.IOException;
 import java.util.*;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.choerodon.test.manager.api.vo.TestPlanVO;
+import io.choerodon.test.manager.api.vo.event.OrganizationCreateEventPayload;
 import io.choerodon.test.manager.api.vo.event.ProjectEvent;
 import io.choerodon.test.manager.infra.constant.SagaTaskCodeConstants;
 import io.choerodon.test.manager.infra.constant.SagaTopicCodeConstants;
 import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.enums.TestPlanInitStatus;
 import io.choerodon.test.manager.infra.mapper.TestPlanMapper;
+import org.hzero.core.base.BaseConstants;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Component;
 import io.choerodon.asgard.saga.annotation.SagaTask;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.api.vo.event.InstancePayload;
+import org.springframework.util.Assert;
 
 /**
  * Created by WangZhe@choerodon.io on 2018/6/25.
@@ -52,6 +54,9 @@ public class TestManagerEventHandler {
 
     @Autowired
     private TestIssueFolderService testIssueFolderService;
+
+    @Autowired
+    private TestPriorityService testPriorityService;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -143,6 +148,15 @@ public class TestManagerEventHandler {
             seq = 1)
     public String handleOrgaizationCreateByConsumeSagaTask(String data) {
         LOGGER.info("消费创建组织消息{}", data);
+        OrganizationCreateEventPayload organizationEventPayload = null;
+        try {
+            organizationEventPayload =
+                    objectMapper.readValue(data, OrganizationCreateEventPayload.class);
+        } catch (IOException e) {
+            LOGGER.error("json convert failed, payload: [{}]", data);
+        }
+        Assert.notNull(organizationEventPayload, BaseConstants.ErrorCode.DATA_NOT_EXISTS);
+        testPriorityService.createDefaultPriority(organizationEventPayload.getId());
         return data;
     }
 

@@ -132,6 +132,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         logger.info("==========================>>>>>>>> Data Migrate Succeed!!! FINISHED!!! <<<<<<<<============================");
     }
 
+
     @Async
     @Override
     public void fixDataTestCasePriority() {
@@ -140,7 +141,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         List<TenantVO> body = getAllOrg();
         // 为所有组织创建优先级
         Map<Long, Long> orgMap = body.stream().collect(Collectors.toMap(TenantVO::getTenantId,
-                (tenant -> this.createDefaultPriority(tenant.getTenantId()))));
+                (tenant -> testPriorityService.createDefaultPriority(tenant.getTenantId()))));
         // 修复用例优先级数据
         List<Long> caseProjectIdList = Optional.ofNullable(testCaseMapper.selectALLProjectId()).orElse(Collections.emptyList());
         List<Long> cycleCaseProjectIdList =
@@ -183,7 +184,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         int currentPage = 0;
         int size = 9999;
         Page<TenantVO> body = baseFeignClient.getAllOrgs(currentPage, size).getBody();
-        if (org.apache.commons.collections4.CollectionUtils.isEmpty(body)){
+        if (CollectionUtils.isEmpty(body)){
             return Collections.emptyList();
         }
         List<TenantVO> result = new ArrayList<>(body.getContent());
@@ -198,45 +199,6 @@ public class DataMigrationServiceImpl implements DataMigrationService {
             }
         }
         return result;
-    }
-
-    private Long createDefaultPriority(Long organizationId){
-        Long defaultPriorityId;
-        TestPriorityDTO orgExist = new TestPriorityDTO();
-        orgExist.setOrganizationId(organizationId);
-        List<TestPriorityDTO> priorityDTOList = testPriorityMapper.select(orgExist);
-        if (CollectionUtils.isNotEmpty(priorityDTOList)){
-            defaultPriorityId = priorityDTOList.stream().filter(TestPriorityDTO::getDefaultFlag)
-                    .findFirst().map(TestPriorityDTO::getId)
-                    .orElseGet(() -> {
-                        TestPriorityDTO priorityDTO = priorityDTOList.get(0);
-                        priorityDTO.setDefaultFlag(true);
-                        testPriorityMapper.updateOptional(priorityDTO, TestPriorityDTO.FIELD_DEFAULT_FLAG);
-                        return priorityDTO.getId();
-                    });
-            return defaultPriorityId;
-        }
-        // 创建优先级
-        TestPriorityDTO priority = new TestPriorityDTO();
-        priority.setOrganizationId(organizationId);
-        priority.setEnableFlag(true);
-        priority.setColour("#FFB100");
-        priority.setName("高");
-        priority.setSequence(BigDecimal.ZERO);
-        testPriorityService.create(organizationId, priority);
-        priority.setId(null);
-        priority.setColour("#3575DF");
-        priority.setName("中");
-        priority.setSequence(BigDecimal.ONE);
-        priority.setDefaultFlag(true);
-        testPriorityService.create(organizationId, priority);
-        defaultPriorityId = priority.getId();
-        priority.setId(null);
-        priority.setColour("#3575DF");
-        priority.setName("低");
-        priority.setSequence(new BigDecimal("2"));
-        testPriorityService.create(organizationId, priority);
-        return defaultPriorityId;
     }
 
     private void migrateFolder() {

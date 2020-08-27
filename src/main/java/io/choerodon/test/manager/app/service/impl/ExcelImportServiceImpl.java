@@ -20,6 +20,8 @@ import io.choerodon.test.manager.infra.feign.BaseFeignClient;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import io.choerodon.test.manager.infra.mapper.TestFileLoadHistoryMapper;
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
+import io.choerodon.test.manager.infra.mapper.TestPriorityMapper;
+import io.choerodon.test.manager.infra.util.ConvertUtils;
 import io.choerodon.test.manager.infra.util.ExcelTitleUtil;
 import io.choerodon.test.manager.infra.util.ExcelUtil;
 import io.choerodon.test.manager.infra.util.MultipartExcel;
@@ -42,6 +44,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING;
 
@@ -52,7 +55,8 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     private static final String IMPORT_NOTIFY_CODE = "test-issue-import";
     private static final String IMPORT_ERROR = "test-issue-import-error";
     private static final String HIDDEN_USER = "hidden_user";
-    private static final ExcelReadMeOptionVO[] README_OPTIONS = new ExcelReadMeOptionVO[5];
+    private static final String HIDDEN_PRIORITY = "hidden_priority";
+    private static final ExcelReadMeOptionVO[] README_OPTIONS = new ExcelReadMeOptionVO[6];
     private static final TestCaseStepDTO[] EXAMPLE_TEST_CASE_STEPS = new TestCaseStepDTO[3];
     private static final IssueCreateDTO[] EXAMPLE_ISSUES = new IssueCreateDTO[3];
     private static final String TYPE_CYCLE = "cycle";
@@ -69,6 +73,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         README_OPTIONS[2] = new ExcelReadMeOptionVO("测试步骤", false);
         README_OPTIONS[3] = new ExcelReadMeOptionVO("测试数据", false);
         README_OPTIONS[4] = new ExcelReadMeOptionVO("预期结果", false);
+        README_OPTIONS[5] = new ExcelReadMeOptionVO("优先级*", true);
 
         for (int i = 0; i < EXAMPLE_TEST_CASE_STEPS.length; i++) {
             EXAMPLE_TEST_CASE_STEPS[i] = new TestCaseStepDTO();
@@ -123,6 +128,9 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private TestPriorityMapper testPriorityMapper;
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean cancelFileUpload(Long historyId) {
@@ -144,6 +152,10 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         TestFileLoadHistoryDTO testFileLoadHistoryDTO = initLoadHistory(projectId, folderId, userId);
         TestFileLoadHistoryEnums.Status status = TestFileLoadHistoryEnums.Status.SUCCESS;
         List<Long> issueIds = new ArrayList<>();
+        TestPriorityDTO priorityDTO = new TestPriorityDTO();
+        priorityDTO.setOrganizationId(ConvertUtils.getOrganizationId(projectId));
+        Map<String, Long> priorityMap = testPriorityMapper.select(priorityDTO)
+                .stream().collect(Collectors.toMap(TestPriorityDTO::getName, TestPriorityDTO::getId));
 
         if(ObjectUtils.isEmpty(testCasesSheet) || isOldExcel(issuesWorkbook, ExcelTitleName.EXCEL_HEADERS)){
             logger.info("错误的模板文件");
@@ -188,7 +200,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
             if (isIssueHeaderRow(currentRow, excelTitleUtil)) {
                     //插入用例
-                testCaseDTO = processIssueHeaderRow(currentRow, projectId, folderId, excelTitleUtil);
+                testCaseDTO = processIssueHeaderRow(currentRow, projectId, folderId, excelTitleUtil, priorityMap);
                     if (testCaseDTO == null) {
                         failedCount++;
                     } else {
@@ -244,6 +256,10 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
         Workbook importTemp = ExcelUtil.getWorkBook(ExcelUtil.Mode.XSSF);
         List<UserDTO> userDTOS = userService.list(new PageRequest(0, 99999), projectId, null, null).getBody().getContent();
+        TestPriorityDTO priorityDTO = new TestPriorityDTO();
+        priorityDTO.setOrganizationId(organizationId);
+        List<String> priorityNameList = testPriorityMapper.select(priorityDTO)
+                .stream().map(TestPriorityDTO::getName).collect(Collectors.toList());
 
         List<String> userNameList = new ArrayList<>();
         for (UserDTO userDTO : userDTOS) {
@@ -251,7 +267,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         }
 
         addReadMeSheet(importTemp);
-        addTestCaseSheet(importTemp, userNameList);
+        addTestCaseSheet(importTemp, userNameList, priorityNameList);
 
         return importTemp;
     }
@@ -264,13 +280,14 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         setReadMeSheetStyle(readMeSheet);
     }
 
-    private void addTestCaseSheet(Workbook workbook, List<String> userNameList) {
+    private void addTestCaseSheet(Workbook workbook, List<String> userNameList, List<String> priorityNameList) {
         Sheet testCaseSheet = workbook.createSheet("测试用例");
         workbook.setSheetOrder("测试用例", 1);
 
         fillTestCaseSheet(testCaseSheet);
         setTestCaseSheetStyle(testCaseSheet);
 
+        ExcelUtil.dropDownList2007(workbook, testCaseSheet, priorityNameList, 1, 500, 5, 5, HIDDEN_PRIORITY, 2);
 //        ExcelUtil.dropDownList2007(workbook, testCaseSheet, userNameList, 1, 500, 2, 2, HIDDEN_USER, 2);
     }
 
@@ -520,20 +537,28 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                 || StringUtils.isNotBlank(user) || StringUtils.isNotBlank(issueLink);
     }
 
-    private TestCaseDTO processIssueHeaderRow(Row row, Long projectId, Long folderId, ExcelTitleUtil excelTitleUtil) {
+    private TestCaseDTO processIssueHeaderRow(Row row, Long projectId, Long folderId,
+                                              ExcelTitleUtil excelTitleUtil,Map<String, Long> priorityMap) {
         if (ExcelUtil.isBlank(excelTitleUtil.getCell(ExcelTitleName.CASE_SUMMARY, row))) {
             markAsError(row, "测试概要不能为空");
             return null;
         }
 
+        if (ExcelUtil.isBlank(excelTitleUtil.getCell(ExcelTitleName.PRIORITY, row))) {
+            markAsError(row, "优先级不能为空");
+            return null;
+        }
+
         String description = ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.CASE_DESCRIPTION, row));
         String summary = ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.CASE_SUMMARY, row));
+        String priority = ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.PRIORITY, row));
 
         IssueCreateDTO issueCreateDTO = new IssueCreateDTO();
         issueCreateDTO.setProjectId(projectId);
         issueCreateDTO.setSummary(summary);
         issueCreateDTO.setDescription(description);
         issueCreateDTO.setFolderId(folderId);
+        issueCreateDTO.setPriorityId(priorityMap.get(priority));
 
         if (!ExcelUtil.isBlank(excelTitleUtil.getCell(ExcelTitleName.LINK_ISSUE, row))) {
             String issueNumString = ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.LINK_ISSUE, row));

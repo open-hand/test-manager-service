@@ -15,6 +15,7 @@ import io.choerodon.test.manager.api.vo.agile.*;
 import io.choerodon.test.manager.infra.feign.IssueFeignClient;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hzero.core.base.BaseConstants;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -539,6 +540,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         if (testCaseVO == null || testCaseVO.getCaseId() != null) {
             throw new CommonException("error.test.case.insert.caseId.should.be.null");
         }
+        Assert.notNull(testCaseVO.getPriorityId(), BaseConstants.ErrorCode.DATA_INVALID);
         TestCaseDTO testCaseDTO = modelMapper.map(testCaseVO, TestCaseDTO.class);
         testCaseDTO.setVersionNum(1L);
         DBValidateUtil.executeAndvalidateUpdateNum(testCaseMapper::insert, testCaseDTO, 1, "error.testcase.insert");
@@ -558,6 +560,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         if (ObjectUtils.isEmpty(testCaseDTO) || ObjectUtils.isEmpty(testCaseDTO.getCaseId())) {
             throw new CommonException("error.case.is.not.null");
         }
+        Assert.notNull(testCaseDTO.getPriorityId(), BaseConstants.ErrorCode.DATA_INVALID);
         DBValidateUtil.executeAndvalidateUpdateNum(testCaseMapper::updateByPrimaryKeySelective, testCaseDTO, 1, "error.testcase.update");
         return testCaseDTO;
     }
