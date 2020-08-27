@@ -113,6 +113,9 @@ public class TestCaseServiceImpl implements TestCaseService {
     @Autowired
     private TestCycleCaseService testCycleCaseService;
 
+    @Autowired
+    private TestPriorityMapper testPriorityMapper;
+
     @Value("${services.attachment.url}")
     private String attachmentUrl;
 
@@ -540,7 +543,12 @@ public class TestCaseServiceImpl implements TestCaseService {
         if (testCaseVO == null || testCaseVO.getCaseId() != null) {
             throw new CommonException("error.test.case.insert.caseId.should.be.null");
         }
-        Assert.notNull(testCaseVO.getPriorityId(), BaseConstants.ErrorCode.DATA_INVALID);
+        if (Objects.isNull(testCaseVO.getPriorityId())){
+            TestPriorityDTO priorityDTO = new TestPriorityDTO();
+            priorityDTO.setOrganizationId(ConvertUtils.getOrganizationId(testCaseVO.getProjectId()));
+            priorityDTO.setDefaultFlag(true);
+            testCaseVO.setPriorityId(testPriorityMapper.selectOne(priorityDTO).getId());
+        }
         TestCaseDTO testCaseDTO = modelMapper.map(testCaseVO, TestCaseDTO.class);
         testCaseDTO.setVersionNum(1L);
         DBValidateUtil.executeAndvalidateUpdateNum(testCaseMapper::insert, testCaseDTO, 1, "error.testcase.insert");

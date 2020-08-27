@@ -332,6 +332,7 @@
                 tc.case_num AS source_case_num,
                 tc.priority_id,
                 tp.name AS priority_name,
+                tp.colour AS priority_colour,
                 tp.sequence,
                 tc.created_by,
                 tc.last_updated_by,
