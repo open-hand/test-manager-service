@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.infra.feign.callback;
 
 import java.util.List;
+import java.util.Set;
 
 import io.choerodon.core.domain.Page;
 import io.choerodon.test.manager.api.vo.TenantVO;
@@ -45,6 +46,11 @@ public class BaseFeignClientFallback implements BaseFeignClient {
 
     @Override
     public ResponseEntity<Page<TenantVO>> getAllOrgs(int page, int size) {
+        throw new CommonException(QUERY_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<List<ProjectDTO>> queryProjects(Set<Long> ids) {
         throw new CommonException(QUERY_ERROR);
     }
 }

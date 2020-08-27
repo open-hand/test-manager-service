@@ -268,9 +268,10 @@ public class TestPriorityServiceImpl implements TestPriorityService {
         this.create(organizationId, priority);
         defaultPriorityId = priority.getId();
         priority.setId(null);
-        priority.setColour("#3575DF");
+        priority.setColour("#979797");
         priority.setName("低");
         priority.setSequence(new BigDecimal("2"));
+        priority.setDefaultFlag(false);
         this.create(organizationId, priority);
         return defaultPriorityId;
     }
