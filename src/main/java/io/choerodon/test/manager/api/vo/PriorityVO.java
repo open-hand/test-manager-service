@@ -10,6 +10,16 @@ import org.hzero.starter.keyencrypt.core.Encrypt;
  */
 public class PriorityVO {
 
+    public PriorityVO() {
+    }
+
+    public PriorityVO(Long id, String name, String colour, BigDecimal sequence) {
+        this.id = id;
+        this.name = name;
+        this.colour = colour;
+        this.sequence = sequence;
+    }
+
     @ApiModelProperty(value = "优先级")
     @Encrypt
     private Long id;

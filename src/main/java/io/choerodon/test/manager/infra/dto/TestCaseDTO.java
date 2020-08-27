@@ -35,6 +35,16 @@ public class TestCaseDTO extends AuditDomain {
     private String priorityName;
     @Transient
     private BigDecimal sequence;
+    @Transient
+    private String priorityColour;
+
+    public String getPriorityColour() {
+        return priorityColour;
+    }
+
+    public void setPriorityColour(String priorityColour) {
+        this.priorityColour = priorityColour;
+    }
 
     public BigDecimal getSequence() {
         return sequence;

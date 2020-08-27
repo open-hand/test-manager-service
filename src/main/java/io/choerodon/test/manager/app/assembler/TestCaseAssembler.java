@@ -84,6 +84,7 @@ public class TestCaseAssembler {
         testCaseRepVO.setCreateUser(map.get(testCaseDTO.getCreatedBy()));
         testCaseRepVO.setLastUpdateUser(map.get(testCaseDTO.getLastUpdatedBy()));
         testCaseRepVO.setFolderName(folderMap.get(testCaseDTO.getFolderId()).getName());
+        testCaseRepVO.setPriorityVO(new PriorityVO(testCaseDTO.getPriorityId(), testCaseDTO.getPriorityName(), testCaseDTO.getPriorityColour(), testCaseDTO.getSequence()));
         return testCaseRepVO;
     }
 
