@@ -560,7 +560,6 @@ public class TestCaseServiceImpl implements TestCaseService {
         if (ObjectUtils.isEmpty(testCaseDTO) || ObjectUtils.isEmpty(testCaseDTO.getCaseId())) {
             throw new CommonException("error.case.is.not.null");
         }
-        Assert.notNull(testCaseDTO.getPriorityId(), BaseConstants.ErrorCode.DATA_INVALID);
         DBValidateUtil.executeAndvalidateUpdateNum(testCaseMapper::updateByPrimaryKeySelective, testCaseDTO, 1, "error.testcase.update");
         return testCaseDTO;
     }
