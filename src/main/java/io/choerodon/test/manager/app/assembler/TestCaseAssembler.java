@@ -18,6 +18,7 @@ import org.hzero.core.base.BaseConstants;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -58,6 +59,9 @@ public class TestCaseAssembler {
 
     @Autowired
     private TestCycleCaseService testCycleCaseService;
+
+    @Autowired
+    private TestPriorityMapper testPriorityMapper;
 
     @Value("${services.attachment.url}")
     private String attachmentUrl;
@@ -156,6 +160,11 @@ public class TestCaseAssembler {
             testCaseInfoVO.setFolder(testIssueFolderDTO.getName());
         }
         testCaseInfoVO.setCaseNum(getIssueNum(testCaseDTO.getProjectId(), testCaseDTO.getCaseNum()));
+        // 查询用例的优先级信息
+        TestPriorityDTO priorityDTO = testPriorityMapper.selectByPrimaryKey(testCaseInfoVO.getPriorityId());
+        PriorityVO priorityVO = new PriorityVO();
+        BeanUtils.copyProperties(priorityDTO, priorityVO);
+        testCaseInfoVO.setPriorityVO(priorityVO);
         return testCaseInfoVO;
     }
 
@@ -223,6 +232,11 @@ public class TestCaseAssembler {
             }
             testCycleCaseInfoVO.setCaseHasExist(hasExist);
         }
+        // 查询用例的优先级信息
+        TestPriorityDTO priorityDTO = testPriorityMapper.selectByPrimaryKey(testCycleCaseInfoVO.getPriorityId());
+        PriorityVO priorityVO = new PriorityVO();
+        BeanUtils.copyProperties(priorityDTO, priorityVO);
+        testCycleCaseInfoVO.setPriorityVO(priorityVO);
         return testCycleCaseInfoVO;
     }
 

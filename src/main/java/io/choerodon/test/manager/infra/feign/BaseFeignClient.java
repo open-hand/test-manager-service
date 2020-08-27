@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author dinghuang123@gmail.com
@@ -50,5 +51,8 @@ public interface BaseFeignClient {
     @GetMapping("/choerodon/v1/organizations/all")
     ResponseEntity<Page<TenantVO>> getAllOrgs(@RequestParam("page") int page,
                                               @RequestParam("size") int size);
+
+    @GetMapping(value = "/choerodon/v1/projects/ids")
+    ResponseEntity<List<ProjectDTO>> queryProjects(Set<Long> ids);
 }
 

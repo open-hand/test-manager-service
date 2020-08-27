@@ -2,17 +2,16 @@ package io.choerodon.test.manager.app.service.impl;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.oauth.CustomUserDetails;
 import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.test.manager.api.vo.*;
+import io.choerodon.test.manager.api.vo.agile.*;
 import io.choerodon.test.manager.infra.enums.TestPlanInitStatus;
 
 import io.choerodon.test.manager.infra.feign.BaseFeignClient;
-import io.choerodon.test.manager.infra.util.ConvertUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,10 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.apache.commons.collections4.CollectionUtils;
 
-import io.choerodon.test.manager.api.vo.agile.DataLogFixVO;
-import io.choerodon.test.manager.api.vo.agile.ProductVersionDTO;
-import io.choerodon.test.manager.api.vo.agile.ProjectInfoFixVO;
-import io.choerodon.test.manager.api.vo.agile.TestVersionFixVO;
 import io.choerodon.test.manager.infra.util.RankUtil;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.infra.dto.*;
@@ -149,10 +144,11 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         Set<Long> projectIdSet = new HashSet<>();
         projectIdSet.addAll(caseProjectIdList);
         projectIdSet.addAll(cycleCaseProjectIdList);
-        Map<Long, List<Long>> projectMap = projectIdSet.stream().collect(Collectors.toMap(ConvertUtils::getOrganizationId,
-                projectId ->{
+        List<ProjectDTO> projectList = baseFeignClient.queryProjects(projectIdSet).getBody();
+        Map<Long, List<Long>> projectMap = projectList.stream().collect(Collectors.toMap(ProjectDTO::getOrganizationId,
+                project ->{
                     List<Long> list = new ArrayList<>();
-                    list.add(projectId);
+                    list.add(project.getId());
                     return list;
                 }, (v1, v2) -> {
                     v1.addAll(v2);
@@ -168,10 +164,8 @@ public class DataMigrationServiceImpl implements DataMigrationService {
                 failList.add(entry.getKey());
                 continue;
             }
-            if (caseProjectIdList.contains(entry.getKey())){
+            if (CollectionUtils.isNotEmpty(entry.getValue())){
                 testCaseMapper.updatePriorityByProject(entry.getValue(), defaultPriority);
-            }
-            if (cycleCaseProjectIdList.contains(entry.getKey())){
                 testCycleCaseMapper.updatePriorityByProject(entry.getValue(), defaultPriority);
             }
             successCount++;

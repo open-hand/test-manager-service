@@ -12,7 +12,7 @@ public class PriorityVO {
 
     @ApiModelProperty(value = "优先级")
     @Encrypt
-    private Long priorityId;
+    private Long id;
     @ApiModelProperty(value = "优先级名称")
     private String name;
     @ApiModelProperty(value = "描述")
@@ -29,12 +29,12 @@ public class PriorityVO {
     @ApiModelProperty(value = "是否启用")
     private Boolean enableFlag;
 
-    public Long getPriorityId() {
-        return priorityId;
+    public Long getId() {
+        return id;
     }
 
-    public void setPriorityId(Long priorityId) {
-        this.priorityId = priorityId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
