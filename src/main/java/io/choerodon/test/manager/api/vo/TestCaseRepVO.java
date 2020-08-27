@@ -68,8 +68,20 @@ public class TestCaseRepVO {
 
     private Long executeId;
 
+    @ApiModelProperty(value = "优先级id")
+    @Encrypt
+    private Long priorityId;
+
     @ApiModelProperty(value = "优先级")
     private PriorityVO priorityVO;
+
+    public Long getPriorityId() {
+        return priorityId;
+    }
+
+    public void setPriorityId(Long priorityId) {
+        this.priorityId = priorityId;
+    }
 
     public PriorityVO getPriorityVO() {
         return priorityVO;

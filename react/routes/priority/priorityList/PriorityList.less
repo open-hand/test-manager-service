@@ -1,0 +1,58 @@
+.c7ntest-priority {
+  .color-block {
+    width: 0.16rem;
+    height: 0.16rem;
+    border-radius: 0.03rem;
+  }
+
+  .operations {
+    text-align: right;
+  }
+
+  .tips {
+    margin-bottom: 0.2rem;
+    width: 5.2rem;
+  }
+
+  tr.drop-over-downward td {
+    transform: scale(1.05);
+  }
+
+  tr.drop-over-downward {
+    box-shadow: 0 0 0.03rem 0.03rem rgb(149, 184, 197);
+  }
+
+  tr.drop-over-upward td {
+    transform: scale(1.05);
+  }
+
+  tr.drop-over-upward {
+    box-shadow: 0 0 0.03rem 0.03rem rgb(212, 183, 170);
+  }
+
+  .issue-priority-disable {
+    background: #F5F5F5;
+
+    td {
+      opacity: 0.5;
+    }
+
+    .operations {
+      opacity: 1;
+    }
+  }
+  .issue-priority {
+    &-tr-right {
+      float: right;
+    }
+
+    &-des {
+      line-height: 0.2rem;
+      color: fade(#000, 65%);
+    }
+  }
+
+  .page-content {
+    padding: 0 20px;
+  }
+}

@@ -22,6 +22,7 @@ import EditIssueContext from './stores';
 import EditDetailWrap from './Component/EditDetailWrap';
 import './Detail.less';
 import LinkIssues from './link-issues';
+import PriorityTag from '../../../../components/PriorityTag';
 
 const { TitleWrap, ContentWrap, PropertyWrap } = EditDetailWrap;
 /**
@@ -161,7 +162,7 @@ function Detail({
               className="assignee"
               label={<FormattedMessage id="issue_edit_creator" />}
               valueStyle={{
-                display: 'flex', alignItems: 'center', flexWrap: 'wrap', marginLeft: 5, 
+                display: 'flex', alignItems: 'center', flexWrap: 'wrap', marginLeft: 5,
               }}
             >
               <UserHead user={createUser} color="#000000" />
@@ -170,12 +171,16 @@ function Detail({
             <PropertyWrap valueStyle={{ marginLeft: 6 }} label={<FormattedMessage id="issue_edit_createDate" />}>
               <Timeago date={creationDate} />
             </PropertyWrap>
+            {/* 优先级 */}
+            <PropertyWrap valueStyle={{ marginLeft: 6 }} label={<FormattedMessage id="issue_edit_priority" />}>
+              <PriorityTag priority={{ color: 'red', name: '紧急' }} />
+            </PropertyWrap>
             {showMore ? (
               <Fragment>
                 <PropertyWrap
                   label={<FormattedMessage id="issue_edit_updater" />}
                   valueStyle={{
-                    display: 'flex', alignItems: 'center', flexWrap: 'wrap', marginLeft: 6, 
+                    display: 'flex', alignItems: 'center', flexWrap: 'wrap', marginLeft: 6,
                   }}
                 >
                   <UserHead user={lastUpdateUser} color="#000000" />
@@ -192,7 +197,7 @@ function Detail({
           </Button>
         </section>
         <Divider />
- 
+
         {/** 附件 */}
         <section id="attachment">
           <TitleWrap title={<FormattedMessage id="attachment" />}>

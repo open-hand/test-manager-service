@@ -28,6 +28,7 @@ import {
 import Store from './stores';
 import EditExecuteIssue from './components/EditExecuteIssue';
 import StepTableDataSet from './stores/StepTableDataSet';
+import AutoHeightPrecondition from './components/auto-height-precondition';
 
 const CardWrapper = ({
   children, title, style, titleClassName,
@@ -48,44 +49,7 @@ function TestPlanExecuteDetail(props) {
     ExecuteDetailStore, stepTableDataSet, executeHistoryDataSet, testStatusDataSet,
   } = context;
   const [syncLoading, setSyncLoading] = useState(false);
-  const [preconditionState, setPreconditionState] = useReducer((state, action) => {
-    switch (action.type) {
-      case 'init':
-        return ({
-          loaded: true,
-          iconVisible: action.desHeight > 52,
-          desVisible: !(action.desHeight > 52),
-          desHeight: action.desHeight,
-        });
-      case 'uHeight':
-        return ({
-          ...state,
-          iconVisible: action.desHeight > 52,
-          desHeight: action.desHeight,
-        });
-      case 'visible':
-        return ({
-          ...state,
-          iconVisible: action.desHeight ? action.desHeight > 52 : state.iconVisible,
-          desVisible: !state.desVisible,
-        });
-      case 'destroy':
-        return ({
-          loaded: false,
-          iconVisible: false,
-          desVisible: true,
-          desHeight: 0,
-        });
-      default:
-        return state;
-    }
-  }, {
-    loaded: false,
-    iconVisible: false,
-    desVisible: true,
-    desHeight: 0,
-  });
-  const preconditionRef = useRef(null);
+
   useEffect(() => {
     const { executeId } = context;
     ExecuteDetailStore.setDetailParams(queryString.parse(context.location.search.replace(/%253D/g, '%3D'))); // 全局替换 id加密后 防止有% 被转义
@@ -320,11 +284,7 @@ function TestPlanExecuteDetail(props) {
       okText: '保存',
     });
   };
-  useEffect(() => {
-    if (preconditionRef.current) {
-      setPreconditionState({ type: 'init', desHeight: preconditionRef.current.offsetHeight });
-    }
-  }, [preconditionRef]);
+
 
   // 默认只显示15个字其余用... 进行省略
   const renderBreadcrumbTitle = (text) => {
@@ -332,19 +292,7 @@ function TestPlanExecuteDetail(props) {
     const textArr = [...text];
     return textArr.length > 15 ? <Tooltip title={text}>{`${textArr.slice(0, 15).join('') + ellipsis}`}</Tooltip> : text;
   };
-  function renderRichText(text, isEllipsis = false) {
-    const textArr = [{ insert: '前置条件：' }];
-    if (text && text !== '') {
-      const tempText = text2Delta(text);
-      if (Array.isArray(tempText)) {
-        textArr.push(...tempText);
-      } else {
-        textArr.push({ insert: tempText });
-      }
-    }
-    return <div className={`c7n-test-execute-detail-card-title-description-head-content${isEllipsis ? '-ellipsis' : ''}`}><RichTextShow data={delta2Html(JSON.stringify(textArr))} /></div>;
-  }
-
+ 
   function render() {
     // disabled 用于禁止action列
     const { disabled } = props;
@@ -437,15 +385,7 @@ function TestPlanExecuteDetail(props) {
                 <CardWrapper
                   title={(
                     <div className="c7n-test-execute-detail-card-title-description">
-                      <div className="c7n-test-execute-detail-card-title-description-head" ref={preconditionRef}>
-                        {/* <span className="c7n-test-execute-detail-card-title-description-head-label">
-                          前置条件
-                        </span> */}
-                        {renderRichText(detailData.description, preconditionState.iconVisible && !preconditionState.desVisible)}
-                        <span className="c7n-test-execute-detail-card-title-description-head-more">
-                          <Icon style={{ cursor: 'pointer ' }} type={`expand_${preconditionState.desVisible ? 'less' : 'more'}`} onClick={() => { setPreconditionState({ type: 'visible', desHeight: preconditionRef.current.offsetHeight }); }} />
-                        </span>
-                      </div>
+                      <AutoHeightPrecondition data={detailData.description} />
                       {[
                         <FormattedMessage id="execute_testDetail" />,
                         <span style={{ marginLeft: 5 }}>{`（${stepTableDataSet.totalCount}）`}</span>,

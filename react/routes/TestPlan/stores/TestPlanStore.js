@@ -303,8 +303,12 @@ class TestPlanStore extends TestPlanTreeStore {
    * @memberof TestPlanStore
    */
   loadAllData = () => {
+    const { testPlanStatus } = this;
     this.setLoading(true);
     return Promise.all([getStatusList('CYCLE_CASE'), this.loadIssueTree()]).then(([statusList]) => {
+      if (testPlanStatus !== this.testPlanStatus) {
+        return;
+      }
       this.setLoading(false);
       this.setStatusList(statusList);
       if (this.getCurrentPlanId) {
