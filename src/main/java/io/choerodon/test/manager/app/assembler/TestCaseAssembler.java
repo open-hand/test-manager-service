@@ -263,6 +263,9 @@ public class TestCaseAssembler {
             hasExist = false;
         }
         testCycleCaseUpdateVO.setCaseHasExist(hasExist);
+        TestPriorityDTO priorityDTO = testPriorityMapper.selectByPrimaryKey(testCycleCaseDTO.getPriorityId());
+        testCycleCaseUpdateVO.setPriorityVO(new PriorityVO(priorityDTO.getId(), priorityDTO.getName(),
+                priorityDTO.getColour(), priorityDTO.getSequence()));
         return testCycleCaseUpdateVO;
     }
 

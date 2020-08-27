@@ -19,12 +19,21 @@ public class TestCycleCaseUpdateVO {
 
     private Long objectVersionNumber;
 
+    private PriorityVO priorityVO;
 
     private List<TestCycleCaseAttachmentRelVO> cycleCaseAttachmentRelVOList;
 
     private List<TestCycleCaseStepUpdateVO> testCycleCaseStepUpdateVOS;
 
     private Boolean caseHasExist;
+
+    public PriorityVO getPriorityVO() {
+        return priorityVO;
+    }
+
+    public void setPriorityVO(PriorityVO priorityVO) {
+        this.priorityVO = priorityVO;
+    }
 
     public Long getExecuteId() {
         return executeId;
