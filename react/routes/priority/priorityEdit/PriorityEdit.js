@@ -45,7 +45,8 @@ class PriorityEdit extends Component {
         const orgId = AppState.currentMenuType.organizationId;
 
         try {
-          await priorityApi.update(id, {
+          await priorityApi.update({
+            id,
             name,
             description: des,
             defaultFlag: !!isDefault,
@@ -204,11 +205,11 @@ class PriorityEdit extends Component {
                 'default',
                 {
                   valuePropName: 'checked',
-                  initialValue: !!editingPriority.default,
+                  initialValue: !!editingPriority.defaultFlag,
                 },
               )(
                 <Checkbox
-                  disabled={!!editingPriority.default || !editingPriority.enable}
+                  disabled={!!editingPriority.defaultFlag || !editingPriority.enableFlag}
                 >
                   设置为默认优先级
                   

@@ -58,7 +58,7 @@ class PriorityList extends Component {
     const { PriorityStore } = this.props;
     const { getPriorityList } = PriorityStore;
     const dragRow = getPriorityList[dragIndex];
-    if (!dragRow.enable) {
+    if (!dragRow.enableFlag) {
       return;
     }
 
@@ -91,26 +91,26 @@ class PriorityList extends Component {
 
   renderMenu = (text, record) => {
     const { PriorityStore, intl } = this.props;
-    const enableList = PriorityStore.getPriorityList.filter(item => item.enable);
+    const enableList = PriorityStore.getPriorityList.filter(item => item.enableFlag);
     let name;
-    if (record.default) {
+    if (record.defaultFlag) {
       name = `${text} ${intl.formatMessage({ id: 'priority.default' })}`;
     } else {
       name = text;
     }
     const menu = (
       <Menu onClick={item => this.handleChooseMenu(item.key, record)}>
-        {record.enable && enableList && enableList.length === 1
+        {record.enableFlag && enableList && enableList.length === 1
           ? null
           : (
             <Menu.Item key="edit">
               <span>
-                <FormattedMessage id={record.enable ? 'disable' : 'enable'} />
+                <FormattedMessage id={record.enableFlag ? 'disable' : 'enable'} />
               </span>
             </Menu.Item>
           )
         }
-        {record.enable && enableList && enableList.length === 1
+        {record.enableFlag && enableList && enableList.length === 1
           ? null
           : (
             <Menu.Item key="del">
@@ -124,7 +124,7 @@ class PriorityList extends Component {
       <TableDropMenu
         menu={menu}
         text={name}
-        isHasMenu={!(record.enable && enableList && enableList.length === 1)}
+        isHasMenu={!(record.enableFlag && enableList && enableList.length === 1)}
         onClickEdit={this.handleEdit.bind(this, record.id)}
       />
     );
@@ -132,7 +132,7 @@ class PriorityList extends Component {
 
   getColumns = () => {
     const { PriorityStore, intl } = this.props;
-    const enableList = PriorityStore.getPriorityList.filter(item => item.enable);
+    const enableList = PriorityStore.getPriorityList.filter(item => item.enableFlag);
     return [
       {
         title: <FormattedMessage id="priority.name" />,
@@ -260,7 +260,7 @@ class PriorityList extends Component {
 
   handleChangeEnable = (priority) => {
     const { intl } = this.props;
-    if (priority.enable) {
+    if (priority.enableFlag) {
       const that = this;
       confirm({
         title: intl.formatMessage({ id: 'priority.disable.title' }),
@@ -290,7 +290,7 @@ class PriorityList extends Component {
     const { PriorityStore } = this.props;
     const orgId = AppState.currentMenuType.organizationId;
     try {
-      await priorityApi.updateStatus(priority.id, !priority.enable);
+      await priorityApi.updateStatus(priority.id, !priority.enableFlag);
       PriorityStore.loadPriorityList(orgId);
     } catch (err) {
       message.error('修改状态失败');
@@ -356,7 +356,7 @@ class PriorityList extends Component {
               index,
               moveRow: this.moveRow,
             })}
-            rowClassName={(record, index) => (!record.enable ? 'issue-priority-disable' : '')}
+            rowClassName={(record, index) => (!record.enableFlag ? 'issue-priority-disable' : '')}
           />
 
           {

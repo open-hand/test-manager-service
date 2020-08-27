@@ -6,6 +6,7 @@ import {
   Form, DataSet, Icon, message, Select,
 } from 'choerodon-ui/pro';
 import { PromptInput } from '@/components';
+import { observer } from 'mobx-react-lite';
 import UploadButton from './UploadButton';
 import { WYSIWYGEditor } from '../../../../components';
 import CreateIssueDataSet from './store/CreateIssueDataSet';
@@ -14,15 +15,23 @@ import SelectTree from '../SelectTree';
 import { beforeTextUpload, returnBeforeTextUpload } from '../../../../common/utils';
 import './CreateIssue.less';
 import { uploadFile } from '../../../../api/IssueManageApi';
+import PriorityOptionDataSet from './store/PriorityOptionDataSet';
 
 function CreateIssue(props) {
   const [visibleDetail, setVisibleDetail] = useState(true);
   const {
     intl, caseId, defaultFolderValue, onOk, modal,
   } = props;
+  const priorityOptionsDataSet = useMemo(() => new DataSet(PriorityOptionDataSet()), []);
+  const createDataset = useMemo(() => new DataSet(CreateIssueDataSet('issue', intl, priorityOptionsDataSet)), [intl]);
 
-  const createDataset = useMemo(() => new DataSet(CreateIssueDataSet('issue', intl)), [intl]);
-
+  useEffect(() => {
+    // 设置优先级默认值
+    const defaultRecord = priorityOptionsDataSet.find(item => item.get('defaultFlag'));
+    if (defaultRecord) {
+      createDataset.current.set('priorityId', defaultRecord.get('id'));
+    }
+  }, [priorityOptionsDataSet.length]);
 
   const handleCreateIssue = useCallback(async () => {
     try {
@@ -75,7 +84,7 @@ function CreateIssue(props) {
     <Form dataSet={createDataset} className={`test-create-issue-form ${visibleDetail ? '' : 'test-create-issue-form-hidden'}`}>
       <PromptInput name="summary" maxLength={44} />
       <SelectTree name="folder" parentDataSet={createDataset} defaultValue={defaultFolderValue.id} />
-      <Select name="priority" />
+      <Select name="priorityId" />
       <div role="none" style={{ cursor: 'pointer' }} onClick={() => setVisibleDetail(!visibleDetail)}>
         <div className="test-create-issue-line" />
         <span className="test-create-issue-head">
@@ -101,4 +110,4 @@ function CreateIssue(props) {
     </Form>
   );
 }
-export default withRouter(CreateIssue);
+export default withRouter(observer(CreateIssue));

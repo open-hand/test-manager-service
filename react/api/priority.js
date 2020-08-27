@@ -14,7 +14,7 @@ class PriorityApi {
   }
 
   update(data) {
-    return request.put(`${this.getPrefix}/test_priority`, data);
+    return request.put(`${this.getPrefix}/test_priority`, { ...data, organizationId: getOrganizationId() });
   }
 
   updateStatus(priorityId, enable) {

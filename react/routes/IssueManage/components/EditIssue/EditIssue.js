@@ -110,6 +110,7 @@ function EditIssue() {
         }
         break;
       }
+
       default: {
         if (key === 'summary' && value === '') {
           Choerodon.prompt('用例名不可为空！');
