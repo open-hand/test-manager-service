@@ -60,6 +60,7 @@
     <id column="summary" property="summary"/>
     <id column="folder_name" property="folderName"/>
     <id column="version_id" property="versionId"/>
+    <id column="priority_id" property="priorityId"/>
     <id column="last_update_date" property="lastUpdateDate"/>
     <id column="creation_date" property="creationDate"/>
     <id column="last_updated_by" property="lastUpdatedBy"/>
