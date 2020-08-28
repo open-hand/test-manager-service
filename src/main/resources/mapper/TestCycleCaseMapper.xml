@@ -545,6 +545,9 @@
         </foreach>
         </if>
         <include refid="sqlParam"/>
+        <if test="searchDTO != null and searchDTO.searchArgs != null and searchDTO.searchArgs.priorityId != null">
+            AND tcc.priority_id = #{searchDTO.searchArgs.priorityId}
+        </if>
          order by tcc.rank
     </select>
 
