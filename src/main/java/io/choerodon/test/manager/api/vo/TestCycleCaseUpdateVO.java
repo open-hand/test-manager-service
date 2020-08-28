@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.api.vo;
 
+import io.swagger.annotations.ApiModelProperty;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 
 import java.util.List;
@@ -19,6 +20,10 @@ public class TestCycleCaseUpdateVO {
 
     private Long objectVersionNumber;
 
+    @ApiModelProperty(value = "优先级id")
+    @Encrypt
+    private Long priorityId;
+
     private PriorityVO priorityVO;
 
     private List<TestCycleCaseAttachmentRelVO> cycleCaseAttachmentRelVOList;
@@ -26,6 +31,14 @@ public class TestCycleCaseUpdateVO {
     private List<TestCycleCaseStepUpdateVO> testCycleCaseStepUpdateVOS;
 
     private Boolean caseHasExist;
+
+    public Long getPriorityId() {
+        return priorityId;
+    }
+
+    public void setPriorityId(Long priorityId) {
+        this.priorityId = priorityId;
+    }
 
     public PriorityVO getPriorityVO() {
         return priorityVO;
