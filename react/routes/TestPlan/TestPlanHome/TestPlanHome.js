@@ -350,10 +350,12 @@ function TestPlanHome({ history }) {
                       className={`${prefixCls}-contentWrap-main-card`}
                     >
                       <Tabs
-                        defaultActiveKey="testPlanSchedule"
+                        defaultActiveKey="testPlanTable"
                         onChange={handleMainTabsChange}
                         activeKey={mainActiveTab}
                       >
+                        <TabPane tab="测试用例" key="testPlanTable" />
+                        <TabPane tab="我的执行" key="mineTestPlanTable" />
                         {
                             testPlanStore.isPlan(currentCycle.id) ? (
                               <TabPane tab="计划日历" key="testPlanSchedule">
@@ -361,8 +363,6 @@ function TestPlanHome({ history }) {
                               </TabPane>
                             ) : ''
                           }
-                        <TabPane tab="测试用例" key="testPlanTable" />
-                        <TabPane tab="我的执行" key="mineTestPlanTable" />
                       </Tabs>
                       {
                           mainActiveTab !== 'testPlanSchedule' && (

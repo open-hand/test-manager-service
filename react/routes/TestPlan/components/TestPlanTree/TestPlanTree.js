@@ -113,10 +113,8 @@ class TestPlanTree extends Component {
     if (item.id) {
       if (testPlanStore.isPlan(item.id)) { // 如果是计划
         testPlanStore.updateTimes([item]);
-        testPlanStore.setMainActiveTab('testPlanSchedule');
-      } else {
-        testPlanStore.setMainActiveTab('testPlanTable');
       }
+      testPlanStore.setMainActiveTab('testPlanTable');
       testPlanStore.setFilter({});
       testPlanStore.setBarFilter([]);
       testPlanStore.checkIdMap.clear();

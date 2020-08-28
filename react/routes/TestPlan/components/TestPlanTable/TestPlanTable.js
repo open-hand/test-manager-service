@@ -236,7 +236,8 @@ const TestPlanTable = observer(({
     title: <FormattedMessage id="priority" />,
     dataIndex: 'priorityId',
     key: 'priorityId',
-    filters: priorityList && priorityList.map(priorityVO => ({ text: priorityVO.name, value: priorityVO.id })),
+    filters: priorityList && priorityList.filter(priorityVO => priorityVO.enableFlag)
+      .map(priorityVO => ({ text: priorityVO.name, value: priorityVO.id })),
     filteredValue: getPriorityFilteredValue(),
     flex: 1,
     width: 100,

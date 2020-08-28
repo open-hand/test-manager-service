@@ -217,12 +217,19 @@ export default observer((props) => {
     const transformedFilters = Object.entries(filters).filter(item => item[1].length > 0);
     const res = {};
     transformedFilters.forEach((item) => {
-      if (item[0] === 'summary') {
-        // eslint-disable-next-line prefer-destructuring
-        res.summary = item[1][0];
-      } else if (item[0] === 'caseNum') {
-        // eslint-disable-next-line prefer-destructuring
-        res.caseNum = item[1][0];
+      switch (item[0]) {
+        case 'sequence':
+          // eslint-disable-next-line prefer-destructuring
+          res.sequence = item[1][0];
+          break;
+        case 'sourceCaseNum':
+          // eslint-disable-next-line prefer-destructuring
+          res.caseNum = item[1][0];
+          break;
+        default:
+          // eslint-disable-next-line prefer-destructuring
+          res[item[0]] = item[1][0];
+          break;
       }
     });
     return res;
@@ -307,6 +314,8 @@ export default observer((props) => {
       dataIndex: 'priorityId',
       key: 'sequence',
       sorter: true,
+      filters: IssueStore.priorityList.filter(priorityVO => priorityVO.enableFlag)
+        .map(priorityVO => ({ text: priorityVO.name, value: priorityVO.id })),
       width: '1rem',
       render: (priorityId, record) => priorityId && <PriorityTag priority={record.priorityVO} />,
     },
