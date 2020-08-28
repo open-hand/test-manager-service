@@ -65,15 +65,16 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
     static {
         README_OPTIONS[0] = new ExcelReadMeOptionVO("用例概要*", true);
-        README_OPTIONS[1] = new ExcelReadMeOptionVO("前置条件", false);
+        README_OPTIONS[1] = new ExcelReadMeOptionVO("优先级*", true);
+        README_OPTIONS[2] = new ExcelReadMeOptionVO("前置条件", false);
         //README_OPTIONS[2] = new ExcelReadMeOptionVO("优先级", false);
 //        README_OPTIONS[2] = new ExcelReadMeOptionVO("被指定人", false);
         //README_OPTIONS[3] = new ExcelReadMeOptionVO("模块", false);
 //        README_OPTIONS[3] = new ExcelReadMeOptionVO("关联的issue", false);
-        README_OPTIONS[2] = new ExcelReadMeOptionVO("测试步骤", false);
-        README_OPTIONS[3] = new ExcelReadMeOptionVO("测试数据", false);
-        README_OPTIONS[4] = new ExcelReadMeOptionVO("预期结果", false);
-        README_OPTIONS[5] = new ExcelReadMeOptionVO("优先级*", true);
+        README_OPTIONS[3] = new ExcelReadMeOptionVO("测试步骤", false);
+        README_OPTIONS[4] = new ExcelReadMeOptionVO("测试数据", false);
+        README_OPTIONS[5] = new ExcelReadMeOptionVO("预期结果", false);
+
 
         for (int i = 0; i < EXAMPLE_TEST_CASE_STEPS.length; i++) {
             EXAMPLE_TEST_CASE_STEPS[i] = new TestCaseStepDTO();
@@ -287,7 +288,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         fillTestCaseSheet(testCaseSheet);
         setTestCaseSheetStyle(testCaseSheet);
 
-        ExcelUtil.dropDownList2007(workbook, testCaseSheet, priorityNameList, 1, 500, 5, 5, HIDDEN_PRIORITY, 2);
+        ExcelUtil.dropDownList2007(workbook, testCaseSheet, priorityNameList, 1, 500, 1, 1, HIDDEN_PRIORITY, 2);
 //        ExcelUtil.dropDownList2007(workbook, testCaseSheet, userNameList, 1, 500, 2, 2, HIDDEN_USER, 2);
     }
 
