@@ -65,6 +65,7 @@ public class TestPriorityDTO extends AuditDomain {
     @Transient
     private String param;
     @Transient
+    @Encrypt
     private Long changePriorityId;
 
     public Long getChangePriorityId() {
