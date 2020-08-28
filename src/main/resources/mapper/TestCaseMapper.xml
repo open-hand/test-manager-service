@@ -354,6 +354,9 @@
         ) as tci
         <where>
             <include refid="sqlParam"/>
+            <if test="searchDTO != null and searchDTO.searchArgs != null and searchDTO.searchArgs.priorityId != null">
+                AND tci.priority_id = #{searchDTO.searchArgs.priorityId}
+            </if>
         </where>
     </select>
     <select id="checkPriorityDelete" resultType="java.lang.Long">
