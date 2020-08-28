@@ -214,6 +214,7 @@
             <id column="case_id" property="caseId"/>
             <result  column="summary" property="summary"/>
             <result  column="description" property="description"/>
+            <result  column="priority_id" property="priorityId"/>
         </association>
         <collection  property="caseStep" ofType="io.choerodon.test.manager.infra.dto.TestCaseStepDTO">
             <id column="step_id" property="stepId"/>
@@ -233,6 +234,7 @@
         SELECT
         tc.case_id as case_id,
         tc.summary as summary,
+        tc.priority_id as priority_id,
         tc.description as description,
         cs.step_id as step_id,
         cs.test_step as test_step,
