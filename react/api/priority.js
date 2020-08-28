@@ -1,3 +1,4 @@
+import { stores, axios, Choerodon } from '@choerodon/boot';
 import { getProjectId, request, getOrganizationId } from '../common/utils';
 
 class PriorityApi {
@@ -21,8 +22,8 @@ class PriorityApi {
     return request.post(`${this.getPrefix}/test_priority/${priorityId}/${enable ? 'enabled' : 'disabled'}`);
   }
 
-  delete(data) {
-    return request.delete(`${this.getPrefix}/test_priority`, data);
+  delete(id, changePriorityId) {
+    return request.delete(`${this.getPrefix}/test_priority`, { data: { id, changePriorityId } });
   }
 
   /**
