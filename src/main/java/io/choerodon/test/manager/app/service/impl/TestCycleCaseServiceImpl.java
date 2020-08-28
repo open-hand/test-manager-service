@@ -605,6 +605,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                 testCycleCase.setSummary(testCaseDTO.getSummary());
                 testCycleCase.setDescription(testCaseDTO.getDescription());
                 testCycleCase.setVersionNum(testCaseDTO.getVersionNum());
+                testCycleCase.setPriorityId(testCaseDTO.getPriorityId());
             }
             if (caseCompareRepVO.getChangeAttach()) {
                 testCycleCaseAttachmentRelService.snycByCase(testCycleCaseDTO, testCaseDTO);
@@ -626,6 +627,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                 testCaseRepVO.setDescription(testCycleCaseDTO.getDescription());
                 testCaseRepVO.setObjectVersionNumber(testCaseDTO.getObjectVersionNumber());
                 testCaseRepVO.setExecuteId(testCycleCaseDTO.getExecuteId());
+                testCaseRepVO.setPriorityId(testCycleCaseDTO.getPriorityId());
                 List<String> fieldList = verifyUpdateUtil.verifyUpdateData((JSONObject) JSON.toJSON(testCaseRepVO), testCaseRepVO);
                 testCaseService.updateCase(testCaseDTO.getProjectId(), testCaseRepVO, fieldList.toArray(new String[fieldList.size()]));
                 testCycleCaseDTO.setVersionNum(testCaseDTO.getVersionNum() + 1);
