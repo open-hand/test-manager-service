@@ -71,6 +71,7 @@ class PriorityList extends Component {
     priorityApi.sort(PriorityStore.getPriorityList.map(item => ({
       id: item.id,
       sequence: item.sequence,
+      objectVersionNumber: item.objectVersionNumber,
     }))).then(() => {
       PriorityStore.loadPriorityList(orgId);
     });
