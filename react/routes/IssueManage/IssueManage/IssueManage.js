@@ -8,6 +8,7 @@ import { Modal } from 'choerodon-ui/pro/lib';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import Empty from '@/components/Empty';
 import empty from '@/assets/empty.png';
+import priorityApi from '@/api/priority';
 import IssueStore from '../stores/IssueStore';
 import { getParams } from '../../../common/utils';
 import RunWhenProjectChange from '../../../common/RunWhenProjectChange';
@@ -40,6 +41,9 @@ export default class IssueManage extends Component {
         caseId: paramIssueId,
       });
     }
+    priorityApi.load().then((res) => {
+      IssueStore.setPriorityList(res);
+    });
     // 当参数中有用例名时，在table的筛选框中加入
     const barFilters = paramName ? [paramName] : [];
     IssueStore.setBarFilters(barFilters);

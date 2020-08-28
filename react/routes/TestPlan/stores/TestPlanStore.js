@@ -23,7 +23,7 @@ class TestPlanStore extends TestPlanTreeStore {
   }
 
   // @observable mainActiveTab = this.isPlan(this.currentCycle.id) ? 'testPlanSchedule' : 'testPlanTable';
-  @observable mainActiveTab = 'testPlanSchedule';
+  @observable mainActiveTab = 'testPlanTable';
 
   @action setMainActiveTab = (mainActiveTab) => {
     this.mainActiveTab = mainActiveTab;
@@ -202,7 +202,7 @@ class TestPlanStore extends TestPlanTreeStore {
     this.testPlanStatus = 'todo';
     this.planInfo = {};
     this.statusRes = {};
-    this.mainActiveTab = 'testPlanSchedule';
+    this.mainActiveTab = 'testPlanTable';
     this.times = [];
   }
 

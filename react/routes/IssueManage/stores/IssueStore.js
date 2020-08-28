@@ -17,6 +17,12 @@ class IssueStore {
     total: 0,
   };
 
+  @observable priorityList=[];
+
+  @action setPriorityList(data) {
+    this.priorityList = data;
+  }
+
   @observable filter = {
     searchArgs: {},
   };
