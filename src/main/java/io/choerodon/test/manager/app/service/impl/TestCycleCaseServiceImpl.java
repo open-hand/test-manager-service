@@ -903,6 +903,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                 testCycleCaseDTO.setSummary(v.getSummary());
                 testCycleCaseDTO.setSource("none");
                 testCycleCaseDTO.setRank(RankUtil.Operation.INSERT.getRank(lastedRank, null));
+                testCycleCaseDTO.setPriorityId(v.getPriorityId());
                 lastedRank = testCycleCaseDTO.getRank();
                 testCycleCaseDTOS.add(testCycleCaseDTO);
             }
