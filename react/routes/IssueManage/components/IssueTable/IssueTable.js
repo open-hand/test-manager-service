@@ -220,7 +220,7 @@ export default observer((props) => {
       switch (item[0]) {
         case 'sequence':
           // eslint-disable-next-line prefer-destructuring
-          res.sequence = item[1][0];
+          res.priorityId = item[1][0];
           break;
         case 'sourceCaseNum':
           // eslint-disable-next-line prefer-destructuring
