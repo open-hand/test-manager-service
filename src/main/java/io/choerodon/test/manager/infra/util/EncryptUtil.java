@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.infra.util;
 
 import org.hzero.starter.keyencrypt.core.Encrypt;
+import org.hzero.starter.keyencrypt.core.EncryptContext;
 import org.hzero.starter.keyencrypt.core.EncryptionService;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +22,7 @@ public class EncryptUtil {
 
     public void decryptIfFieldEncrypted(Field field, Object objectUpdate, Object v) throws IllegalAccessException {
         Encrypt encrypt = field.getAnnotation(Encrypt.class);
-        if (encrypt != null && v instanceof String) {
+        if (encrypt != null && v instanceof String && EncryptContext.isEncrypt()) {
             String decrypt = encryptionService.decrypt(v.toString(), encrypt.value());
             field.set(objectUpdate, Long.parseLong(decrypt));
         } else {
