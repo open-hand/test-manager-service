@@ -222,9 +222,9 @@ class TestPlanStore extends TestPlanTreeStore {
         return 1;
       }
     });
-
     this.treeData.treeFolder[root.index].isSort = true;
-    this.treeData.treeFolder[root.index].children = newChildren;
+    this.treeData.treeFolder[root.index].children.splice(0, newChildren.length, ...newChildren);
+    // this.treeData.treeFolder[root.index].children = newChildren;
     // eslint-disable-next-line no-param-reassign
     this.treeFolderMaps.set(root.id, {
       ...root, isSort: true, oldChildren: root.children, children: newChildren,
@@ -246,22 +246,24 @@ class TestPlanStore extends TestPlanTreeStore {
         // 返回原顺序
         if (sortData && sortData.isSort) {
           const stackChildren = [];
+          stackChildren.push(sortData.id);
           stackChildren.push(...sortData.children);
-          this.treeFolderMaps.set(sortData.id, {
-            ...sortData, children: sortData.oldChildren, oldChildren: [], isSort: false,
-          });
           while (stackChildren.length > 0) {
             const id = stackChildren.pop();
             const tempData = this.treeFolderMaps.get(id);
-            stackChildren.push(...tempData.children);
-            this.treeData.treeFolder[tempData.index].isSort = false;
-            this.treeData.treeFolder[tempData.index].children = tempData.oldChildren;
-            this.treeFolderMaps.set(tempData.id, {
-              ...tempData, children: tempData.oldChildren, oldChildren: [], isSort: false,
-            });
+            if (tempData.isSort) {
+              stackChildren.push(...tempData.children);
+              this.treeData.treeFolder[tempData.index].isSort = false;
+              const oldChildren = [...tempData.oldChildren];
+              this.treeData.treeFolder[tempData.index].children.splice(0, oldChildren.length, ...oldChildren);
+
+              this.treeFolderMaps.set(tempData.id, {
+                ...tempData, children: oldChildren, oldChildren: [], isSort: false,
+              });
+            }
           }
           if (planId === this.getCurrentPlanId) {
-            this.updateTimes([sortData]);
+            this.updateTimes([this.treeFolderMaps.get(planId)]);
           }
           resolve(true);
         }
@@ -290,7 +292,7 @@ class TestPlanStore extends TestPlanTreeStore {
         // this.treeFolderMaps.set(planId, sortData);
         this.sortTreeData(sortData, sortData.children);
         if (planId === this.getCurrentPlanId) {
-          this.updateTimes([sortData]);
+          this.updateTimes([this.treeFolderMaps.get(planId)]);
         }
         resolve(true);
       }).then(() => {
