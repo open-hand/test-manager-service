@@ -333,7 +333,6 @@
                 tc.folder_id,
                 tc.project_id,
                 CONCAT_WS( '-', tpi.project_code, tc.case_num ) AS case_num,
-                tc.case_id AS source_case_num,
                 tc.priority_id,
                 tp.name AS priority_name,
                 tp.colour AS priority_colour,
