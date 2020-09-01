@@ -11,7 +11,7 @@
         <id column="description" property="description"/>
         <id column="last_updated_by" property="lastUpdatedBy"/>
         <id column="created_by" property="createdBy"/>
-
+        <id column="priority_name" property="priorityName"/>
         <collection property="caseSteps"
                     ofType="io.choerodon.test.manager.api.vo.TestCaseStepVO">
             <id column="step_id" property="stepId"/>
@@ -183,9 +183,11 @@
         SELECT
         tpi.project_code,
         tif.`name` folderName,
+        tp.name AS priority_name,
         ts.*,tcs.*
         FROM
         test_case ts
+        LEFT JOIN test_priority tp ON ts.priority_id = tp.id
         LEFT JOIN test_issue_folder tif ON tif.folder_id = ts.folder_id
         LEFT JOIN test_case_step tcs on tcs.issue_id =ts.case_id
         LEFT JOIN test_project_info tpi on ts.project_id=tpi.project_id
