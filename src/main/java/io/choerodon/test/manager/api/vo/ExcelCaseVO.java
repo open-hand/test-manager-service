@@ -25,6 +25,15 @@ public class ExcelCaseVO {
     private Long createdBy;
     private String executor;
     private List<TestCaseStepVO> caseSteps;
+    private String priorityName;
+
+    public String getPriorityName() {
+        return priorityName;
+    }
+
+    public void setPriorityName(String priorityName) {
+        this.priorityName = priorityName;
+    }
 
     public String getProjectCode() {
         return projectCode;

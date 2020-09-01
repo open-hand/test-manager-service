@@ -206,11 +206,12 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
         Row row = ExcelUtil.createRow(sheet, columnNum, rowStyles);
         if (!ObjectUtils.isEmpty(excelCaseVO)) {
             Optional.ofNullable(excelCaseVO.getFolderName()).ifPresent(v -> ExcelUtil.createCell(row, 0, ExcelUtil.CellType.TEXT, v));
-            Optional.ofNullable(excelCaseVO.getCaseNum()).ifPresent(v -> ExcelUtil.createCell(row, 2, ExcelUtil.CellType.TEXT, v));
             Optional.ofNullable(excelCaseVO.getSummary()).ifPresent(v -> ExcelUtil.createCell(row, 1, ExcelUtil.CellType.TEXT, v));
+            Optional.ofNullable(excelCaseVO.getPriorityName()).ifPresent(v -> ExcelUtil.createCell(row, 2, ExcelUtil.CellType.TEXT, v));
+            Optional.ofNullable(excelCaseVO.getCaseNum()).ifPresent(v -> ExcelUtil.createCell(row, 3, ExcelUtil.CellType.TEXT, v));
             //接口修改后，改成描述
-            Optional.ofNullable(ExcelUtil.getColumnWithoutRichText(excelCaseVO.getDescription())).ifPresent(v -> ExcelUtil.createCell(row, 3, ExcelUtil.CellType.TEXT, v));
-            Optional.ofNullable(excelCaseVO.getExecutor()).ifPresent(v -> ExcelUtil.createCell(row, 4, ExcelUtil.CellType.TEXT, v));
+            Optional.ofNullable(ExcelUtil.getColumnWithoutRichText(excelCaseVO.getDescription())).ifPresent(v -> ExcelUtil.createCell(row, 4, ExcelUtil.CellType.TEXT, v));
+            Optional.ofNullable(excelCaseVO.getExecutor()).ifPresent(v -> ExcelUtil.createCell(row, 5, ExcelUtil.CellType.TEXT, v));
         }
 //        ExcelUtil.createCell(row, 9, ExcelUtil.CellType.TEXT, "").setCellFormula(
 //                getLookupString("A" + (row.getRowNum() + 1), statusEnd + 2, folderEnd, 2));
