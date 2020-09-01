@@ -77,7 +77,7 @@ function EditExecuteIssue(props) {
           <div className="test-edit-execute-issue-line" />
           <span className="test-edit-execute-issue-head">
             <Icon type={`${visibleDetail ? 'expand_less' : 'expand_more'}`} />
-            用例详细信息
+            用例前置条件
           </span>
 
         </div>
