@@ -222,7 +222,7 @@ export default observer((props) => {
           // eslint-disable-next-line prefer-destructuring
           res.priorityId = item[1][0];
           break;
-        case 'sourceCaseNum':
+        case 'caseId':
           // eslint-disable-next-line prefer-destructuring
           res.caseNum = item[1][0];
           break;
@@ -304,7 +304,7 @@ export default observer((props) => {
     {
       title: '用例编号',
       dataIndex: 'caseNum',
-      key: 'sourceCaseNum',
+      key: 'caseId',
       sorter: true,
       filters: [],
       render: caseNum => renderIssueNum(caseNum),
