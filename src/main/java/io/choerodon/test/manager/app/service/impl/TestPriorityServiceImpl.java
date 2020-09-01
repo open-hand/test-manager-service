@@ -34,6 +34,8 @@ public class TestPriorityServiceImpl implements TestPriorityService {
     private static final String NOT_FOUND = "error.priority.notFound";
     private static final String DELETE_ILLEGAL = "error.priority.deleteIllegal";
     private static final String LAST_ILLEGAL = "error.priority.lastIllegal";
+    protected static final String[] UPDATE_FIELDS = new String[]{TestPriorityDTO.FIELD_DEFAULT_FLAG, TestPriorityDTO.FIELD_NAME,
+            TestPriorityDTO.FIELD_DESCRIPTION, TestPriorityDTO.FIELD_COLOUR};
 
     @Autowired
     private TestCaseService testCaseService;
@@ -91,7 +93,7 @@ public class TestPriorityServiceImpl implements TestPriorityService {
                 throw new CommonException("error.priority.illegal");
             }
         }
-        int isUpdate = testPriorityMapper.updateOptional(testPriorityDTO, TestPriorityDTO.UPDATE_FIELDS);
+        int isUpdate = testPriorityMapper.updateOptional(testPriorityDTO, UPDATE_FIELDS);
         if (isUpdate != 1) {
             throw new CommonException("error.priority.update");
         }

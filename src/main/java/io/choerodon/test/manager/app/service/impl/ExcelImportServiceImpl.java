@@ -61,7 +61,8 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     private static final IssueCreateDTO[] EXAMPLE_ISSUES = new IssueCreateDTO[3];
     private static final String TYPE_CYCLE = "cycle";
     public static final int EXCEL_WIDTH_PX = 256;
-
+    protected static final String[] EXCEL_HEADERS = new String[]{ExcelTitleName.CASE_SUMMARY, ExcelTitleName.PRIORITY,
+            ExcelTitleName.CASE_DESCRIPTION, ExcelTitleName.TEST_STEP, ExcelTitleName.TEST_DATA, ExcelTitleName.EXPECT_RESULT};
 
     static {
         README_OPTIONS[0] = new ExcelReadMeOptionVO("用例概要*", true);
@@ -159,7 +160,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         Map<String, Long> priorityMap = testPriorityMapper.select(priorityDTO)
                 .stream().collect(Collectors.toMap(TestPriorityDTO::getName, TestPriorityDTO::getId));
 
-        if(ObjectUtils.isEmpty(testCasesSheet) || isOldExcel(issuesWorkbook, ExcelTitleName.EXCEL_HEADERS)){
+        if(ObjectUtils.isEmpty(testCasesSheet) || isOldExcel(issuesWorkbook, EXCEL_HEADERS)){
             logger.info("错误的模板文件");
             // 更新创建历史记录
             testFileLoadHistoryDTO.setMessage("错误的模板文件");

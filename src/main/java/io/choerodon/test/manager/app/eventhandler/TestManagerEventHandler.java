@@ -130,7 +130,7 @@ public class TestManagerEventHandler {
 
         } catch (Exception e) {
             if (map != null) {
-                testPlanServcie.setPlanInitStatusFail(modelMapper.map(testPlanMapper.selectByPrimaryKey(map.get("new").longValue()), TestPlanVO.class));
+                testPlanServcie.setPlanInitStatusFail(modelMapper.map(testPlanMapper.selectByPrimaryKey(map.get("new")), TestPlanVO.class));
             }
             throw e;
         }

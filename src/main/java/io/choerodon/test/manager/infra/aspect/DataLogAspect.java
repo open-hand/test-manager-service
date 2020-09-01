@@ -14,6 +14,8 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +45,8 @@ public class DataLogAspect {
     private static final String FIELD_DESCRIPTION_NULL = "[{\"insert\":\"\n\"}]";
     private static final String FIELD_FOLDER = "Folder Link";
     private static final String FIELD_ATTACHMENT = "Attachment";
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(DataLogAspect.class);
 
     @Autowired
     private ModelMapper modelMapper;
@@ -141,7 +145,7 @@ public class DataLogAspect {
                 testCaseAttachmentDTOS.stream().filter(v -> !attachNames.contains(v.getFileName())).forEach( v -> createDataLog(v.getProjectId(), v.getCaseId(), FIELD_ATTACHMENT, null, v.getUrl(), null, null));
              }
         } catch (Exception throwable) {
-            throwable.printStackTrace();
+            LOGGER.error("handleCaseBatchInsertAttach e message:[{}], trace: [{}]", throwable.getMessage(), throwable.getStackTrace());
         }
     }
 
@@ -162,7 +166,7 @@ public class DataLogAspect {
                 attachmentDTOS.stream().filter(v -> !attachNames.contains(v.getFileName())).forEach( v -> createDataLog(v.getProjectId(), v.getCaseId(), FIELD_ATTACHMENT, v.getUrl(), null, v.getAttachmentId().toString(), null));
             }
         } catch (Exception throwable) {
-            throwable.printStackTrace();
+            LOGGER.error("handleCaseBatchDeleteAttach exception message:[{}], trace: [{}]", throwable.getMessage(), throwable.getStackTrace());
         }
     }
 
@@ -179,7 +183,7 @@ public class DataLogAspect {
                 createDataLog(testCaseAttachmentDTO.getProjectId(), testCaseAttachmentDTO.getCaseId(), FIELD_ATTACHMENT, testCaseAttachmentDTO.getUrl(), null, testCaseAttachmentDTO.getAttachmentId().toString(), null);
             }
         } catch (Exception throwable) {
-            throwable.printStackTrace();
+            LOGGER.error("handleAttachmentDeleteLog exception message:[{}], trace: [{}]", throwable.getMessage(), throwable.getStackTrace());
         }
     }
 
@@ -198,7 +202,7 @@ public class DataLogAspect {
                 createDataLog(testCaseAttachmentDTO.getProjectId(), testCaseAttachmentDTO.getCaseId(), FIELD_ATTACHMENT, null, testCaseAttachmentDTO.getUrl(), null, testCaseAttachmentDTO.getAttachmentId().toString());
             }
         } catch (Throwable throwable) {
-            throwable.printStackTrace();
+            LOGGER.error("handleAttachmentCreateLog exception message:[{}], trace: [{}]", throwable.getMessage(), throwable.getStackTrace());
         }
 
         return  result;
@@ -236,7 +240,7 @@ public class DataLogAspect {
             }
 
         } catch (Exception throwable) {
-            throwable.printStackTrace();
+            LOGGER.error("handleCaseMoveFolder exception message:[{}], trace: [{}]", throwable.getMessage(), throwable.getStackTrace());
         }
     }
 
@@ -258,7 +262,7 @@ public class DataLogAspect {
                 handleIssueFolder(field, testCaseDTO, testCaseRepVO);
             }
         } catch (Exception throwable) {
-            throwable.printStackTrace();
+            LOGGER.error("handleCaseDataLog exception message:[{}], trace: [{}]", throwable.getMessage(), throwable.getStackTrace());
         }
     }
 
