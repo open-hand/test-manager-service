@@ -86,6 +86,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         for (int i = 0; i < EXAMPLE_ISSUES.length; i++) {
             EXAMPLE_ISSUES[i] = new IssueCreateDTO();
             EXAMPLE_ISSUES[i].setSummary("概要" + (i + 1));
+            EXAMPLE_ISSUES[i].setPriorityCode("优先级" + (i + 1));
             EXAMPLE_ISSUES[i].setDescription("前置条件" + (i + 1));
         }
     }
@@ -328,10 +329,11 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         setSheetBaseStyle(testCaseSheet);
         // 设置列宽度
         testCaseSheet.setColumnWidth(0,EXCEL_WIDTH_PX * 48);
-        testCaseSheet.setColumnWidth(1,EXCEL_WIDTH_PX * 32);
-        testCaseSheet.setColumnWidth(2,EXCEL_WIDTH_PX * 48);
-        testCaseSheet.setColumnWidth(3,EXCEL_WIDTH_PX * 16);
-        testCaseSheet.setColumnWidth(4,EXCEL_WIDTH_PX * 48);
+        testCaseSheet.setColumnWidth(1,EXCEL_WIDTH_PX * 16);
+        testCaseSheet.setColumnWidth(2,EXCEL_WIDTH_PX * 32);
+        testCaseSheet.setColumnWidth(3,EXCEL_WIDTH_PX * 48);
+        testCaseSheet.setColumnWidth(4,EXCEL_WIDTH_PX * 16);
+        testCaseSheet.setColumnWidth(5,EXCEL_WIDTH_PX * 48);
 
         CellStyle cellStyle = testCaseSheet.getWorkbook().createCellStyle();
         cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
@@ -379,16 +381,17 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     private void writeExample(Sheet sheet, int rowNum, int colNum, IssueCreateDTO issueCreateDTO, TestCaseStepDTO... steps) {
         Row row = ExcelUtil.getOrCreateRow(sheet, rowNum);
         row.createCell(colNum, CELL_TYPE_STRING).setCellValue(issueCreateDTO.getSummary());
-        row.createCell(colNum + 1, CELL_TYPE_STRING).setCellValue(issueCreateDTO.getDescription());
+        row.createCell(colNum + 1, CELL_TYPE_STRING).setCellValue(issueCreateDTO.getPriorityCode());
+        row.createCell(colNum + 2, CELL_TYPE_STRING).setCellValue(issueCreateDTO.getDescription());
 //        row.createCell(colNum + 2, CELL_TYPE_STRING).setCellValue("1234张三");
         //row.createCell(colNum + 3, CELL_TYPE_STRING).setCellValue("测试模块");
 //        row.createCell(colNum + 2, CELL_TYPE_STRING).setCellValue("XX-111");
 
         for (int i = 0; i < steps.length; i++) {
             row = ExcelUtil.getOrCreateRow(sheet, i + rowNum);
-            row.createCell(colNum + 2, CELL_TYPE_STRING).setCellValue(steps[i].getTestStep());
-            row.createCell(colNum + 3, CELL_TYPE_STRING).setCellValue(steps[i].getTestData());
-            row.createCell(colNum + 4, CELL_TYPE_STRING).setCellValue(steps[i].getExpectedResult());
+            row.createCell(colNum + 3, CELL_TYPE_STRING).setCellValue(steps[i].getTestStep());
+            row.createCell(colNum + 4, CELL_TYPE_STRING).setCellValue(steps[i].getTestData());
+            row.createCell(colNum + 5, CELL_TYPE_STRING).setCellValue(steps[i].getExpectedResult());
         }
     }
 
@@ -553,6 +556,11 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         String description = ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.CASE_DESCRIPTION, row));
         String summary = ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.CASE_SUMMARY, row));
         String priority = ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.PRIORITY, row));
+
+        if (Objects.isNull(priorityMap.get(priority))) {
+            markAsError(row, "优先级不存在");
+            return null;
+        }
 
         IssueCreateDTO issueCreateDTO = new IssueCreateDTO();
         issueCreateDTO.setProjectId(projectId);
