@@ -18,6 +18,4 @@ public class ExcelTitleName {
     public static final String TEST_DATA = "测试数据";
     public static final String EXPECT_RESULT = "预期结果";
     public static final String PRIORITY = "优先级*";
-
-    public static final String[] EXCEL_HEADERS = new String[]{CASE_SUMMARY, PRIORITY, CASE_DESCRIPTION, TEST_STEP, TEST_DATA, EXPECT_RESULT};
 }

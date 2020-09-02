@@ -42,7 +42,6 @@ public class IssueLabelDTO extends AuditDomain {
     /**
      * 项目id
      */
-    @NotNull(message = "error.IssueLabel.projectIdNotNull")
     private Long projectId;
 
     public Long getLabelId() {
