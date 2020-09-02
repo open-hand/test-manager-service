@@ -120,6 +120,10 @@ function PureTree({
     Modal.confirm({
       title: getDeleteTitle ? callFunction(getDeleteTitle, item).split('|')[0] : '确认删除目录',
       children: getDeleteTitle ? callFunction(getDeleteTitle, item).split('|')[1] : undefined,
+      okText: '删除',
+      okProps: {
+        color: 'red',
+      },
     }).then(async (button) => {
       if (button === 'ok') {
         try {
