@@ -290,6 +290,13 @@ export function cancelImport(historyId) {
   return request.put(`/test/v1/projects/${getProjectId()}/test/fileload/history/cancel?historyId=${historyId}`);
 }
 /**
+ * 复制一个用例文件夹前置查询
+ * @param {*} folderId 
+ */
+export function preCopyFolder(folderId) {
+  return request.get(`/test/v1/projects/${getProjectId()}/issueFolder/folder/${folderId}/clone/check_name`);
+}
+/**
  * 复制一个用例文件夹（包括里面用例）
  * @param {*} folderId 
  */
