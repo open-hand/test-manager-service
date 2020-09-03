@@ -1,9 +1,9 @@
 import React, { Component, createRef } from 'react';
-import { WSHandler } from '@choerodon/boot';
+import { WSHandler, Choerodon } from '@choerodon/boot';
 import { observer } from 'mobx-react';
 import { Menu } from 'choerodon-ui';
 import { handleRequestFailed } from '@/common/utils';
-import { copyFolder } from '@/api/IssueManageApi';
+import { preCopyFolder, copyFolder } from '@/api/IssueManageApi';
 import './IssueTree.less';
 import {
   addFolder, editFolder, deleteFolder, moveFolder,
@@ -32,7 +32,7 @@ class IssueTree extends Component {
     if (parentId === 0) {
       IssueTreeStore.addRootItem(result.folderId);
     }
-    
+
     const newData = {
       id: result.folderId,
       children: [],
@@ -121,12 +121,23 @@ class IssueTree extends Component {
     IssueTreeStore.setCurrentFolder(item);
   }
 
+  handleCopyFolder = (folderId) => {
+    preCopyFolder(folderId).then((isCanCopy) => {
+      if (isCanCopy) {
+        copyFolder(folderId).then((res) => {
+          IssueTreeStore.loadIssueTree(folderId);
+        });
+        return true;
+      }
+      Choerodon.prompt('复制后的文件名超出最大限制');
+      return false;
+    });
+  }
+
   handleMenuClick = (key, nodeItem) => {
     switch (key) {
       case 'copy':
-        copyFolder(nodeItem.id).then((res) => {
-          IssueTreeStore.loadIssueTree(nodeItem.id);
-        });
+        this.handleCopyFolder(nodeItem.id);
         break;
       case 'delete':
         IssueTreeStore.treeRef.current.trigger.delete(nodeItem);
