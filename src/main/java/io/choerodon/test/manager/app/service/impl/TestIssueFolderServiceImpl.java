@@ -264,6 +264,18 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
 
     @Override
     public TestIssueFolderDTO cloneCurrentFolder(Long projectId, Long folderId) {
+        // 复制当前文件夹
+        TestIssueFolderDTO newFolder = preGenerateNewFolder(projectId, folderId);
+        newFolder.setName(generateCopyFolderName(newFolder.getName(), newFolder.getProjectId(), newFolder.getParentId()));
+        newFolder.setRank(RankUtil.genNext(newFolder.getRank()));
+        newFolder.setInitStatus(TestPlanInitStatus.CREATING);
+        testIssueFolderMapper.insertSelective(newFolder);
+        newFolder = testIssueFolderMapper.selectByPrimaryKey(newFolder.getFolderId());
+        newFolder.setOldFolderId(folderId);
+        return newFolder;
+    }
+
+    private TestIssueFolderDTO preGenerateNewFolder(Long projectId, Long folderId) {
         // 检查当前文件夹是否存在
         TestIssueFolderDTO folder = new TestIssueFolderDTO();
         folder.setProjectId(projectId);
@@ -272,15 +284,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
         if (Objects.isNull(folderDTO)) {
             throw new CommonException(BaseConstants.ErrorCode.DATA_NOT_EXISTS);
         }
-        // 复制当前文件夹
-        TestIssueFolderDTO newFolder = new TestIssueFolderDTO(folderDTO, folderDTO.getParentId(), 0L);
-        newFolder.setName(generateCopyFolderName(newFolder.getName(), newFolder.getProjectId(), newFolder.getParentId()));
-        newFolder.setRank(RankUtil.genNext(newFolder.getRank()));
-        newFolder.setInitStatus(TestPlanInitStatus.CREATING);
-        testIssueFolderMapper.insertSelective(newFolder);
-        newFolder = testIssueFolderMapper.selectByPrimaryKey(newFolder.getFolderId());
-        newFolder.setOldFolderId(folderId);
-        return newFolder;
+        return new TestIssueFolderDTO(folderDTO, folderDTO.getParentId(), 0L);
     }
 
     private String generateCopyFolderName(String oldFolderName, Long projectId, Long parentFolderId) {
@@ -343,6 +347,14 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
         }else {
             messageClient.sendByUserId(userId, TestIssueFolderDTO.MESSAGE_COPY_TEST_FOLDER, BaseConstants.FIELD_SUCCESS);
         }
+    }
+
+    @Override
+    public boolean checkCopyFolderName(Long projectId, Long folderId) {
+        // 复制当前文件夹
+        TestIssueFolderDTO newFolder = preGenerateNewFolder(projectId, folderId);
+        String newName = generateCopyFolderName(newFolder.getName(), newFolder.getProjectId(), newFolder.getParentId());
+        return newName.length() <= 100;
     }
 
     @Override
