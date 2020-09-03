@@ -65,4 +65,6 @@ public interface TestIssueFolderService {
     void cloneChildrenFolderAndCase(Long projectId, TestIssueFolderDTO newFolder);
 
     void changeFloderStatus(TestIssueFolderDTO newFolder, Long userId);
+
+    boolean checkCopyFolderName(Long projectId, Long folderId);
 }

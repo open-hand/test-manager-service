@@ -92,4 +92,16 @@ public class TestIssueFolderController {
                                                                   @Encrypt Long folderId) {
         return Results.success(testIssueFolderService.cloneFolder(projectId, folderId));
     }
+
+    /**
+     * 复制计划文件夹
+     */
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @ApiOperation("检查复制文件夹名称合规")
+    @GetMapping("/folder/{folderId}/clone/check_name")
+    public ResponseEntity<Boolean> checkCopyFolderName(@PathVariable(name = "project_id") Long projectId,
+                                                       @PathVariable(name = "folderId")
+                                                       @Encrypt Long folderId) {
+        return Results.success(testIssueFolderService.checkCopyFolderName(projectId, folderId));
+    }
 }
