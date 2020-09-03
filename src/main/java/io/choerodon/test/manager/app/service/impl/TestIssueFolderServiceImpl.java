@@ -288,19 +288,24 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
     }
 
     private String generateCopyFolderName(String oldFolderName, Long projectId, Long parentFolderId) {
+        String newName;
         List<TestIssueFolderDTO> folderList = testIssueFolderMapper.selectByCondition(Condition.builder(TestIssueFolderDTO.class)
                 .andWhere(Sqls.custom().andEqualTo("projectId", projectId).andEqualTo("parentId", parentFolderId)
                 .andLike("name", oldFolderName)).build());
         boolean suffix = folderList.stream().map(samePreFolder -> StringUtils.substring(samePreFolder.getName(), oldFolderName.length()))
                 .anyMatch(name ->StringUtils.contains(name, "-副本"));
         if (!suffix){
-            return oldFolderName + "-副本";
+            newName = oldFolderName + "-副本";
+            Assert.isTrue(newName.length() <= 100, BaseConstants.ErrorCode.DATA_INVALID);
+            return newName;
         }
         int seq = folderList.stream().map(testIssueFolderDTO -> {
             String name = StringUtils.substring(testIssueFolderDTO.getName(), oldFolderName.length() + 3);
             return StringUtils.substring(name, name.length() - 2, name.length() - 1);
         }).filter(StringUtils::isNumeric).map(Integer::valueOf).max(Comparator.naturalOrder()).orElse(0) + 1;
-        return oldFolderName + "-副本 (" + seq + ")";
+        newName = oldFolderName + "-副本 (" + seq + ")";
+        Assert.isTrue(newName.length() <= 100, BaseConstants.ErrorCode.DATA_INVALID);
+        return newName;
     }
 
     @Override
