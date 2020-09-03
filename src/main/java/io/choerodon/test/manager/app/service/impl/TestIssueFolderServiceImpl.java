@@ -274,13 +274,29 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
         }
         // 复制当前文件夹
         TestIssueFolderDTO newFolder = new TestIssueFolderDTO(folderDTO, folderDTO.getParentId(), 0L);
-        newFolder.setName(newFolder.getName() + "-副本");
+        newFolder.setName(generateCopyFolderName(newFolder.getName(), newFolder.getProjectId(), newFolder.getParentId()));
         newFolder.setRank(RankUtil.genNext(newFolder.getRank()));
         newFolder.setInitStatus(TestPlanInitStatus.CREATING);
         testIssueFolderMapper.insertSelective(newFolder);
         newFolder = testIssueFolderMapper.selectByPrimaryKey(newFolder.getFolderId());
         newFolder.setOldFolderId(folderId);
         return newFolder;
+    }
+
+    private String generateCopyFolderName(String oldFolderName, Long projectId, Long parentFolderId) {
+        List<TestIssueFolderDTO> folderList = testIssueFolderMapper.selectByCondition(Condition.builder(TestIssueFolderDTO.class)
+                .andWhere(Sqls.custom().andEqualTo("projectId", projectId).andEqualTo("parentId", parentFolderId)
+                .andLike("name", oldFolderName)).build());
+        boolean suffix = folderList.stream().map(samePreFolder -> StringUtils.substring(samePreFolder.getName(), oldFolderName.length()))
+                .anyMatch(name ->StringUtils.contains(name, "-副本"));
+        if (!suffix){
+            return oldFolderName + "-副本";
+        }
+        int seq = folderList.stream().map(testIssueFolderDTO -> {
+            String name = StringUtils.substring(testIssueFolderDTO.getName(), oldFolderName.length() + 3);
+            return StringUtils.substring(name, name.length() - 2, name.length() - 1);
+        }).filter(StringUtils::isNumeric).map(Integer::valueOf).max(Comparator.naturalOrder()).orElse(0) + 1;
+        return oldFolderName + "-副本 (" + seq + ")";
     }
 
     @Override
