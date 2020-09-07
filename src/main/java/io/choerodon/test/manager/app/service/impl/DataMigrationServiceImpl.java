@@ -1,6 +1,5 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -131,7 +130,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
     @Async
     @Override
     public void fixDataTestCasePriority() {
-        logger.info("==============================>>>>>>>> test case proority Start <<<<<<<<=================================");
+        logger.info("==============================>>>>>>>> test case priority Start <<<<<<<<=================================");
         // 为所有组织修复优先级
         List<TenantVO> body = getAllOrg();
         // 为所有组织创建优先级
@@ -145,6 +144,10 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         projectIdSet.addAll(caseProjectIdList);
         projectIdSet.addAll(cycleCaseProjectIdList);
         List<ProjectDTO> projectList = baseFeignClient.queryProjects(projectIdSet).getBody();
+        if (CollectionUtils.isEmpty(projectList)){
+            logger.info("========================>>>>>>>> test case not exist, data fix end <<<<<<<<===========================");
+            return;
+        }
         Map<Long, List<Long>> projectMap = projectList.stream().collect(Collectors.toMap(ProjectDTO::getOrganizationId,
                 project ->{
                     List<Long> list = new ArrayList<>();
@@ -167,11 +170,12 @@ public class DataMigrationServiceImpl implements DataMigrationService {
             if (CollectionUtils.isNotEmpty(entry.getValue())){
                 testCaseMapper.updatePriorityByProject(entry.getValue(), defaultPriority);
                 testCycleCaseMapper.updatePriorityByProject(entry.getValue(), defaultPriority);
+                logger.info("test case and cycle case priority fix: project list: [{}], fix completed", entry.getValue());
             }
             successCount++;
         }
         logger.info("organiztion priority fix: success count: [{}], fail list: [{}]", successCount, failList);
-        logger.info("==============================>>>>>>>> test case proority end <<<<<<<<=================================");
+        logger.info("==============================>>>>>>>> test case priority end <<<<<<<<=================================");
     }
 
     private List<TenantVO> getAllOrg() {

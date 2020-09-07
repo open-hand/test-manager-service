@@ -18,6 +18,8 @@ import io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper;
 import io.choerodon.test.manager.infra.mapper.TestPriorityMapper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +32,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class TestPriorityServiceImpl implements TestPriorityService {
+
+    public static final Logger logger = LoggerFactory.getLogger(TestPriorityServiceImpl.class);
 
     private static final String NOT_FOUND = "error.priority.notFound";
     private static final String DELETE_ILLEGAL = "error.priority.deleteIllegal";
@@ -252,6 +256,7 @@ public class TestPriorityServiceImpl implements TestPriorityService {
                         testPriorityMapper.updateOptional(priorityDTO, TestPriorityDTO.FIELD_DEFAULT_FLAG);
                         return priorityDTO.getId();
                     });
+            logger.info("organization [{}] exist test priority, default priority id is [{}]", organizationId, defaultPriorityId);
             return defaultPriorityId;
         }
         // 创建优先级
@@ -275,6 +280,7 @@ public class TestPriorityServiceImpl implements TestPriorityService {
         priority.setSequence(new BigDecimal("2"));
         priority.setDefaultFlag(false);
         this.create(organizationId, priority);
+        logger.info("organization [{}] create test priority completed, default priority id is [{}]", organizationId, defaultPriorityId);
         return defaultPriorityId;
     }
 }
