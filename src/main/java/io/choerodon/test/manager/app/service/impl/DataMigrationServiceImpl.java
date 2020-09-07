@@ -126,79 +126,6 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         logger.info("==========================>>>>>>>> Data Migrate Succeed!!! FINISHED!!! <<<<<<<<============================");
     }
 
-
-    @Async
-    @Override
-    public void fixDataTestCasePriority() {
-        logger.info("==============================>>>>>>>> test case priority Start <<<<<<<<=================================");
-        // 为所有组织修复优先级
-        List<TenantVO> body = getAllOrg();
-        // 为所有组织创建优先级
-        Map<Long, Long> orgMap = body.stream().collect(Collectors.toMap(TenantVO::getTenantId,
-                (tenant -> testPriorityService.createDefaultPriority(tenant.getTenantId()))));
-        // 修复用例优先级数据
-        List<Long> caseProjectIdList = Optional.ofNullable(testCaseMapper.selectALLProjectId()).orElse(Collections.emptyList());
-        List<Long> cycleCaseProjectIdList =
-                Optional.ofNullable(testCycleCaseMapper.selectALLProjectId()).orElse(Collections.emptyList());
-        Set<Long> projectIdSet = new HashSet<>();
-        projectIdSet.addAll(caseProjectIdList);
-        projectIdSet.addAll(cycleCaseProjectIdList);
-        List<ProjectDTO> projectList = baseFeignClient.queryProjects(projectIdSet).getBody();
-        if (CollectionUtils.isEmpty(projectList)){
-            logger.info("========================>>>>>>>> test case not exist, data fix end <<<<<<<<===========================");
-            return;
-        }
-        Map<Long, List<Long>> projectMap = projectList.stream().collect(Collectors.toMap(ProjectDTO::getOrganizationId,
-                project ->{
-                    List<Long> list = new ArrayList<>();
-                    list.add(project.getId());
-                    return list;
-                }, (v1, v2) -> {
-                    v1.addAll(v2);
-                    return v1;
-                }));
-        Long defaultPriority;
-        List<Long> failList = new ArrayList<>();
-        long successCount = 0;
-        for (Map.Entry<Long, List<Long>> entry : projectMap.entrySet()) {
-            // 如果不存在则创建默认三条高中低，并返回默认优先级id
-            defaultPriority = orgMap.get(entry.getKey());
-            if (Objects.isNull(defaultPriority)){
-                failList.add(entry.getKey());
-                continue;
-            }
-            if (CollectionUtils.isNotEmpty(entry.getValue())){
-                testCaseMapper.updatePriorityByProject(entry.getValue(), defaultPriority);
-                testCycleCaseMapper.updatePriorityByProject(entry.getValue(), defaultPriority);
-                logger.info("test case and cycle case priority fix: project list: [{}], fix completed", entry.getValue());
-            }
-            successCount++;
-        }
-        logger.info("organiztion priority fix: success count: [{}], fail list: [{}]", successCount, failList);
-        logger.info("==============================>>>>>>>> test case priority end <<<<<<<<=================================");
-    }
-
-    private List<TenantVO> getAllOrg() {
-        int currentPage = 0;
-        int size = 9999;
-        Page<TenantVO> body = baseFeignClient.getAllOrgs(currentPage, size).getBody();
-        if (CollectionUtils.isEmpty(body)){
-            return Collections.emptyList();
-        }
-        List<TenantVO> result = new ArrayList<>(body.getContent());
-        long page = body.getTotalElements() / body.getNumberOfElements();
-        if (page > 0){
-            for (int i = 1; i <= page; i++) {
-                Page<TenantVO> temp = baseFeignClient.getAllOrgs(i, size).getBody();
-                if (CollectionUtils.isEmpty(temp)){
-                    break;
-                }
-                result.addAll(temp);
-            }
-        }
-        return result;
-    }
-
     private void migrateFolder() {
         List<Long> projectIdList = testIssueFolderService.queryProjectIdList();
         logger.info("=======================>>>project number:{}===============>>>{}", projectIdList.size(), projectIdList);
@@ -458,5 +385,78 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         testPlanDTO.setEndDate(testVersionFixVO.getReleaseDate() == null ? testVersionFixVO.getExpectReleaseDate() : testVersionFixVO.getReleaseDate());
         testPlanDTO.setStartDate(testVersionFixVO.getStartDate() == null ? testVersionFixVO.getReleaseDate() : testVersionFixVO.getStartDate());
         return testPlanDTO;
+    }
+
+
+    @Async
+    @Override
+    public void fixDataTestCasePriority() {
+        logger.info("==============================>>>>>>>> test case priority Start <<<<<<<<=================================");
+        // 为所有组织修复优先级
+        List<TenantVO> body = getAllOrg();
+        // 为所有组织创建优先级
+        Map<Long, Long> orgMap = body.stream().collect(Collectors.toMap(TenantVO::getTenantId,
+                (tenant -> testPriorityService.createDefaultPriority(tenant.getTenantId()))));
+        // 修复用例优先级数据
+        List<Long> caseProjectIdList = Optional.ofNullable(testCaseMapper.selectALLProjectId()).orElse(Collections.emptyList());
+        List<Long> cycleCaseProjectIdList =
+                Optional.ofNullable(testCycleCaseMapper.selectALLProjectId()).orElse(Collections.emptyList());
+        Set<Long> projectIdSet = new HashSet<>();
+        projectIdSet.addAll(caseProjectIdList);
+        projectIdSet.addAll(cycleCaseProjectIdList);
+        List<ProjectDTO> projectList = baseFeignClient.queryProjects(projectIdSet).getBody();
+        if (CollectionUtils.isEmpty(projectList)){
+            logger.info("========================>>>>>>>> test case not exist, data fix end <<<<<<<<===========================");
+            return;
+        }
+        Map<Long, List<Long>> projectMap = projectList.stream().collect(Collectors.toMap(ProjectDTO::getOrganizationId,
+                project ->{
+                    List<Long> list = new ArrayList<>();
+                    list.add(project.getId());
+                    return list;
+                }, (v1, v2) -> {
+                    v1.addAll(v2);
+                    return v1;
+                }));
+        Long defaultPriority;
+        List<Long> failList = new ArrayList<>();
+        long successCount = 0;
+        for (Map.Entry<Long, List<Long>> entry : projectMap.entrySet()) {
+            // 如果不存在则创建默认三条高中低，并返回默认优先级id
+            defaultPriority = orgMap.get(entry.getKey());
+            if (Objects.isNull(defaultPriority)){
+                failList.add(entry.getKey());
+                continue;
+            }
+            if (CollectionUtils.isNotEmpty(entry.getValue())){
+                testCaseMapper.updatePriorityByProject(entry.getValue(), defaultPriority);
+                testCycleCaseMapper.updatePriorityByProject(entry.getValue(), defaultPriority);
+                logger.info("test case and cycle case priority fix: project list: [{}], fix completed", entry.getValue());
+            }
+            successCount++;
+        }
+        logger.info("organiztion priority fix: success count: [{}], fail list: [{}]", successCount, failList);
+        logger.info("==============================>>>>>>>> test case priority end <<<<<<<<=================================");
+    }
+
+    private List<TenantVO> getAllOrg() {
+        int currentPage = 0;
+        int size = 9999;
+        Page<TenantVO> body = baseFeignClient.getAllOrgs(currentPage, size).getBody();
+        if (CollectionUtils.isEmpty(body)){
+            return Collections.emptyList();
+        }
+        List<TenantVO> result = new ArrayList<>(body.getContent());
+        long page = body.getTotalElements() / body.getNumberOfElements();
+        if (page > 0){
+            for (int i = 1; i <= page; i++) {
+                Page<TenantVO> temp = baseFeignClient.getAllOrgs(i, size).getBody();
+                if (CollectionUtils.isEmpty(temp)){
+                    break;
+                }
+                result.addAll(temp);
+            }
+        }
+        return result;
     }
 }
