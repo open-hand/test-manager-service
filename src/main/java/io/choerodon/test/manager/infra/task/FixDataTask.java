@@ -16,16 +16,16 @@
 //    private DataMigrationService dataMigrationService;
 //
 //    @JobTask(maxRetryCount = 3,
-//            code = "migrationAgileToTestManager",
-//            description = "升级到0.20.0,同步敏捷数据到测试管理服务")
-//    @TimedTask(name = "migrationAgileToTestManager",
-//            description = "升级到0.20.0,同步敏捷数据到测试管理服务",
+//            code = "fixDataPriority",
+//            description = "升级到0.24.0-alpha,修复优先级数据")
+//    @TimedTask(name = "fixDataPriority",
+//            description = "升级到0.24.0-alpha,修复优先级数据",
 //            oneExecution = true,
 //            repeatCount = 0,
 //            repeatInterval = 1,
 //            repeatIntervalUnit = QuartzDefinition.SimpleRepeatIntervalUnit.HOURS,
 //            params = {})
-//    public void migrationAgileToTestManager(Map<String, Object> map) {
-//        dataMigrationService.fixData();
+//    public void fixDataPriority(Map<String, Object> map) {
+//        dataMigrationService.fixDataTestCasePriority();
 //    }
 //}
