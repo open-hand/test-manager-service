@@ -447,7 +447,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
             return Collections.emptyList();
         }
         List<TenantVO> result = new ArrayList<>(body.getContent());
-        long page = body.getTotalElements() / body.getNumberOfElements();
+        long page = body.getTotalPages();
         if (page > 0){
             for (int i = 1; i <= page; i++) {
                 Page<TenantVO> temp = baseFeignClient.getAllOrgs(i, size).getBody();
