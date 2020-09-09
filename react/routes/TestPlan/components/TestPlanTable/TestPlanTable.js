@@ -55,7 +55,6 @@ const TestPlanTable = observer(({
 
   const divRef = useRef();
   const [tipVisible, setTipVisible] = useState(false);
-
   // eslint-disable-next-line consistent-return
   useEffect(() => {
     if (divRef.current) {
@@ -84,7 +83,7 @@ const TestPlanTable = observer(({
         }
       };
     }
-  }, []);
+  }, [checkIdMap.size]);
 
   const handleCheckBoxChange = () => {
     if (checkIdMap.size && tipVisible) {
@@ -194,6 +193,24 @@ const TestPlanTable = observer(({
     },
     render: (text, record) => renderMenu(record.summary, record),
   }, {
+    title: <span>被指派人</span>,
+    dataIndex: 'assignedUser',
+    key: 'assignedUser',
+    flex: 1.2,
+    style: {
+      overflow: 'hidden',
+    },
+    render(assignedUser) {
+      return (
+        <div
+          className="c7ntest-text-dot"
+        >
+          <User user={assignedUser} />
+        </div>
+      );
+    },
+  },
+  {
     title: <span>执行人</span>,
     dataIndex: 'lastUpdateUser',
     key: 'lastUpdateUser',
@@ -294,24 +311,6 @@ const TestPlanTable = observer(({
         key: 'more',
         width: 55,
         render: (text, record) => renderMoreAction(record),
-      });
-      columns.splice(3, 0, {
-        title: <span>被指派人</span>,
-        dataIndex: 'assignedUser',
-        key: 'assignedUser',
-        flex: 1.2,
-        style: {
-          overflow: 'hidden',
-        },
-        render(assignedUser) {
-          return (
-            <div
-              className="c7ntest-text-dot"
-            >
-              <User user={assignedUser} />
-            </div>
-          );
-        },
       });
     } else {
       columns.splice(1, 0, {

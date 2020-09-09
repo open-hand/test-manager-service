@@ -94,7 +94,10 @@ function TestPlanModal({
         <DatePicker range name="range" min={Date.now()} />
         {mode === 'create' && (
           <div>
-            <div>
+            <div style={{
+              display: 'flex',
+            }}
+            >
               <span>导入用例方式</span>
               <Tip title="导入用例方式" />
             </div>
@@ -110,7 +113,10 @@ function TestPlanModal({
       )}
       <Form dataSet={dataSet} style={{ width: 512 }}>
         <div>
-          <div>
+          <div style={{
+            display: 'flex',
+          }}
+          >
             <span>是否自动同步</span>
             <Tip title="即用例库的用例更新之后是否同步更新计划中的用例" />
           </div>

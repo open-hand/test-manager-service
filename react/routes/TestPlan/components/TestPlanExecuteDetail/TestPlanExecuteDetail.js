@@ -107,6 +107,9 @@ function TestPlanExecuteDetail(props) {
       updateDetail(detailData).then(() => {
         ExecuteDetailStore.getInfo();
         executeHistoryDataSet.query();
+        if (text === '通过') {
+          stepTableDataSet.query();
+        }
       }).catch((error) => {
         Choerodon.prompt(`${error || '网络错误'}`);
       });
@@ -351,7 +354,7 @@ function TestPlanExecuteDetail(props) {
         <Breadcrumb title={detailData ? renderBreadcrumbTitle(summary) : null} />
         <Content style={{ padding: visible ? '0 437px 0 0' : 0 }}>
 
-          <Spin spinning={false} style={{ display: 'flex' }}>
+          <Spin spinning={ExecuteDetailStore.loading} style={{ display: 'flex' }}>
             <div style={{ display: 'flex', width: '100%', height: '100%' }}>
               {/* 左边内容区域 */}
               <div
