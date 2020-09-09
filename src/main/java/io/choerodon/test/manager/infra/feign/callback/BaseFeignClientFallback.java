@@ -45,7 +45,7 @@ public class BaseFeignClientFallback implements BaseFeignClient {
     }
 
     @Override
-    public ResponseEntity<Page<TenantVO>> getAllOrgs(int page, int size) {
+    public ResponseEntity<Page<TenantVO>> getAllOrgs(int page, int size, String sort) {
         throw new CommonException(QUERY_ERROR);
     }
 

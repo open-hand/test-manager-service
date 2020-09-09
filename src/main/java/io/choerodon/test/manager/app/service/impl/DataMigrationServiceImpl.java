@@ -442,7 +442,8 @@ public class DataMigrationServiceImpl implements DataMigrationService {
     private List<TenantVO> getAllOrg() {
         int currentPage = 0;
         int size = 9999;
-        Page<TenantVO> body = baseFeignClient.getAllOrgs(currentPage, size).getBody();
+        String sort = "tenantId,ASC";
+        Page<TenantVO> body = baseFeignClient.getAllOrgs(currentPage, size, sort).getBody();
         if (CollectionUtils.isEmpty(body)){
             return Collections.emptyList();
         }
@@ -450,7 +451,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         long page = body.getTotalPages();
         if (page > 0){
             for (int i = 1; i <= page; i++) {
-                Page<TenantVO> temp = baseFeignClient.getAllOrgs(i, size).getBody();
+                Page<TenantVO> temp = baseFeignClient.getAllOrgs(i, size, sort).getBody();
                 if (CollectionUtils.isEmpty(temp)){
                     break;
                 }
