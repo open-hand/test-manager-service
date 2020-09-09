@@ -391,7 +391,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
     @Async
     @Override
     public void fixDataTestCasePriority() {
-        logger.info("==============================>>>>>>>> test case priority Start <<<<<<<<=================================");
+        logger.info("==============================>>>>>>>> test case priority fix start <<<<<<<<=================================");
         // 为所有组织修复优先级
         List<TenantVO> body = getAllOrg();
         // 为所有组织创建优先级
@@ -436,7 +436,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
             successCount++;
         }
         logger.info("organiztion priority fix: success count: [{}], fail list: [{}]", successCount, failList);
-        logger.info("==============================>>>>>>>> test case priority end <<<<<<<<=================================");
+        logger.info("==============================>>>>>>>> test case priority fix finished <<<<<<<<=================================");
     }
 
     private List<TenantVO> getAllOrg() {
