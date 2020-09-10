@@ -47,7 +47,7 @@ const QuickOperate = ({
   onSubmit,
   readOnly,
 }) => {
-  const menuItems = statusList.map(item => (
+  const menuItems = statusList.filter(status => !statusArr.some(s => s.name === status.statusName)).map(item => (
     <Menu.Item key={item.statusId} style={{ display: 'flex', alignItems: 'center' }}>
       <StatusTags
         color={item.statusColor}
@@ -59,7 +59,7 @@ const QuickOperate = ({
     <Menu onClick={(item) => {
       if (!readOnly) {
         onSubmit({
-          executionStatus: item.key, 
+          executionStatus: item.key,
         });
       }
     }}
