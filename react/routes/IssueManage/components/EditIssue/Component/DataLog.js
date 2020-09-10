@@ -15,7 +15,7 @@ const PROP = {
 const PROP_SIMPLE = {
   issue_test: '测试用例',
   issue_auto_test: '自动化测试用例',
-  description: '描述',
+  description: '前置条件',
   Attachment: '附件',
 };
 
