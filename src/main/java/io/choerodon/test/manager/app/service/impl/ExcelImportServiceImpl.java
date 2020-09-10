@@ -5,12 +5,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.test.manager.api.vo.TestFileLoadHistoryWebsocketVO;
 import io.choerodon.test.manager.api.vo.agile.*;
 
 
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.vo.ExcelReadMeOptionVO;
-import io.choerodon.test.manager.api.vo.TestFileLoadHistoryWithRateVO;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.enums.ExcelTitleName;
@@ -624,18 +624,13 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     }
 
     private void updateProgress(TestFileLoadHistoryDTO testFileLoadHistoryDTO, Long userId, double rate) {
-        TestFileLoadHistoryWithRateVO testFileLoadHistoryWithRateVO = modelMapper
-                .map(testFileLoadHistoryDTO, TestFileLoadHistoryWithRateVO.class);
-        testFileLoadHistoryWithRateVO.setRate(rate);
-        if(TestFileLoadHistoryEnums.Status.FAILURE.getTypeValue().equals(testFileLoadHistoryWithRateVO.getStatus())){
-            testFileLoadHistoryWithRateVO.setCode(IMPORT_ERROR);
-            //notifyService.postWebSocket(IMPORT_NOTIFY_CODE, userId.toString(), JSON.toJSONString(testFileLoadHistoryWithRateVO));
-            messageClient.sendByUserId(userId,IMPORT_NOTIFY_CODE,toJson(testFileLoadHistoryWithRateVO));
-        }else {
-            //notifyService.postWebSocket(IMPORT_NOTIFY_CODE, userId.toString(), JSON.toJSONString(testFileLoadHistoryWithRateVO));
-            messageClient.sendByUserId(userId,IMPORT_NOTIFY_CODE,toJson(testFileLoadHistoryWithRateVO));
+        TestFileLoadHistoryWebsocketVO websocketVO = modelMapper
+                .map(testFileLoadHistoryDTO, TestFileLoadHistoryWebsocketVO.class);
+        websocketVO.setRate(rate);
+        if(TestFileLoadHistoryEnums.Status.FAILURE.getTypeValue().equals(websocketVO.getStatus())){
+            websocketVO.setCode(IMPORT_ERROR);
         }
-
+        messageClient.sendByUserId(userId,IMPORT_NOTIFY_CODE,toJson(websocketVO));
         logger.info("导入进度：{}", rate);
         if (rate == 100.) {
             logger.info("完成");
@@ -649,9 +644,9 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         }
     }
 
-    private String toJson(TestFileLoadHistoryWithRateVO testFileLoadHistoryWithRateVO){
+    private String toJson(TestFileLoadHistoryWebsocketVO websocketVO){
         try {
-            return objectMapper.writeValueAsString(testFileLoadHistoryWithRateVO);
+            return objectMapper.writeValueAsString(websocketVO);
         } catch (IOException e) {
             logger.error("json convert fail");
             throw new CommonException(e);
