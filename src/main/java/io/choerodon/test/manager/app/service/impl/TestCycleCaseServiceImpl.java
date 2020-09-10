@@ -715,7 +715,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         List<List<TestCaseDTO>> lists = ConvertUtils.averageAssign(list, (int) Math.ceil(list.size() / AVG_NUM == 0 ? 1 : list.size() / AVG_NUM));
         lists.forEach(testCaseDTOList -> {
             List<Long> caseIds = testCaseDTOList.stream().map(TestCaseDTO::getCaseId).collect(Collectors.toList());
-            List<TestCycleCaseDTO> testCycleCaseDTOS = caseToCycleCase(testCaseDTOList, testCycleDTO, defaultStatusId);
+            List<TestCycleCaseDTO> testCycleCaseDTOS = caseToCycleCase(testCaseDTOList, testCycleDTO, defaultStatusId, planId);
             bathcInsert(testCycleCaseDTOS);
             // 同步步骤
             int count = testCaseStepMapper.countByProjectIdAndCaseIds(caseIds);
@@ -913,12 +913,14 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         return testCycleCaseDTOS;
     }
 
-    private List<TestCycleCaseDTO> caseToCycleCase(List<TestCaseDTO> testCaseDTOS, TestCycleDTO testCycleDTO, Long defaultStatusId) {
+    private List<TestCycleCaseDTO> caseToCycleCase(List<TestCaseDTO> testCaseDTOS, TestCycleDTO testCycleDTO,
+                                                   Long defaultStatusId, Long planId) {
         if (CollectionUtils.isEmpty(testCaseDTOS)) {
             return new ArrayList<>();
         }
+        String firstRank = testCycleCaseMapper.getFirstRank(planId);
         List<TestCycleCaseDTO> testCycleCaseDTOS = new ArrayList<>();
-        String preRank = null;
+        String preRank = RankUtil.Operation.INSERT.getRank(null, firstRank);
         for (TestCaseDTO v : testCaseDTOS) {
             TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
             testCycleCaseDTO.setCycleId(testCycleDTO.getCycleId());
@@ -930,7 +932,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             testCycleCaseDTO.setCreatedBy(testCycleDTO.getCreatedBy());
             testCycleCaseDTO.setLastUpdatedBy(testCycleDTO.getLastUpdatedBy());
             testCycleCaseDTO.setSummary(v.getSummary());
-            testCycleCaseDTO.setRank(RankUtil.Operation.INSERT.getRank(preRank, null));
+            testCycleCaseDTO.setRank(RankUtil.Operation.INSERT.getRank(preRank, firstRank));
             preRank = testCycleCaseDTO.getRank();
             testCycleCaseDTO.setSource("none");
             testCycleCaseDTO.setPriorityId(v.getPriorityId());
