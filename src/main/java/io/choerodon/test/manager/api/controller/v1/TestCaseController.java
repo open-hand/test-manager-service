@@ -15,6 +15,8 @@ import io.choerodon.test.manager.infra.util.VerifyUpdateUtil;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.hzero.starter.keyencrypt.core.Encrypt;
+import org.hzero.starter.keyencrypt.core.EncryptContext;
+import org.hzero.starter.keyencrypt.core.EncryptType;
 import org.springframework.beans.factory.annotation.Autowired;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -164,7 +166,7 @@ public class TestCaseController {
                                        @Encrypt Long folderId) {
         excelImportService.importIssueByExcel(projectId, folderId,
                 DetailsHelper.getUserDetails().getUserId(),
-                ExcelUtil.getWorkbookFromMultipartFile(ExcelUtil.Mode.XSSF, excelFile), RequestContextHolder.currentRequestAttributes());
+                ExcelUtil.getWorkbookFromMultipartFile(ExcelUtil.Mode.XSSF, excelFile),EncryptContext.encryptType(), RequestContextHolder.currentRequestAttributes());
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
