@@ -31,6 +31,8 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.hzero.boot.file.FileClient;
 import org.hzero.boot.message.MessageClient;
+import org.hzero.starter.keyencrypt.core.EncryptContext;
+import org.hzero.starter.keyencrypt.core.EncryptType;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -150,8 +152,10 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
     @Async
     @Override
-    public void importIssueByExcel(Long projectId, Long folderId, Long userId, Workbook issuesWorkbook, RequestAttributes requestAttributes) {
+    public void importIssueByExcel(Long projectId, Long folderId, Long userId, Workbook issuesWorkbook,
+                                   EncryptType encryptType, RequestAttributes requestAttributes) {
         // 添加加密信息上下文
+        EncryptContext.setEncryptType(encryptType.name());
         RequestContextHolder.setRequestAttributes(requestAttributes);
         ProjectDTO projectDTO = baseFeignClient.queryProject(projectId).getBody();
         // 默认是导入到导入文件夹，不存在则创建
