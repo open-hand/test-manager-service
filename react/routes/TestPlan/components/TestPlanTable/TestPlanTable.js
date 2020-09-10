@@ -354,7 +354,7 @@ const TestPlanTable = observer(({
   //   });
   // }
 
-  const data = isMine ? testList.filter(item => Number(item.assignedTo) === Number(AppState.userInfo.id)) : testList;
+  const data = isMine ? testList.filter(item => (item.assignedTo && item.assignedTo.toString() === AppState.userInfo.id.toString())) : testList;
   return (
     <div className={`c7ntest-testPlanTable ${isMine ? 'c7ntest-mineTestPlanTable' : ''}`}>
       {
