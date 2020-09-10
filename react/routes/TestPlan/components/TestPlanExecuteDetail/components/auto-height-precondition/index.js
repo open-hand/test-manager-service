@@ -44,11 +44,30 @@ function AutoHeightPrecondition({ data }) {
     },
     [],
   );
+  // 检查首行是否含有图片
+  function checkImgInHeadLine(arr) {
+    let isHasHeadLine = false;
+    for (let index = 0; index < arr.length; index += 1) {
+      const { insert } = arr[index];
+      if (typeof (insert) === 'string' && (insert === '\n' || insert.includes('\n'))) {
+        const str = insert.substring(insert.length - 1);
+        break;
+      }
+      if (Object.prototype.hasOwnProperty.call(insert, 'image')) {
+        isHasHeadLine = true;
+        break;
+      }
+    }
+    return isHasHeadLine;
+  }
   function renderRichText(text, isEllipsis = false) {
     const textArr = [{ insert: '前置条件：' }];
     if (text && text !== '') {
       const tempText = text2Delta(text);
       if (Array.isArray(tempText)) {
+        if (checkImgInHeadLine(tempText)) {
+          textArr[0].insert = '前置条件：\n';
+        }
         textArr.push(...tempText);
       } else {
         textArr.push({ insert: tempText });
@@ -66,11 +85,11 @@ function AutoHeightPrecondition({ data }) {
       {renderRichText(data, preconditionState.iconVisible && !preconditionState.desVisible)}
       <span className="c7n-test-execute-detail-card-title-description-head-more">
         {preconditionState.iconVisible && (
-        <Icon 
-          style={{ cursor: 'pointer ' }} 
-          type={`expand_${preconditionState.desVisible ? 'less' : 'more'}`}
-          onClick={() => { setPreconditionState({ type: 'visible' }); }}
-        />
+          <Icon
+            style={{ cursor: 'pointer ' }}
+            type={`expand_${preconditionState.desVisible ? 'less' : 'more'}`}
+            onClick={() => { setPreconditionState({ type: 'visible' }); }}
+          />
         )}
       </span>
     </div>
