@@ -450,6 +450,19 @@
 
     </select>
 
+    <select id="getFirstRank" resultType="java.lang.String">
+        SELECT
+            tcc.rank
+        FROM
+            test_cycle_case tcc
+        JOIN test_cycle tc on tc.cycle_id=tcc.cycle_id
+        WHERE
+            tc.plan_id = #{planId}
+        ORDER BY
+            tcc.rank
+        LIMIT 1
+    </select>
+
     <insert id="batchInsertTestCycleCases" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="executeId">
         INSERT INTO test_cycle_case(cycle_id, issue_id, rank, execution_status, assigned_to, description,project_id, object_version_number,
         created_by, creation_date, last_updated_by, last_update_date) VALUES

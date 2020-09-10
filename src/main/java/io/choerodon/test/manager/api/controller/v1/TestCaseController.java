@@ -20,6 +20,7 @@ import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -163,7 +164,7 @@ public class TestCaseController {
                                        @Encrypt Long folderId) {
         excelImportService.importIssueByExcel(projectId, folderId,
                 DetailsHelper.getUserDetails().getUserId(),
-                ExcelUtil.getWorkbookFromMultipartFile(ExcelUtil.Mode.XSSF, excelFile));
+                ExcelUtil.getWorkbookFromMultipartFile(ExcelUtil.Mode.XSSF, excelFile), RequestContextHolder.currentRequestAttributes());
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
@@ -263,6 +264,6 @@ public class TestCaseController {
                                                                         @RequestParam(required = false) String content) {
         return ResponseEntity.ok(testCaseService.queryIssueByOptionForAgile(projectId, issueId, issueNum, self, content, pageRequest));
     }
-    
-    
+
+
 }

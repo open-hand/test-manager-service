@@ -39,6 +39,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -148,7 +150,9 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
     @Async
     @Override
-    public void importIssueByExcel(Long projectId, Long folderId, Long userId, Workbook issuesWorkbook) {
+    public void importIssueByExcel(Long projectId, Long folderId, Long userId, Workbook issuesWorkbook, RequestAttributes requestAttributes) {
+        // 添加加密信息上下文
+        RequestContextHolder.setRequestAttributes(requestAttributes);
         ProjectDTO projectDTO = baseFeignClient.queryProject(projectId).getBody();
         // 默认是导入到导入文件夹，不存在则创建
         Sheet testCasesSheet = issuesWorkbook.getSheet("测试用例");
