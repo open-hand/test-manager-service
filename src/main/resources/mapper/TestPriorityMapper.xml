@@ -29,6 +29,16 @@
             ) t)
     </update>
 
+    <select id="selectDefaultPriority" resultType="java.lang.Long">
+        SELECT
+           id
+        FROM
+           test_priority
+        where
+            organization_id = #{organizationId}
+            AND is_default = 1
+    </select>
+
     <delete id="cancelDefaultPriority">
         UPDATE test_priority SET is_default = 0
         WHERE organization_id=#{organizationId} AND is_default = 1
