@@ -86,6 +86,11 @@ function TestPlanExecuteDetail(props) {
   };
 
   const handleSubmit = (updateData) => {
+    if(updateData.executionStatus) {
+      const { statusList } = ExecuteDetailStore;
+      const statusItem = _.find(statusList, { statusId: updateData.executionStatus }) || {};
+      updateData.executionStatusName = statusItem.statusName;
+    }
     const detailData = ExecuteDetailStore.getDetailData;
     const newData = { ...detailData, ...updateData };
     updateDetail(newData).then(() => {
