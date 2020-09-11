@@ -12,7 +12,7 @@ import { observer } from 'mobx-react-lite';
 import { withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import { toJS } from 'mobx';
-import _ from 'lodash';
+import { find, debounce } from 'lodash';
 import { Modal, Button, message } from 'choerodon-ui/pro';
 import queryString from 'query-string';
 import { uploadFile, deleteFile } from '@/api/FileApi';
@@ -121,7 +121,7 @@ function TestPlanExecuteDetail(props) {
     } else {
       Choerodon.prompt('未找到对应状态');
     }
-  };
+  }
 
   const quickHandle = (statusName) => {
     quickPassOrFail(statusName);
