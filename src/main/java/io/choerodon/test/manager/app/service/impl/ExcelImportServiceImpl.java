@@ -186,7 +186,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         Iterator<Row> rowIterator = rowIteratorSkipFirst(testCasesSheet);
         Map<String, Integer> headerLocationMap = getHeaderLocationMap(testCasesSheet);
         ExcelTitleUtil excelTitleUtil = new ExcelTitleUtil(headerLocationMap);
-        double nonBlankRowCount = (testCasesSheet.getPhysicalNumberOfRows() - 1) / 95.;
+        double nonBlankRowCount = getRealRowCount(testCasesSheet, EXCEL_HEADERS.length);
         double progress = 0.;
         long successfulCount = 0L;
         long failedCount = 0L;
@@ -198,6 +198,10 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         //更新文件和用例的关联表
         while (rowIterator.hasNext()) {
             currentRow = rowIterator.next();
+            if (isSkip(currentRow, EXCEL_HEADERS.length)){
+                // 如果当前行全部为空，则跳过
+                continue;
+            }
             if (Objects.equals(TestFileLoadHistoryEnums.Status.valueOf(testFileLoadHistoryMapper
                         .queryLoadHistoryStatus(testFileLoadHistoryDTO.getId())), TestFileLoadHistoryEnums.Status.CANCEL)) {
                     status = TestFileLoadHistoryEnums.Status.CANCEL;
@@ -217,12 +221,13 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                     } else {
                         successfulCount++;
                         issueIds.add(testCaseDTO.getCaseId());
+                        updateProgress(testFileLoadHistoryDTO, userId, progress / nonBlankRowCount);
                     }
                 }
                 //processRow(issueDTO, currentRow, errorRowIndexes, excelTitleUtil);
                 // 插入循环步骤
             processRow(testCaseDTO, currentRow, errorRowIndexes ,excelTitleUtil);
-                updateProgress(testFileLoadHistoryDTO, userId, ++progress / nonBlankRowCount);
+            ++progress;
             }
 
         testFileLoadHistoryDTO.setSuccessfulCount(successfulCount);
@@ -235,6 +240,39 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         }
 
         finishImport(testFileLoadHistoryDTO, userId, status);
+    }
+
+    /**
+     * @param sheet
+     * @param columnNum 数据页总共有多少列数据
+     * @return
+     */
+    private Integer getRealRowCount(Sheet sheet, int columnNum) {
+        Integer count = 0;
+        for (int r = 1; r <= sheet.getPhysicalNumberOfRows(); r++) {
+            Row row = sheet.getRow(r);
+            //row为空跳过
+            if (isSkip(row, columnNum)) {
+                continue;
+            }
+            count++;
+        }
+        return count;
+    }
+
+
+    private boolean isSkip(Row row, int columnNum) {
+        if (row == null) {
+            return true;
+        }
+        //所有列都为空才跳过
+        boolean skip = true;
+        for (int i = 0; i < columnNum; i++) {
+            Cell cell = row.getCell(i);
+            skip = skip && isCellEmpty(cell);
+
+        }
+        return skip;
     }
 
     private boolean isOldExcel(Workbook workbook, String[] headers) {
@@ -553,7 +591,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     private TestCaseDTO processIssueHeaderRow(Row row, Long projectId, Long folderId,
                                               ExcelTitleUtil excelTitleUtil,Map<String, Long> priorityMap) {
         if (ExcelUtil.isBlank(excelTitleUtil.getCell(ExcelTitleName.CASE_SUMMARY, row))) {
-            markAsError(row, "测试概要不能为空");
+            markAsError(row, "用例概要不能为空");
             return null;
         }
 
