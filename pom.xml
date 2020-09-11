@@ -20,6 +20,7 @@
         <argLine>-Xmx512m -XX:MaxPermSize=256m</argLine>
         <choerodon.serviceBuild>true</choerodon.serviceBuild>
         <choerodon.mainClass>io.choerodon.test.manager.TestManagerServiceApplication</choerodon.mainClass>
+        <deploy.classifier/>
     </properties>
 
     <dependencies>
@@ -274,21 +275,29 @@
     </dependencies>
 
     <build>
-        <finalName>app</finalName>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.18.1</version>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <includes>
-                        <include>**/*Test.java</include>
-                        <include>**/*Spec.java</include>
-                    </includes>
-                    <argLine>@{argLine}</argLine>
+                    <classifier>${deploy.classifier}</classifier>
+                    <mainClass>io.choerodon.test.manager.TestManagerServiceApplication</mainClass>
                 </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal><!--可以把依赖的包都打包到生成的Jar包中 -->
+                        </goals>
+                        <!--可以生成不含依赖包的不可执行Jar包 -->
+                        <configuration>
+                            <classifier>exec</classifier>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
+        <finalName>app</finalName>
     </build>
+
 </project>
 
