@@ -11,15 +11,18 @@ import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.swagger.annotation.CustomPageRequest;
 import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.api.vo.agile.IssueNumDTO;
+import io.choerodon.test.manager.infra.util.EncryptUtil;
 import io.choerodon.test.manager.infra.util.VerifyUpdateUtil;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.hzero.starter.keyencrypt.core.Encrypt;
+import org.hzero.starter.keyencrypt.core.EncryptContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -56,6 +59,9 @@ public class TestCaseController {
 
     @Autowired
     private VerifyUpdateUtil verifyUpdateUtil;
+
+    @Autowired
+    private EncryptUtil encryptUtil;
 
     @Autowired
     public TestCaseController(ExcelServiceHandler excelServiceHandler) {
@@ -163,7 +169,7 @@ public class TestCaseController {
                                        @Encrypt Long folderId) {
         excelImportService.importIssueByExcel(projectId, folderId,
                 DetailsHelper.getUserDetails().getUserId(),
-                ExcelUtil.getWorkbookFromMultipartFile(ExcelUtil.Mode.XSSF, excelFile));
+                ExcelUtil.getWorkbookFromMultipartFile(ExcelUtil.Mode.XSSF, excelFile),EncryptContext.encryptType(), RequestContextHolder.currentRequestAttributes());
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
@@ -204,6 +210,7 @@ public class TestCaseController {
                                                                   @RequestParam(name = "plan_id", required = false)
                                                                   @Encrypt Long planId,
                                                                   @RequestBody(required = false) SearchDTO searchDTO) {
+        encryptUtil.decryptSearchDTO(searchDTO);
         return new ResponseEntity<>(testCaseService.listAllCaseByFolderId(projectId, folderId, pageRequest, searchDTO, planId), HttpStatus.OK);
     }
 
@@ -263,6 +270,6 @@ public class TestCaseController {
                                                                         @RequestParam(required = false) String content) {
         return ResponseEntity.ok(testCaseService.queryIssueByOptionForAgile(projectId, issueId, issueNum, self, content, pageRequest));
     }
-    
-    
+
+
 }

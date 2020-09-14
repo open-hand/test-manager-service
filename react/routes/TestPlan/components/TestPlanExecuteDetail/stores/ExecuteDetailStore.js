@@ -99,18 +99,18 @@ class ExecuteDetailStore {
   getInfo = (id = this.id) => {
     this.enterLoading();
     this.setId(id);
-    Promise.all([
+    return Promise.all([
       // getCycle(id, cycleId),
       getStatusList('CYCLE_CASE'),
       getDetailsData(id, this.detailParams, {
-        ...this.getSearchFilter, 
+        ...this.getSearchFilter,
         ...this.detailData ? {
           contents: this.getSearchFilter.contents,
           searchArgs: {
             ...this.getSearchFilter.searchArgs,
             previousExecuteId: this.detailData.previousExecuteId,
             nextExecuteId: this.detailData.nextExecuteId,
-          },          
+          },
         } : {},
       }),
     ])
@@ -132,7 +132,7 @@ class ExecuteDetailStore {
 
   loadDetailData(id = this.id) {
     getDetailsData(id, this.detailParams, {
-      ...this.getSearchFilter, 
+      ...this.getSearchFilter,
       ...this.detailData ? {
         searchArgs: {
           ...this.getSearchFilter.searchArgs,

@@ -91,6 +91,9 @@ public class DemoServiceImpl implements DemoService {
     @Autowired
     private TestCaseService testCaseService;
 
+    @Autowired
+    private TestPriorityMapper testPriorityMapper;
+
     @Override
     public OrganizationRegisterEventPayload demoInit(DemoPayload demoPayload) {
 
@@ -112,7 +115,8 @@ public class DemoServiceImpl implements DemoService {
         Date dateSix = testData.getDateSix();
 
         List<Long> issueFolderIds = initIssueFolders(versionId, projectId, userId, dateOne);
-        List<Long> caseIds = initCase(issueFolderIds, projectId, userId, dateTwo);
+        Long defaultPriority = testPriorityMapper.selectDefaultPriority(organization.getId());
+        List<Long> caseIds = initCase(issueFolderIds, projectId, userId, dateTwo,defaultPriority);
         initIssueSteps(caseIds, projectId, userId, dateThree);
         // 创建计划
         Long planId = initPlan(project, userId, dateTwo);
@@ -120,7 +124,7 @@ public class DemoServiceImpl implements DemoService {
         List<Long> phaseIdsMap = initCycleFolders(planId, projectId, versionId, dateOne, dateTwo, dateThree, dateFour, dateFive, dateSix, issueFolderIds, userId);
         // 初始化执行
         Long defaultCaseStatus = testStatusMapper.getDefaultStatus(TestStatusType.STATUS_TYPE_CASE);
-        List<TestCycleCaseDTO> cycleCase = initCycleCase(projectId, phaseIdsMap, userId, dateFive, caseIds,defaultCaseStatus,userA.getId(),userB.getId());
+        List<TestCycleCaseDTO> cycleCase = initCycleCase(projectId, phaseIdsMap, userId, dateFive, caseIds,defaultCaseStatus,userA.getId(),userB.getId(),defaultPriority);
         // 初始化执行步骤
         Long defaultStatus = testStatusMapper.getDefaultStatus(TestStatusType.STATUS_TYPE_CASE_STEP);
         initCycleCaseStep(cycleCase,userId, dateSix,caseIds,projectId,defaultStatus);
@@ -185,16 +189,16 @@ public class DemoServiceImpl implements DemoService {
         testCycleCaseStepMapper.updateAuditFields(cycleCaseIds.toArray(new Long[cycleCaseIds.size()]),userId,dateOne);
     }
 
-    private List<TestCycleCaseDTO> initCycleCase(long projectId, List<Long> phaseIdsMap, long userId, Date dateOne, List<Long> caseIds,Long statusWIPId,Long userA,Long userB) {
+    private List<TestCycleCaseDTO> initCycleCase(long projectId, List<Long> phaseIdsMap, long userId, Date dateOne, List<Long> caseIds,Long statusWIPId,Long userA,Long userB,Long defaultPriority) {
         List<TestCycleCaseDTO> cycleCase = new ArrayList<>();
-        cycleCase.add(insertCycleCase("用户登录",RANK_1, statusWIPId,projectId, phaseIdsMap.get(1), userId, dateOne, caseIds.get(0),userA));
-        cycleCase.add(insertCycleCase("登录错误操作",RANK_2,statusWIPId, projectId, phaseIdsMap.get(1), userId, dateOne, caseIds.get(1),userB));
-        cycleCase.add(insertCycleCase("通过商品详情快速下单",RANK_3, statusWIPId,projectId, phaseIdsMap.get(0), userId, dateOne, caseIds.get(2),userA));
-        cycleCase.add(insertCycleCase("用户维护配送信息", RANK_4,statusWIPId,projectId, phaseIdsMap.get(2), userId, dateOne, caseIds.get(3),userB));
+        cycleCase.add(insertCycleCase("用户登录",RANK_1, statusWIPId,projectId, phaseIdsMap.get(1), userId, dateOne, caseIds.get(0),userA,defaultPriority));
+        cycleCase.add(insertCycleCase("登录错误操作",RANK_2,statusWIPId, projectId, phaseIdsMap.get(1), userId, dateOne, caseIds.get(1),userB,defaultPriority));
+        cycleCase.add(insertCycleCase("通过商品详情快速下单",RANK_3, statusWIPId,projectId, phaseIdsMap.get(0), userId, dateOne, caseIds.get(2),userA,defaultPriority));
+        cycleCase.add(insertCycleCase("用户维护配送信息", RANK_4,statusWIPId,projectId, phaseIdsMap.get(2), userId, dateOne, caseIds.get(3),userB,defaultPriority));
         return cycleCase;
     }
 
-    private TestCycleCaseDTO insertCycleCase(String summary,String rank,Long statusWIPId, long projectId, Long cycleId, long userId, Date dateOne, Long caseId,Long assignedTo) {
+    private TestCycleCaseDTO insertCycleCase(String summary,String rank,Long statusWIPId, long projectId, Long cycleId, long userId, Date dateOne, Long caseId,Long assignedTo,Long defaultPriority) {
         TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
         testCycleCaseDTO.setCycleId(cycleId);
         testCycleCaseDTO.setProjectId(projectId);
@@ -206,6 +210,7 @@ public class DemoServiceImpl implements DemoService {
         testCycleCaseDTO.setCreationDate(dateOne);
         testCycleCaseDTO.setLastUpdateDate(dateOne);
         testCycleCaseDTO.setRank(rank);
+        testCycleCaseDTO.setPriorityId(defaultPriority);
         testCycleCaseDTO.setExecutionStatus(statusWIPId);
         testCycleCaseDTO.setAssignedTo(assignedTo);
         return testCycleCaseService.baseInsert(testCycleCaseDTO);
@@ -230,21 +235,22 @@ public class DemoServiceImpl implements DemoService {
     }
 
 
-    private List<Long> initCase(List<Long> issueFolderIds, Long projectId, Long userId, Date date) {
+    private List<Long> initCase(List<Long> issueFolderIds, Long projectId, Long userId, Date date,Long defaultPriority) {
         List<Long> list = new ArrayList<>();
-        list.add(insertIssueCase(issueFolderIds.get(0),RANK_1, projectId, userId, date, "用户登录"));
-        list.add(insertIssueCase(issueFolderIds.get(0),RANK_2, projectId, userId, date, "登录错误操作"));
-        list.add(insertIssueCase(issueFolderIds.get(4), RANK_3,projectId, userId, date, "通过商品详情快速下单"));
-        list.add(insertIssueCase(issueFolderIds.get(3), RANK_4,projectId, userId, date, "用户维护配送信息"));
+        list.add(insertIssueCase(issueFolderIds.get(0),RANK_1, projectId, userId, date, "用户登录",defaultPriority));
+        list.add(insertIssueCase(issueFolderIds.get(0),RANK_2, projectId, userId, date, "登录错误操作",defaultPriority));
+        list.add(insertIssueCase(issueFolderIds.get(4), RANK_3,projectId, userId, date, "通过商品详情快速下单",defaultPriority));
+        list.add(insertIssueCase(issueFolderIds.get(3), RANK_4,projectId, userId, date, "用户维护配送信息",defaultPriority));
         testCaseMapper.updateAuditFields(projectId,list.toArray(new Long[list.size()]), userId, date);
         return list;
     }
 
-    private Long insertIssueCase(Long folderId, String rank,Long projectId, Long userId, Date date, String summary) {
+    private Long insertIssueCase(Long folderId, String rank,Long projectId, Long userId, Date date, String summary,Long defaultPriority) {
         TestCaseVO testCaseVO = new TestCaseVO();
         testCaseVO.setProjectId(projectId);
         testCaseVO.setFolderId(folderId);
         testCaseVO.setSummary(summary);
+        testCaseVO.setPriorityId(defaultPriority);
         testCaseVO.setRank(rank);
         return testCaseService.createTestCase(projectId,testCaseVO).getCaseId();
     }

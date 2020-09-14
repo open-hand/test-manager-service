@@ -12,7 +12,7 @@ import { observer } from 'mobx-react-lite';
 import { withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import { toJS } from 'mobx';
-import _ from 'lodash';
+import { find, debounce } from 'lodash';
 import { Modal, Button, message } from 'choerodon-ui/pro';
 import queryString from 'query-string';
 import { uploadFile, deleteFile } from '@/api/FileApi';
@@ -86,6 +86,11 @@ function TestPlanExecuteDetail(props) {
   };
 
   const handleSubmit = (updateData) => {
+    if(updateData.executionStatus) {
+      const { statusList } = ExecuteDetailStore;
+      const statusItem = _.find(statusList, { statusId: updateData.executionStatus }) || {};
+      updateData.executionStatusName = statusItem.statusName;
+    }
     const detailData = ExecuteDetailStore.getDetailData;
     const newData = { ...detailData, ...updateData };
     updateDetail(newData).then(() => {
@@ -107,13 +112,16 @@ function TestPlanExecuteDetail(props) {
       updateDetail(detailData).then(() => {
         ExecuteDetailStore.getInfo();
         executeHistoryDataSet.query();
+        if (text === '通过') {
+          stepTableDataSet.query();
+        }
       }).catch((error) => {
         Choerodon.prompt(`${error || '网络错误'}`);
       });
     } else {
       Choerodon.prompt('未找到对应状态');
     }
-  };
+  }
 
   const quickHandle = (statusName) => {
     quickPassOrFail(statusName);
@@ -351,7 +359,7 @@ function TestPlanExecuteDetail(props) {
         <Breadcrumb title={detailData ? renderBreadcrumbTitle(summary) : null} />
         <Content style={{ padding: visible ? '0 437px 0 0' : 0 }}>
 
-          <Spin spinning={false} style={{ display: 'flex' }}>
+          <Spin spinning={ExecuteDetailStore.loading} style={{ display: 'flex' }}>
             <div style={{ display: 'flex', width: '100%', height: '100%' }}>
               {/* 左边内容区域 */}
               <div

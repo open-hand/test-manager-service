@@ -62,6 +62,14 @@ public interface TestCycleCaseMapper extends BaseMapper<TestCycleCaseDTO> {
      */
     String getLastedRank(@Param("planId") Long planId);
 
+    /**
+     * 获取plan下第一个case的rank
+     *
+     * @param planId
+     * @return
+     */
+    String getFirstRank(@Param("planId") Long planId);
+
     int batchInsertTestCycleCases(List<TestCycleCaseDTO> testCycleCaseDTOS);
 
     void updateAuditFields(@Param("executeIds") Long[] executeId, @Param("userId") Long userId, @Param("date") Date date);

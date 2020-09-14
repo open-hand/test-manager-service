@@ -26,4 +26,6 @@ public interface TestPriorityMapper extends BaseMapper<TestPriorityDTO> {
     void cancelDefaultPriority(@Param("organizationId") Long organizationId);
 
     void updateMinSeqAsDefault(@Param("organizationId") Long organizationId);
+
+    Long selectDefaultPriority(@Param("organizationId") Long organizationId);
 }

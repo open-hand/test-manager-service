@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import {
   Dropdown, Button, Menu, Icon,
 } from 'choerodon-ui';
+import { debounce } from 'lodash';
 import { StatusTags } from '../../../../../../components';
 import './QuickOperate.less';
 
@@ -47,7 +48,7 @@ const QuickOperate = ({
   onSubmit,
   readOnly,
 }) => {
-  const menuItems = statusList.map(item => (
+  const menuItems = statusList.filter(status => !statusArr.some(s => s.name === status.statusName)).map(item => (
     <Menu.Item key={item.statusId} style={{ display: 'flex', alignItems: 'center' }}>
       <StatusTags
         color={item.statusColor}
@@ -59,7 +60,7 @@ const QuickOperate = ({
     <Menu onClick={(item) => {
       if (!readOnly) {
         onSubmit({
-          executionStatus: item.key, 
+          executionStatus: item.key,
         });
       }
     }}
@@ -72,7 +73,7 @@ const QuickOperate = ({
       快速操作:
       {
         statusArr.map(status => (
-          <QuickStatus name={status.name} color={status.color} onClick={quickHandle} disable={readOnly}>
+          <QuickStatus name={status.name} color={status.color} onClick={debounce(quickHandle, 300)} disable={readOnly}>
             {status.name}
           </QuickStatus>
         ))

@@ -5,12 +5,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.test.manager.api.vo.TestFileLoadHistoryWebsocketVO;
 import io.choerodon.test.manager.api.vo.agile.*;
 
 
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.vo.ExcelReadMeOptionVO;
-import io.choerodon.test.manager.api.vo.TestFileLoadHistoryWithRateVO;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.enums.ExcelTitleName;
@@ -31,6 +31,8 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.hzero.boot.file.FileClient;
 import org.hzero.boot.message.MessageClient;
+import org.hzero.starter.keyencrypt.core.EncryptContext;
+import org.hzero.starter.keyencrypt.core.EncryptType;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +41,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -148,7 +152,11 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
     @Async
     @Override
-    public void importIssueByExcel(Long projectId, Long folderId, Long userId, Workbook issuesWorkbook) {
+    public void importIssueByExcel(Long projectId, Long folderId, Long userId, Workbook issuesWorkbook,
+                                   EncryptType encryptType, RequestAttributes requestAttributes) {
+        // 添加加密信息上下文
+        EncryptContext.setEncryptType(encryptType.name());
+        RequestContextHolder.setRequestAttributes(requestAttributes);
         ProjectDTO projectDTO = baseFeignClient.queryProject(projectId).getBody();
         // 默认是导入到导入文件夹，不存在则创建
         Sheet testCasesSheet = issuesWorkbook.getSheet("测试用例");
@@ -178,7 +186,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         Iterator<Row> rowIterator = rowIteratorSkipFirst(testCasesSheet);
         Map<String, Integer> headerLocationMap = getHeaderLocationMap(testCasesSheet);
         ExcelTitleUtil excelTitleUtil = new ExcelTitleUtil(headerLocationMap);
-        double nonBlankRowCount = (testCasesSheet.getPhysicalNumberOfRows() - 1) / 95.;
+        double nonBlankRowCount = getRealRowCount(testCasesSheet, EXCEL_HEADERS.length);
         double progress = 0.;
         long successfulCount = 0L;
         long failedCount = 0L;
@@ -190,6 +198,10 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         //更新文件和用例的关联表
         while (rowIterator.hasNext()) {
             currentRow = rowIterator.next();
+            if (isSkip(currentRow, EXCEL_HEADERS.length)){
+                // 如果当前行全部为空，则跳过
+                continue;
+            }
             if (Objects.equals(TestFileLoadHistoryEnums.Status.valueOf(testFileLoadHistoryMapper
                         .queryLoadHistoryStatus(testFileLoadHistoryDTO.getId())), TestFileLoadHistoryEnums.Status.CANCEL)) {
                     status = TestFileLoadHistoryEnums.Status.CANCEL;
@@ -209,12 +221,13 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                     } else {
                         successfulCount++;
                         issueIds.add(testCaseDTO.getCaseId());
+                        updateProgress(testFileLoadHistoryDTO, userId, progress / nonBlankRowCount);
                     }
                 }
                 //processRow(issueDTO, currentRow, errorRowIndexes, excelTitleUtil);
                 // 插入循环步骤
             processRow(testCaseDTO, currentRow, errorRowIndexes ,excelTitleUtil);
-                updateProgress(testFileLoadHistoryDTO, userId, ++progress / nonBlankRowCount);
+            ++progress;
             }
 
         testFileLoadHistoryDTO.setSuccessfulCount(successfulCount);
@@ -227,6 +240,39 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         }
 
         finishImport(testFileLoadHistoryDTO, userId, status);
+    }
+
+    /**
+     * @param sheet
+     * @param columnNum 数据页总共有多少列数据
+     * @return
+     */
+    private Integer getRealRowCount(Sheet sheet, int columnNum) {
+        Integer count = 0;
+        for (int r = 1; r <= sheet.getPhysicalNumberOfRows(); r++) {
+            Row row = sheet.getRow(r);
+            //row为空跳过
+            if (isSkip(row, columnNum)) {
+                continue;
+            }
+            count++;
+        }
+        return count;
+    }
+
+
+    private boolean isSkip(Row row, int columnNum) {
+        if (row == null) {
+            return true;
+        }
+        //所有列都为空才跳过
+        boolean skip = true;
+        for (int i = 0; i < columnNum; i++) {
+            Cell cell = row.getCell(i);
+            skip = skip && isCellEmpty(cell);
+
+        }
+        return skip;
     }
 
     private boolean isOldExcel(Workbook workbook, String[] headers) {
@@ -545,7 +591,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     private TestCaseDTO processIssueHeaderRow(Row row, Long projectId, Long folderId,
                                               ExcelTitleUtil excelTitleUtil,Map<String, Long> priorityMap) {
         if (ExcelUtil.isBlank(excelTitleUtil.getCell(ExcelTitleName.CASE_SUMMARY, row))) {
-            markAsError(row, "测试概要不能为空");
+            markAsError(row, "用例概要不能为空");
             return null;
         }
 
@@ -616,18 +662,13 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     }
 
     private void updateProgress(TestFileLoadHistoryDTO testFileLoadHistoryDTO, Long userId, double rate) {
-        TestFileLoadHistoryWithRateVO testFileLoadHistoryWithRateVO = modelMapper
-                .map(testFileLoadHistoryDTO, TestFileLoadHistoryWithRateVO.class);
-        testFileLoadHistoryWithRateVO.setRate(rate);
-        if(TestFileLoadHistoryEnums.Status.FAILURE.getTypeValue().equals(testFileLoadHistoryWithRateVO.getStatus())){
-            testFileLoadHistoryWithRateVO.setCode(IMPORT_ERROR);
-            //notifyService.postWebSocket(IMPORT_NOTIFY_CODE, userId.toString(), JSON.toJSONString(testFileLoadHistoryWithRateVO));
-            messageClient.sendByUserId(userId,IMPORT_NOTIFY_CODE,toJson(testFileLoadHistoryWithRateVO));
-        }else {
-            //notifyService.postWebSocket(IMPORT_NOTIFY_CODE, userId.toString(), JSON.toJSONString(testFileLoadHistoryWithRateVO));
-            messageClient.sendByUserId(userId,IMPORT_NOTIFY_CODE,toJson(testFileLoadHistoryWithRateVO));
+        TestFileLoadHistoryWebsocketVO websocketVO = modelMapper
+                .map(testFileLoadHistoryDTO, TestFileLoadHistoryWebsocketVO.class);
+        websocketVO.setRate(rate);
+        if(TestFileLoadHistoryEnums.Status.FAILURE.getTypeValue().equals(websocketVO.getStatus())){
+            websocketVO.setCode(IMPORT_ERROR);
         }
-
+        messageClient.sendByUserId(userId,IMPORT_NOTIFY_CODE,toJson(websocketVO));
         logger.info("导入进度：{}", rate);
         if (rate == 100.) {
             logger.info("完成");
@@ -641,9 +682,9 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         }
     }
 
-    private String toJson(TestFileLoadHistoryWithRateVO testFileLoadHistoryWithRateVO){
+    private String toJson(TestFileLoadHistoryWebsocketVO websocketVO){
         try {
-            return objectMapper.writeValueAsString(testFileLoadHistoryWithRateVO);
+            return objectMapper.writeValueAsString(websocketVO);
         } catch (IOException e) {
             logger.error("json convert fail");
             throw new CommonException(e);
