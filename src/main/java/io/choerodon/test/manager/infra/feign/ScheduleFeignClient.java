@@ -20,7 +20,7 @@ import java.util.List;
  * @since 2018/11/23
  */
 @Component
-@FeignClient(value = "hzero-asgard", fallback = ScheduleFeignClientFallback.class)
+@FeignClient(value = "choerodon-asgard", fallback = ScheduleFeignClientFallback.class)
 public interface ScheduleFeignClient {
     @ApiOperation(value = "项目层创建定时任务")
     @PostMapping(value = "/v1/schedules/projects/{project_id}/tasks")

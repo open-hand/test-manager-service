@@ -17,7 +17,7 @@ import java.util.List;
  * @since 2018/5/24
  */
 @Component
-@FeignClient(value = "hzero-iam", fallback = BaseFeignClientFallback.class)
+@FeignClient(value = "choerodon-iam", fallback = BaseFeignClientFallback.class)
 public interface BaseFeignClient {
 
     @PostMapping(value = "/choerodon/v1/users/ids")
