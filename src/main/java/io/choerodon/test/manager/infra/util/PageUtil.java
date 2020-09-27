@@ -45,7 +45,7 @@ public class PageUtil {
         result.setSize(queryAll ? all.size() : pageRequest.getSize());
         result.setNumber(pageRequest.getPage());
         result.setTotalElements(all.size());
-        result.setTotalPages(queryAll ? 0 : ((int) (Math.ceil(all.size() / (pageRequest.getSize() * 1.0))) - 1));
+        result.setTotalPages(queryAll ? (all.size() == 0 ? 0 : 1) : ((int) (Math.ceil(all.size() / (pageRequest.getSize() * 1.0)))));
         int fromIndex = pageRequest.getSize() * pageRequest.getPage();
         int size;
         if (all.size() >= fromIndex) {
