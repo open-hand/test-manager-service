@@ -77,6 +77,8 @@ mybatis:
   configuration:
     mapUnderscoreToCamelCase: true
     key-generator: snowflake
+    snowflake:
+      meta-provider-redis-db: ${SPRING_RESIDS_DATABASE:13}
 
 feign:
   hystrix:
