@@ -29,7 +29,7 @@ hzero:
     oauthUrl: http://example/oauth/api/user
   service:
     platform:
-      name: cherodon-platform
+      name: choerodon-platform
     oauth:
       name: choerodon-oauth
     iam:
