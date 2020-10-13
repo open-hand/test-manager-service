@@ -44,7 +44,7 @@ public class TestFolderCycleCaseVO {
     private String source;
 
     @ApiModelProperty(value = "指派人id")
-    @Encrypt
+    @Encrypt(ignoreValue = {"0"})
     private Long assignedTo;
 
     @ApiModelProperty(value = "经办人")
