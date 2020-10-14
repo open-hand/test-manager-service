@@ -11,15 +11,17 @@ function EditTestStepTable(props) {
   const [testStepData, setTestStepData] = useState([]);
   const onClone = (newData, originStep) => ({
     ...originStep,
+    _status: 'add',
     executeStepId: Math.random(),
   });
-  const onCreate = newStep => ({
+  const onCreate = (newStep) => ({
     ...newStep,
+    _status: 'add',
     executeStepId: Math.random(),
   });
   useEffect(() => {
     if (current) {
-      current.set(name, testStepData.filter(step => !step.stepIsCreating));
+      current.set(name, testStepData.filter((step) => !step.stepIsCreating));
     }
   }, [current, name, testStepData]);
   useEffect(() => {
