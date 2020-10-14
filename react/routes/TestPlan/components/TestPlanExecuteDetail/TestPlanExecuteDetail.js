@@ -12,7 +12,7 @@ import { observer } from 'mobx-react-lite';
 import { withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import { toJS } from 'mobx';
-import { find, debounce } from 'lodash';
+import _, { find, debounce } from 'lodash';
 import { Modal, Button, message } from 'choerodon-ui/pro';
 import queryString from 'query-string';
 import { uploadFile, deleteFile } from '@/api/FileApi';
@@ -57,7 +57,6 @@ function TestPlanExecuteDetail(props) {
     ExecuteDetailStore.setId(executeId);
   }, [ExecuteDetailStore, context, context.match.params]);
 
-
   const goExecute = (mode) => {
     const detailData = ExecuteDetailStore.getDetailData;
     const { nextExecuteId, previousExecuteId } = detailData;
@@ -86,10 +85,10 @@ function TestPlanExecuteDetail(props) {
   };
 
   const handleSubmit = (updateData) => {
-    if(updateData.executionStatus) {
+    if (updateData.executionStatus) {
       const { statusList } = ExecuteDetailStore;
       const statusItem = _.find(statusList, { statusId: updateData.executionStatus }) || {};
-      updateData.executionStatusName = statusItem.statusName;
+      _.set(updateData, 'executionStatusName', statusItem.statusName);
     }
     const detailData = ExecuteDetailStore.getDetailData;
     const newData = { ...detailData, ...updateData };
@@ -100,7 +99,6 @@ function TestPlanExecuteDetail(props) {
       Choerodon.prompt('网络异常');
     });
   };
-
 
   const quickPassOrFail = (text) => {
     const detailData = { ...ExecuteDetailStore.getDetailData };
@@ -121,7 +119,7 @@ function TestPlanExecuteDetail(props) {
     } else {
       Choerodon.prompt('未找到对应状态');
     }
-  }
+  };
 
   const quickHandle = (statusName) => {
     quickPassOrFail(statusName);
@@ -136,7 +134,6 @@ function TestPlanExecuteDetail(props) {
     ExecuteDetailStore.getInfo();
     stepTableDataSet.query();
   };
-
 
   /**
    * 批量删除已上传文件（修改用例 保存）
@@ -157,14 +154,16 @@ function TestPlanExecuteDetail(props) {
     const { executeId } = data;
     const testCycleCaseStepUpdateVOS = data.testCycleCaseStepUpdateVOS.map(
       (i) => {
-        let { stepId } = i;
-        let { executeStepId } = i;
-        if (String(i.stepId).indexOf('.') !== -1) {
+        let {
+          executeStepId, stepId,
+        } = i;
+        const { _status, ...otherI } = i;
+        if (_status === 'add') {
           stepId = 0;
           executeStepId = null;
         }
         return {
-          ...i,
+          ...otherI,
           stepId,
           executeId,
           executeStepId,
@@ -199,7 +198,7 @@ function TestPlanExecuteDetail(props) {
             await uploadFile(formDataAdd, config);
           }
           // 删除文件 只能单个文件删除， 进行遍历删除
-          await deleteFiles(formDataDel.map(i => i.id));
+          await deleteFiles(formDataDel.map((i) => i.id));
         }
         await updateSidebarDetail(newData);
         message.success(`${isAsync ? '同步修改成功' : '修改成功'}`);
@@ -284,15 +283,13 @@ function TestPlanExecuteDetail(props) {
               <Tooltip title="相关用例已删除">
                 <Button funcType="raised" color="primary">保存并同步到用例库</Button>
               </Tooltip>
-            )
-          }
+            )}
           {cancelBtn}
         </div>
       ),
       okText: '保存',
     });
   };
-
 
   // 默认只显示15个字其余用... 进行省略
   const renderBreadcrumbTitle = (text) => {
@@ -331,10 +328,8 @@ function TestPlanExecuteDetail(props) {
             {visible ? '隐藏详情' : '查看详情'}
           </Button>
 
-
           {planStatus !== 'done'
-            && <Button icon="mode_edit" funcType="flat" type="primary" onClick={handleOpenEdit}>修改用例</Button>
-          }
+            && <Button icon="mode_edit" funcType="flat" type="primary" onClick={handleOpenEdit}>修改用例</Button>}
           <Button
             disabled={!previousExecuteId}
             onClick={() => {
@@ -448,6 +443,5 @@ function TestPlanExecuteDetail(props) {
   }
   return render();
 }
-
 
 export default withRouter(observer(TestPlanExecuteDetail));
