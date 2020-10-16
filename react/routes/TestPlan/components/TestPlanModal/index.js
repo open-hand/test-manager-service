@@ -42,19 +42,19 @@ function TestPlanModal({
   }, [initCaseSelected, mode, selectIssueStore]);
   const handleSubmit = useCallback(async () => {
     const data = dataSet.toData()[0];
-    
     const {
-      range, custom, __id, __status, objectVersionNumber, id, ...rest
+      range, custom, __id, __status, objectVersionNumber, description, id, ...rest
     } = data;
     const caseSelected = custom ? selectIssueStore.getSelectedFolders() : null;
-    if (mode === 'edit' && !dataSet.isModified()) {
+    if (mode === 'edit' && !dataSet.dirty) {
       return true;
     }
     try {
       const validate = await dataSet.validate();
-      if (dataSet.isModified() && validate && data.range && data.range[0] && data.range[1]) {
+      if (dataSet.dirty && validate && data.range && data.range[0] && data.range[1]) {
         const plan = {
           ...rest,
+          description: description === null ? '' : description,
           custom,
           id,
           objectVersionNumber,

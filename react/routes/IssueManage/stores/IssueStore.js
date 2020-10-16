@@ -17,7 +17,7 @@ class IssueStore {
     total: 0,
   };
 
-  @observable priorityList=[];
+  @observable priorityList = [];
 
   @action setPriorityList(data) {
     this.priorityList = data;
@@ -60,6 +60,7 @@ class IssueStore {
       orderField: '',
       orderType: '',
     };
+    this.clickIssue = {};
     this.loading = true;
     this.paramName = undefined;
     this.paramIssueId = undefined;
@@ -92,7 +93,7 @@ class IssueStore {
   }
 
   async moveOrCopyIssues(folderId, isCopy) {
-    const issueLinks = this.getDraggingTableItems.map(issue => ({
+    const issueLinks = this.getDraggingTableItems.map((issue) => ({
       caseId: issue.caseId,
       folderId,
     }));
@@ -160,9 +161,8 @@ class IssueStore {
     this.copy = flag;
   }
 
-
   @action setDraggingTableItems(draggingTableItems) {
-    this.draggingTableItems = draggingTableItems.filter(issue => issue.typeCode !== 'issue_auto_test');
+    this.draggingTableItems = draggingTableItems.filter((issue) => issue.typeCode !== 'issue_auto_test');
   }
 
   @action setTableDraging(flag) {

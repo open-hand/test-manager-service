@@ -1,4 +1,4 @@
-import React, { createContext } from 'react';
+import React, { createContext, useEffect, useMemo } from 'react';
 import CreateAutoTestStore from './CreateAutoTestStore';
 import TestPlanStore from './TestPlanStore';
 
@@ -9,7 +9,10 @@ export const StoreProvider = (props) => {
   const { children } = props;
   const createAutoTestStore = CreateAutoTestStore;
   const testPlanStore = TestPlanStore;
-
+  useEffect(() => () => {
+    testPlanStore.clearStore();
+  },
+  [testPlanStore]);
   const value = {
     ...props,
     createAutoTestStore,

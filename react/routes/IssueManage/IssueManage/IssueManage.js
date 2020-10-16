@@ -24,11 +24,16 @@ import IssueTreeStore from '../stores/IssueTreeStore';
 
 @injectIntl
 @observer
-export default class IssueManage extends Component {
+class IssueManage extends Component {
   componentDidMount() {
     RunWhenProjectChange(IssueStore.clearStore);
     RunWhenProjectChange(IssueTreeStore.clearStore);
     this.getInit();
+  }
+
+  componentWillUnmount() {
+    IssueTreeStore.clearStore();
+    IssueStore.clearStore();
   }
 
   getInit = () => {
@@ -79,13 +84,11 @@ export default class IssueManage extends Component {
     IssueStore.loadIssues(1, 10);
   }
 
-
   handleTableRowClick = (record) => {
     IssueStore.setClickIssue(record);
   }
 
-
-  saveRef = name => (ref) => {
+  saveRef = (name) => (ref) => {
     this[name] = ref;
   }
 
@@ -95,7 +98,7 @@ export default class IssueManage extends Component {
 
   handleClose = (issueInfo) => {
     const { issues } = IssueStore;
-    const index = issues.findIndex(item => item.caseId === issueInfo.caseId);
+    const index = issues.findIndex((item) => item.caseId === issueInfo.caseId);
     if (index > -1) {
       issues[index] = { ...issues[index], ...issueInfo };
     }
@@ -216,12 +219,12 @@ export default class IssueManage extends Component {
         </Header>
         <Breadcrumb />
         <Content style={{ display: 'flex', padding: '0', borderTop: '0.01rem solid rgba(0,0,0,0.12)' }}>
-          <Fragment>
+          <>
             <div className="c7ntest-Issue-content-left">
               {tabs.length > 1 && tab}
               <IssueTree />
             </div>
-            <Fragment>
+            <>
               {
                 noFolder ? (
                   <Empty
@@ -251,11 +254,12 @@ export default class IssueManage extends Component {
                   </div>
                 )
               }
-            </Fragment>
-          </Fragment>
+            </>
+          </>
           <TestCaseDetail visible={clickIssue && clickIssue.caseId} onClose={this.handleClose} />
         </Content>
       </Page>
     );
   }
 }
+export default IssueManage;
