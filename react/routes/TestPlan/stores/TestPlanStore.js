@@ -180,7 +180,11 @@ class TestPlanStore extends TestPlanTreeStore {
 
   @action clearStore = () => {
     this.tableLoading = false;
-    this.treeData = {};
+    this.treeData = {
+      rootIds: [],
+      treeFolder: [],
+    };
+    this.treeRef = {};
     this.treeFolderMaps = new Map();
     this.testList = [];
     this.expandedKeys = ['0-0'];
@@ -410,5 +414,4 @@ class TestPlanStore extends TestPlanTreeStore {
     });
   }
 }
-
 export default new TestPlanStore();
