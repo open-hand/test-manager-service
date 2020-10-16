@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Choerodon } from '@choerodon/boot';
+import WYSIWYGViewer from '@choerodon/agile/lib/components/WYSIWYGViewer';
 import { Tooltip, Button } from 'choerodon-ui/pro';
 import {
   cloneStep, updateStep, deleteStep, createIssueStep,
@@ -31,7 +32,7 @@ function EditTestStepTable({ onUpdateDetail }) {
   } = useContext(EditIssueContext);
   const [editDescriptionShow, setEditDescriptionShow] = useState(false);
   const { issueSteps, issueInfo: { description } } = store;
-  const onUpdateStep = newData => store.loadWithLoading(
+  const onUpdateStep = (newData) => store.loadWithLoading(
     updateStep(newData), store.loadIssueData,
   );
   const onCreateIssueStep = (newData) => {
@@ -78,7 +79,6 @@ function EditTestStepTable({ onUpdateDetail }) {
               handleDelete={() => {
                 setEditDescriptionShow(false);
               }}
-
               handleSave={(value) => {
                 onUpdateDetail({ description: value });
                 setEditDescriptionShow(false);
@@ -108,10 +108,10 @@ function EditTestStepTable({ onUpdateDetail }) {
         <>
           <span className="c7ntest-edit-test-step-item-title-text">前置条件</span>
           <div className="c7ntest-edit-test-step-item-title-btn">
-            <Tooltip title="全屏编辑" getPopupContainer={triggerNode => triggerNode.parentNode}>
+            <Tooltip title="全屏编辑" getPopupContainer={(triggerNode) => triggerNode.parentNode}>
               <Button color="primary" icon="zoom_out_map" onClick={handleOpenFullEditor} />
             </Tooltip>
-            <Tooltip title="编辑" getPopupContainer={triggerNode => triggerNode.parentNode.parentNode}>
+            <Tooltip title="编辑" getPopupContainer={(triggerNode) => triggerNode.parentNode.parentNode}>
               <Button
                 color="primary"
                 icon="mode_edit mlr-3"

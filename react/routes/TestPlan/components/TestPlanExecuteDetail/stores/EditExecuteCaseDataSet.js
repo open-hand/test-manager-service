@@ -15,7 +15,9 @@ function EditExecuteCaseDataSet(executeId, intlPrefix, intl, priorityOptionDataS
       {
         name: 'summary', type: 'string', label: summary, required: true,
       },
-      { name: 'description', type: 'any', label: description },
+      {
+        name: 'description', type: 'any', label: description, trim: 'none', 
+      },
       {
         name: 'priorityId',
         type: 'string',
@@ -61,7 +63,7 @@ function EditExecuteCaseDataSet(executeId, intlPrefix, intl, priorityOptionDataS
         method: 'get',
         transformResponse: (data) => {
           const newData = JSON.parse(data);
-          const fileList = newData.cycleCaseAttachmentRelVOList.map(file => ({
+          const fileList = newData.cycleCaseAttachmentRelVOList.map((file) => ({
             uid: -file.id, // 文件唯一标识，建议设置为负数，防止和内部产生的 id 冲突
             name: file.attachmentName, // 文件名 
             status: 'done', // 状态有：uploading done error removed
