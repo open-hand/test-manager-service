@@ -61,7 +61,7 @@ function Detail({
  * @param {function} func 回调
  */
   const handleFileUpload = (propFileList, func) => {
-    const fileList = propFileList.filter(i => !i.url);
+    const fileList = propFileList.filter((i) => !i.url);
     const formData = new FormData();
     fileList.forEach((file) => {
       // file.name = encodeURI(encodeURI(file.name));
@@ -90,47 +90,11 @@ function Detail({
   };
 
   const onUploadFiles = (arr) => {
-    if (arr.length > 0 && arr.some(one => !one.url)) {
+    if (arr.length > 0 && arr.some((one) => !one.url)) {
       handleFileUpload(arr, store.loadIssueData);
     }
   };
 
-  function renderDescription() {
-    let delta;
-    if (editDescriptionShow === undefined) {
-      return null;
-    }
-    if (!description || editDescriptionShow) {
-      delta = text2Delta(description);
-      return (
-        editDescriptionShow && (
-          <div className="line-start mt-10">
-            <WYSIWYGEditor
-              autoFocus
-              bottomBar
-              defaultValue={delta}
-              style={{ height: 200, width: '100%' }}
-              handleDelete={() => {
-                setEditDescriptionShow(false);
-              }}
-
-              handleSave={(value) => {
-                onUpdate({ description: value });
-                setEditDescriptionShow(false);
-              }}
-            />
-          </div>
-        )
-      );
-    } else {
-      delta = delta2Html(description);
-      return (
-        <ContentWrap>
-          <IssueDescription style={{ paddingRight: 20 }} data={delta} />
-        </ContentWrap>
-      );
-    }
-  }
   const handleCreateLinkIssueOk = () => {
     if (handleCreateLinkIssue) {
       handleCreateLinkIssue();
@@ -148,7 +112,7 @@ function Detail({
 
   function render() {
     return (
-      <React.Fragment>
+      <>
         <section id="detail">
           <TitleWrap style={{ marginTop: 0 }} title={<FormattedMessage id="detail" />} />
           <ContentWrap style={{ display: 'flex', flexWrap: 'wrap' }}>
@@ -177,7 +141,7 @@ function Detail({
               <FieldPriority priority={priorityVO || {}} onUpdate={onUpdate} />
             </PropertyWrap>
             {showMore ? (
-              <Fragment>
+              <>
                 <PropertyWrap
                   label={<FormattedMessage id="issue_edit_updater" />}
                   valueStyle={{
@@ -189,7 +153,7 @@ function Detail({
                 <PropertyWrap valueStyle={{ marginLeft: 6 }} label={<FormattedMessage id="issue_edit_updateDate" />}>
                   <Timeago date={lastUpdateDate} />
                 </PropertyWrap>
-              </Fragment>
+              </>
             ) : null}
           </ContentWrap>
           <Button className="leftBtn" funcType="flat" onClick={() => setShowMore(!showMore)}>
@@ -220,7 +184,7 @@ function Detail({
         <section id="link_task" style={{ marginBottom: 20 }}>
           <TitleWrap title="问题链接">
             <div style={{ marginLeft: '14px' }}>
-              <Tooltip title="问题链接" getPopupContainer={triggerNode => triggerNode.parentNode}>
+              <Tooltip title="问题链接" getPopupContainer={(triggerNode) => triggerNode.parentNode}>
                 <Button icon="playlist_add" onClick={() => setCreateLinkTaskShow(true)} />
               </Tooltip>
             </div>
@@ -243,7 +207,7 @@ function Detail({
             />
           ) : null
         }
-      </React.Fragment>
+      </>
     );
   }
   return render();

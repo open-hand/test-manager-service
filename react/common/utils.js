@@ -17,17 +17,22 @@ export function text2Delta(description) {
     return String(description);
   }
   let temp = description;
+
   try {
-    temp = JSON.parse(description.replace(/\\n/g, '\\n')
+    temp = description.replace(/\\n/g, '\\n')
       .replace(/\\'/g, "\\'")
       .replace(/\\"/g, '\\"')
       .replace(/\\&/g, '\\&')
       .replace(/\\r/g, '\\r')
       .replace(/\\t/g, '\\t')
       .replace(/\\b/g, '\\b')
-      .replace(/\\f/g, '\\f'));
+      .replace(/\\f/g, '\\f');
+    temp = JSON.parse(temp);
   } catch (error) {
     temp = description;
+    if (typeof (description) === 'string') {
+      temp = description.split(/\n|\r|\f/g).map((item) => ({ insert: `${item}\n` }));
+    }
   }
   // return temp;
   return temp || '';
@@ -55,6 +60,7 @@ export function delta2Html(description, config) {
   const text = converter.convert();
   // if (text.substring(0, 3) === '<p>') {
   //   return text.substring(3);
+  // }
   // } else {
   // console.log(description, text);
   return text;
@@ -73,7 +79,6 @@ export function delta2Text(delta) {
 export function escape(str) {
   return str.replace(/<\/script/g, '<\\/script').replace(/<!--/g, '<\\!--');
 }
-
 
 /**
  * 将以base64的图片url数据转换为Blob
@@ -184,7 +189,7 @@ export function returnBeforeTextUpload(text, data, func, pro = 'description') {
  * @param {{issueType:string,issueId:number,fileName:string}} config 附件上传的额外信息
  */
 export function handleFileUpload(propFileList, func, config) {
-  const fileList = propFileList.filter(i => !i.url);
+  const fileList = propFileList.filter((i) => !i.url);
   const formData = new FormData();
   fileList.forEach((file) => {
     // file.name = encodeURI(encodeURI(file.name));
