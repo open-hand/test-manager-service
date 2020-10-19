@@ -7,6 +7,7 @@ import {
 import {
   Page, Header, Content, Breadcrumb,
 } from '@choerodon/boot';
+import JsonBig from 'json-bigint';
 import { Choerodon } from '@choerodon/boot';
 import { observer } from 'mobx-react-lite';
 import { withRouter } from 'react-router-dom';
@@ -129,7 +130,11 @@ function TestPlanExecuteDetail(props) {
     ExecuteDetailStore.setCreateBugShow(false);
   };
 
-  const handleBugCreate = () => {
+  const handleBugCreate = (res, requestData) => {
+    const { assigneeId, projectId } = requestData;
+    sessionStorage.setItem('test.plan.execute.detail.create.bug.default.value', JsonBig.stringify({
+      assigneeId, projectId,
+    }));
     ExecuteDetailStore.setCreateBugShow(false);
     ExecuteDetailStore.getInfo();
     stepTableDataSet.query();

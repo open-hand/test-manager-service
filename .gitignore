@@ -31,6 +31,9 @@ application-default.yml
 lib
 yarn.lock
 node_modules
+.yalc
+yalc.lock
+yarn-error.log
 package-lock.json
 **/lib/dist/
 **/lib/assets/
