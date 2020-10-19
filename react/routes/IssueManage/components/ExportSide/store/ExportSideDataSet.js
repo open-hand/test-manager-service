@@ -13,7 +13,7 @@ const onHumanizeDuration = (record) => {
   const lastTime = moment(lastUpdateDate);
   let diff = lastTime.diff(startTime);
   // console.log(diff);
-  if (diff <= 0) {
+  if (diff < 0) {
     diff = moment().diff(startTime);
   }
   return creationDate && lastUpdateDate
