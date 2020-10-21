@@ -58,6 +58,8 @@ import io.choerodon.test.manager.infra.util.TypeUtil;
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class TestCaseServiceImpl implements TestCaseService {
+    private static final String API_TYPE = "api";
+    private static final String REPLAY = "replay";
 
     @Autowired
     private TestCaseFeignClient testCaseFeignClient;
@@ -341,7 +343,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         Set<Long> folderIds = new HashSet<>();
         TestIssueFolderDTO testIssueFolder = new TestIssueFolderDTO();
         testIssueFolder.setProjectId(projectId);
-        Map<Long, List<TestIssueFolderDTO>> folderMap = testIssueFolderMapper.select(testIssueFolder).stream().filter(issueFolderDTO -> !"api".equals(issueFolderDTO.getType())).collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
+        Map<Long, List<TestIssueFolderDTO>> folderMap = testIssueFolderMapper.select(testIssueFolder).stream().filter(issueFolderDTO -> !API_TYPE.equals(issueFolderDTO.getType()) && !REPLAY.equals(issueFolderDTO.getType())).collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
         queryAllFolderIds(folderId, folderIds, folderMap);
         // 处理排序
         checkPageRequest(pageRequest);
@@ -587,7 +589,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         Set<Long> folderIds = new HashSet<>();
         TestIssueFolderDTO testIssueFolder = new TestIssueFolderDTO();
         testIssueFolder.setProjectId(projectId);
-        Map<Long, List<TestIssueFolderDTO>> folderMap = testIssueFolderMapper.select(testIssueFolder).stream().filter(issueFolderDTO -> !"api".equals(issueFolderDTO.getType())).collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
+        Map<Long, List<TestIssueFolderDTO>> folderMap = testIssueFolderMapper.select(testIssueFolder).stream().filter(issueFolderDTO -> !API_TYPE.equals(issueFolderDTO.getType()) && !REPLAY.equals(issueFolderDTO.getType())).collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
         queryAllFolderIds(folderId, folderIds, folderMap);
         return folderIds;
     }
@@ -645,7 +647,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         Set<Long> folderIds = new HashSet<>();
         TestIssueFolderDTO testIssueFolder = new TestIssueFolderDTO();
         testIssueFolder.setProjectId(projectId);
-        Map<Long, List<TestIssueFolderDTO>> folderMap = testIssueFolderMapper.select(testIssueFolder).stream().filter(issueFolderDTO -> !"api".equals(issueFolderDTO.getType())).collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
+        Map<Long, List<TestIssueFolderDTO>> folderMap = testIssueFolderMapper.select(testIssueFolder).stream().filter(issueFolderDTO -> !API_TYPE.equals(issueFolderDTO.getType()) && !REPLAY.equals(issueFolderDTO.getType())).collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
         queryAllFolderIds(folderId, folderIds, folderMap);
         // 查询文件夹下的的用例
         List<Long> caseIds = testCaseMapper.listCaseIds(projectId, folderIds, null);

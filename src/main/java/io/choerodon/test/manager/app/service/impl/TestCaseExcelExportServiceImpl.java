@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import com.alibaba.fastjson.JSON;
-import org.springframework.util.StringUtils;
 
 import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.api.vo.agile.IssueStatusDTO;
@@ -72,6 +71,8 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
     private static final String STATUS = "status";
     private static final String FOLDERS = "folders";
     private static final String USERS = "users";
+    private static final String API_TYPE = "api";
+    private static final String REPLAY = "replay";
 
     private enum CaseHeader {
         COLUMN1("文件夹*"), COLUMN2("用例概要*"), COLUMN11("用例优先级*"), COLUMN3("用例编号"),
@@ -283,7 +284,7 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
         TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO();
         testIssueFolderDTO.setProjectId(projectId);
 
-        List<TestIssueFolderVO> testIssueFolderVOS = modelMapper.map(testIssueFolderMapper.select(testIssueFolderDTO).stream().filter(issueFolderDTO -> !"api".equals(issueFolderDTO.getType())).collect(Collectors.toList()),
+        List<TestIssueFolderVO> testIssueFolderVOS = modelMapper.map(testIssueFolderMapper.select(testIssueFolderDTO).stream().filter(issueFolderDTO -> !API_TYPE.equals(issueFolderDTO.getType()) && !REPLAY.equals(issueFolderDTO.getType())).collect(Collectors.toList()),
                 new TypeToken<List<TestIssueFolderVO>>() {
         }.getType());
         List<IssueStatusDTO> issueStatusDTOS = testCaseService.listStatusByProjectId(projectId);

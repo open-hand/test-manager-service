@@ -61,7 +61,6 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
 
     public static final String TYPE_CYCLE = "cycle";
     public static final String TYPE_TEMP = "temp";
-    private static final String API_TYPE = "api";
 
 
     private TestCaseService testCaseService;
