@@ -433,6 +433,7 @@ function TestPlanExecuteDetail(props) {
                   <CreateBug
                     visible={createBugShow}
                     defectType={defectType}
+                    description={ExecuteDetailStore.getDefaultDefectDescription}
                     id={createDefectTypeId}
                     onCancel={handleHiddenCreateBug}
                     onOk={handleBugCreate}

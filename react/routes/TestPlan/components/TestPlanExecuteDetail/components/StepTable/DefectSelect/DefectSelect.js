@@ -8,14 +8,14 @@ import { FormattedMessage } from 'react-intl';
 import { removeDefect } from '@/api/ExecuteDetailApi';
 import { getIssuesForDefects } from '@/api/agileApi';
 import './DefectSelect.less';
-
+import { text2Delta } from '../../../../../../../common/utils';
 
 const { Option } = Select;
 function DefectSelect(props) {
   const { defects } = props;
   const selectRef = useRef();
-  const [defectIds, setDefectIds] = useState(defects ? defects.map(defect => defect.issueId.toString()) : []);
-  const [originDefects, setOriginDefects] = useState(defects ? defects.map(defect => defect.issueId.toString()) : []);
+  const [defectIds, setDefectIds] = useState(defects ? defects.map((defect) => defect.issueId.toString()) : []);
+  const [originDefects, setOriginDefects] = useState(defects ? defects.map((defect) => defect.issueId.toString()) : []);
   const [issue, dispatch] = useReducer((state, action) => {
     const { issueData, searchValue } = action;
     switch (action.type) {
@@ -71,7 +71,7 @@ function DefectSelect(props) {
     // window.console.log('old', oldList, 'new', List);
     // 删除元素
     if (oldList.length > List.length) {
-      const deleteEle = oldList.filter(old => !List.includes(old));
+      const deleteEle = oldList.filter((old) => !List.includes(old));
       // 如果issue已存在，调用删除接口
       if (defectIds.includes(deleteEle[0])
         && _.find(defects, { issueId: Number(deleteEle[0]) })) {
@@ -83,9 +83,9 @@ function DefectSelect(props) {
     // 收集需要添加的缺陷
     // console.log('List=', List, defects, issueList);
     const needAdd = issueList
-      .filter(item => List.includes(item.issueId.toString()))// 取到选中的issueList
-      .filter(item => !originDefects.includes(item.issueId.toString()))// 去掉之前已有的
-      .map(item => ({
+      .filter((item) => List.includes(item.issueId.toString()))// 取到选中的issueList
+      .filter((item) => !originDefects.includes(item.issueId.toString()))// 去掉之前已有的
+      .map((item) => ({
         defectLinkId: executeStepId,
         issueId: item.issueId,
         issueInfosVO: {
@@ -127,10 +127,10 @@ function DefectSelect(props) {
   const DebounceLoadFilterData = _.debounce(loadFilterData, 400);
   function render() {
     const {
-      executeStepId, handleSubmit, ExecuteDetailStore, record, ...otherProps
+      executeStepId, handleSubmit, ExecuteDetailStore, record, dataSet, ...otherProps
     } = props;
     const { issueList } = issue;
-    const defectsOptions = issueList.map(item => (
+    const defectsOptions = issueList.map((item) => (
       <Option key={item.issueId} value={item.issueId.toString()}>
         {item.issueNum}
         {' '}
@@ -150,7 +150,7 @@ function DefectSelect(props) {
         filterOption={false}
         showArrow={false}
         loading={selectLoading}
-        defaultValue={defects.map(defect => defect.issueId.toString())}
+        defaultValue={defects.map((defect) => defect.issueId.toString())}
         footer={(
           <div
             className="primary"
@@ -158,6 +158,14 @@ function DefectSelect(props) {
             role="none"
             onClick={() => {
               handleSubmit(record);
+              const { caseNum, summary, description } = ExecuteDetailStore.getDetailData;
+              const { testStep, testData, expectedResult } = record.toData();
+              let newDescription = text2Delta(description);
+              const defaultDescription = [{ insert: '测试用例：\n' }, { insert: `${caseNum}-${summary}\n` },
+                { insert: '前置条件：\n' }, { insert: '测试步骤：\n' }, { insert: `${testStep}  测试数据：${testData || '无'}\n` }, { insert: '预期结果：\n' }, { insert: `${expectedResult}` }];
+              newDescription = Array.isArray(newDescription) ? newDescription : [{ insert: `${newDescription || ''}` }];
+              defaultDescription.splice(3, 0, ...newDescription, String(newDescription[newDescription.length - 1].insert).lastIndexOf('\n') === 0 ? { insert: '' } : { insert: '\n' });
+              ExecuteDetailStore.setDefaultDefectDescription(defaultDescription);
               ExecuteDetailStore.setCreateBugShow(true);
               ExecuteDetailStore.setDefectType('CASE_STEP');
               ExecuteDetailStore.setCreateDefectTypeId(executeStepId);
@@ -174,6 +182,7 @@ function DefectSelect(props) {
         onFilterChange={(value) => {
           DebounceLoadFilterData(value);
         }}
+        // eslint-disable-next-line react/jsx-props-no-spreading
         {...otherProps}
       >
         {defectsOptions}
