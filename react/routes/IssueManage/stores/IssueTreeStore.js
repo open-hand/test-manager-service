@@ -4,6 +4,7 @@ import {
 } from 'mobx';
 import { find, pull } from 'lodash';
 import { getIssueTree } from '@/api/IssueManageApi';
+import { localPageCacheStore } from '@choerodon/agile/lib/stores/common/LocalPageCacheStore';
 
 class IssueTreeStore {
   @observable treeData = {
@@ -99,6 +100,7 @@ class IssueTreeStore {
   }
 
   @action setCurrentFolder(currentFolder) {
+    localPageCacheStore.setItem('issueMange.tree', currentFolder);
     this.currentFolder = currentFolder;
   }
 

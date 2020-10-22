@@ -5,6 +5,7 @@ import {
 import { Choerodon } from '@choerodon/boot';
 import { findIndex } from 'lodash';
 import { handleRequestFailed } from '@/common/utils';
+import { localPageCacheStore } from '@choerodon/agile/lib/stores/common/LocalPageCacheStore';
 import { getIssuesByFolder, moveIssues, copyIssues } from '../../../api/IssueManageApi';
 import IssueTreeStore from './IssueTreeStore';
 
@@ -84,6 +85,14 @@ class IssueStore {
           current: res.pageNum,
           pageSize: size,
           total: res.total,
+        });
+        localPageCacheStore.setItem('issueManage.table', {
+          page: {
+            current: res.pageNum,
+            pageSize: size,
+            total: res.total,
+          },
+          filter: this.getFilter,
         });
         this.setLoading(false);
       } catch (e) {
