@@ -29,13 +29,13 @@
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
-    "@choerodon/agile": "file:.yalc/@choerodon/agile",
+    "@choerodon/agile": "^0.24.0",
     "@choerodon/boot": "^0.22.0",
     "@choerodon/master": "^0.24.0",
     "babel-eslint": "^10.1.0",
     "babel-plugin-module-resolver": "^3.2.0",
     "babel-preset-c7n-app": "^0.0.1",
-    "choerodon-ui": "0.8.66",
+    "choerodon-ui": "~0.8.62",
     "eslint": "^7.6.0",
     "eslint-config-airbnb": "^18.2.0",
     "eslint-config-c7n-app": "^0.0.2",
@@ -58,6 +58,10 @@
       "npm run lint-staged:es"
     ],
     "react/**/*.scss": "stylelint --syntax scss"
+  },
+  "resolutions": {
+    "react": "16.14.0",
+    "react-dom": "16.14.0"
   },
   "husky": {
     "hooks": {

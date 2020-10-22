@@ -9,6 +9,7 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import Empty from '@/components/Empty';
 import empty from '@/assets/empty.png';
 import priorityApi from '@/api/priority';
+import { localPageCacheStore } from '@choerodon/agile/lib/stores/common/LocalPageCacheStore';
 import IssueStore from '../stores/IssueStore';
 import { getParams } from '../../../common/utils';
 import RunWhenProjectChange from '../../../common/RunWhenProjectChange';
@@ -31,11 +32,11 @@ class IssueManage extends Component {
     this.getInit();
   }
 
-  componentWillUnmount() {
-    IssueTreeStore.clearStore();
-    IssueStore.clearStore();
-  }
-
+  // componentWillUnmount() {
+  //   IssueTreeStore.clearStore();
+  //   IssueStore.clearStore();
+  // }
+  
   getInit = () => {
     const Request = getParams(this.props.location.search);
     const { paramName, paramIssueId, folderId } = Request;
@@ -52,15 +53,22 @@ class IssueManage extends Component {
     // 当参数中有用例名时，在table的筛选框中加入
     const barFilters = paramName ? [paramName] : [];
     IssueStore.setBarFilters(barFilters);
-    this.getTestCase(folderId);
+    // 加载缓存
+    const { id: defaultTreeIdValue } = localPageCacheStore.getItem('issueMange.tree') || {};
+    const { page = {}, filter = {} } = localPageCacheStore.getItem('issueManage.table') || {};
+    const { current, pageSize } = page;
+    const { contents, searchArgs } = filter;
+    IssueStore.setBarFilters(contents || []);
+    IssueStore.setFilter(searchArgs ? { searchArgs } : { searchArgs: {} });
+    this.getTestCase(folderId || defaultTreeIdValue, current, pageSize);
   }
 
-  getTestCase = async (defaultSelectId) => {
+  getTestCase = async (defaultSelectId, defaultPage, defaultPageSize) => {
     await IssueTreeStore.loadIssueTree(defaultSelectId);
     const { currentFolder } = IssueTreeStore;
     const { id } = currentFolder;
     if (id) {
-      IssueStore.loadIssues();
+      IssueStore.loadIssues(defaultPage, defaultPageSize);
     }
   }
 

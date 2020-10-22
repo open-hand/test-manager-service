@@ -1,12 +1,14 @@
-
-import React, { useRef, useState, useCallback } from 'react';
-import _ from 'lodash';
+import React, {
+  useRef, useEffect, useState, useCallback,
+} from 'react';
+import { findIndex, set } from 'lodash';
 import { toJS } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import {
   Spin, Table, Pagination, Tooltip, Icon,
 } from 'choerodon-ui';
 import { Droppable, DragDropContext } from 'react-beautiful-dnd';
+import { localPageCacheStore } from '@choerodon/agile/lib/stores/common/LocalPageCacheStore';
 import UserHead from '@/components/UserHead';
 import useAvoidClosure from '@/hooks/useAvoidClosure';
 import CreateIssueTiny from '../CreateIssueTiny';
@@ -20,16 +22,49 @@ import {
 import './IssueTable.less';
 import PriorityTag from '../../../../components/PriorityTag';
 
-
 export default observer((props) => {
   const [firstIndex, setFirstIndex] = useState(null);
   const [filteredColumns, setFilteredColumns] = useState([]);
   const instance = useRef();
-
+  const tableRef = useRef();
   const handleColumnFilterChange = ({ selectedKeys }) => {
     setFilteredColumns(selectedKeys);
   };
+  const transformFilters = (filters, reverse = false) => {
+    const transformedFilters = Object.entries(filters).filter((item) => item[1].length > 0);
+    const filterRules = [{ origin: 'sequence', to: 'priorityId' }, { origin: 'caseId', to: 'caseNum' }];
+    const maps = new Map(filterRules.map((item) => (reverse ? [item.to, item.origin] : [item.origin, item.to])));
+    const res = {};
 
+    transformedFilters.forEach((item) => {
+      let key = item[0];
+      if (maps.has(item[0])) {
+        key = maps.get(item[0]);
+      }
+      set(res, key, reverse ? [item[1]] : item[1][0]);
+    });
+    return res;
+  };
+  const handleSaveTableRef = useCallback((r) => {
+    const { filter } = localPageCacheStore.getItem('issueManage.table') || {};
+    if (r && r.state && filter) {
+      let { content, searchArgs } = filter;
+      content = toJS(content);
+      searchArgs = toJS(searchArgs);
+      if (content && Array.isArray(content)) {
+        r.state.barFilters.push(...content);
+      }
+      if (searchArgs && Object.keys(searchArgs).length > 0) {
+        const newSearchArgs = transformFilters(searchArgs, true);
+        for (const key in newSearchArgs) {
+          if (Object.prototype.hasOwnProperty.call(newSearchArgs, key) && newSearchArgs[key]) {
+            set(r.state, `filters.${key}`, newSearchArgs[key]);
+          }
+        }
+      }
+    }
+    // set(tableRef.current.state.filters, 'summary', ['59']);
+  }, []);
   const shouldColumnShow = useAvoidClosure((column) => {
     if (column.title === '' || !column.dataIndex) {
       return true;
@@ -49,8 +84,8 @@ export default observer((props) => {
     IssueStore.loadIssues();
   };
   const renderThead = (columns) => {
-    const Columns = columns.filter(column => shouldColumnShow(column));
-    const ths = Columns.map(column => (
+    const Columns = columns.filter((column) => shouldColumnShow(column));
+    const ths = Columns.map((column) => (
       // <th style={{ flex: column.flex || 1 }} >
       <th
         className={IssueStore.order.orderField === column.key && `c7ntest-issuetable-sorter-${IssueStore.order.orderType}`}
@@ -79,7 +114,7 @@ export default observer((props) => {
       } else {
         // 是否已经选择
         const old = IssueStore.getDraggingTableItems;
-        const hasSelected = _.findIndex(old, { caseId: issue.caseId });
+        const hasSelected = findIndex(old, { caseId: issue.caseId });
 
         // 已选择就去除
         if (hasSelected >= 0) {
@@ -96,13 +131,12 @@ export default observer((props) => {
     setFirstIndex(index);
   });
 
-
   const renderTbody = (data, columns) => {
     const {
       disabled, onRow,
     } = props;
-    const Columns = columns.filter(column => shouldColumnShow(column));
-    const tds = index => Columns.map((column) => {
+    const Columns = columns.filter((column) => shouldColumnShow(column));
+    const tds = (index) => Columns.map((column) => {
       let renderedItem = null;
       const {
         dataIndex, render,
@@ -175,7 +209,7 @@ export default observer((props) => {
 
   const onDragStart = useAvoidClosure((monitor) => {
     const draggingTableItems = IssueStore.getDraggingTableItems;
-    if (draggingTableItems.length < 1 || _.findIndex(draggingTableItems, { caseId: monitor.draggableId }) < 0) {
+    if (draggingTableItems.length < 1 || findIndex(draggingTableItems, { caseId: monitor.draggableId }) < 0) {
       const { index } = monitor.source;
       setFirstIndex(index);
       IssueStore.setDraggingTableItems([IssueStore.getIssues[index]]);
@@ -186,7 +220,7 @@ export default observer((props) => {
     document.addEventListener('keyup', leaveCopy);
   });
 
-  const getComponents = useAvoidClosure(columns => ({
+  const getComponents = useAvoidClosure((columns) => ({
     table: () => {
       const table = (
         <table>
@@ -194,7 +228,7 @@ export default observer((props) => {
             {renderThead(columns)}
           </thead>
           <Droppable droppableId="dropTable" isDropDisabled>
-            {provided => (
+            {(provided) => (
               <tbody
                 ref={provided.innerRef}
               >
@@ -213,28 +247,6 @@ export default observer((props) => {
     },
   }));
 
-  const transformFilters = (filters) => {
-    const transformedFilters = Object.entries(filters).filter(item => item[1].length > 0);
-    const res = {};
-    transformedFilters.forEach((item) => {
-      switch (item[0]) {
-        case 'sequence':
-          // eslint-disable-next-line prefer-destructuring
-          res.priorityId = item[1][0];
-          break;
-        case 'caseId':
-          // eslint-disable-next-line prefer-destructuring
-          res.caseNum = item[1][0];
-          break;
-        default:
-          // eslint-disable-next-line prefer-destructuring
-          res[item[0]] = item[1][0];
-          break;
-      }
-    });
-    return res;
-  };
-
   const handleFilterChange = (pagination, filters, sorter, barFilters) => {
     // 条件变化返回第一页
     IssueStore.setPagination({
@@ -252,10 +264,11 @@ export default observer((props) => {
     IssueStore.loadIssues(current - 1, pageSize);
   };
 
-  const renderTable = columns => (
+  const renderTable = (columns) => (
     <div className="c7ntest-issuetable">
       <Table
         // filterBar={false}
+        ref={handleSaveTableRef}
         rowKey="caseId"
         columns={columns}
         dataSource={IssueStore.getIssues}
@@ -270,7 +283,6 @@ export default observer((props) => {
     </div>
   );
 
-
   const handlePaginationChange = (page, pageSize) => {
     IssueStore.loadIssues(page, pageSize);
   };
@@ -279,12 +291,11 @@ export default observer((props) => {
     IssueStore.loadIssues(current, size);
   };
 
-  const manageVisible = columns => columns.map(column => (shouldColumnShow(column) ? { ...column, hidden: false } : { ...column, hidden: true }));
+  const manageVisible = (columns) => columns.map((column) => (shouldColumnShow(column) ? { ...column, hidden: false } : { ...column, hidden: true }));
 
   const reLoadTable = () => {
     IssueStore.loadIssues();
   };
-
 
   const { onClick, history } = props;
   const columns = manageVisible([
@@ -307,15 +318,15 @@ export default observer((props) => {
       key: 'caseId',
       sorter: true,
       filters: [],
-      render: caseNum => renderIssueNum(caseNum),
+      render: (caseNum) => renderIssueNum(caseNum),
     },
     {
       title: '优先级',
       dataIndex: 'priorityId',
       key: 'sequence',
       sorter: true,
-      filters: IssueStore.priorityList.filter(priorityVO => priorityVO.enableFlag)
-        .map(priorityVO => ({ text: priorityVO.name, value: priorityVO.id })),
+      filters: IssueStore.priorityList.filter((priorityVO) => priorityVO.enableFlag)
+        .map((priorityVO) => ({ text: priorityVO.name, value: priorityVO.id })),
       width: '1rem',
       render: (priorityId, record) => priorityId && <PriorityTag priority={record.priorityVO} />,
     },
@@ -323,7 +334,7 @@ export default observer((props) => {
       title: '创建人',
       dataIndex: 'createUser',
       key: 'createUser',
-      render: createUser => createUser && <UserHead user={createUser} />,
+      render: (createUser) => createUser && <UserHead user={createUser} />,
       width: '1rem',
     },
     {
@@ -331,13 +342,13 @@ export default observer((props) => {
       dataIndex: 'creationDate',
       key: 'creationDate',
       sorter: true,
-      render: creationDate => <Tooltip title={creationDate}><span style={{ color: 'rgba(0, 0, 0, 0.65)' }}>{creationDate}</span></Tooltip>,
+      render: (creationDate) => <Tooltip title={creationDate}><span style={{ color: 'rgba(0, 0, 0, 0.65)' }}>{creationDate}</span></Tooltip>,
     },
     {
       title: '更新人',
       dataIndex: 'lastUpdateUser',
       key: 'lastUpdateUser',
-      render: lastUpdateUser => lastUpdateUser && <UserHead user={lastUpdateUser} />,
+      render: (lastUpdateUser) => lastUpdateUser && <UserHead user={lastUpdateUser} />,
       width: '1rem',
     },
     {
@@ -345,7 +356,7 @@ export default observer((props) => {
       dataIndex: 'lastUpdateDate',
       key: 'lastUpdateDate',
       sorter: true,
-      render: lastUpdateDate => <Tooltip title={lastUpdateDate}><span style={{ color: 'rgba(0, 0, 0, 0.65)' }}>{lastUpdateDate}</span></Tooltip>,
+      render: (lastUpdateDate) => <Tooltip title={lastUpdateDate}><span style={{ color: 'rgba(0, 0, 0, 0.65)' }}>{lastUpdateDate}</span></Tooltip>,
     },
   ]);
 
