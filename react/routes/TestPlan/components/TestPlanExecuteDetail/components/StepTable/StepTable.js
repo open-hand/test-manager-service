@@ -31,7 +31,7 @@ const DefectSelectText = ({
           <span
             role="none"
             className="c7n-test-execute-detail-step-table-defects-option-btn"
-            onMouseDown={e => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
             onClick={onDelete.bind(this, data, record)}
           >
             <Icon
@@ -48,7 +48,7 @@ const DefectSelectText = ({
     return (
       <ul className="c7n-test-execute-detail-step-table-defects">
         {
-          defects.map(defect => defect.issueInfosVO && (
+          defects.map((defect) => defect.issueInfosVO && (
             <DefectItem data={defect} delBtnVisible={visibleDel}>
               {`${defect.issueInfosVO.issueName} ${defect.issueInfosVO.summary}`}
             </DefectItem>
@@ -91,7 +91,7 @@ function StepTable(props) {
     }
   };
   const handleDeleteFile = (record, value) => {
-    const newFiles = record.get('stepAttachment').filter(file => file.id !== value.id);
+    const newFiles = record.get('stepAttachment').filter((file) => file.id !== value.id);
     updateTableHeight(
       () => record.set('stepAttachment', newFiles),
     );
@@ -114,14 +114,14 @@ function StepTable(props) {
   };
   function renderAction({ record }) {
     return (
-      <React.Fragment>
+      <>
         <Tooltip title={<FormattedMessage id="execute_quickPass" />}>
           <Button key="pass" disabled={getActionHidden()} shape="circle" funcType="flat" icon="check_circle" onClick={onQuickPassOrFail.bind(this, '通过', record)} />
         </Tooltip>
         <Tooltip title={<FormattedMessage id="execute_quickFail" />}>
           <Button key="fail" disabled={getActionHidden()} shape="circle" funcType="flat" icon="cancel" onClick={onQuickPassOrFail.bind(this, '失败', record)} />
         </Tooltip>
-      </React.Fragment>
+      </>
     );
   }
   // 约束附件名长度
@@ -133,7 +133,7 @@ function StepTable(props) {
     return nameArr.length > length ? nameArr.slice(0, length).join('') + ellipsis + suffix : text;
   }
 
-  const getFileList = attachments => attachments && attachments.map((attachment) => {
+  const getFileList = (attachments) => attachments && attachments.map((attachment) => {
     const attachmentName = limitAttachmentLength(attachment.attachmentName);
     const {
       attachmentLinkId, attachmentType, comment, id, objectVersionNumber, url,
@@ -158,7 +158,7 @@ function StepTable(props) {
   function renderAttachment({ record, value }) {
     return (
       <UploadInTable
-        fileList={getFileList(value && value.filter(attachment => attachment.attachmentType === 'CYCLE_STEP'))}
+        fileList={getFileList(value && value.filter((attachment) => attachment.attachmentType === 'CYCLE_STEP'))}
         readOnly={readOnly}
         handleUpdateFileList={onAddFile.bind(this, record)}
         handleDeleteFile={handleDeleteFile.bind(this, record)}
@@ -172,7 +172,7 @@ function StepTable(props) {
 
   const handleAddDefects = (record) => {
     if (record.get('tempDefects')) {
-      addDefects(record.get('tempDefects').map(i => i.issueInfosVO)).then(() => {
+      addDefects(record.get('tempDefects').map((i) => i.issueInfosVO)).then(() => {
         onRefreshCurrent();
       });
     }
@@ -181,7 +181,7 @@ function StepTable(props) {
   };
   const handleDeleteDefect = (defect, record) => {
     updateTableHeight(
-      () => record.set('defects', _.filter(record.get('defects'), item => item.issueId !== defect.issueId)),
+      () => record.set('defects', _.filter(record.get('defects'), (item) => item.issueId !== defect.issueId)),
     );
   };
   /**
@@ -197,7 +197,7 @@ function StepTable(props) {
         onSubmit={() => {
           handleAddDefects(record);
         }}
-        originData={{ defects: defects && defects.map(i => i) }}
+        originData={{ defects: defects && defects.map((i) => i) }}
       >
         <Text>
           <DefectSelectText
@@ -223,6 +223,7 @@ function StepTable(props) {
               ExecuteDetailStore={ExecuteDetailStore}
               setNeedAdd={(needAdd) => { record.set('tempDefects', needAdd); }}
               record={record}
+              dataSet={dataSet}
               executeStepId={record.get('executeStepId')}
               handleSubmit={handleAddDefects}
             />
@@ -243,7 +244,7 @@ function StepTable(props) {
     }
   }
   function renderStatus({ value }) {
-    const status = testStatusDataSet.toData().length === 0 ? {} : testStatusDataSet.toData().find(item => item.statusId === value);
+    const status = testStatusDataSet.toData().length === 0 ? {} : testStatusDataSet.toData().find((item) => item.statusId === value);
     const { statusName = '', statusColor = false } = status || {};
 
     return <StatusTags name={statusName} color={statusColor} style={{ lineHeight: '.16rem' }} />;

@@ -1,9 +1,8 @@
-
 import {
   observable, action, computed, toJS,
 } from 'mobx';
 import { Choerodon } from '@choerodon/boot';
-import _ from 'lodash';
+import { find, remove } from 'lodash';
 import { getDetailsData } from '@/api/ExecuteDetailApi';
 import { getStatusList } from '@/api/TestStatusApi';
 
@@ -23,6 +22,8 @@ class ExecuteDetailStore {
 
   @observable detailData = false;
 
+  @observable defaultDefectDescription = [];
+
   @observable searchFilter = {};
 
   @computed get getSearchFilter() {
@@ -38,7 +39,6 @@ class ExecuteDetailStore {
   @computed get getDetailParams() {
     return this.detailParams;
   }
-
 
   @action setDetailParams(data) {
     this.detailParams = {
@@ -66,7 +66,6 @@ class ExecuteDetailStore {
       contents,
     });
   }
-
 
   @computed get getCreateBugShow() {
     return this.createBugShow;
@@ -145,11 +144,9 @@ class ExecuteDetailStore {
     });
   }
 
-
   @computed get getLoading() {
     return this.loading;
   }
-
 
   @computed get getDetailData() {
     return toJS(this.detailData);
@@ -159,11 +156,9 @@ class ExecuteDetailStore {
     return toJS(this.statusList);
   }
 
-
   @computed get getUserList() {
     return toJS(this.userList);
   }
-
 
   @computed get getDefectIssueIds() {
     return [];
@@ -172,16 +167,16 @@ class ExecuteDetailStore {
   getStatusById = (status) => {
     const statusId = status;
     return {
-      statusName: _.find(this.statusList, { statusId })
-        && _.find(this.statusList, { statusId }).statusName,
+      statusName: find(this.statusList, { statusId })
+        && find(this.statusList, { statusId }).statusName,
       statusColor:
-        _.find(this.statusList, { statusId })
-        && _.find(this.statusList, { statusId }).statusColor,
+        find(this.statusList, { statusId })
+        && find(this.statusList, { statusId }).statusColor,
     };
   }
 
   @computed get getStepStatusById() {
-    return this.cycleData.defects.map(defect => defect.issueId.toString());
+    return this.cycleData.defects.map((defect) => defect.issueId.toString());
   }
 
   // set
@@ -190,13 +185,12 @@ class ExecuteDetailStore {
   }
 
   @action removeLocalDefect = (defectId) => {
-    _.remove(this.cycleData.defects, { id: defectId });
+    remove(this.cycleData.defects, { id: defectId });
   }
 
   @action setStatusList = (statusList) => {
     this.statusList = statusList;
   }
-
 
   @action setDetailData = (data) => {
     this.detailData = data;
@@ -220,6 +214,14 @@ class ExecuteDetailStore {
 
   @action setExecuteDetailSideVisible = (ExecuteDetailSideVisible) => {
     this.ExecuteDetailSideVisible = ExecuteDetailSideVisible;
+  }
+
+  @action setDefaultDefectDescription(data) {
+    this.defaultDefectDescription = data;
+  }
+
+  @computed get getDefaultDefectDescription() {
+    return this.defaultDefectDescription;
   }
 }
 
