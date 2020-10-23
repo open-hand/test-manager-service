@@ -9,6 +9,7 @@ import {
 import { Loading } from '@/components';
 import Tree from '@/components/Tree';
 import { getProjectId } from '@/common/utils';
+import { localPageCacheStore } from '@choerodon/agile/lib/stores/common/LocalPageCacheStore';
 import { openClonePlan } from '../TestPlanModal';
 import openDragPlanFolder from '../DragPlanFolder';
 import openImportIssue from '../ImportIssue';
@@ -84,7 +85,6 @@ class TestPlanTree extends Component {
     }
   }
 
-
   handleCreateFolder = async (value, parentId, item) => {
     const { context: { testPlanStore } } = this.props;
     const isPlan = testPlanStore.isPlan(parentId);
@@ -128,7 +128,6 @@ class TestPlanTree extends Component {
     testPlanStore.setCurrentCycle(item);
   }
 
-
   handleMenuClick = (key, nodeItem) => {
     const { context: { testPlanStore } } = this.props;
     switch (key) {
@@ -143,7 +142,7 @@ class TestPlanTree extends Component {
       }
       case 'drag': {
         openDragPlanFolder({
-          beforeOpen: plantIds => testPlanStore.getFolderDataById(nodeItem.id).isSort && testPlanStore.returnDefaultRank(plantIds),
+          beforeOpen: (plantIds) => testPlanStore.getFolderDataById(nodeItem.id).isSort && testPlanStore.returnDefaultRank(plantIds),
           planId: nodeItem.id,
           handleOk: () => {
             testPlanStore.loadAllData();
@@ -273,7 +272,7 @@ class TestPlanTree extends Component {
               getFolderIcon: (item, defaultIcon) => (item.topLevel ? <Icon type="insert_invitation" style={{ marginRight: 5 }} /> : defaultIcon),
               // 计划和没有执行的，可以添加子目录
               // 最多8层
-              enableAddFolder: item => item.path.length < 9 && (item.topLevel || !item.hasCase),
+              enableAddFolder: (item) => item.path.length < 9 && (item.topLevel || !item.hasCase),
             }
           }
           onMenuClick={this.handleMenuClick}
@@ -287,9 +286,10 @@ TestPlanTree.propTypes = {
 
 };
 
-export default props => (
+export default (props) => (
   <Store.Consumer>
-    {context => (
+    {(context) => (
+      // eslint-disable-next-line react/jsx-props-no-spreading
       <TestPlanTree {...props} context={context} />
     )}
   </Store.Consumer>

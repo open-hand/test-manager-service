@@ -5,12 +5,13 @@ import {
 import moment from 'moment';
 import { find, findIndex, pull } from 'lodash';
 import { getPlanTree } from '@/api/TestPlanApi';
+import { localPageCacheStore } from '@choerodon/agile/lib/stores/common/LocalPageCacheStore';
 // import { getIssueTree } from '@/api/IssueManageApi';
 // 数据处理成tree形式，便于查看数据
 function makeTree(rootIds, treeFolder) {
-  const map = new Map(treeFolder.map(item => ([item.id, item])));
+  const map = new Map(treeFolder.map((item) => ([item.id, item])));
   const transverse = (item) => {
-    item.children = item.children.map(id => transverse(map.get(id)));
+    item.children = item.children.map((id) => transverse(map.get(id)));
     return item;
   };
   return transverse({
@@ -22,6 +23,10 @@ class TestPlanTreeStore {
   @observable testPlanStatus = 'doing';
 
   @action setTestPlanStatus = (testPlanStatus) => {
+    localPageCacheStore.setItem('testPlan.tree.activeTab', testPlanStatus);
+    localPageCacheStore.remove('testPlan.tree.selected');
+    localPageCacheStore.remove('testPlan.table.activeTab');
+    localPageCacheStore.remove('testPlan.table.queryParams');
     this.testPlanStatus = testPlanStatus;
   }
 
@@ -114,7 +119,7 @@ class TestPlanTreeStore {
   }
 
   // this.treeData.treeFolder.filter(item => parent.children.includes(item.id));
-  getAllChildren = parent => parent.children.map(item => this.treeFolderMaps.get(item));
+  getAllChildren = (parent) => parent.children.map((item) => this.treeFolderMaps.get(item));
 
   generateTimes = (data, times, level = 0) => {
     for (let i = 0; i < data.length; i += 1) {
@@ -159,11 +164,11 @@ class TestPlanTreeStore {
     const { flattenedTree } = this.treeRef.current || {};
     let flattenedTreeIds;
     if (flattenedTree) {
-      flattenedTreeIds = flattenedTree.map(node => node.item).filter(item => item.isExpanded).map(item => item.id);
+      flattenedTreeIds = flattenedTree.map((node) => node.item).filter((item) => item.isExpanded).map((item) => item.id);
     }
 
     const { rootIds, treeFolder } = treeData;
-    const firstRoot = (treeFolder && treeFolder.find(item => item.issueFolderVO.initStatus === 'success' && item.topLevel)) || {};
+    const firstRoot = (treeFolder && treeFolder.find((item) => item.issueFolderVO.initStatus === 'success' && item.topLevel)) || {};
     // 选中之前选中的
     let selectedId = this.currentCycle ? this.currentCycle.id : undefined;
     if (!this.currentCycle.id && rootIds && rootIds.length > 0) {
@@ -177,7 +182,7 @@ class TestPlanTreeStore {
         } = folder;
         const newFolder = {
           id: planId ? `${planId}%${id}` : id,
-          children: children ? children.map(child => `${planId || id}%${child}`) : [],
+          children: children ? children.map((child) => `${planId || id}%${child}`) : [],
           oldChildren: [], // 初始顺序
           data: issueFolderVO,
           isExpanded: (flattenedTreeIds && (flattenedTreeIds.includes(id) || flattenedTreeIds.includes(`${planId}%${id}`))) || expanded,
@@ -192,13 +197,14 @@ class TestPlanTreeStore {
     };
     // window.console.log(makeTree(toJS(this.treeData.rootIds), toJS(this.treeData.treeFolder)));
     if (selectedId) {
-      const currentCycle = this.treeFolderMaps.get(selectedId) || {};
+      const currentCycle = this.treeFolderMaps.get(defaultSelectId || selectedId) || {};
       this.setCurrentCycle(currentCycle);
       this.updateTimes([currentCycle]);
     }
   }
 
   @action setCurrentCycle(currentCycle) {
+    localPageCacheStore.setItem('testPlan.tree.selected', currentCycle);
     this.currentCycle = currentCycle;
   }
 

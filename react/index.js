@@ -3,9 +3,11 @@ import { Route, Switch } from 'react-router-dom';
 import { ModalContainer } from 'choerodon-ui/pro';
 import { inject } from 'mobx-react';
 import { asyncLocaleProvider, asyncRouter, nomatch } from '@choerodon/boot';
+import { localPageCacheStore } from '@choerodon/agile/lib/stores/common/LocalPageCacheStore';
 import 'moment/locale/zh-cn';
 import 'moment/locale/en-nz';
 import moment from 'moment';
+import RunWhenProjectChange from './common/RunWhenProjectChange';
 import './index.less';
 
 const TestPlanIndex = asyncRouter(() => import('./routes/TestPlan'));
@@ -17,6 +19,10 @@ const Priority = asyncRouter(() => import('./routes/priority'));
 
 @inject('AppState')
 class TestManagerIndex extends React.Component {
+  componentWillUnmount() {
+    RunWhenProjectChange(localPageCacheStore.clear);
+  }
+
   render() {
     const { match, AppState } = this.props;
     const langauge = AppState.currentLanguage;
@@ -29,10 +35,10 @@ class TestManagerIndex extends React.Component {
     return (
       <div className="testManager">
         <IntlProviderAsync>
-          <React.Fragment>
-            <Switch>         
+          <>
+            <Switch>
               <Route path={`${match.url}/IssueManage`} component={IssueManageIndex} />
-              <Route path={`${match.url}/TestPlan`} component={TestPlanIndex} />     
+              <Route path={`${match.url}/TestPlan`} component={TestPlanIndex} />
               <Route path={`${match.url}/report`} component={ReportIndex} />
               <Route path={`${match.url}/status`} component={CustomStatusIndex} />
               <Route path={`${match.url}/AutoTest`} component={AutoTestIndex} />
@@ -40,7 +46,7 @@ class TestManagerIndex extends React.Component {
               <Route path="*" component={nomatch} />
             </Switch>
             <ModalContainer />
-          </React.Fragment>
+          </>
         </IntlProviderAsync>
       </div>
     );
