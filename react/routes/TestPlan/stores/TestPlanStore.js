@@ -8,6 +8,7 @@ import priorityApi from '@/api/priority';
 import {
   getExecutesByFolder, getStatusByFolder, getPlanDetail, executesAssignTo,
 } from '@/api/TestPlanApi';
+import { localPageCacheStore } from '@choerodon/agile/lib/stores/common/LocalPageCacheStore';
 import TestPlanTreeStore from './TestPlanTreeStore';
 
 const { AppState } = stores;
@@ -26,6 +27,8 @@ class TestPlanStore extends TestPlanTreeStore {
   @observable mainActiveTab = 'testPlanTable';
 
   @action setMainActiveTab = (mainActiveTab) => {
+    localPageCacheStore.setItem('testPlan.table.activeTab', mainActiveTab);
+    localPageCacheStore.remove('testPlan.table.queryParams');
     this.mainActiveTab = mainActiveTab;
   }
 
@@ -315,17 +318,17 @@ class TestPlanStore extends TestPlanTreeStore {
    *
    * @memberof TestPlanStore
    */
-  loadAllData = () => {
+  loadAllData = (defaultSelectedId = undefined) => {
     const { testPlanStatus } = this;
     this.setLoading(true);
-    return Promise.all([getStatusList('CYCLE_CASE'), priorityApi.load(), this.loadIssueTree()]).then(([statusList, priorityList]) => {
+    return Promise.all([getStatusList('CYCLE_CASE'), priorityApi.load(), this.loadIssueTree(defaultSelectedId)]).then(([statusList, priorityList]) => {
       if (testPlanStatus !== this.testPlanStatus) {
         return;
       }
       this.setLoading(false);
       this.setPriorityList(priorityList);
       this.setStatusList(statusList);
-      if (this.getCurrentPlanId) {
+      if (this.mainActiveTab !== 'testPlanSchedule' && this.getCurrentPlanId) {
         this.loadPlanDetail();
         this.loadExecutes();
         this.loadStatusRes();
@@ -369,6 +372,9 @@ class TestPlanStore extends TestPlanTreeStore {
         ...executePagination,
         ...{ total: executes.total },
       });
+      localPageCacheStore.setItem('testPlan.table.queryParams', {
+        planId, folderId, search: getSearchObj, current, pageSize, total: executes.total,
+      }); // 查询条件缓存
     } else {
       const { mineOrderField, mineOrderType } = mineOrder;
       const { current, pageSize } = mineExecutePagination;
@@ -381,6 +387,9 @@ class TestPlanStore extends TestPlanTreeStore {
         ...mineExecutePagination,
         ...{ total: executes.total },
       });
+      localPageCacheStore.setItem('testPlan.table.queryParams', {
+        planId, folderId, search: getMineSearchObj, current, pageSize, total: executes.total,
+      }); // 查询条件缓存
     }
     this.setTestList(executes.list || []);
     this.setTableLoading(false);

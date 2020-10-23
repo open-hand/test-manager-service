@@ -9,6 +9,7 @@ import {
 } from '@choerodon/boot';
 import { Icon, Tabs, Card } from 'choerodon-ui';
 import { Modal, Button } from 'choerodon-ui/pro';
+import { localPageCacheStore } from '@choerodon/agile/lib/stores/common/LocalPageCacheStore';
 import {
   deleteExecute, updateExecute, comfirmUpdate, ignoreUpdate, getRankByDate,
 } from '../../../api/TestPlanApi';
@@ -133,7 +134,7 @@ function TestPlanHome({ history }) {
       cycle_id: cycleId,
       plan_id: testPlanStore.getCurrentPlanId,
       assignerId,
-      contents: contents.map(c => c),
+      contents: contents.map((c) => c),
       executionStatus,
       summary,
     };
@@ -217,11 +218,11 @@ function TestPlanHome({ history }) {
     let executionStatus;
     let executionStatusName;
     if (isPass) {
-      const { statusId, statusName } = statusList.find(status => status.statusName === '通过') || {};
+      const { statusId, statusName } = statusList.find((status) => status.statusName === '通过') || {};
       executionStatus = statusId;
       executionStatusName = statusName;
     } else {
-      const { statusId, statusName } = statusList.find(status => status.statusName === '失败') || {};
+      const { statusId, statusName } = statusList.find((status) => status.statusName === '失败') || {};
       executionStatus = statusId;
       executionStatusName = statusName;
     }
@@ -266,6 +267,34 @@ function TestPlanHome({ history }) {
   };
 
   useEffect(() => {
+    // 加载缓存
+    const defaultTreeActiveTab = localPageCacheStore.getItem('testPlan.tree.activeTab');
+    const defaultTreeSelected = localPageCacheStore.getItem('testPlan.tree.selected');
+    const defaultTableActiveTab = localPageCacheStore.getItem('testPlan.table.activeTab');
+    const defaultTreeQueryParams = localPageCacheStore.getItem('testPlan.table.queryParams');
+    if (defaultTableActiveTab) {
+      testPlanStore.setTestPlanStatus(defaultTreeActiveTab);
+      testPlanStore.setCurrentCycle(defaultTreeSelected || {});
+      testPlanStore.setFilter({});
+    }
+    if (defaultTableActiveTab) {
+      testPlanStore.setMainActiveTab(defaultTableActiveTab);
+    }
+    if (defaultTreeQueryParams) {
+      const {
+        search, current, pageSize,
+      } = defaultTreeQueryParams;
+      const { searchArgs, contents } = search;
+      if (defaultTableActiveTab === 'mineTestPlanTable') {
+        testPlanStore.setMineExecutePagination({ current, pageSize });
+        testPlanStore.setMineFilter(searchArgs);
+        testPlanStore.setMineBarFilter(contents);
+      } else {
+        testPlanStore.setExecutePagination({ current, pageSize });
+        testPlanStore.setFilter(searchArgs);
+        testPlanStore.setBarFilter(contents);
+      }
+    }
     testPlanStore.loadAllData();
   }, [testPlanStore]);
   const handleRefresh = useCallback(() => {
