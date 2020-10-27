@@ -1,6 +1,8 @@
 package io.choerodon.test.manager.app.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.choerodon.mybatis.pagehelper.PageHelper;
 import io.choerodon.core.domain.Page;
 import com.google.common.collect.Lists;
@@ -28,6 +30,7 @@ import io.choerodon.test.manager.infra.enums.TestAutomationHistoryEnums;
 import io.choerodon.test.manager.infra.mapper.*;
 import io.choerodon.test.manager.infra.util.FileUtil;
 import io.choerodon.test.manager.infra.util.GenerateUUID;
+import org.hzero.starter.keyencrypt.core.EncryptionService;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,10 +40,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.yaml.snakeyaml.Yaml;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by zongw.lee@gmail.com on 22/11/2018
@@ -76,6 +76,12 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    private EncryptionService encryptionService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     /**
      * 查询value
@@ -141,7 +147,7 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
     @Override
     public QuartzTask createTimedTaskForDeploy(ScheduleTaskDTO taskDTO, Long projectId) {
         Assert.notNull(taskDTO.getParams().get(DEPLOYDTONAME), "error.deploy.param.deployDTO.not.be.null");
-        String deployString = JSON.toJSONString(taskDTO.getParams().get(DEPLOYDTONAME));
+        String deployString =  decryptFields(taskDTO);
         ApplicationDeployVO deploy = JSON.parseObject(deployString, ApplicationDeployVO.class);
         scheduleService.getMethodByService(projectId, "test-manager-service")
                 .stream().filter(v -> v.getCode().equals(SCHEDULECODE))
@@ -157,6 +163,21 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         taskDTO.setName("test-deploy-" + appName + "-" + appVersion + "-" + GenerateUUID.generateUUID());
         taskDTO.setDescription("测试应用：" + appName + "版本：" + appVersion + "定时部署");
         return scheduleService.create(projectId, taskDTO);
+    }
+
+    private String decryptFields(ScheduleTaskDTO taskDTO){
+        Map<String, Object> deployStringArray =  objectMapper.convertValue(taskDTO.getParams().get(DEPLOYDTONAME), Map.class);
+        String appId = encryptionService.decrypt((String) deployStringArray.get("appId"), "");
+        String appVersionId = encryptionService.decrypt((String) deployStringArray.get("appVersionId"), "");
+        String environmentId = encryptionService.decrypt((String) deployStringArray.get("environmentId"), "");
+        deployStringArray.put("appId", appId);
+        deployStringArray.put("appVersionId", appVersionId);
+        deployStringArray.put("environmentId", environmentId);
+        try {
+            return objectMapper.writeValueAsString(deployStringArray);
+        } catch (JsonProcessingException e) {
+            throw new CommonException("error.parse.object.to.string", e);
+        }
     }
 
     /**
