@@ -115,7 +115,7 @@ export default observer(() => {
           setCreating(true);
         }}
       >
-        <Icon type="playlist_add icon" style={{ marginRight: -2 }} />
+        <Icon type="playlist_add icon" style={{ marginRight: 2 }} />
         <span><FormattedMessage id="issue_issueCreate" /></span>
       </Button>
     );
