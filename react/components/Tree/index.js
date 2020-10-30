@@ -91,7 +91,7 @@ function PureTree({
   const previous = usePrevious(selected);
   const flattenedTree = useMemo(() => flattenTree(tree), [tree]);
   useEffect(() => {
-    setTree(oldTree => selectItemWithExpand(oldTree, selected ? selected.id : undefined, previous ? previous.id : undefined));
+    setTree((oldTree) => selectItemWithExpand(oldTree, selected ? selected.id : undefined, previous ? previous.id : undefined));
   }, [previous, selected]);
   const addFirstLevelItem = (item) => {
     if (getRootNode(tree).children.includes('new')) {
@@ -110,12 +110,12 @@ function PureTree({
         name: '',
       },
     };
-    setTree(oldTree => addItem(oldTree, getRootNode(oldTree), item || newChild));
+    setTree((oldTree) => addItem(oldTree, getRootNode(oldTree), item || newChild));
   };
   const updateTree = useCallback((itemId, attrs) => {
-    setTree(oldTree => mutateTree(oldTree, itemId, attrs));
+    setTree((oldTree) => mutateTree(oldTree, itemId, attrs));
   }, []);
-  const getItem = useCallback(itemId => getItemById(flattenedTree, itemId), [flattenedTree]);
+  const getItem = useCallback((itemId) => getItemById(flattenedTree, itemId), [flattenedTree]);
   const handleDelete = useCallback((item) => {
     Modal.confirm({
       title: getDeleteTitle ? callFunction(getDeleteTitle, item).split('|')[0] : '确认删除目录',
@@ -128,7 +128,7 @@ function PureTree({
       if (button === 'ok') {
         try {
           await onDelete(item);
-          setTree(oldTree => removeItem(oldTree, item.path));
+          setTree((oldTree) => removeItem(oldTree, item.path));
           if (selected.id === item.id) {
             // 这里取旧的tree数据
             setSelected(getSiblingOrParent(tree, item));
@@ -153,15 +153,15 @@ function PureTree({
     setSelected(item);
   };
   const filterTree = useCallback((value) => {
-    setTree(oldTree => expandTreeBySearch(oldTree, value || ''));
+    setTree((oldTree) => expandTreeBySearch(oldTree, value || ''));
     setSearch(value || '');
   }, []);
   const onExpand = (itemId) => {
-    setTree(oldTree => mutateTree(oldTree, itemId, { isExpanded: true }));
+    setTree((oldTree) => mutateTree(oldTree, itemId, { isExpanded: true }));
   };
 
   const onCollapse = (itemId) => {
-    setTree(oldTree => mutateTree(oldTree, itemId, { isExpanded: false }));
+    setTree((oldTree) => mutateTree(oldTree, itemId, { isExpanded: false }));
   };
 
   const onDragEnd = async (
@@ -183,18 +183,18 @@ function PureTree({
         return;
       }
 
-      setTree(oldTree => moveItemOnTree(oldTree, source, destination));
+      setTree((oldTree) => moveItemOnTree(oldTree, source, destination));
       const newItem = await afterDrag(sourceItem, destination);
-      setTree(oldTree => mutateTree(oldTree, sourceItem.id, { ...sourceItem, ...newItem }));
+      setTree((oldTree) => mutateTree(oldTree, sourceItem.id, { ...sourceItem, ...newItem }));
     } catch (error) {
-      setTree(oldTree => moveItemOnTree(oldTree, destination, source));
+      setTree((oldTree) => moveItemOnTree(oldTree, destination, source));
     }
   };
 
   const handleMenuClick = useCallback((node, { key }) => {
     switch (key) {
       case 'rename': {
-        setTree(oldTree => mutateTree(oldTree, node.id, { isEditing: true }));
+        setTree((oldTree) => mutateTree(oldTree, node.id, { isEditing: true }));
         break;
       }
       case 'delete': {
@@ -217,7 +217,7 @@ function PureTree({
         if (find(tree.items, { id: 'new' })) {
           return;
         }
-        setTree(oldTree => addItem(oldTree, node, newChild));
+        setTree((oldTree) => addItem(oldTree, node, newChild));
         break;
       }
       default:
@@ -229,43 +229,47 @@ function PureTree({
     if (value.trim()) {
       try {
         const newItem = await onCreate(value, item.parentId, item);
-        setTree(oldTree => createItem(oldTree, path, {
-          ...newItem,
-          children: [],
-          hasChildren: false,
-          isExpanded: false,
-          isChildrenLoading: false,
-          isEditing: false,
-        }));
-        setTree((newTree) => {
-          if (updateItem && selected.id === item.parentId && selected.children.length === 0) {
-            updateItem(newTree.items[selected.id]);
-          }
-          return newTree;
-        });
+        if (newItem) {
+          setTree((oldTree) => createItem(oldTree, path, {
+            ...newItem,
+            children: [],
+            hasChildren: false,
+            isExpanded: false,
+            isChildrenLoading: false,
+            isEditing: false,
+          }));
+          setTree((newTree) => {
+            if (updateItem && selected.id === item.parentId && selected.children.length === 0) {
+              updateItem(newTree.items[selected.id]);
+            }
+            return newTree;
+          });
+        }
       } catch (error) {
-        setTree(oldTree => removeItem(oldTree, path));
+        setTree((oldTree) => removeItem(oldTree, path));
       }
     } else {
-      setTree(oldTree => removeItem(oldTree, path));
+      setTree((oldTree) => removeItem(oldTree, path));
     }
   };
   const handleEdit = useAvoidClosure(async (value, item) => {
     // 值未变，或为空，不编辑，还原
     if (!value.trim() || value === item.data.name) {
-      setTree(oldTree => mutateTree(oldTree, item.id, { isEditing: false }));
+      setTree((oldTree) => mutateTree(oldTree, item.id, { isEditing: false }));
     } else {
       try {
         const newItem = await onEdit(value, item);
-        setTree(oldTree => mutateTree(oldTree, item.id, { ...item, ...newItem, isEditing: false }));
-        setTree((newTree) => {
-          if (updateItem && selected.id === item.id) {
-            updateItem(newTree.items[selected.id]);
-          }
-          return newTree;
-        });
+        if (newItem) {
+          setTree((oldTree) => mutateTree(oldTree, item.id, { ...item, ...newItem, isEditing: false }));
+          setTree((newTree) => {
+            if (updateItem && selected.id === item.id) {
+              updateItem(newTree.items[selected.id]);
+            }
+            return newTree;
+          });
+        }
       } catch (error) {
-        setTree(oldTree => mutateTree(oldTree, item.id, { isEditing: false }));
+        setTree((oldTree) => mutateTree(oldTree, item.id, { isEditing: false }));
       }
     }
   });
@@ -300,7 +304,7 @@ function PureTree({
           暂无数据
         </div>
       ) : (
-        <Fragment>
+        <>
           <div className={`${prefix}-top`}>
             <FilterInput
               onChange={filterTree}
@@ -319,7 +323,7 @@ function PureTree({
               {...restProps}
             />
           </div>
-        </Fragment>
+        </>
       )}
     </div>
   );
