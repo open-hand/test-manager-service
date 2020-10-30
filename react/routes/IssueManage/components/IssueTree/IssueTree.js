@@ -23,12 +23,18 @@ class IssueTree extends Component {
   }
 
   handleCreate = async (value, parentId) => {
+    if (value && value.indexOf('/') > -1) {
+      Choerodon.prompt('目录名不能包含/');
+      return false;
+    }
+
     const data = {
       [parentId ? 'parentId' : 'rootNode']: parentId || true, // 解决主键为0 无法解密
       name: value,
       type: 'cycle',
     };
     const result = await handleRequestFailed(addFolder(data));
+
     if (parentId === 0) {
       IssueTreeStore.addRootItem(result.folderId);
     }
@@ -51,6 +57,10 @@ class IssueTree extends Component {
   }
 
   handleEdit = async (newName, item) => {
+    if (newName && newName.indexOf('/') > -1) {
+      Choerodon.prompt('目录名不能包含/');
+      return false;
+    }
     const { objectVersionNumber } = item.data;
     const data = {
       folderId: item.id,
@@ -100,7 +110,6 @@ class IssueTree extends Component {
       },
     };
   }
-
 
   setSelected = (item) => {
     IssueTreeStore.setCurrentFolder(item);
@@ -163,7 +172,6 @@ class IssueTree extends Component {
     </TreeNode>
   )
 
-
   getMenuItems = () => ([
 
     <Menu.Item key="rename">
@@ -203,9 +211,9 @@ class IssueTree extends Component {
             treeNodeProps={{
               menuItems: this.getMenuItems,
               // 最多8层
-              enableAddFolder: item => item.path.length < 9 && !item.hasCase,
+              enableAddFolder: (item) => item.path.length < 9 && !item.hasCase,
             }}
-            getDeleteTitle={item => `确认删除“${item.data.name}”目录？|删除后目录下的所有用例也将被删除`}
+            getDeleteTitle={(item) => `确认删除“${item.data.name}”目录？|删除后目录下的所有用例也将被删除`}
           />
         </WSHandler>
       </div>
