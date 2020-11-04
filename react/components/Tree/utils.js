@@ -2,9 +2,9 @@ import { mutateTree } from '@atlaskit/tree';
 import { getTreePosition, getParent } from '@atlaskit/tree/dist/cjs/utils/tree';
 import { useEffect, useRef } from 'react';
 
-const hasLoadedChildren = item => !!item.hasChildren && item.children.length > 0;
+const hasLoadedChildren = (item) => !!item.hasChildren && item.children.length > 0;
 
-const isLeafItem = item => !item.hasChildren;
+const isLeafItem = (item) => !item.hasChildren;
 export function getRootNode(tree) {
   return tree.items['0'];
 }
@@ -129,17 +129,19 @@ export function expandTreeBySearch(tree, search) {
 function getItemById(tree, id) {
   return tree.items[id];
 }
-export function getSiblingOrParent(tree, item) {
+export function getSiblingOrParent(tree, newTree, item) {
   const parent = getParent(tree, item.path);
   const index = parent.children.indexOf(item.id);
+  let targetId;
   if (parent.children[index + 1]) {
-    return getItemById(tree, parent.children[index + 1]);
+    targetId = parent.children[index + 1];
+  } else if (parent.children[index - 1]) {
+    targetId = parent.children[index - 1];
+  } else if (parent.id !== getRootNode(tree).id) {
+    targetId = parent.id;
   }
-  if (parent.children[index - 1]) {
-    return getItemById(tree, parent.children[index - 1]);
-  }
-  if (parent.id !== getRootNode(tree).id) {
-    return parent;
+  if (targetId !== undefined) {
+    return getItemById(newTree, targetId);
   }
   return {};
 }
