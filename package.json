@@ -1,7 +1,7 @@
 {
   "name": "@choerodon/testmanager",
   "routeName": "testManager",
-  "version": "0.24.0",
+  "version": "0.24.0-alpha.3",
   "description": "",
   "main": "./lib/index.js",
   "files": [
