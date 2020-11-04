@@ -20,7 +20,7 @@ import { getUpdateCompared } from '../../../../api/TestPlanApi';
 const prefix = 'c7ntest-testPlan-updateRemind';
     
 const UpdateRemindModalChildren = (props) => {
-  const { testPlanStore, executeId } = props;
+  const { testPlanStore, executeId, cycleName } = props;
   const newStepTableDataSet = useMemo(() => new DataSet(UpdateStepTableDataSet({ stepData: (testPlanStore.comparedInfo.testCase && testPlanStore.comparedInfo.testCase.testCaseStepS) || [] })), [testPlanStore.comparedInfo.testCase]);
   const oldStepTableDataSet = useMemo(() => new DataSet(UpdateStepTableDataSet({ stepData: (testPlanStore.comparedInfo.testCycleCase && testPlanStore.comparedInfo.testCycleCase.cycleCaseStep) || [] })), [testPlanStore.comparedInfo.testCycleCase]);
   const [loading, setLoading] = useState(false);
@@ -55,11 +55,11 @@ const UpdateRemindModalChildren = (props) => {
         <div className={`${prefix}-updateContent`}>
           <span className={`${prefix}-updateContent-span`}>变更内容</span>
           <div className={`${prefix}-updateContent-div`}>
-            <UpdateContent tag="old" updateData={testCycleCase} dataSet={oldStepTableDataSet} />
+            <UpdateContent tag="old" updateData={testCycleCase} dataSet={oldStepTableDataSet} cycleName={cycleName} />
             <div className={`${prefix}-updateContent-div-icon`}>
               <Icon type="arrow_forward" />
             </div>
-            <UpdateContent tag="new" updateData={testCase} dataSet={newStepTableDataSet} />
+            <UpdateContent tag="new" updateData={testCase} dataSet={newStepTableDataSet} cycleName={cycleName} />
           </div>
         </div>
       </Spin>

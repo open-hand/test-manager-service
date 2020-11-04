@@ -105,11 +105,13 @@ function TestPlanHome({ history }) {
   };
 
   const handleOpenUpdateRemind = (record) => {
+    const cycle = (testPlanStore.treeData.treeFolder || []).find((item) => item.data.folderId === record.cycleId);
+    const cycleName = cycle && cycle.data.name;
     updateModal = Modal.open({
       key: updateRemindModal,
       drawer: true,
       title: '用例变更提醒',
-      children: <UpdateRemindModalChildren testPlanStore={testPlanStore} executeId={record.executeId} />,
+      children: <UpdateRemindModalChildren testPlanStore={testPlanStore} executeId={record.executeId} cycleName={cycleName} />,
       style: { width: '10.9rem' },
       className: 'c7ntest-testPlan-updateRemind-modal',
       okText: '更新',
