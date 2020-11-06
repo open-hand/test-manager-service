@@ -711,6 +711,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         if (CollectionUtils.isEmpty(list)) {
             return;
         }
+        Collections.sort(list, (o1, o2) -> o1.getCaseId().compareTo(o2.getCaseId()));
         Long defaultStatusId = testStatusService.getDefaultStatusId(TestStatusType.STATUS_TYPE_CASE);
         List<List<TestCaseDTO>> lists = ConvertUtils.averageAssign(list, (int) Math.ceil(list.size() / AVG_NUM == 0 ? 1 : list.size() / AVG_NUM));
         lists.forEach(testCaseDTOList -> {
@@ -920,7 +921,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         }
         String firstRank = testCycleCaseMapper.getFirstRank(planId);
         List<TestCycleCaseDTO> testCycleCaseDTOS = new ArrayList<>();
-        String preRank = RankUtil.Operation.INSERT.getRank(null, firstRank);
+        String preRank = firstRank;
         for (TestCaseDTO v : testCaseDTOS) {
             TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
             testCycleCaseDTO.setCycleId(testCycleDTO.getCycleId());
@@ -932,7 +933,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             testCycleCaseDTO.setCreatedBy(testCycleDTO.getCreatedBy());
             testCycleCaseDTO.setLastUpdatedBy(testCycleDTO.getLastUpdatedBy());
             testCycleCaseDTO.setSummary(v.getSummary());
-            testCycleCaseDTO.setRank(RankUtil.Operation.INSERT.getRank(preRank, firstRank));
+            testCycleCaseDTO.setRank(RankUtil.genPre(preRank));
             preRank = testCycleCaseDTO.getRank();
             testCycleCaseDTO.setSource("none");
             testCycleCaseDTO.setPriorityId(v.getPriorityId());
