@@ -130,8 +130,15 @@ function PureTree({
           await onDelete(item);
           setTree((oldTree) => removeItem(oldTree, item.path));
           if (selected.id === item.id) {
-            // 这里取旧的tree数据
-            setSelected(getSiblingOrParent(tree, item));
+            let target;
+            // 这里用旧的tree获取目标id，用新tree获取数据
+            setTree((newTree) => {
+              target = getSiblingOrParent(tree, newTree, item);
+              return newTree;
+            });
+            if (target) {
+              setSelected(target);
+            }
           }
         } catch (error) {
           Choerodon.prompt(error.message);

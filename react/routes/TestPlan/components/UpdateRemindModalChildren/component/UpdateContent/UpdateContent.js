@@ -12,7 +12,9 @@ import './UpdateContent.less';
 const prefix = 'c7ntest-testPlan-updateRemind-updateContent';
 
 function UpdateContent(props) {
-  const { tag, updateData, dataSet } = props;
+  const {
+    tag, updateData, dataSet, cycleName, 
+  } = props;
   const fileList = tag === 'old' ? ((updateData && updateData.caseAttachment) || []) : ((updateData && updateData.attachment) || []);
   return (
     <div className={`${prefix}-detail`}>
@@ -20,7 +22,7 @@ function UpdateContent(props) {
       <div className={`${prefix}-detail-info`}>
         <div className={`${prefix}-item`}>
           <div className={`${prefix}-item-field`}>目录</div>
-          <div className={`${prefix}-item-value`}>{tag === 'old' ? updateData && updateData.folderName : updateData && updateData.folder}</div>
+          <div className={`${prefix}-item-value`}>{cycleName || ''}</div>
         </div>
         <div className={`${prefix}-item`}>
           <div className={`${prefix}-item-field`}>用例名称</div>
@@ -42,7 +44,7 @@ function UpdateContent(props) {
           <div className={`${prefix}-item-value`} style={{ display: 'flex', flexWrap: 'wrap' }}>
             {
               fileList && fileList.length > 0 && (
-                fileList.map(item => (
+                fileList.map((item) => (
                   <Tooltip title={tag === 'new' ? item.fileName : item.attachmentName}>
                     <div style={{ width: 150 }}>
                       <SingleFileUpload
