@@ -9,15 +9,19 @@ import org.hzero.starter.keyencrypt.core.Encrypt;
 public class ApplicationDeployVO {
 
     @ApiModelProperty(value = "应用ID")
+    @Encrypt
     private Long appId;
 
     @ApiModelProperty(value = "应用版本ID")
+    @Encrypt
     private Long appVersionId;
 
     @ApiModelProperty(value = "环境ID")
+    @Encrypt
     private Long environmentId;
 
     @ApiModelProperty(value = "项目版本ID")
+    @Encrypt
     private Long projectVersionId;
 
     @ApiModelProperty(value = "历史记录ID")
