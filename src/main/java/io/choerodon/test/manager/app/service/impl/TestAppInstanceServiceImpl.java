@@ -30,6 +30,7 @@ import io.choerodon.test.manager.infra.enums.TestAutomationHistoryEnums;
 import io.choerodon.test.manager.infra.mapper.*;
 import io.choerodon.test.manager.infra.util.FileUtil;
 import io.choerodon.test.manager.infra.util.GenerateUUID;
+import org.hzero.starter.keyencrypt.core.EncryptContext;
 import org.hzero.starter.keyencrypt.core.EncryptionService;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -166,6 +167,9 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
     }
 
     private String decryptFields(ScheduleTaskDTO taskDTO){
+        if (!EncryptContext.isEncrypt()){
+            return JSON.toJSONString(taskDTO.getParams().get(DEPLOYDTONAME));
+        }
         Map<String, Object> deployStringArray =  objectMapper.convertValue(taskDTO.getParams().get(DEPLOYDTONAME), Map.class);
         String appId = encryptionService.decrypt((String) deployStringArray.get("appId"), "");
         String appVersionId = encryptionService.decrypt((String) deployStringArray.get("appVersionId"), "");
