@@ -12,6 +12,7 @@ import io.choerodon.test.manager.api.vo.ApplicationDeployVO;
 import io.choerodon.test.manager.api.vo.TestAppInstanceVO;
 import io.choerodon.test.manager.app.service.TestAppInstanceService;
 import io.swagger.annotations.ApiOperation;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,9 +44,9 @@ public class TestAppInstanceController {
     @GetMapping("/value")
     public ResponseEntity<InstanceValueVO> queryValues(
             @PathVariable(value = "project_id") Long projectId,
-            @RequestParam(value = "appId") Long appId,
-            @RequestParam(value = "envId") Long envId,
-            @RequestParam(value = "versionId") Long versionId) {
+            @RequestParam(value = "appId") @Encrypt Long appId,
+            @RequestParam(value = "envId") @Encrypt Long envId,
+            @RequestParam(value = "versionId") @Encrypt Long versionId) {
         return Optional.ofNullable(instanceService.queryValues(projectId, appId, envId, versionId))
                 .map(target -> new ResponseEntity<>(target, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.values.query"));
