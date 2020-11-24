@@ -271,5 +271,16 @@ public class TestCaseController {
         return ResponseEntity.ok(testCaseService.queryIssueByOptionForAgile(projectId, issueId, issueNum, self, content, pageRequest));
     }
 
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @ApiOperation("分页搜索查询case列表")
+    @CustomPageRequest
+    @GetMapping("/case/summary")
+    public ResponseEntity<Page<TestCaseVO>> queryCaseByContent(@PathVariable("project_id") Long projectId,
+                                                        @SortDefault(value = "caseId", direction = Sort.Direction.DESC)
+                                                            PageRequest pageRequest,
+                                                        @ApiParam(value = "搜索内容")
+                                                        @RequestParam(required = false) String content) {
+        return new ResponseEntity<>(testCaseService.queryCaseByContent(projectId, pageRequest, content), HttpStatus.OK);
+    }
 
 }
