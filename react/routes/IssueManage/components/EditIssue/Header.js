@@ -4,6 +4,7 @@ import { observer } from 'mobx-react-lite';
 import { TextEditToggle } from '@/components';
 import EditIssueContext from './stores';
 import './Header.less';
+import TypeTag from '../../../../components/TypeTag';
 
 const { TextArea } = Input;
 const { Text, Edit } = TextEditToggle;
@@ -27,9 +28,10 @@ function Header({
       >
         {/* caseNum 用例编号 */}
         <div style={{
-          fontSize: 16, fontWeight: 500, color: '#3F51B5',
+          fontSize: 16, fontWeight: 500, color: '#3F51B5', display: 'flex', alignItems: 'center',
         }}
         >
+          <TypeTag data={{ icon: 'test-case', colour: 'rgb(77, 144, 254)' }} style={{ marginRight: 5 }} />
           <span>{caseNum}</span>
         </div>
         <div
@@ -52,7 +54,7 @@ function Header({
           originData={summary}
         >
           <Text>
-            {data => data || ''}
+            {(data) => data || ''}
           </Text>
           <Edit>
             <TextArea style={{ fontSize: '20px', fontWeight: 500, padding: '0.04rem' }} maxLength={44} autosize autoFocus />
