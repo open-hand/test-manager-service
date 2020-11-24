@@ -1,6 +1,9 @@
 package io.choerodon.test.manager.app.service;
 
 import java.util.List;
+
+import io.choerodon.test.manager.api.vo.TestCaseLinkVO;
+import io.choerodon.test.manager.api.vo.TestCaseVO;
 import io.choerodon.test.manager.api.vo.agile.IssueInfoDTO;
 import io.choerodon.test.manager.api.vo.IssueLinkVO;
 import io.choerodon.test.manager.infra.dto.TestCaseLinkDTO;
@@ -39,4 +42,10 @@ public interface TestCaseLinkService {
     void batchInsert(List<TestCaseLinkDTO> testCaseLinkDTOList);
 
     List<TestCaseLinkDTO> create(Long projectId, Long caseId, List<Long> issueIds);
+
+    List<TestCaseLinkDTO> createAndLink(Long projectId, Long issueId, TestCaseVO testCaseVO);
+
+    void createByIssue(Long projectId, Long issueId, List<Long> caseIds);
+
+    List<TestCaseLinkVO> queryLinkCases(Long projectId, Long issueId);
 }

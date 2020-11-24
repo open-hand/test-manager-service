@@ -2,11 +2,9 @@ package io.choerodon.test.manager.infra.mapper;
 
 import java.util.*;
 
-import io.choerodon.test.manager.api.vo.ExcelCaseVO;
+import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.api.vo.agile.SearchDTO;
 import io.choerodon.mybatis.common.BaseMapper;
-import io.choerodon.test.manager.api.vo.CaseCompareVO;
-import io.choerodon.test.manager.api.vo.TestCaseMigrateDTO;
 import io.choerodon.test.manager.infra.dto.TestCaseDTO;
 import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Param;
@@ -56,4 +54,8 @@ public interface TestCaseMapper extends BaseMapper<TestCaseDTO> {
     List<Long> selectALLProjectId();
 
     void updatePriorityByProject(@Param("projectIds") List<Long> projectIds, @Param("priorityId") Long priorityId);
+
+    List<TestCaseVO> queryCaseByContent(@Param("projectId") Long projectId, @Param("content") String content);
+
+    List<TestCaseLinkVO> listByLinkCaseIds(@Param("projectId") Long projectId, @Param("linkCaseIds") List<Long> linkCaseIds);
 }

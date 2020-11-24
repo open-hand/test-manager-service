@@ -6,6 +6,8 @@ import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.swagger.annotation.Permission;
 
 import io.choerodon.test.manager.api.vo.IssueLinkVO;
+import io.choerodon.test.manager.api.vo.TestCaseLinkVO;
+import io.choerodon.test.manager.api.vo.TestCaseVO;
 import io.choerodon.test.manager.app.service.TestCaseLinkService;
 import io.choerodon.test.manager.infra.dto.TestCaseLinkDTO;
 import io.swagger.annotations.ApiOperation;
@@ -53,5 +55,33 @@ public class TestCaseLinkController {
                                                              @RequestParam(name = "case_id")
                                                              @Encrypt Long caseId) {
         return new ResponseEntity<>(testCaseLinkService.queryLinkIssues(projectId, caseId), HttpStatus.OK);
+    }
+
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @ApiOperation("issue详情页创建用例并关联")
+    @PostMapping("/create_and_link")
+    public ResponseEntity<List<TestCaseLinkDTO>> createAndLink(@PathVariable(name = "project_id") Long projectId,
+                                                               @RequestParam("issue_id") @Encrypt Long issueId,
+                                                               @RequestBody TestCaseVO testCaseVO) {
+        return new ResponseEntity<>(testCaseLinkService.createAndLink(projectId, issueId, testCaseVO), HttpStatus.OK);
+    }
+
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @ApiOperation("issue详情页关联用例")
+    @PostMapping("/create_by_issue")
+    public ResponseEntity creatByIssue(@PathVariable(name = "project_id") Long projectId,
+                                       @RequestParam("issue_id") @Encrypt Long issueId,
+                                       @RequestBody @Encrypt List<Long> caseIds) {
+        testCaseLinkService.createByIssue(projectId, issueId, caseIds);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
+
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @ApiOperation("查询问题关联的测试用例")
+    @GetMapping("/list_link_case_info")
+    public ResponseEntity<List<TestCaseLinkVO>> queryLinkCases(@PathVariable(name = "project_id") Long projectId,
+                                                               @RequestParam(name = "issue_id")
+                                                               @Encrypt Long issueId) {
+        return new ResponseEntity<>(testCaseLinkService.queryLinkCases(projectId, issueId), HttpStatus.OK);
     }
 }

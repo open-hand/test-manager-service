@@ -1,10 +1,13 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import io.choerodon.test.manager.api.vo.TestCaseLinkVO;
+import io.choerodon.test.manager.api.vo.TestCaseVO;
+import io.choerodon.test.manager.app.service.TestCaseService;
+import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,6 +43,12 @@ public class TestCaseLinkServiceImpl implements TestCaseLinkService {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    private TestCaseService testCaseService;
+
+    @Autowired
+    private TestCaseMapper testCaseMapper;
 
 
     @Override
@@ -142,5 +151,56 @@ public class TestCaseLinkServiceImpl implements TestCaseLinkService {
         if (testCaseLinkMapper.insertSelective(testCaseLinkDTO) != 1) {
             throw new CommonException("error.insert.case.link");
         }
+    }
+
+    @Override
+    public List<TestCaseLinkDTO> createAndLink(Long projectId, Long issueId, TestCaseVO testCaseVO) {
+        Long caseId = testCaseService.createTestCase(projectId, testCaseVO, null).getCaseId();
+        return create(projectId, caseId, Collections.singletonList(issueId));
+    }
+
+    @Override
+    public void createByIssue(Long projectId, Long issueId, List<Long> caseIds) {
+        if (CollectionUtils.isEmpty(caseIds)) {
+            return;
+        }
+         if (ObjectUtils.isEmpty(projectId) || ObjectUtils.isEmpty(issueId)) {
+             throw new CommonException("error.projectId.and.issueId.not.null");
+         }
+        caseIds.forEach(v -> {
+            TestCaseLinkDTO testCaseLinkDTO = new TestCaseLinkDTO();
+            testCaseLinkDTO.setProjectId(projectId);
+            testCaseLinkDTO.setLinkCaseId(v);
+            testCaseLinkDTO.setIssueId(issueId);
+            create(projectId, testCaseLinkDTO);
+        });
+    }
+
+    @Override
+    public List<TestCaseLinkVO> queryLinkCases(Long projectId, Long issueId) {
+        if (ObjectUtils.isEmpty(projectId) || ObjectUtils.isEmpty(issueId)) {
+            throw new CommonException("error.projectId.and.issueId.not.null");
+        }
+        TestCaseLinkDTO testCaseLinkDTO = new TestCaseLinkDTO();
+        testCaseLinkDTO.setIssueId(issueId);
+        testCaseLinkDTO.setProjectId(projectId);
+        List<TestCaseLinkDTO> caseLinkList = testCaseLinkMapper.select(testCaseLinkDTO);
+        if (CollectionUtils.isEmpty(caseLinkList)) {
+            return new ArrayList<>();
+        }
+        List<Long> linkCaseIds = caseLinkList.stream().map(TestCaseLinkDTO::getLinkCaseId).collect(Collectors.toList());
+
+        List<TestCaseLinkVO> testCases = testCaseMapper.listByLinkCaseIds(projectId, linkCaseIds);
+        Map<Long, TestCaseLinkVO> collect = testCases.stream().collect(Collectors.toMap(TestCaseLinkVO::getCaseId, Function.identity()));
+        List<TestCaseLinkVO> result = new ArrayList<>();
+        caseLinkList.forEach(v -> {
+            if(ObjectUtils.isEmpty(collect.get(v.getLinkCaseId()))){
+                return;
+            }
+            TestCaseLinkVO testCaseLinkVO = collect.get(v.getLinkCaseId());
+            modelMapper.map(v,testCaseLinkVO);
+            result.add(testCaseLinkVO);
+        });
+        return result;
     }
 }
