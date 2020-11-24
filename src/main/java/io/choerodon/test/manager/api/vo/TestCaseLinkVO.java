@@ -44,6 +44,18 @@ public class TestCaseLinkVO {
     @ApiModelProperty(value = "优先级颜色")
     private String priorityColour;
 
+    @ApiModelProperty(value = "文件夹Id")
+    @Encrypt
+    private Long folderId;
+
+    public Long getFolderId() {
+        return folderId;
+    }
+
+    public void setFolderId(Long folderId) {
+        this.folderId = folderId;
+    }
+
     public Long getLinkId() {
         return linkId;
     }

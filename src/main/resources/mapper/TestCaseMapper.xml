@@ -411,6 +411,7 @@
             tc.case_id,
             tc.summary,
             tc.project_id,
+            tc.folder_id,
             CONCAT_WS( '-', tpi.project_code, tc.case_num ) AS case_num,
             tc.priority_id,
             tp.name AS priority_name,
