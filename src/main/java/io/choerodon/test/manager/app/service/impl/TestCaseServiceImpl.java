@@ -7,22 +7,10 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import io.choerodon.core.utils.PageableHelper;
-import io.choerodon.mybatis.domain.AuditDomain;
-import io.choerodon.mybatis.pagehelper.PageHelper;
-import io.choerodon.core.domain.Page;
-import io.choerodon.test.manager.api.vo.agile.*;
-import io.choerodon.test.manager.infra.feign.IssueFeignClient;
-
 import org.apache.commons.lang3.StringUtils;
-import org.hzero.core.base.BaseConstants;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
-import io.choerodon.mybatis.pagehelper.domain.Sort;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,20 +18,28 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
-import io.choerodon.test.manager.infra.enums.IssueTypeCode;
+import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
+import io.choerodon.core.utils.PageableHelper;
+import io.choerodon.mybatis.domain.AuditDomain;
+import io.choerodon.mybatis.pagehelper.PageHelper;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.mybatis.pagehelper.domain.Sort;
+import io.choerodon.test.manager.api.vo.*;
+import io.choerodon.test.manager.api.vo.agile.*;
 import io.choerodon.test.manager.api.vo.devops.AppServiceDeployVO;
 import io.choerodon.test.manager.api.vo.devops.AppServiceVersionRespVO;
 import io.choerodon.test.manager.api.vo.devops.ApplicationRepDTO;
 import io.choerodon.test.manager.api.vo.devops.InstanceValueVO;
-import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.app.assembler.TestCaseAssembler;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.infra.annotation.DataLog;
 import io.choerodon.test.manager.infra.constant.DataLogConstants;
 import io.choerodon.test.manager.infra.dto.*;
+import io.choerodon.test.manager.infra.enums.IssueTypeCode;
 import io.choerodon.test.manager.infra.feign.ApplicationFeignClient;
 import io.choerodon.test.manager.infra.feign.BaseFeignClient;
+import io.choerodon.test.manager.infra.feign.IssueFeignClient;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import io.choerodon.test.manager.infra.mapper.*;
 import io.choerodon.test.manager.infra.util.ConvertUtils;
@@ -60,6 +56,7 @@ import io.choerodon.test.manager.infra.util.TypeUtil;
 public class TestCaseServiceImpl implements TestCaseService {
     private static final String API_TYPE = "api";
     private static final String REPLAY = "replay";
+    private static final String UI="ui";
 
     @Autowired
     private TestCaseFeignClient testCaseFeignClient;
@@ -343,7 +340,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         Set<Long> folderIds = new HashSet<>();
         TestIssueFolderDTO testIssueFolder = new TestIssueFolderDTO();
         testIssueFolder.setProjectId(projectId);
-        Map<Long, List<TestIssueFolderDTO>> folderMap = testIssueFolderMapper.select(testIssueFolder).stream().filter(issueFolderDTO -> !API_TYPE.equals(issueFolderDTO.getType()) && !REPLAY.equals(issueFolderDTO.getType())).collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
+        Map<Long, List<TestIssueFolderDTO>> folderMap = testIssueFolderMapper.select(testIssueFolder).stream().filter(issueFolderDTO -> !API_TYPE.equals(issueFolderDTO.getType()) && !REPLAY.equals(issueFolderDTO.getType()) && !UI.equals(issueFolderDTO.getType())).collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
         queryAllFolderIds(folderId, folderIds, folderMap);
         // 处理排序
         checkPageRequest(pageRequest);
@@ -589,7 +586,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         Set<Long> folderIds = new HashSet<>();
         TestIssueFolderDTO testIssueFolder = new TestIssueFolderDTO();
         testIssueFolder.setProjectId(projectId);
-        Map<Long, List<TestIssueFolderDTO>> folderMap = testIssueFolderMapper.select(testIssueFolder).stream().filter(issueFolderDTO -> !API_TYPE.equals(issueFolderDTO.getType()) && !REPLAY.equals(issueFolderDTO.getType())).collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
+        Map<Long, List<TestIssueFolderDTO>> folderMap = testIssueFolderMapper.select(testIssueFolder).stream().filter(issueFolderDTO -> !API_TYPE.equals(issueFolderDTO.getType()) && !REPLAY.equals(issueFolderDTO.getType()) && !UI.equals(issueFolderDTO.getType())).collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
         queryAllFolderIds(folderId, folderIds, folderMap);
         return folderIds;
     }
@@ -647,7 +644,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         Set<Long> folderIds = new HashSet<>();
         TestIssueFolderDTO testIssueFolder = new TestIssueFolderDTO();
         testIssueFolder.setProjectId(projectId);
-        Map<Long, List<TestIssueFolderDTO>> folderMap = testIssueFolderMapper.select(testIssueFolder).stream().filter(issueFolderDTO -> !API_TYPE.equals(issueFolderDTO.getType()) && !REPLAY.equals(issueFolderDTO.getType())).collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
+        Map<Long, List<TestIssueFolderDTO>> folderMap = testIssueFolderMapper.select(testIssueFolder).stream().filter(issueFolderDTO -> !API_TYPE.equals(issueFolderDTO.getType()) && !REPLAY.equals(issueFolderDTO.getType()) && !UI.equals(issueFolderDTO.getType())).collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
         queryAllFolderIds(folderId, folderIds, folderMap);
         // 查询文件夹下的的用例
         List<Long> caseIds = testCaseMapper.listCaseIds(projectId, folderIds, null);

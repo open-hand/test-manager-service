@@ -95,7 +95,7 @@
           <if test='advancedSearchArgs.name != null and advancedSearchArgs.name.length > 0'>
               AND
               tif.name LIKE CONCAT(CONCAT('%',#{advancedSearchArgs.name, jdbcType=VARCHAR}),'%')
-              and tif.type !='api' and tif.type !='replay'
+              and tif.type !='api' and tif.type !='replay' and tif.type !='ui'
           </if>
           <if test="advancedSearchArgs.status != null">
               AND
@@ -138,7 +138,7 @@
                 AND
                 tif.name LIKE CONCAT(CONCAT('%',#{advancedSearchArgs.name, jdbcType=VARCHAR}),'%')
                 AND
-                tif.type !='api' AND tif.type !='replay'
+                tif.type !='api' AND tif.type !='replay' AND tif.type !='ui'
 
             </if>
             <if test="advancedSearchArgs.status != null">
