@@ -36,7 +36,7 @@ class IssueManage extends Component {
   //   IssueTreeStore.clearStore();
   //   IssueStore.clearStore();
   // }
-  
+
   getInit = () => {
     const Request = getParams(this.props.location.search);
     const { paramName, paramIssueId, folderId } = Request;
@@ -51,14 +51,14 @@ class IssueManage extends Component {
       IssueStore.setPriorityList(res);
     });
     // 当参数中有用例名时，在table的筛选框中加入
-    const barFilters = paramName ? [paramName] : [];
+    const barFilters = paramName ? [paramName] : undefined;
     IssueStore.setBarFilters(barFilters);
     // 加载缓存
     const { id: defaultTreeIdValue } = localPageCacheStore.getItem('issueMange.tree') || {};
     const { page = {}, filter = {} } = localPageCacheStore.getItem('issueManage.table') || {};
     const { current, pageSize } = page;
     const { contents, searchArgs } = filter;
-    IssueStore.setBarFilters(contents || []);
+    IssueStore.setBarFilters(barFilters || contents || []);
     IssueStore.setFilter(searchArgs ? { searchArgs } : { searchArgs: {} });
     this.getTestCase(folderId || defaultTreeIdValue, current, pageSize);
   }
