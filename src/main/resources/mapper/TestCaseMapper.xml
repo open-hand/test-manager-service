@@ -405,6 +405,7 @@
             AND (search.case_num LIKE CONCAT(CONCAT('%', #{content}), '%') OR search.summary LIKE CONCAT(CONCAT('%',#{content}), '%'))
         </if>
     </select>
+
     <select id="listByLinkCaseIds" resultType="io.choerodon.test.manager.api.vo.TestCaseLinkVO">
         SELECT
             tc.case_id,

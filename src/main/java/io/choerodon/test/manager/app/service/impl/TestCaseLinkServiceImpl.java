@@ -1,9 +1,6 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -167,6 +164,9 @@ public class TestCaseLinkServiceImpl implements TestCaseLinkService {
         if (CollectionUtils.isEmpty(caseIds)) {
             return;
         }
+         if (ObjectUtils.isEmpty(projectId) || ObjectUtils.isEmpty(issueId)) {
+             throw new CommonException("error.projectId.and.issueId.not.null");
+         }
         caseIds.forEach(v -> {
             TestCaseLinkDTO testCaseLinkDTO = new TestCaseLinkDTO();
             testCaseLinkDTO.setProjectId(projectId);
@@ -178,6 +178,9 @@ public class TestCaseLinkServiceImpl implements TestCaseLinkService {
 
     @Override
     public List<TestCaseLinkVO> queryLinkCases(Long projectId, Long issueId) {
+        if (ObjectUtils.isEmpty(projectId) || ObjectUtils.isEmpty(issueId)) {
+            throw new CommonException("error.projectId.and.issueId.not.null");
+        }
         TestCaseLinkDTO testCaseLinkDTO = new TestCaseLinkDTO();
         testCaseLinkDTO.setIssueId(issueId);
         testCaseLinkDTO.setProjectId(projectId);

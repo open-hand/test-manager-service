@@ -70,8 +70,8 @@ public class TestCaseLinkController {
     @ApiOperation("issue详情页关联用例")
     @PostMapping("/create_by_issue")
     public ResponseEntity creatByIssue(@PathVariable(name = "project_id") Long projectId,
-                                                        @RequestParam("issue_id") @Encrypt Long issueId,
-                                                        @RequestBody @Encrypt List<Long> caseIds) {
+                                       @RequestParam("issue_id") @Encrypt Long issueId,
+                                       @RequestBody @Encrypt List<Long> caseIds) {
         testCaseLinkService.createByIssue(projectId, issueId, caseIds);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }

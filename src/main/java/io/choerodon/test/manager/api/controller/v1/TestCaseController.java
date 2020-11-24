@@ -276,10 +276,10 @@ public class TestCaseController {
     @CustomPageRequest
     @GetMapping("/case/summary")
     public ResponseEntity<Page<TestCaseVO>> queryCaseByContent(@PathVariable("project_id") Long projectId,
-                                                        @SortDefault(value = "caseId", direction = Sort.Direction.DESC)
-                                                            PageRequest pageRequest,
-                                                        @ApiParam(value = "搜索内容")
-                                                        @RequestParam(required = false) String content) {
+                                                               @SortDefault(value = "caseId", direction = Sort.Direction.DESC)
+                                                                       PageRequest pageRequest,
+                                                               @ApiParam(value = "搜索内容")
+                                                               @RequestParam(required = false) String content) {
         return new ResponseEntity<>(testCaseService.queryCaseByContent(projectId, pageRequest, content), HttpStatus.OK);
     }
 
