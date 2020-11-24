@@ -1,11 +1,13 @@
 package io.choerodon.test.manager.app.service.impl;
 
 import java.util.*;
-
-import io.choerodon.core.exception.CommonException;
-
 import java.util.stream.Collectors;
-import org.apache.poi.ss.usermodel.*;
+
+import com.alibaba.fastjson.JSON;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Name;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.xssf.usermodel.XSSFDataValidation;
 import org.apache.poi.xssf.usermodel.XSSFDataValidationConstraint;
@@ -14,19 +16,20 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
-import com.alibaba.fastjson.JSON;
 
-import io.choerodon.test.manager.api.vo.*;
+import io.choerodon.core.exception.CommonException;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.mybatis.pagehelper.domain.Sort;
+import io.choerodon.test.manager.api.vo.ExcelCaseVO;
+import io.choerodon.test.manager.api.vo.ExcelLookupCaseVO;
+import io.choerodon.test.manager.api.vo.TestCaseStepVO;
+import io.choerodon.test.manager.api.vo.TestIssueFolderVO;
 import io.choerodon.test.manager.api.vo.agile.IssueStatusDTO;
 import io.choerodon.test.manager.api.vo.agile.LookupValueDTO;
 import io.choerodon.test.manager.api.vo.agile.ProductVersionDTO;
 import io.choerodon.test.manager.api.vo.agile.UserDTO;
-import io.choerodon.mybatis.pagehelper.domain.Sort;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
-
 import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.app.service.UserService;
 import io.choerodon.test.manager.infra.dto.TestIssueFolderDTO;
@@ -73,6 +76,7 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
     private static final String USERS = "users";
     private static final String API_TYPE = "api";
     private static final String REPLAY = "replay";
+    private static final String UI = "ui";
 
     private enum CaseHeader {
         COLUMN1("文件夹*"), COLUMN2("用例概要*"), COLUMN11("用例优先级*"), COLUMN3("用例编号"),
@@ -116,9 +120,9 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
         // 生成文件的目录结构
         Long parentId = folder.getParentId();
         TestIssueFolderDTO testIssueFolderDTO;
-        while (parentId != 0){
+        while (parentId != 0) {
             testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(parentId);
-            if(testIssueFolderDTO == null){
+            if (testIssueFolderDTO == null) {
                 throw new CommonException("error.folder.not.exists");
             }
             parentId = testIssueFolderDTO.getParentId();
@@ -127,11 +131,11 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
         StringBuffer sb = new StringBuffer();
         String fileName = stringBuilder.toString();
         String[] split = fileName.split("-");
-        for(int i=split.length-1;i>=0;i--){
-            if(i==0){
+        for (int i = split.length - 1; i >= 0; i--) {
+            if (i == 0) {
                 sb.append(split[i]);
-            }else {
-                sb.append(split[i]+"-");
+            } else {
+                sb.append(split[i] + "-");
             }
 
         }
@@ -168,7 +172,7 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
     public int populateBody(Sheet sheet, int column, List<ExcelCaseVO> cycleCases, Queue<CellStyle> rowStyles) {
         if (sheet.getWorkbook().getNumberOfSheets() != 1) {
             //设置下拉框的值
-             // setDataValidationByFormula(sheet, PRIORITIES, 3, 3);
+            // setDataValidationByFormula(sheet, PRIORITIES, 3, 3);
 //            setDataValidationByFormula(sheet, STATUS, 5, 5);
 //            setDataValidationByFormula(sheet, USERS, 6, 6);
 
@@ -284,9 +288,9 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
         TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO();
         testIssueFolderDTO.setProjectId(projectId);
 
-        List<TestIssueFolderVO> testIssueFolderVOS = modelMapper.map(testIssueFolderMapper.select(testIssueFolderDTO).stream().filter(issueFolderDTO -> !API_TYPE.equals(issueFolderDTO.getType()) && !REPLAY.equals(issueFolderDTO.getType())).collect(Collectors.toList()),
+        List<TestIssueFolderVO> testIssueFolderVOS = modelMapper.map(testIssueFolderMapper.select(testIssueFolderDTO).stream().filter(issueFolderDTO -> !API_TYPE.equals(issueFolderDTO.getType()) && !REPLAY.equals(issueFolderDTO.getType()) && !UI.equals(issueFolderDTO.getType())).collect(Collectors.toList()),
                 new TypeToken<List<TestIssueFolderVO>>() {
-        }.getType());
+                }.getType());
         List<IssueStatusDTO> issueStatusDTOS = testCaseService.listStatusByProjectId(projectId);
 
         //加1的原因是每一个新数据开始时都会有一个header
