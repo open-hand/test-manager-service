@@ -677,12 +677,12 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
-    public Page<TestCaseVO> queryCaseByContent(Long projectId, PageRequest pageRequest,String content) {
+    public Page<TestCaseVO> queryCaseByContent(Long projectId, PageRequest pageRequest,String content, Long issueId) {
         if (Objects.isNull(projectId)) {
             throw new CommonException("error.queryCase.projectId.not.null");
         }
         Page<TestCaseVO> casePageInfo = PageHelper.doPageAndSort(pageRequest,
-                () -> testCaseMapper.queryCaseByContent(projectId, content));
+                () -> testCaseMapper.queryCaseByContent(projectId, content, issueId));
 
         return casePageInfo;
     }

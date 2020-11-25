@@ -220,5 +220,5 @@ public interface TestCaseService {
 
     void batchUpdateCasePriority(Long organizationId, Long priorityId, Long changePriorityId, Long userId, List<Long> projectIds);
 
-    Page<TestCaseVO> queryCaseByContent(Long projectId, PageRequest pageRequest,String content);
+    Page<TestCaseVO> queryCaseByContent(Long projectId, PageRequest pageRequest,String content, Long issueId);
 }
