@@ -399,6 +399,12 @@
             LEFT JOIN test_project_info tpi ON tpi.project_id = tc.project_id
             LEFT JOIN test_priority tp ON tc.priority_id = tp.id
             WHERE tc.project_id=#{projectId}
+            AND tc.case_id NOT IN (
+                SELECT tcl.link_case_id
+                FROM test_case_link tcl
+                WHERE tcl.project_id = #{projectId}
+                AND tcl.issue_id = #{issueId}
+            )
         ) search
         WHERE 1=1
         <if test="content != null">
