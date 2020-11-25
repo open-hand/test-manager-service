@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "@choerodon/agile": "^0.24.0",
+    "@choerodon/compiler": "^0.0.1",
     "@choerodon/boot": "^0.22.0",
     "@choerodon/master": "^0.24.0",
     "babel-eslint": "8.x",
@@ -47,6 +48,7 @@
   "scripts": {
     "start": "node --max_old_space_size=4096 node_modules/@choerodon/boot/bin/choerodon-front-boot-start --config ./react/config.js",
     "dist": "choerodon-front-boot dist --config ./react/config.js",
+    "watch": "compiler compile --watch --ignore-error",
     "lint-staged": "lint-staged",
     "lint-staged:es": "eslint",
     "compile": "choerodon-front-boot compile"
