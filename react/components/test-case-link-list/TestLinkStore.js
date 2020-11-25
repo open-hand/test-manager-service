@@ -17,7 +17,9 @@ function TestLinkStore(issueId) {
       });
     },
     loadCaseList({ page, filter }) {
-      const queryStr = queryString.stringify({ page, size: 20, content: filter });
+      const queryStr = queryString.stringify({
+        page, size: 20, content: filter, issueId, 
+      });
       return axios.get(`/test/v1/projects/${getProjectId()}/case/case/summary?${queryStr}`);
     },
     delete(linkId) {
@@ -46,8 +48,8 @@ function TestLinkStore(issueId) {
         category,
         type: 'project',
         organizationId,
-        paramIssueId: linkId, 
-        paramName, 
+        paramIssueId: linkId,
+        paramName,
         folderId,
       });
       history.push(`/testManager/IssueManage?${queryStr}`);
