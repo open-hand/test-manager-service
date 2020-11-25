@@ -1,10 +1,13 @@
 import { useLocalStore } from 'mobx-react-lite';
-import { axios, Choerodon } from '@choerodon/boot';
+import { axios, stores, Choerodon } from '@choerodon/boot';
 import queryString from 'query-string';
+import { useHistory } from 'react-router-dom';
 import { getProjectId, getOrganizationId } from '@/common/utils';
-import to from '@choerodon/agile/lib/utils/to';
+
+const { AppState } = stores;
 
 function TestLinkStore(issueId) {
+  const history = useHistory();
   return useLocalStore(() => ({
     data: [],
     issueId,
@@ -33,15 +36,20 @@ function TestLinkStore(issueId) {
         this.loadData();
       }).catch(() => Choerodon.prompt('关联错误，请重试', 'error'));
     },
-    toLink(linkId, name, folderId) {
-      to('/testManager/IssueManage', {
-        type: 'project',
-        params: {
-          paramIssueId: linkId,
-          paramName: name,
-          folderId,
-        },
+    toLink(linkId, paramName, folderId) {
+      const {
+        id, name, category, organizationId,
+      } = AppState.currentMenuType;
+      const queryStr = queryString.stringify({
+        id,
+        name,
+        category,
+        organizationId,
+        paramIssueId: linkId, 
+        paramName, 
+        folderId,
       });
+      history.push(`/testManager/IssueManage?${queryStr}`);
     },
   }));
 }
