@@ -44,6 +44,7 @@ function TestLinkStore(issueId) {
         id,
         name,
         category,
+        type: 'project',
         organizationId,
         paramIssueId: linkId, 
         paramName, 
