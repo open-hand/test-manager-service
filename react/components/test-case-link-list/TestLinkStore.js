@@ -14,11 +14,11 @@ function TestLinkStore(issueId) {
       });
     },
     loadCaseList({ page, filter }) {
-      const queryStr = queryString({ page, size: 20, content: filter });
+      const queryStr = queryString.stringify({ page, size: 20, content: filter });
       return axios.get(`/test/v1/projects/${getProjectId()}/case/case/summary?${queryStr}`);
     },
     delete(linkId) {
-      const queryStr = queryString({ linkId, organizationId: getOrganizationId() });
+      const queryStr = queryString.stringify({ linkId, organizationId: getOrganizationId() });
       return axios.delete(`test/v1/projects/${getProjectId()}/case_link?${queryStr}`).then(() => this.loadData());
     },
     createLink(caseIds = []) {
