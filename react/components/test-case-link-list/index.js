@@ -2,12 +2,14 @@ import React, { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Icon, Button, Tooltip } from 'choerodon-ui';
 import { map } from 'lodash';
+import { injectIntl } from 'react-intl';
+
 import CaseListItem from './CaseListItem';
 import { openTestCaseModal } from './TestCaseModal';
 import useTestLinkStore from './TestLinkStore';
 
-const TestLink = observer(({
-  reloadIssue, issueId, disabled,
+const TestLink = ({
+  reloadIssue, issueId, disabled, intl,
 }) => {
   const testLinkStore = useTestLinkStore(issueId);
 
@@ -20,6 +22,7 @@ const TestLink = observer(({
     <CaseListItem
       link={link}
       i={i}
+      intl={intl}
       testLinkStore={testLinkStore}
       disabled={disabled}
       onRefresh={() => {
@@ -42,20 +45,20 @@ const TestLink = observer(({
           <span>测试用例</span>
         </div>
         {
-            !disabled && (
+          !disabled && (
             <div className="c7n-title-right" style={{ marginLeft: '14px' }}>
               <Tooltip placement="topRight" title="关联测试用例" getPopupContainer={(triggerNode) => triggerNode.parentNode}>
-                <Button style={{ padding: '0 6px' }} className="leftBtn" funcType="flat" onClick={() => openTestCaseModal(testLinkStore)}>
+                <Button style={{ padding: '0 6px' }} className="leftBtn" funcType="flat" onClick={() => openTestCaseModal(testLinkStore, intl)}>
                   <Icon type="playlist_add icon" />
                 </Button>
               </Tooltip>
             </div>
-            )
+          )
         }
       </div>
       {renderLinkIssues()}
     </div>
   );
-});
+};
 
-export default TestLink;
+export default injectIntl(observer(TestLink));

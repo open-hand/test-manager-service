@@ -9,18 +9,19 @@ import { PromptInput } from '@/components';
 import { observer } from 'mobx-react-lite';
 import { beforeTextUpload, returnBeforeTextUpload } from '@/common/utils';
 import { uploadFile } from '@/api/IssueManageApi';
-import { WYSIWYGEditor } from '@/components';
 import UploadButton from './UploadButton';
 import CreateIssueDataSet from './store/CreateIssueDataSet';
 import CreateTestStepTable from './CreateTestStepTable';
 import SelectTree from '../../routes/IssueManage/components/SelectTree';
 import './CreateIssue.less';
 import PriorityOptionDataSet from './store/PriorityOptionDataSet';
+// eslint-disable-next-line no-undef
+const WYSIWYGEditor = C7NTryImport('@/components/WYSIWYGEditor', <div />);
 
 function CreateIssue(props) {
   const [visibleDetail, setVisibleDetail] = useState(true);
   const {
-    intl, caseId, defaultFolderValue, onOk, modal, request,
+    intl, caseId, defaultFolderValue, onOk = (v1, v2) => v1, modal, request,
   } = props;
   const priorityOptionsDataSet = useMemo(() => new DataSet(PriorityOptionDataSet()), []);
   const createDataset = useMemo(() => new DataSet(CreateIssueDataSet('issue', intl, priorityOptionsDataSet)), [intl]);
@@ -62,7 +63,9 @@ function CreateIssue(props) {
           })),
         };
         const reqResult = await request(newData);
-        handleUploadFile((reqResult || {}).caseId);
+        // eslint-disable-next-line no-unused-expressions
+        reqResult && handleUploadFile((reqResult || {}).caseId);
+        onOk(reqResult, createDataset.current.get('folderId'));
         return typeof (reqResult) !== 'undefined' ? reqResult : true;
       }
       if (await createDataset.submit().then((res) => {
@@ -99,7 +102,7 @@ function CreateIssue(props) {
   return (
     <Form dataSet={createDataset} className={`test-create-issue-form ${visibleDetail ? '' : 'test-create-issue-form-hidden'}`}>
       <PromptInput name="summary" maxLength={44} />
-      <SelectTree name="folder" parentDataSet={createDataset} defaultValue={defaultFolderValue.id} />
+      <SelectTree name="folder" parentDataSet={createDataset} defaultValue={defaultFolderValue ? defaultFolderValue.id : undefined} />
       <Select name="priorityId" />
       <div role="none" style={{ cursor: 'pointer' }} onClick={() => setVisibleDetail(!visibleDetail)}>
         <div className="test-create-issue-line" />

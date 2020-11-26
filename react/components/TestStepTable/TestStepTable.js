@@ -1,4 +1,4 @@
-
+/* eslint-disable react/jsx-props-no-spreading */
 import React, { useState } from 'react';
 import { Choerodon } from '@choerodon/boot';
 import PropTypes from 'prop-types';
@@ -6,9 +6,9 @@ import {
   Input, Icon, Modal, Tooltip, Button,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
+import useClickOnce from '@/hooks/useClickOnce';
 import { DragTable } from '..';
 import { TextEditToggle } from '..';
-import useClickOnce from '@/hooks/useClickOnce';
 import './TestStepTable.less';
 
 const { confirm } = Modal;
@@ -25,8 +25,8 @@ const propTypes = {
   onDrag: PropTypes.func,
 };
 const defaultProps = {
-  onCreate: newStep => newStep,
-  onUpdate: step => step,
+  onCreate: (newStep) => newStep,
+  onUpdate: (step) => step,
   onDelete: () => {
 
   },
@@ -35,7 +35,7 @@ const defaultProps = {
     ...newData,
     stepId: Math.random(),
   }),
-  onDrag: step => step,
+  onDrag: (step) => step,
 };
 function TestStepTable(props) {
   const {
@@ -69,7 +69,6 @@ function TestStepTable(props) {
       setData([...data]);
     }
   };
-
 
   const handleAddCreating = () => {
     const lastRank = data.length
@@ -141,7 +140,7 @@ function TestStepTable(props) {
       setData([...data]);
     }
   };
-  const onCloneStep = useClickOnce(reset => async (stepId, index) => {
+  const onCloneStep = useClickOnce((reset) => async (stepId, index) => {
     const originData = data[index];
     const lastRank = originData.rank;
     const nextRank = data[index + 1] ? data[index + 1].rank : null;
@@ -183,7 +182,7 @@ function TestStepTable(props) {
    *
    * @param {*} id
    */
-  const findRefByID = id => recordRef.find(item => item.id === id);
+  const findRefByID = (id) => recordRef.find((item) => item.id === id);
   /**
  * 保存每一步ref
  * @param {*} record
@@ -237,7 +236,7 @@ function TestStepTable(props) {
     const {
       disabled,
     } = props;
-    const hasStepIsCreating = data.some(item => item.stepIsCreating);
+    const hasStepIsCreating = data.some((item) => item.stepIsCreating);
 
     const columns = [{
       title: null,
@@ -248,7 +247,7 @@ function TestStepTable(props) {
         return index + 1;
       },
     }, {
-      title: <FormattedMessage id="execute_testStep" />,
+      title: <FormattedMessage id="execute_testStep" defaultMessage="测试步骤" />,
       dataIndex: 'testStep',
       key: 'testStep',
       flex: 2.4,
@@ -273,7 +272,7 @@ function TestStepTable(props) {
             }}
           >
             <Text>
-              {newValue => (
+              {(newValue) => (
                 stepIsCreating
                   ? (
                     <span className="c7ntest-text-wrap">
@@ -305,7 +304,7 @@ function TestStepTable(props) {
         );
       },
     }, {
-      title: <FormattedMessage id="execute_testData" />,
+      title: <FormattedMessage id="execute_testData" defaultMessage="测试数据" />,
       dataIndex: 'testData',
       key: 'testData',
       flex: 2,
@@ -326,7 +325,7 @@ function TestStepTable(props) {
             }}
           >
             <Text>
-              {newValue => (
+              {(newValue) => (
                 stepIsCreating
                   ? (
                     <span className="c7ntest-text-wrap">
@@ -357,7 +356,7 @@ function TestStepTable(props) {
         );
       },
     }, {
-      title: <FormattedMessage id="execute_expectedOutcome" />,
+      title: <FormattedMessage id="execute_expectedOutcome" defaultMessage="预期结果" />,
       dataIndex: 'expectedResult',
       key: 'expectedResult',
       flex: 2.4,
@@ -382,7 +381,7 @@ function TestStepTable(props) {
             }}
           >
             <Text>
-              {newValue => (
+              {(newValue) => (
                 stepIsCreating
                   ? (
                     <span className="c7ntest-text-wrap">
@@ -418,10 +417,10 @@ function TestStepTable(props) {
             display: 'flex', alignItems: 'center', minWidth: 100,
           }}
           >
-            <Tooltip title={<FormattedMessage id="execute_move" />}>
+            <Tooltip title={<FormattedMessage id="execute_move" defaultMessage="移动" />}>
               <Icon type="open_with" {...provided.dragHandleProps} style={{ marginRight: 7 }} />
             </Tooltip>
-            <Tooltip title={<FormattedMessage id="execute_copy" />}>
+            <Tooltip title={<FormattedMessage id="execute_copy" defaultMessage="复制" />}>
               <Button disabled={disabled} shape="circle" funcType="flat" icon="library_books" style={{ color: 'black' }} onClick={() => onCloneStep(record.stepId, index)} />
             </Tooltip>
             <Button disabled={disabled} shape="circle" funcType="flat" icon="delete_forever" style={{ color: 'black' }} onClick={() => handleDeleteStep(index, record.stepId)} />
@@ -429,10 +428,10 @@ function TestStepTable(props) {
         ) : (
           <div>
             <div {...provided.dragHandleProps} />
-            <Tooltip title={<FormattedMessage id="excute_save" />}>
+            <Tooltip title={<FormattedMessage id="excute_save" defaultMessage="保存" />}>
               <Button disabled={disabled} shape="circle" funcType="flat" icon="done" style={{ margin: '0 -5px 5px', color: 'black' }} onClick={() => onCreateStep(record, index)} />
             </Tooltip>
-            <Tooltip title={<FormattedMessage id="excute_cancel" />}>
+            <Tooltip title={<FormattedMessage id="excute_cancel" defaultMessage="取消" />}>
               <Button disabled={disabled} shape="circle" funcType="flat" icon="close" style={{ margin: '0 5px', color: 'black' }} onClick={() => onCancelCreateStep(index)} />
             </Tooltip>
           </div>
@@ -462,7 +461,7 @@ function TestStepTable(props) {
             funcType="flat"
             onClick={handleAddCreating}
           >
-            <FormattedMessage id="issue_edit_addTestDetail" />
+            <FormattedMessage id="issue_edit_addTestDetail" defaultMessage="添加步骤" />
           </Button>
         </div>
       </div>
