@@ -46,9 +46,9 @@ function CreateIssue(props) {
   };
   const handleCreateIssue = useCallback(async () => {
     try {
-      // if (!await createDataset.current.validate()) {
-      //   return false;
-      // }
+      if (!await createDataset.current.validate()) {
+        return false;
+      }
       // 描述富文本转换为字符串
       const oldDes = createDataset.current.get('description');
       await returnBeforeTextUpload(oldDes, {}, (des) => createDataset.current.set('description', des.description));
