@@ -96,11 +96,11 @@ const openTestCaseModal = (testLinkStore, intl) => {
     title: (
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <span>关联测试用例</span>
-        <Button color="primary" icon="playlist_add" onClick={handleOpenCreateIssue}>
-          <Tooltip title="创建测试用例并关联到问题项" arrowPointAtCenter>
-            <span />
-          </Tooltip>
-        </Button>
+     
+        <Tooltip title="创建测试用例并关联到问题项" arrowPointAtCenter>
+          <Button color="primary" icon="playlist_add" onClick={handleOpenCreateIssue} />
+        </Tooltip>
+
       </div>),
     children: <TestCaseForm testLinkStore={testLinkStore} intl={intl} />,
     style: {
