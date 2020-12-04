@@ -34,6 +34,7 @@ function autoExpandParent(tree, id) {
   let newTree = tree;
   let parent = findParent(tree, id);
   while (parent) {
+    newTree = mutateTree(newTree, parent.id, { isMatch: true });
     if (!parent.isExpanded) {
       newTree = mutateTree(newTree, parent.id, { isExpanded: true });
     }

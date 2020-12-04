@@ -2,7 +2,7 @@ import React, {
   useState, useEffect, useCallback, useMemo, useImperativeHandle, forwardRef, Fragment,
 } from 'react';
 import PropTypes from 'prop-types';
-import { find } from 'lodash';
+import { find, pickBy } from 'lodash';
 import { Choerodon } from '@choerodon/boot';
 import Tree, {
   mutateTree,
@@ -63,6 +63,7 @@ const propTypes = {
   }),
   setSelected: PropTypes.func,
   renderTreeNode: PropTypes.func,
+  searchAutoFilter: PropTypes.bool,
 
 };
 const defaultProps = {
@@ -81,15 +82,34 @@ function PureTree({
   treeNodeProps,
   onMenuClick,
   getDeleteTitle,
+  searchAutoFilter = false,
   ...restProps
 }, ref) {
-  const [tree, setTree] = useState(mapDataToTree(data));
+  const [tree, setTree] = useState(mapDataToTree(data));  
   useEffect(() => {
     setTree(mapDataToTree(data));
   }, [data]);
   const [search, setSearch] = useState('');
   const previous = usePrevious(selected);
-  const flattenedTree = useMemo(() => flattenTree(tree), [tree]);
+  const filteredTree = useMemo(() => {
+    if (!search || !searchAutoFilter) {
+      return tree;
+    } else {
+      const filtered = { ...tree, items: {} };
+      Object.keys(tree.items).forEach((key) => {
+        if (tree.items[key].isMatch) {
+          const item = { ...tree.items[key] };
+          if (item.children) {
+            item.children = item.children.slice().filter((c) => tree.items[c].isMatch);
+          }
+          filtered.items[key] = item;
+        }
+      });
+      return filtered;
+    }
+  }, [search, searchAutoFilter, tree]);
+  const flattenedTree = useMemo(() => flattenTree(filteredTree), [filteredTree]);
+  
   useEffect(() => {
     setTree((oldTree) => selectItemWithExpand(oldTree, selected ? selected.id : undefined, previous ? previous.id : undefined));
   }, [previous, selected]);
@@ -319,7 +339,7 @@ function PureTree({
           </div>
           <div className={`${prefix}-scroll`}>
             <Tree
-              tree={tree}
+              tree={filteredTree}
               renderItem={renderItem}
               onExpand={onExpand}
               onCollapse={onCollapse}
