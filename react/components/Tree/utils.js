@@ -20,10 +20,10 @@ export function selectItem(tree, id, previous) {
   }
   return newTree;
 }
-function findParent(tree, id) {
+export function findParent(tree, id) {
   const keys = Object.keys(tree.items);
   for (const key of keys) {
-    const item = tree.items[key];   
+    const item = tree.items[key];
     if (item.children.includes(id)) {
       return item;
     }
@@ -34,7 +34,6 @@ function autoExpandParent(tree, id) {
   let newTree = tree;
   let parent = findParent(tree, id);
   while (parent) {
-    newTree = mutateTree(newTree, parent.id, { isMatch: true });
     if (!parent.isExpanded) {
       newTree = mutateTree(newTree, parent.id, { isExpanded: true });
     }
@@ -42,7 +41,7 @@ function autoExpandParent(tree, id) {
   }
   return newTree;
 }
-export function selectItemWithExpand(tree, id, previous) {  
+export function selectItemWithExpand(tree, id, previous) {
   let newTree = tree;
   newTree = selectItem(newTree, id, previous);
   newTree = autoExpandParent(newTree, id);
@@ -117,16 +116,17 @@ export function expandTreeBySearch(tree, search) {
     const item = tree.items[itemId];
     // 更新数据，使tree的组件会更新
     if (search && item.data.name.indexOf(search) > -1) {
-      newTree = mutateTree(newTree, itemId, { isMatch: true });
+      newTree = mutateTree(newTree, itemId, { isMatch: true, isExpanded: item.children && item.children.length > 0 });
       // 展开父级
       newTree = autoExpandParent(newTree, item.id);
     } else if (item.isMatch) {
-      newTree = mutateTree(newTree, itemId, { isMatch: false });
+      newTree = mutateTree(newTree, itemId, { isMatch: false, isExpanded: false });
     }
   });
 
   return newTree;
 }
+
 function getItemById(tree, id) {
   return tree.items[id];
 }

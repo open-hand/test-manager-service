@@ -14,7 +14,7 @@ import { Modal } from 'choerodon-ui/pro';
 import useAvoidClosure from '@/hooks/useAvoidClosure';
 import TreeNode from './TreeNode';
 import {
-  selectItemWithExpand, usePrevious, removeItem, addItem, createItem, expandTreeBySearch, getItemByPosition, getRootNode, getSiblingOrParent,
+  selectItemWithExpand, usePrevious, removeItem, addItem, createItem, expandTreeBySearch, getItemByPosition, getRootNode, getSiblingOrParent, findParent,
 } from './utils';
 import FilterInput from './FilterInput';
 import './index.less';
@@ -85,7 +85,7 @@ function PureTree({
   searchAutoFilter = false,
   ...restProps
 }, ref) {
-  const [tree, setTree] = useState(mapDataToTree(data));  
+  const [tree, setTree] = useState(mapDataToTree(data));
   useEffect(() => {
     setTree(mapDataToTree(data));
   }, [data]);
@@ -96,11 +96,31 @@ function PureTree({
       return tree;
     } else {
       const filtered = { ...tree, items: {} };
+      const matchedMap = new Map();
+      const setMatch = (itemId) => {        
+        matchedMap.set(itemId, true);
+        const item = tree.items[itemId];
+        if (item.children) {
+          item.children.forEach((childId) => {
+            setMatch(childId);
+          });
+        }
+        let current = findParent(tree, itemId);
+        while (current) {
+          matchedMap.set(current.id, true);
+          current = findParent(tree, current.id);
+        }
+      };
       Object.keys(tree.items).forEach((key) => {
         if (tree.items[key].isMatch) {
+          setMatch(key);
+        }
+      });
+      Object.keys(tree.items).forEach((key) => {
+        if (matchedMap.has(key)) {
           const item = { ...tree.items[key] };
           if (item.children) {
-            item.children = item.children.slice().filter((c) => tree.items[c].isMatch);
+            item.children = item.children.slice().filter((c) => matchedMap.has(c));
           }
           filtered.items[key] = item;
         }
@@ -109,7 +129,7 @@ function PureTree({
     }
   }, [search, searchAutoFilter, tree]);
   const flattenedTree = useMemo(() => flattenTree(filteredTree), [filteredTree]);
-  
+
   useEffect(() => {
     setTree((oldTree) => selectItemWithExpand(oldTree, selected ? selected.id : undefined, previous ? previous.id : undefined));
   }, [previous, selected]);
@@ -325,18 +345,18 @@ function PureTree({
 
   const isEmpty = flattenedTree.length === 0;
   return (
-    <div className={prefix}>
-      {isEmpty ? (
-        <div className={`${prefix}-empty`}>
-          暂无数据
+    <div className={prefix}>      
+      <>
+        <div className={`${prefix}-top`}>
+          <FilterInput
+            onChange={filterTree}
+          />
         </div>
-      ) : (
-        <>
-          <div className={`${prefix}-top`}>
-            <FilterInput
-              onChange={filterTree}
-            />
+        {isEmpty ? (
+          <div className={`${prefix}-empty`}>
+            暂无数据
           </div>
+        ) : (
           <div className={`${prefix}-scroll`}>
             <Tree
               tree={filteredTree}
@@ -350,8 +370,8 @@ function PureTree({
               {...restProps}
             />
           </div>
-        </>
-      )}
+        )}
+      </>
     </div>
   );
 }
