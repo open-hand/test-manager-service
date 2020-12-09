@@ -41,8 +41,8 @@ class ReportProgress extends Component {
         loading: false,
       });
       if (res && res.length > 0) {
-        const latestPlanId = res[res.length - 1];
-        if (latestPlanId !== -Infinity) {
+        const latestPlanId = res[res.length - 1]?.planId;
+        if (latestPlanId) {
           this.loadProgressByPlan(latestPlanId, latestPlanId);
         }
         this.setState({
@@ -105,7 +105,7 @@ class ReportProgress extends Component {
               },
             },
           },
-          data: this.state.versionProgress.statusVOList.map(item => ({
+          data: this.state.versionProgress.statusVOList.map((item) => ({
             name: item.statusName,
             value: item.count,
             itemStyle: {
@@ -203,13 +203,13 @@ class ReportProgress extends Component {
             <div className="c7ntest-switchVersion">
               <Select
                 className="c7ntest-version-filter-item"
-                getPopupContainer={triggerNode => triggerNode.parentNode}
+                getPopupContainer={(triggerNode) => triggerNode.parentNode}
                 value={currentPlanId}
                 label="计划"
                 onChange={this.handlePlanChange}
               >
                 {
-                  planList.map(item => (
+                  planList.map((item) => (
                     <Option value={item.planId} key={item.planId}>{item.name}</Option>
                   ))
                 }
