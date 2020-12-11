@@ -3,6 +3,8 @@ package io.choerodon.test.manager.app.service;
 import java.util.List;
 import java.util.Map;
 
+import io.choerodon.core.domain.Page;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.infra.dto.TestPlanDTO;
 
@@ -11,7 +13,7 @@ import io.choerodon.test.manager.infra.dto.TestPlanDTO;
  * @date: 2019/11/26 14:16
  * @description:
  */
-public interface TestPlanServcie {
+public interface TestPlanService {
 
     /**
      * 创建计划
@@ -93,4 +95,18 @@ public interface TestPlanServcie {
      * @param planId 计划id
      */
     void orderByFromDate(Long projectId, Long planId);
+
+    /**
+     * 查询测试计划报表info数据
+     *
+     * @param projectId
+     * @param planId
+     * @return
+     */
+    TestPlanReporterInfoVO reporterInfo(Long projectId, Long planId);
+
+    Page<TestPlanReporterIssueVO> pagedQueryIssues(Long projectId,
+                                                   Long planId,
+                                                   PageRequest pageRequest,
+                                                   TestPlanReporterIssueVO query);
 }

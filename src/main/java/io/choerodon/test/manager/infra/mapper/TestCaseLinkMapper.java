@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.infra.mapper;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -13,4 +14,6 @@ import io.choerodon.test.manager.infra.dto.TestCaseLinkDTO;
  */
 public interface TestCaseLinkMapper extends BaseMapper<TestCaseLinkDTO> {
     void batchInsert(@Param("testCaseLinkDTOList") List<TestCaseLinkDTO> testCaseLinkDTOList);
+
+    Set<Long> selectIssueIdByPlanId(@Param("planId") Long planId);
 }

@@ -5,10 +5,8 @@ import java.util.List;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.swagger.annotation.Permission;
 
-import io.choerodon.test.manager.api.vo.FormStatusVO;
-import io.choerodon.test.manager.api.vo.TestPlanVO;
-import io.choerodon.test.manager.api.vo.TestTreeIssueFolderVO;
-import io.choerodon.test.manager.app.service.TestPlanServcie;
+import io.choerodon.test.manager.api.vo.*;
+import io.choerodon.test.manager.app.service.TestPlanService;
 import io.choerodon.test.manager.infra.dto.TestPlanDTO;
 import io.swagger.annotations.ApiOperation;
 import org.hzero.starter.keyencrypt.core.Encrypt;
@@ -26,14 +24,14 @@ import org.springframework.web.bind.annotation.*;
 public class TestPlanController {
 
     @Autowired
-    private TestPlanServcie testPlanServcie;
+    private TestPlanService testPlanService;
 
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("创建测试计划")
     @PostMapping
     public ResponseEntity<TestPlanDTO> create(@PathVariable("project_id") Long projectId,
                                               @RequestBody TestPlanVO testPlanVO) {
-        return new ResponseEntity<>(testPlanServcie.create(projectId, testPlanVO), HttpStatus.OK);
+        return new ResponseEntity<>(testPlanService.create(projectId, testPlanVO), HttpStatus.OK);
     }
 
     @Permission(level = ResourceLevel.ORGANIZATION)
@@ -41,7 +39,7 @@ public class TestPlanController {
     @GetMapping("/tree")
     public ResponseEntity<TestTreeIssueFolderVO> queryTree(@PathVariable("project_id") Long projectId,
                                                            @RequestParam("status_code") String statusCode) {
-        return new ResponseEntity<>(testPlanServcie.buildPlanTree(projectId, statusCode), HttpStatus.OK);
+        return new ResponseEntity<>(testPlanService.buildPlanTree(projectId, statusCode), HttpStatus.OK);
     }
 
     @Permission(level = ResourceLevel.ORGANIZATION)
@@ -49,7 +47,7 @@ public class TestPlanController {
     @PutMapping
     public ResponseEntity<TestPlanVO> update(@PathVariable("project_id") Long projectId,
                                              @RequestBody TestPlanVO testPlanVO) {
-        return new ResponseEntity<>(testPlanServcie.update(projectId, testPlanVO), HttpStatus.OK);
+        return new ResponseEntity<>(testPlanService.update(projectId, testPlanVO), HttpStatus.OK);
     }
 
     @Permission(level = ResourceLevel.ORGANIZATION)
@@ -58,7 +56,7 @@ public class TestPlanController {
     public ResponseEntity<TestPlanVO> query(@PathVariable(name = "project_id") Long projectId,
                                             @PathVariable(name = "plan_id")
                                             @Encrypt Long planId) {
-        return new ResponseEntity<>(testPlanServcie.queryPlanInfo(projectId, planId), HttpStatus.OK);
+        return new ResponseEntity<>(testPlanService.queryPlanInfo(projectId, planId), HttpStatus.OK);
     }
 
     @Permission(level = ResourceLevel.ORGANIZATION)
@@ -67,7 +65,7 @@ public class TestPlanController {
     public ResponseEntity<TestPlanVO> queryInfo(@PathVariable(name = "project_id") Long projectId,
                                                 @PathVariable(name = "plan_id")
                                                 @Encrypt Long planId) {
-        return new ResponseEntity<>(testPlanServcie.queryPlan(projectId, planId), HttpStatus.OK);
+        return new ResponseEntity<>(testPlanService.queryPlan(projectId, planId), HttpStatus.OK);
     }
 
     @Permission(level = ResourceLevel.ORGANIZATION)
@@ -75,7 +73,7 @@ public class TestPlanController {
     @PostMapping("/update_status")
     public ResponseEntity<Void> updateStatus(@PathVariable(name = "project_id") Long projectId,
                                        @RequestBody TestPlanDTO testPlanDTO) {
-        testPlanServcie.updateStatusCode(projectId, testPlanDTO);
+        testPlanService.updateStatusCode(projectId, testPlanDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -85,7 +83,7 @@ public class TestPlanController {
     public ResponseEntity<Void> deletePlan(@PathVariable(name = "project_id") Long projectId,
                                      @PathVariable(name = "plan_id")
                                      @Encrypt Long planId) {
-        testPlanServcie.delete(projectId, planId);
+        testPlanService.delete(projectId, planId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -96,7 +94,7 @@ public class TestPlanController {
                                                 @PathVariable(name = "plan_id")
                                                 @Encrypt Long planId) {
 
-        return new ResponseEntity<>(testPlanServcie.clone(projectId, planId), HttpStatus.OK);
+        return new ResponseEntity<>(testPlanService.clone(projectId, planId), HttpStatus.OK);
     }
 
     @Permission(level = ResourceLevel.ORGANIZATION)
@@ -104,7 +102,7 @@ public class TestPlanController {
     @GetMapping("/project_plan")
     public ResponseEntity<List<TestPlanVO>> allPlan(@PathVariable(name = "project_id") Long projectId) {
 
-        return new ResponseEntity<>(testPlanServcie.projectPlan(projectId), HttpStatus.OK);
+        return new ResponseEntity<>(testPlanService.projectPlan(projectId), HttpStatus.OK);
     }
 
     @Permission(level = ResourceLevel.ORGANIZATION)
@@ -113,6 +111,33 @@ public class TestPlanController {
     public ResponseEntity<List<FormStatusVO>> formStatus(@PathVariable(name = "project_id") Long projectId,
                                                          @PathVariable(name = "plan_id")
                                                          @Encrypt Long planId) {
-        return new ResponseEntity<>(testPlanServcie.planStatus(projectId, planId), HttpStatus.OK);
+        return new ResponseEntity<>(testPlanService.planStatus(projectId, planId), HttpStatus.OK);
     }
+
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @ApiOperation("查询测试报告概览信息")
+    @GetMapping("/{plan_id}/reporter/info")
+    public ResponseEntity<TestPlanReporterInfoVO> reporterInfo(@PathVariable(name = "project_id") Long projectId,
+                                                               @PathVariable(name = "plan_id") @Encrypt Long planId) {
+        return new ResponseEntity<>(testPlanService.reporterInfo(projectId, planId), HttpStatus.OK);
+    }
+
+//    @Permission(level = ResourceLevel.ORGANIZATION)
+//    @ApiOperation("查询测试报告未通过的问题项")
+//    @PostMapping("/{plan_id}/reporter/issue")
+//    public ResponseEntity<Page<TestPlanReporterIssueVO>> pagedQueryIssues(@PathVariable(name = "project_id") Long projectId,
+//                                                                          @PathVariable(name = "plan_id") @Encrypt Long planId,
+//                                                                          @ApiIgnore
+//                                                                          @SortDefault PageRequest pageRequest,
+//                                                                          @RequestBody TestPlanReporterIssueVO query) {
+//        return new ResponseEntity<>(testPlanService.pagedQueryIssues(projectId, planId, pageRequest, query), HttpStatus.OK);
+//    }
+//
+//    @Permission(level = ResourceLevel.ORGANIZATION)
+//    @ApiOperation("查询测试报告缺陷")
+//    @PostMapping("/{plan_id}/reporter/bug")
+//    public ResponseEntity<TestPlanReporterInfoVO> listBugs(@PathVariable(name = "project_id") Long projectId,
+//                                                             @PathVariable(name = "plan_id") @Encrypt Long planId) {
+//        return new ResponseEntity<>(testPlanService.listIssues(projectId, planId), HttpStatus.OK);
+//    }
 }

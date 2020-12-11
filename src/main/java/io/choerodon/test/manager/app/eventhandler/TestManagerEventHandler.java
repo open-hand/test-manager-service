@@ -48,7 +48,7 @@ public class TestManagerEventHandler {
     private TestProjectInfoService testProjectInfoService;
 
     @Autowired
-    private TestPlanServcie testPlanServcie;
+    private TestPlanService testPlanService;
 
     @Autowired
     private TestPlanMapper testPlanMapper;
@@ -113,9 +113,9 @@ public class TestManagerEventHandler {
     public void createPlan(String message) {
         TestPlanVO testPlanVO = JSONObject.parseObject(message, TestPlanVO.class);
         try {
-            testPlanServcie.sagaCreatePlan(testPlanVO);
+            testPlanService.sagaCreatePlan(testPlanVO);
         } catch (Exception e) {
-            testPlanServcie.setPlanInitStatusFail(modelMapper.map(testPlanMapper.selectByPrimaryKey(testPlanVO.getPlanId()),TestPlanVO.class));
+            testPlanService.setPlanInitStatusFail(modelMapper.map(testPlanMapper.selectByPrimaryKey(testPlanVO.getPlanId()),TestPlanVO.class));
             throw e;
         }
 
@@ -126,11 +126,11 @@ public class TestManagerEventHandler {
         Map<String, Long> map = null ;
         try {
             map = JSONObject.parseObject(message,Map.class);
-            testPlanServcie.sagaClonePlan(map);
+            testPlanService.sagaClonePlan(map);
 
         } catch (Exception e) {
             if (map != null) {
-                testPlanServcie.setPlanInitStatusFail(modelMapper.map(testPlanMapper.selectByPrimaryKey(map.get("new")), TestPlanVO.class));
+                testPlanService.setPlanInitStatusFail(modelMapper.map(testPlanMapper.selectByPrimaryKey(map.get("new")), TestPlanVO.class));
             }
             throw e;
         }
@@ -140,7 +140,7 @@ public class TestManagerEventHandler {
     public void changeStatusFail(String message) {
         TestPlanVO testPlanVO = JSONObject.parseObject(message, TestPlanVO.class);
         testPlanVO.setInitStatus(TestPlanInitStatus.FAIL);
-        testPlanServcie.update(testPlanVO.getProjectId(),testPlanVO);
+        testPlanService.update(testPlanVO.getProjectId(),testPlanVO);
     }
 
     @SagaTask(code = SagaTaskCodeConstants.ORG_CREATE,
