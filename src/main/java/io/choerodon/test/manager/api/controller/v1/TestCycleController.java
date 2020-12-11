@@ -9,7 +9,7 @@ import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.vo.TestCycleVO;
 import io.choerodon.test.manager.api.vo.TestTreeIssueFolderVO;
 import io.choerodon.test.manager.app.service.TestCycleService;
-import io.choerodon.test.manager.app.service.TestPlanServcie;
+import io.choerodon.test.manager.app.service.TestPlanService;
 import io.swagger.annotations.ApiOperation;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ public class TestCycleController {
     TestCycleService testCycleService;
 
     @Autowired
-    TestPlanServcie testPlanServcie;
+    TestPlanService testPlanService;
 
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("增加计划文件夹")
@@ -87,7 +87,7 @@ public class TestCycleController {
     public ResponseEntity operatePlanCalendar(@PathVariable(name = "project_id") Long projectId,
                                               @RequestBody TestCycleVO testCycleVO,
                                               @RequestParam(defaultValue = "true") Boolean isCycle) {
-        testPlanServcie.operatePlanCalendar(projectId, testCycleVO, isCycle);
+        testPlanService.operatePlanCalendar(projectId, testCycleVO, isCycle);
         return new ResponseEntity(HttpStatus.OK);
     }
 }

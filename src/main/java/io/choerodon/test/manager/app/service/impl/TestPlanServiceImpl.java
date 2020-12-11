@@ -4,7 +4,11 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import io.choerodon.core.domain.Page;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.test.manager.api.vo.agile.StatusVO;
 import io.choerodon.test.manager.app.assembler.TestCycleAssembler;
+import io.choerodon.test.manager.infra.feign.IssueFeignClient;
 import io.choerodon.test.manager.infra.mapper.*;
 import io.choerodon.test.manager.infra.util.RankUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -38,7 +42,7 @@ import io.choerodon.test.manager.infra.util.DBValidateUtil;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class TestPlanServiceImpl implements TestPlanServcie {
+public class TestPlanServiceImpl implements TestPlanService {
     @Autowired
     private TestPlanMapper testPlanMapper;
 
@@ -76,6 +80,12 @@ public class TestPlanServiceImpl implements TestPlanServcie {
     private TestCycleAssembler testCycleAssembler;
     @Autowired
     private TestCycleMapper testCycleMapper;
+    @Autowired
+    private TestCaseLinkMapper testCaseLinkMapper;
+    @Autowired
+    private IssueFeignClient issueFeignClient;
+    @Autowired
+    private TestCycleCaseDefectRelMapper testCycleCaseDefectRelMapper;
 
     @Override
     public TestPlanVO update(Long projectId, TestPlanVO testPlanVO) {
@@ -291,14 +301,97 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         TestPlanDTO testPlan = testPlanMapper.selectOne(testPlanDTO);
         TestPlanVO testPlanVO = modelMapper.map(testPlan, TestPlanVO.class);
         Long managerId = testPlan.getManagerId();
-        if (!ObjectUtils.isEmpty(managerId)) {
-            Map<Long, UserDO> query = userService.query(new Long[]{managerId});
-            UserDO userDO = query.get(managerId);
-            if (!ObjectUtils.isEmpty(userDO)) {
-                testPlanVO.setManagerUser(userDO);
+        testPlanVO.setManagerUser(getUserById(managerId));
+        return testPlanVO;
+    }
+
+
+    private UserDO getUserById(Long userId) {
+        if (userId != null) {
+            Map<Long, UserDO> map = userService.query(new Long[]{userId});
+            return map.get(userId);
+        }
+        return null;
+    }
+
+    @Override
+    public TestPlanReporterInfoVO reporterInfo(Long projectId, Long planId) {
+        TestPlanReporterInfoVO result = new TestPlanReporterInfoVO();
+        TestPlanDTO testPlanDTO = testPlanMapper.selectByPrimaryKey(planId);
+        if (testPlanDTO == null) {
+            throw new CommonException("error.test.plan.not.existed");
+        }
+        Long managerId = testPlanDTO.getManagerId();
+        UserDO user = getUserById(managerId);
+        result.setManager(user);
+        result.setStartDate(testPlanDTO.getStartDate());
+        result.setEndDate(testPlanDTO.getEndDate());
+        Integer totalCaseCount = testCycleCaseMapper.selectCaseCount(planId);
+        result.setTotalCaseCount(totalCaseCount);
+        Set<Long> issueIds = testCaseLinkMapper.selectIssueIdByPlanId(planId);
+        int relatedIssueCount = 0;
+        int totalBugCount = 0;
+        int solvedBugCount = 0;
+
+        Set<Long> bugIds = testCycleCaseDefectRelMapper.selectIssueIdByPlanId(planId);
+        Set<Long> allIssueIds = new HashSet<>(issueIds);
+        allIssueIds.addAll(bugIds);
+        if (!allIssueIds.isEmpty()) {
+            List<IssueLinkVO> issueInfos = issueFeignClient.queryIssues(projectId, new ArrayList<>(allIssueIds)).getBody();
+            Map<Long, IssueLinkVO> map = issueInfos.stream().collect(Collectors.toMap(IssueLinkVO::getIssueId, Function.identity()));
+            for (Long id : issueIds) {
+                if (!ObjectUtils.isEmpty(map.get(id))) {
+                    relatedIssueCount++;
+                }
+            }
+            for (Long id : bugIds) {
+                IssueLinkVO issue = map.get(id);
+                if (!ObjectUtils.isEmpty(issue)) {
+                    totalBugCount++;
+                    StatusVO status = issue.getStatusVO();
+                    if (!ObjectUtils.isEmpty(status)
+                            && Boolean.TRUE.equals(status.getCompleted())) {
+                        solvedBugCount++;
+                    }
+                }
             }
         }
-        return testPlanVO;
+        result.setRelatedIssueCount(relatedIssueCount);
+        result.setTotalBugCount(totalBugCount);
+        result.setSolvedBugCount(solvedBugCount);
+        return result;
+    }
+
+    @Override
+    public Page<TestPlanReporterIssueVO> pagedQueryIssues(Long projectId,
+                                                          Long planId,
+                                                          PageRequest pageRequest,
+                                                          TestPlanReporterIssueVO query) {
+        Long failedStatusId = queryFailedStatusId(projectId);
+        if (failedStatusId == null) {
+            throw new CommonException("error.test.status.not.existed.name." + "失败");
+        }
+
+
+
+
+
+
+
+        return null;
+    }
+
+    private Long queryFailedStatusId(Long projectId) {
+        TestStatusDTO dto = new TestStatusDTO();
+        dto.setProjectId(projectId);
+        dto.setStatusType("CYCLE_CASE");
+        dto.setStatusName("失败");
+        List<TestStatusDTO> result =testStatusMapper.queryAllUnderProject(dto);
+        if (result.isEmpty()) {
+            return null;
+        } else {
+            return result.get(0).getStatusId();
+        }
     }
 
     @Override

@@ -2,6 +2,7 @@ package io.choerodon.test.manager.infra.mapper;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -31,4 +32,6 @@ public interface TestCycleCaseDefectRelMapper extends BaseMapper<TestCycleCaseDe
     void batchInsert(@Param("list") List<TestCycleCaseDefectRelDTO> list);
 
     void batchDeleteByLinkIdsAndType(@Param("list") List<Long> needDeleteExecutedStepIds, @Param("type")String attachmentCaseStep);
+
+    Set<Long> selectIssueIdByPlanId(@Param("planId") Long planId);
 }

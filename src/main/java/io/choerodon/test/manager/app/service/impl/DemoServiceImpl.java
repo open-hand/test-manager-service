@@ -86,7 +86,7 @@ public class DemoServiceImpl implements DemoService {
     private TestCaseMapper testCaseMapper;
 
     @Autowired
-    private TestPlanServcie testPlanServcie;
+    private TestPlanService testPlanService;
 
     @Autowired
     private TestCaseService testCaseService;
@@ -230,7 +230,7 @@ public class DemoServiceImpl implements DemoService {
         testPlanDTO.setAutoSync(false);
         testPlanDTO.setProjectId(project.getId());
         testPlanDTO.setManagerId(userId);
-        return testPlanServcie.baseCreate(testPlanDTO).getPlanId();
+        return testPlanService.baseCreate(testPlanDTO).getPlanId();
 
     }
 

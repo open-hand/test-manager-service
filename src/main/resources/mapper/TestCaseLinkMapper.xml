@@ -15,4 +15,15 @@
         </foreach>
     </insert>
 
+    <select id="selectIssueIdByPlanId" resultType="java.lang.Long">
+        select
+        distinct t3.issue_id
+        from test_cycle t1
+        left join test_cycle_case t2
+        on t1.cycle_id = t2.cycle_id
+        left join test_case_link t3 on t2.case_id = t3.link_case_id
+        where t1.plan_id = #{planId}
+        and t3.issue_id is not null
+    </select>
+
 </mapper>
