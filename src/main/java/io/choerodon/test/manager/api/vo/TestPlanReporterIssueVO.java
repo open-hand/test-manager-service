@@ -1,7 +1,7 @@
 package io.choerodon.test.manager.api.vo;
 
 import io.choerodon.test.manager.api.vo.agile.StatusVO;
-import io.choerodon.test.manager.api.vo.agile.UserDO;
+import io.choerodon.test.manager.infra.dto.UserMessageDTO;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 
 import java.util.List;
@@ -19,9 +19,49 @@ public class TestPlanReporterIssueVO {
 
     private StatusVO statusMapVO;
 
-    private UserDO assignee;
+    private UserMessageDTO assignee;
 
     private List<TestFolderCycleCaseVO> testFolderCycleCases;
+
+    private Long statusId;
+
+    private Long userId;
+
+    private String caseSummary;
+
+    private Long executionStatus;
+
+    public String getCaseSummary() {
+        return caseSummary;
+    }
+
+    public void setCaseSummary(String caseSummary) {
+        this.caseSummary = caseSummary;
+    }
+
+    public Long getExecutionStatus() {
+        return executionStatus;
+    }
+
+    public void setExecutionStatus(Long executionStatus) {
+        this.executionStatus = executionStatus;
+    }
+
+    public Long getStatusId() {
+        return statusId;
+    }
+
+    public void setStatusId(Long statusId) {
+        this.statusId = statusId;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 
     public Long getIssueId() {
         return issueId;
@@ -47,11 +87,11 @@ public class TestPlanReporterIssueVO {
         this.statusMapVO = statusMapVO;
     }
 
-    public UserDO getAssignee() {
+    public UserMessageDTO getAssignee() {
         return assignee;
     }
 
-    public void setAssignee(UserDO assignee) {
+    public void setAssignee(UserMessageDTO assignee) {
         this.assignee = assignee;
     }
 

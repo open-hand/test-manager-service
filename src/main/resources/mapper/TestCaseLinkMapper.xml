@@ -24,6 +24,49 @@
         left join test_case_link t3 on t2.case_id = t3.link_case_id
         where t1.plan_id = #{planId}
         and t3.issue_id is not null
+        <if test="query != null">
+            <if test="query.caseSummary != null">
+                and t2.summary like concat(concat('%', #{query.caseSummary, jdbcType=VARCHAR}),'%')
+            </if>
+            <if test="query.executionStatus != null">
+                and t2.execution_status = #{query.executionStatus}
+            </if>
+        </if>
+        order by t3.issue_id desc
+    </select>
+
+
+    <resultMap id="TestPlanReporterIssueVO" type="io.choerodon.test.manager.api.vo.TestPlanReporterIssueVO">
+        <id property="issueId" column="issue_id"/>
+        <collection property="testFolderCycleCases"  ofType="io.choerodon.test.manager.api.vo.TestFolderCycleCaseVO">
+            <id property="executeId" column="execute_id"/>
+            <result property="summary" column="case_summary"/>
+            <result property="executionStatus" column="execution_status"/>
+        </collection>
+    </resultMap>
+
+
+    <select id="selectWithCaseByIssueIds" resultMap="TestPlanReporterIssueVO">
+        select
+        t3.issue_id,
+        t2.summary as case_summary,
+        t2.execute_id,
+        t2.execution_status
+        from test_cycle t1
+        left join test_cycle_case t2
+        on t1.cycle_id = t2.cycle_id
+        left join test_case_link t3 on t2.case_id = t3.link_case_id
+        where t1.plan_id = #{planId}
+        and t3.issue_id is not null
+        <if test="query != null">
+            <if test="query.caseSummary != null">
+                and t2.summary like concat(concat('%', #{query.caseSummary, jdbcType=VARCHAR}),'%')
+            </if>
+            <if test="query.executionStatus != null">
+                and t2.execution_status = #{query.executionStatus}
+            </if>
+        </if>
+        order by t3.issue_id desc
     </select>
 
 </mapper>

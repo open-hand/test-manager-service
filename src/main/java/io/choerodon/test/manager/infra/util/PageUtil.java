@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.choerodon.core.domain.Page;
+import io.choerodon.core.domain.PageInfo;
 import io.choerodon.core.utils.PageableHelper;
-import io.choerodon.mybatis.pagehelper.PageHelper;
 import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 
@@ -61,5 +61,10 @@ public class PageUtil {
             result.setContent(new ArrayList<>());
         }
         return result;
+    }
+
+    public static Page empty(PageRequest pageRequest) {
+        PageInfo pageInfo = new PageInfo(pageRequest.getPage(), pageRequest.getSize());
+        return new Page(new ArrayList(), pageInfo, 0);
     }
 }
