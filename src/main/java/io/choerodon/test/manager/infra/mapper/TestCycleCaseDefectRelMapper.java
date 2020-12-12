@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import io.choerodon.test.manager.api.vo.TestPlanReporterIssueVO;
 import org.apache.ibatis.annotations.Param;
 
 import io.choerodon.mybatis.common.BaseMapper;
@@ -33,5 +34,6 @@ public interface TestCycleCaseDefectRelMapper extends BaseMapper<TestCycleCaseDe
 
     void batchDeleteByLinkIdsAndType(@Param("list") List<Long> needDeleteExecutedStepIds, @Param("type")String attachmentCaseStep);
 
-    Set<Long> selectIssueIdByPlanId(@Param("planId") Long planId);
+    Set<Long> selectIssueIdByPlanId(@Param("planId") Long planId,
+                                    @Param("query") TestPlanReporterIssueVO query);
 }

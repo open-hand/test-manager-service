@@ -100,6 +100,14 @@
         left join test_cycle_case_defect_rel t4 on t3.execute_step_id = t4.defect_link_id
         where t1.plan_id = #{planId}
         and t4.issue_id is not null
+        <if test="query != null">
+            <if test="query.caseSummary != null">
+                and t2.summary like concat(concat('%', #{query.caseSummary, jdbcType=VARCHAR}),'%')
+            </if>
+            <if test="query.executionStatus != null">
+                and t2.execution_status = #{query.executionStatus}
+            </if>
+        </if>
     </select>
 
     <insert id="batchInsert">

@@ -109,4 +109,9 @@ public interface TestPlanService {
                                                    Long planId,
                                                    PageRequest pageRequest,
                                                    TestPlanReporterIssueVO query);
+
+    Page<TestPlanReporterIssueVO> pagedQueryBugs(Long projectId,
+                                                 Long planId,
+                                                 PageRequest pageRequest,
+                                                 TestPlanReporterIssueVO query);
 }

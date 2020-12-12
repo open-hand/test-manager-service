@@ -4,16 +4,21 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.netflix.hystrix.exception.HystrixRuntimeException;
 import io.choerodon.core.domain.Page;
+import io.choerodon.core.utils.PageUtils;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.api.vo.agile.StatusVO;
 import io.choerodon.test.manager.app.assembler.TestCycleAssembler;
 import io.choerodon.test.manager.infra.feign.IssueFeignClient;
 import io.choerodon.test.manager.infra.mapper.*;
+import io.choerodon.test.manager.infra.util.PageUtil;
 import io.choerodon.test.manager.infra.util.RankUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -86,6 +91,8 @@ public class TestPlanServiceImpl implements TestPlanService {
     private IssueFeignClient issueFeignClient;
     @Autowired
     private TestCycleCaseDefectRelMapper testCycleCaseDefectRelMapper;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestPlanServiceImpl.class);
 
     @Override
     public TestPlanVO update(Long projectId, TestPlanVO testPlanVO) {
@@ -328,16 +335,25 @@ public class TestPlanServiceImpl implements TestPlanService {
         result.setEndDate(testPlanDTO.getEndDate());
         Integer totalCaseCount = testCycleCaseMapper.selectCaseCount(planId);
         result.setTotalCaseCount(totalCaseCount);
-        Set<Long> issueIds = testCaseLinkMapper.selectIssueIdByPlanId(planId);
+        List<Long> issueIds = testCaseLinkMapper.selectIssueIdByPlanId(planId, null);
         int relatedIssueCount = 0;
         int totalBugCount = 0;
         int solvedBugCount = 0;
+        Set<Long> bugIds = testCycleCaseDefectRelMapper.selectIssueIdByPlanId(planId, null);
 
-        Set<Long> bugIds = testCycleCaseDefectRelMapper.selectIssueIdByPlanId(planId);
         Set<Long> allIssueIds = new HashSet<>(issueIds);
         allIssueIds.addAll(bugIds);
         if (!allIssueIds.isEmpty()) {
-            List<IssueLinkVO> issueInfos = issueFeignClient.queryIssues(projectId, new ArrayList<>(allIssueIds)).getBody();
+            List<IssueLinkVO> issueInfos;
+            try {
+                issueInfos = issueFeignClient.queryIssues(projectId, new ArrayList<>(allIssueIds)).getBody();
+            } catch (HystrixRuntimeException e) {
+                LOGGER.error("feign exception: {}", e);
+                result.setRelatedIssueCount(relatedIssueCount);
+                result.setTotalBugCount(totalBugCount);
+                result.setSolvedBugCount(solvedBugCount);
+                return result;
+            }
             Map<Long, IssueLinkVO> map = issueInfos.stream().collect(Collectors.toMap(IssueLinkVO::getIssueId, Function.identity()));
             for (Long id : issueIds) {
                 if (!ObjectUtils.isEmpty(map.get(id))) {
@@ -371,14 +387,65 @@ public class TestPlanServiceImpl implements TestPlanService {
         if (failedStatusId == null) {
             throw new CommonException("error.test.status.not.existed.name." + "失败");
         }
+        query.setExecutionStatus(failedStatusId);
+        List<Long> issueIds = testCaseLinkMapper.selectIssueIdByPlanId(planId, query);
+        if (issueIds.isEmpty()) {
+            return PageUtil.empty(pageRequest);
+        }
+        return pagedQueryByIssueIds(projectId, planId, pageRequest, query, issueIds);
+    }
 
+    private Page<TestPlanReporterIssueVO> pagedQueryByIssueIds(Long projectId, Long planId, PageRequest pageRequest, TestPlanReporterIssueVO query, List<Long> issueIds) {
+        Page<IssueLinkVO> page;
+        try {
+            page = issueFeignClient
+                    .pagedQueryIssueByOptions(projectId, pageRequest.getPage(), pageRequest.getSize(), new IssueQueryVO(issueIds, query))
+                    .getBody();
+            List<IssueLinkVO> content = page.getContent();
+            if (content.isEmpty()) {
+                return PageUtil.empty(pageRequest);
+            }
+            Map<Long, IssueLinkVO> issueMap = new HashMap<>();
+            Set<Long> userId = new HashSet<>();
+            content.forEach(c -> {
+                issueMap.put(c.getIssueId(), c);
+                if (c.getAssigneeId() != null) {
+                    userId.add(c.getAssigneeId());
+                }
+            });
+            Map<Long, UserMessageDTO> userMap = userService.queryUsersMap(new ArrayList<>(userId));
+            List<Long> existedIssueIds = new ArrayList<>(issueMap.keySet());
+            List<TestPlanReporterIssueVO> result = testCaseLinkMapper.selectWithCaseByIssueIds(existedIssueIds, planId, query);
+            result.forEach(r -> {
+                Long issueId = r.getIssueId();
+                IssueLinkVO issue = issueMap.get(issueId);
+                if (issue == null) {
+                    return;
+                }
+                r.setSummary(issue.getSummary());
+                Long assigneeId= issue.getAssigneeId();
+                if (assigneeId != null) {
+                    r.setAssignee(userMap.get(assigneeId));
+                }
+                r.setStatusMapVO(issue.getStatusVO());
+            });
+            return PageUtils.copyPropertiesAndResetContent(page, result);
+        } catch (HystrixRuntimeException e) {
+            LOGGER.error("feign exception: {}", e);
+            return PageUtil.empty(pageRequest);
+        }
+    }
 
-
-
-
-
-
-        return null;
+    @Override
+    public Page<TestPlanReporterIssueVO> pagedQueryBugs(Long projectId,
+                                                        Long planId,
+                                                        PageRequest pageRequest,
+                                                        TestPlanReporterIssueVO query) {
+        Set<Long> bugIds = testCycleCaseDefectRelMapper.selectIssueIdByPlanId(planId, query);
+        if (bugIds.isEmpty()) {
+            return PageUtil.empty(pageRequest);
+        }
+        return pagedQueryByIssueIds(projectId, planId, pageRequest, query, new ArrayList<>(bugIds));
     }
 
     private Long queryFailedStatusId(Long projectId) {

@@ -2,7 +2,10 @@ package io.choerodon.test.manager.api.controller.v1;
 
 import java.util.List;
 
+import io.choerodon.core.domain.Page;
 import io.choerodon.core.iam.ResourceLevel;
+import io.choerodon.mybatis.pagehelper.annotation.SortDefault;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.swagger.annotation.Permission;
 
 import io.choerodon.test.manager.api.vo.*;
@@ -14,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 /**
  * @author zhaotianxin
@@ -122,22 +126,25 @@ public class TestPlanController {
         return new ResponseEntity<>(testPlanService.reporterInfo(projectId, planId), HttpStatus.OK);
     }
 
-//    @Permission(level = ResourceLevel.ORGANIZATION)
-//    @ApiOperation("查询测试报告未通过的问题项")
-//    @PostMapping("/{plan_id}/reporter/issue")
-//    public ResponseEntity<Page<TestPlanReporterIssueVO>> pagedQueryIssues(@PathVariable(name = "project_id") Long projectId,
-//                                                                          @PathVariable(name = "plan_id") @Encrypt Long planId,
-//                                                                          @ApiIgnore
-//                                                                          @SortDefault PageRequest pageRequest,
-//                                                                          @RequestBody TestPlanReporterIssueVO query) {
-//        return new ResponseEntity<>(testPlanService.pagedQueryIssues(projectId, planId, pageRequest, query), HttpStatus.OK);
-//    }
-//
-//    @Permission(level = ResourceLevel.ORGANIZATION)
-//    @ApiOperation("查询测试报告缺陷")
-//    @PostMapping("/{plan_id}/reporter/bug")
-//    public ResponseEntity<TestPlanReporterInfoVO> listBugs(@PathVariable(name = "project_id") Long projectId,
-//                                                             @PathVariable(name = "plan_id") @Encrypt Long planId) {
-//        return new ResponseEntity<>(testPlanService.listIssues(projectId, planId), HttpStatus.OK);
-//    }
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @ApiOperation("查询测试报告未通过的问题项")
+    @PostMapping("/{plan_id}/reporter/issue")
+    public ResponseEntity<Page<TestPlanReporterIssueVO>> pagedQueryIssues(@PathVariable(name = "project_id") Long projectId,
+                                                                          @PathVariable(name = "plan_id") @Encrypt Long planId,
+                                                                          @ApiIgnore
+                                                                          @SortDefault PageRequest pageRequest,
+                                                                          @RequestBody TestPlanReporterIssueVO query) {
+        return ResponseEntity.ok(testPlanService.pagedQueryIssues(projectId, planId, pageRequest, query));
+    }
+
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @ApiOperation("查询测试报告缺陷")
+    @PostMapping("/{plan_id}/reporter/bug")
+    public ResponseEntity<Page<TestPlanReporterIssueVO>> pagedQueryBugs(@PathVariable(name = "project_id") Long projectId,
+                                                                       @PathVariable(name = "plan_id") @Encrypt Long planId,
+                                                                       @ApiIgnore
+                                                                       @SortDefault PageRequest pageRequest,
+                                                                       @RequestBody TestPlanReporterIssueVO query) {
+        return ResponseEntity.ok(testPlanService.pagedQueryBugs(projectId, planId, pageRequest, query));
+    }
 }
