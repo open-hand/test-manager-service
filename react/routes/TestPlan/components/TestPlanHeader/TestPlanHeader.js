@@ -1,18 +1,25 @@
 import React, { useContext, useCallback, useEffect } from 'react';
-import { Choerodon } from '@choerodon/boot';
+import {
+  Choerodon, axios, stores,
+} from '@choerodon/boot';
 import { observer } from 'mobx-react-lite';
 import { FormattedMessage } from 'react-intl';
 import { Button, Modal } from 'choerodon-ui/pro';
+import { useHistory } from 'react-router-dom';
+
+import queryString from 'query-string';
 import { updatePlanStatus } from '@/api/TestPlanApi';
 import { openEditPlan } from '../TestPlanModal';
 import ConfirmCompleteModalChildren from './components/ConfirmCompleteModalChildren';
 import Store from '../../stores';
 import './TestPlanHeader.less';
 
+const { AppState } = stores;
 const confirmCompletePlanModalKey = Modal.key();
 
 function TestPlanHeader() {
   const { testPlanStore, createAutoTestStore } = useContext(Store);
+  const history = useHistory();
   const { testPlanStatus, getCurrentPlanId } = testPlanStore;
 
   const onUpdatePlanStatus = (planItem, newStatus) => {
@@ -88,12 +95,24 @@ function TestPlanHeader() {
       onEdit: handlePlanEdit,
     });
   }, [getCurrentPlanId, handlePlanEdit]);
-
+  const handleReportClick = useCallback(() => {
+    const {
+      id, name, category, organizationId,
+    } = AppState.currentMenuType;
+    const queryStr = queryString.stringify({
+      id,
+      name,
+      category,
+      type: 'project',
+      organizationId,
+    });
+    history.push(`/testManager/TestPlan/report/${getCurrentPlanId}?${queryStr}`);
+  }, [getCurrentPlanId, history]);
   return (
-    <React.Fragment>
+    <>
       {
-        testPlanStatus !== 'done' ? (
-          <React.Fragment>
+        testPlanStatus !== 'done' && (
+          <>
             {getCurrentPlanId && (
               <Button icon="mode_edit" onClick={handleOpenEditPlan}>
                 <FormattedMessage id="testPlan_editPlan" />
@@ -115,10 +134,18 @@ function TestPlanHeader() {
             {/* <Button icon="auto_test">
               <FormattedMessage id="testPlan_autoTest" />
             </Button> */}
-          </React.Fragment>
-        ) : ''
+          </>
+        )
       }
-    </React.Fragment>
+      {testPlanStatus === 'done' && (
+        <Button
+          icon="check_circle"
+          onClick={handleReportClick}
+        >
+          计划报告
+        </Button>
+      )}
+    </>
   );
 }
 export default observer(TestPlanHeader);
