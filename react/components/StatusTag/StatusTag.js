@@ -11,13 +11,13 @@ const StatusTag = memo(({
   style,
   status,
 }) => {
-  const { colour: statusColor, name: statusName, type: statusCode } = status || {};  
+  const { colour: statusColor, name: statusName, type: statusCode } = status || {};
   return (
     <div
       className=""
       style={{
         display: 'inline-block',
-        background: STATUS[statusCode],
+        background: statusColor || STATUS[statusCode],
         color: '#fff',
         overflow: 'hidden',
         textOverflow: 'ellipsis',
