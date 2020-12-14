@@ -415,8 +415,9 @@ public class TestPlanServiceImpl implements TestPlanService {
             });
             Map<Long, UserMessageDTO> userMap = userService.queryUsersMap(new ArrayList<>(userId));
             List<Long> existedIssueIds = new ArrayList<>(issueMap.keySet());
-            List<TestPlanReporterIssueVO> result = testCaseLinkMapper.selectWithCaseByIssueIds(existedIssueIds, planId, query);
-            result.forEach(r -> {
+            List<TestPlanReporterIssueVO> issues = testCaseLinkMapper.selectWithCaseByIssueIds(existedIssueIds, planId, query);
+            List<TestPlanReporterIssueVO> result = new ArrayList<>();
+            issues.forEach(r -> {
                 Long issueId = r.getIssueId();
                 IssueLinkVO issue = issueMap.get(issueId);
                 if (issue == null) {
@@ -428,6 +429,7 @@ public class TestPlanServiceImpl implements TestPlanService {
                     r.setAssignee(userMap.get(assigneeId));
                 }
                 r.setStatusMapVO(issue.getStatusVO());
+                result.add(r);
             });
             return PageUtils.copyPropertiesAndResetContent(page, result);
         } catch (HystrixRuntimeException e) {
