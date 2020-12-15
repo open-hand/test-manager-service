@@ -86,6 +86,16 @@ public class TestFolderCycleCaseVO {
     @Encrypt
     private Long folderId;
 
+    private String caseNum;
+
+    public String getCaseNum() {
+        return caseNum;
+    }
+
+    public void setCaseNum(String caseNum) {
+        this.caseNum = caseNum;
+    }
+
     public Long getFolderId() {
         return folderId;
     }
