@@ -137,9 +137,9 @@ function TestPlanHeader() {
           </>
         )
       }
-      {testPlanStatus === 'done' && (
+      {(testPlanStatus === 'done' || testPlanStatus === 'doing') && (
         <Button
-          icon="check_circle"
+          icon="find_in_page"
           onClick={handleReportClick}
         >
           计划报告
