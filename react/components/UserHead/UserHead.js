@@ -21,6 +21,7 @@ const UserHead = memo(({
   style,
   type,
   tooltip = true,
+  head = true,
 }) => {
   const iconSize = size || 18;
   const {
@@ -44,7 +45,7 @@ const UserHead = memo(({
         maxWidth: maxWidth || 108,
       }}
     >
-      {
+      {head && (
         type === 'datalog' ? (
           <div
             style={{
@@ -106,8 +107,7 @@ const UserHead = memo(({
                 )
               }
           </div>
-        )
-      }
+        ))}
       {
         hiddenText ? null : (
           <span

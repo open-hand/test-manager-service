@@ -1,6 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 import React from 'react';
 import StatusTag from '@/components/StatusTag';
+import UserHead from '@/components/UserHead';
 
 export function renderStatus({ value }) {
   if (!value) {
@@ -23,6 +24,5 @@ export function renderAssignee({ value }) {
   if (!value) {
     return null;
   }
-  const { realName } = value;
-  return realName;
+  return <UserHead user={value} head={false} />;
 }
