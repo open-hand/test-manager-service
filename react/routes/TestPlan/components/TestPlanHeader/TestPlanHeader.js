@@ -144,7 +144,7 @@ function TestPlanHeader() {
           </>
         )
       }
-      {(testPlanStatus === 'done' || testPlanStatus === 'doing') && (
+      {(getCurrentPlanId && (testPlanStatus === 'done' || testPlanStatus === 'doing')) && (
         <Button
           icon="find_in_page"
           onClick={handleReportClick}
