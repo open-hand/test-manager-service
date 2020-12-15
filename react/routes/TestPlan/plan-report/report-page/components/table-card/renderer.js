@@ -9,6 +9,9 @@ export function renderStatus({ value }) {
   const { name, type } = value;
   return (
     <StatusTag
+      style={{
+        width: 'auto',
+      }}
       status={{
         name,
         type,

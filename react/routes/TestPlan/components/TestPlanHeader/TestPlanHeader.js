@@ -21,8 +21,17 @@ function TestPlanHeader() {
   const { testPlanStore, createAutoTestStore } = useContext(Store);
   const history = useHistory();
   const { testPlanStatus, getCurrentPlanId } = testPlanStore;
-
-  const onUpdatePlanStatus = (planItem, newStatus) => {
+  const {
+    id, name, category, organizationId,
+  } = AppState.currentMenuType;
+  const queryStr = queryString.stringify({
+    id,
+    name,
+    category,
+    type: 'project',
+    organizationId,
+  });
+  const onUpdatePlanStatus = async (planItem, newStatus) => {
     updatePlanStatus({
       planId: planItem.item.id,
       objectVersionNumber: planItem.item.data.objectVersionNumber,
@@ -54,7 +63,15 @@ function TestPlanHeader() {
         <ConfirmCompleteModalChildren planName={planItem.item.data.name} testPlanStore={testPlanStore} />
       ),
       okText: '确定',
-      onOk: onUpdatePlanStatus.bind(this, planItem, newStatus),
+      onOk: async () => {
+        await onUpdatePlanStatus(planItem, newStatus);
+        Modal.open({
+          title: '跳转到计划报告',
+          onOk: () => {
+            history.push(`/testManager/TestPlan/report/${getCurrentPlanId}?${queryStr}`);
+          },
+        });
+      },
       cancelText: '取消',
       style: { width: '5.6rem' },
       className: 'c7ntest-testPlan-completePlan-confirm-modal',
@@ -96,16 +113,6 @@ function TestPlanHeader() {
     });
   }, [getCurrentPlanId, handlePlanEdit]);
   const handleReportClick = useCallback(() => {
-    const {
-      id, name, category, organizationId,
-    } = AppState.currentMenuType;
-    const queryStr = queryString.stringify({
-      id,
-      name,
-      category,
-      type: 'project',
-      organizationId,
-    });
     history.push(`/testManager/TestPlan/report/${getCurrentPlanId}?${queryStr}`);
   }, [getCurrentPlanId, history]);
   return (
@@ -137,7 +144,7 @@ function TestPlanHeader() {
           </>
         )
       }
-      {(testPlanStatus === 'done' || testPlanStatus === 'doing') && (
+      {(getCurrentPlanId && (testPlanStatus === 'done' || testPlanStatus === 'doing')) && (
         <Button
           icon="find_in_page"
           onClick={handleReportClick}
