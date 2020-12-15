@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, { useMemo, useContext } from 'react';
 import { Table, DataSet, Tooltip } from 'choerodon-ui/pro';
 import { observer } from 'mobx-react-lite';
@@ -74,12 +76,12 @@ const BugTable: React.FC = () => {
         method: 'post',
         data: {
           statusType: 'CYCLE_CASE',
-          projectId: getProjectId()
-        }
+          projectId: getProjectId(),
+        },
       }),
       valueField: 'statusId',
       textField: 'statusName',
-    },]
+    }],
   }), [planId]);
   return (
     <Card className={styles.table_card}>
@@ -92,19 +94,27 @@ const BugTable: React.FC = () => {
           dataSet={dataSet}
           rowHeight="auto"
         >
-          <Column name="summary"
-            renderer={({ value, record }) => <Tooltip title={value}><span
-              className="c7n-test-table-cell-click"
-              onClick={() => {
-                history.push(issueLink(record?.get('issueId'), null, value));
-              }}
-              style={{
-                whiteSpace: 'nowrap',
-                display: 'inline-block',
-                maxWidth: '100%',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis'
-              }}>{value}</span></Tooltip>}
+          <Column
+            name="summary"
+            renderer={({ value, record }) => (
+              <Tooltip title={value}>
+                <span
+                  className="c7n-test-table-cell-click"
+                  onClick={() => {
+                    history.push(issueLink(record?.get('issueId'), null, value));
+                  }}
+                  style={{
+                    whiteSpace: 'nowrap',
+                    display: 'inline-block',
+                    maxWidth: '100%',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
+                  {value}
+                </span>
+              </Tooltip>
+            )}
           />
           {/* @ts-ignore */}
           <Column name="statusMapVO" width={150} renderer={renderStatus} />
@@ -116,13 +126,17 @@ const BugTable: React.FC = () => {
             renderer={({ value }) => (
               <div>
                 {/* @ts-ignore */}
-                {value.map((v) => <div style={style}
-                  className="c7n-test-table-cell-click"
-                  onClick={() => {
-                    history.push(issueLink(v.caseId, 'issue_test', v.caseNum, v.caseFolderId));
-                  }}
-
-                >{v.summary}</div>)}
+                {value.map((v) => (
+                  <div
+                    style={style}
+                    className="c7n-test-table-cell-click"
+                    onClick={() => {
+                      history.push(issueLink(v.caseId, 'issue_test', v.caseNum, v.folderId));
+                    }}
+                  >
+                    {v.summary}
+                  </div>
+                ))}
               </div>
             )}
           />
@@ -142,6 +156,10 @@ const BugTable: React.FC = () => {
                       <div style={style}>
                         {status && (
                           <StatusTag
+                            // @ts-ignore
+                            style={{
+                              width: 'auto',
+                            }}
                             // @ts-ignore
                             status={{
                               // @ts-ignore
