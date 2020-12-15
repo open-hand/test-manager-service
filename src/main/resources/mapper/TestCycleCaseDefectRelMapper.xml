@@ -110,6 +110,48 @@
         </if>
     </select>
 
+    <resultMap id="TestPlanReporterIssueVO" type="io.choerodon.test.manager.api.vo.TestPlanReporterIssueVO">
+        <id property="issueId" column="issue_id"/>
+        <collection property="testFolderCycleCases"  ofType="io.choerodon.test.manager.api.vo.TestFolderCycleCaseVO">
+            <id property="executeId" column="execute_id"/>
+            <result property="summary" column="case_summary"/>
+            <result property="executionStatus" column="execution_status"/>
+            <result property="caseId" column="case_id"/>
+            <result property="folderId" column="folder_id"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectWithCaseByIssueIds" resultMap="TestPlanReporterIssueVO">
+        select
+        t4.issue_id,
+        t2.summary as case_summary,
+        t2.execute_id,
+        t2.execution_status,
+        t2.case_id,
+        t5.folder_id
+        from test_cycle t1
+        left join test_cycle_case t2 on t1.cycle_id = t2.cycle_id
+        left join test_cycle_case_step t3 on t2.execute_id = t3.execute_id
+        left join test_cycle_case_defect_rel t4 on t3.execute_step_id = t4.defect_link_id
+        left join test_case t5 on t5.case_id = t2.case_id
+        where t1.plan_id = #{planId}
+        and t4.issue_id is not null
+        <if test="issueIds != null and issueIds.size() > 0">
+            and t4.issue_id in
+            <foreach collection="issueIds" item="issueId" open="(" separator="," close=")">
+                #{issueId}
+            </foreach>
+        </if>
+        <if test="query != null">
+            <if test="query.caseSummary != null">
+                and t2.summary like concat(concat('%', #{query.caseSummary, jdbcType=VARCHAR}),'%')
+            </if>
+            <if test="query.executionStatus != null">
+                and t2.execution_status = #{query.executionStatus}
+            </if>
+        </if>
+    </select>
+
     <insert id="batchInsert">
         insert into test_cycle_case_defect_rel(defect_type,defect_link_id,issue_id,project_id,created_by,last_updated_by)
         values

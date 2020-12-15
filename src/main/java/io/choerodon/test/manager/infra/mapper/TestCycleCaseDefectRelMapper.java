@@ -36,4 +36,8 @@ public interface TestCycleCaseDefectRelMapper extends BaseMapper<TestCycleCaseDe
 
     Set<Long> selectIssueIdByPlanId(@Param("planId") Long planId,
                                     @Param("query") TestPlanReporterIssueVO query);
+
+    List<TestPlanReporterIssueVO> selectWithCaseByIssueIds(@Param("issueIds") List<Long> issueIds,
+                                                           @Param("planId") Long planId,
+                                                           @Param("query") TestPlanReporterIssueVO query);
 }

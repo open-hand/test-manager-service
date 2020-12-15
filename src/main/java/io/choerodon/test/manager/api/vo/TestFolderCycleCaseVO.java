@@ -3,7 +3,6 @@ package io.choerodon.test.manager.api.vo;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.persistence.Transient;
 
 import io.swagger.annotations.ApiModelProperty;
 
@@ -84,6 +83,16 @@ public class TestFolderCycleCaseVO {
     private String priorityColour;
 
     private BigDecimal sequence;
+    @Encrypt
+    private Long folderId;
+
+    public Long getFolderId() {
+        return folderId;
+    }
+
+    public void setFolderId(Long folderId) {
+        this.folderId = folderId;
+    }
 
     public String getPriorityColour() {
         return priorityColour;
