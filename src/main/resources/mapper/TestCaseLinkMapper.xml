@@ -42,6 +42,8 @@
             <id property="executeId" column="execute_id"/>
             <result property="summary" column="case_summary"/>
             <result property="executionStatus" column="execution_status"/>
+            <result property="caseId" column="case_id"/>
+            <result property="folderId" column="folder_id"/>
         </collection>
     </resultMap>
 
@@ -51,13 +53,22 @@
         t3.issue_id,
         t2.summary as case_summary,
         t2.execute_id,
-        t2.execution_status
+        t2.execution_status,
+        t2.case_id,
+        t4.folder_id
         from test_cycle t1
         left join test_cycle_case t2
         on t1.cycle_id = t2.cycle_id
         left join test_case_link t3 on t2.case_id = t3.link_case_id
+        left join test_case t4 on t4.case_id = t2.case_id
         where t1.plan_id = #{planId}
         and t3.issue_id is not null
+        <if test="issueIds != null and issueIds.size() > 0">
+            and t3.issue_id in
+            <foreach collection="issueIds" item="issueId" open="(" separator="," close=")">
+                #{issueId}
+            </foreach>
+        </if>
         <if test="query != null">
             <if test="query.caseSummary != null">
                 and t2.summary like concat(concat('%', #{query.caseSummary, jdbcType=VARCHAR}),'%')
@@ -68,5 +79,7 @@
         </if>
         order by t3.issue_id desc
     </select>
+
+
 
 </mapper>

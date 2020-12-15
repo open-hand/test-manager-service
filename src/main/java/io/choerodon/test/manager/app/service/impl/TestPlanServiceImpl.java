@@ -94,6 +94,10 @@ public class TestPlanServiceImpl implements TestPlanService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestPlanServiceImpl.class);
 
+    private static final String ISSUE = "issue";
+    private static final String BUG = "bug";
+
+
     @Override
     public TestPlanVO update(Long projectId, TestPlanVO testPlanVO) {
         TestPlanDTO testPlan = testPlanMapper.selectByPrimaryKey(testPlanVO.getPlanId());
@@ -392,10 +396,15 @@ public class TestPlanServiceImpl implements TestPlanService {
         if (issueIds.isEmpty()) {
             return PageUtil.empty(pageRequest);
         }
-        return pagedQueryByIssueIds(projectId, planId, pageRequest, query, issueIds);
+        return pagedQueryByIssueIds(projectId, planId, pageRequest, query, issueIds, ISSUE);
     }
 
-    private Page<TestPlanReporterIssueVO> pagedQueryByIssueIds(Long projectId, Long planId, PageRequest pageRequest, TestPlanReporterIssueVO query, List<Long> issueIds) {
+    private Page<TestPlanReporterIssueVO> pagedQueryByIssueIds(Long projectId,
+                                                               Long planId,
+                                                               PageRequest pageRequest,
+                                                               TestPlanReporterIssueVO query,
+                                                               List<Long> issueIds,
+                                                               String queryType) {
         Page<IssueLinkVO> page;
         try {
             page = issueFeignClient
@@ -415,7 +424,7 @@ public class TestPlanServiceImpl implements TestPlanService {
             });
             Map<Long, UserMessageDTO> userMap = userService.queryUsersMap(new ArrayList<>(userId));
             List<Long> existedIssueIds = new ArrayList<>(issueMap.keySet());
-            List<TestPlanReporterIssueVO> issues = testCaseLinkMapper.selectWithCaseByIssueIds(existedIssueIds, planId, query);
+            List<TestPlanReporterIssueVO> issues = queryIssue(existedIssueIds, planId, query, queryType);
             List<TestPlanReporterIssueVO> result = new ArrayList<>();
             issues.forEach(r -> {
                 Long issueId = r.getIssueId();
@@ -438,6 +447,19 @@ public class TestPlanServiceImpl implements TestPlanService {
         }
     }
 
+    private List<TestPlanReporterIssueVO> queryIssue(List<Long> existedIssueIds,
+                                                     Long planId,
+                                                     TestPlanReporterIssueVO query,
+                                                     String queryType) {
+        if (ISSUE.equals(queryType)) {
+            return testCaseLinkMapper.selectWithCaseByIssueIds(existedIssueIds, planId, query);
+        } else if (BUG.equals(queryType)) {
+            return testCycleCaseDefectRelMapper.selectWithCaseByIssueIds(existedIssueIds, planId, query);
+        } else {
+            throw new CommonException("error.illegal.query.type." + queryType);
+        }
+    }
+
     @Override
     public Page<TestPlanReporterIssueVO> pagedQueryBugs(Long projectId,
                                                         Long planId,
@@ -447,7 +469,7 @@ public class TestPlanServiceImpl implements TestPlanService {
         if (bugIds.isEmpty()) {
             return PageUtil.empty(pageRequest);
         }
-        return pagedQueryByIssueIds(projectId, planId, pageRequest, query, new ArrayList<>(bugIds));
+        return pagedQueryByIssueIds(projectId, planId, pageRequest, query, new ArrayList<>(bugIds), BUG);
     }
 
     private Long queryFailedStatusId(Long projectId) {
