@@ -88,7 +88,7 @@ const BugTable: React.FC = () => {
       <div>
         <div className={styles.header}>
           缺陷
-          <Tip title="缺陷" />
+          <Tip title="测试执行所关联的缺陷" />
         </div>
         <Table
           dataSet={dataSet}
@@ -122,7 +122,6 @@ const BugTable: React.FC = () => {
           <Column name="assignee" width={150} style={{ color: 'rgba(0, 0, 0, 0.65)' }} renderer={renderAssignee} />
           <Column
             name="testFolderCycleCases"
-            style={{ color: 'rgba(0, 0, 0, 0.65)' }}
             renderer={({ value }) => (
               <div>
                 {/* @ts-ignore */}
