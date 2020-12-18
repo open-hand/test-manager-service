@@ -15,7 +15,7 @@ import { renderStatus, renderAssignee } from './renderer';
 import context from '../../context';
 import Card from '../card';
 import styles from './index.less';
-import { issueLink } from '../../../../../../common/utils';
+import { issueLink, executeDetailLink } from '../../../../../../common/utils';
 
 const { Column } = Table;
 const lineHeight = 25;
@@ -130,7 +130,10 @@ const BugTable: React.FC = () => {
                     style={style}
                     className="c7n-test-table-cell-click"
                     onClick={() => {
-                      history.push(issueLink(v.caseId, 'issue_test', v.caseNum, v.folderId));
+                      history.push(executeDetailLink(v.executeId, {
+                        plan_id: planId,
+                        cycle_id: '',
+                      }));
                     }}
                   >
                     {v.summary}
