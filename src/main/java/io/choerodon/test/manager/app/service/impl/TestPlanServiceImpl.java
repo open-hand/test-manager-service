@@ -387,11 +387,6 @@ public class TestPlanServiceImpl implements TestPlanService {
                                                           Long planId,
                                                           PageRequest pageRequest,
                                                           TestPlanReporterIssueVO query) {
-        Long failedStatusId = queryFailedStatusId(projectId);
-        if (failedStatusId == null) {
-            throw new CommonException("error.test.status.not.existed.name." + "失败");
-        }
-        query.setExecutionStatus(failedStatusId);
         List<Long> issueIds = testCaseLinkMapper.selectIssueIdByPlanId(planId, query);
         if (issueIds.isEmpty()) {
             return PageUtil.empty(pageRequest);
@@ -405,6 +400,12 @@ public class TestPlanServiceImpl implements TestPlanService {
                                                                TestPlanReporterIssueVO query,
                                                                List<Long> issueIds,
                                                                String queryType) {
+        String statusName = "通过";
+        Long statusId = queryStatusIdByName(projectId, statusName);
+        if (statusId == null) {
+            throw new CommonException("error.test.status.not.existed.name." + statusName);
+        }
+        query.setPassStatusId(statusId);
         Page<IssueLinkVO> page;
         try {
             page = issueFeignClient
@@ -438,6 +439,16 @@ public class TestPlanServiceImpl implements TestPlanService {
                     r.setAssignee(userMap.get(assigneeId));
                 }
                 r.setStatusMapVO(issue.getStatusVO());
+                int count = 0;
+                List<TestFolderCycleCaseVO> caseList = r.getTestFolderCycleCases();
+                if (!ObjectUtils.isEmpty(caseList)) {
+                    for (TestFolderCycleCaseVO t : caseList) {
+                        if (query.getPassStatusId().equals(t.getExecutionStatus())) {
+                            count++;
+                        }
+                    }
+                }
+                r.setPassedCaseCount(count);
                 result.add(r);
             });
             return PageUtils.copyPropertiesAndResetContent(page, result);
@@ -465,6 +476,7 @@ public class TestPlanServiceImpl implements TestPlanService {
                                                         Long planId,
                                                         PageRequest pageRequest,
                                                         TestPlanReporterIssueVO query) {
+
         Set<Long> bugIds = testCycleCaseDefectRelMapper.selectIssueIdByPlanId(planId, query);
         if (bugIds.isEmpty()) {
             return PageUtil.empty(pageRequest);
@@ -472,11 +484,11 @@ public class TestPlanServiceImpl implements TestPlanService {
         return pagedQueryByIssueIds(projectId, planId, pageRequest, query, new ArrayList<>(bugIds), BUG);
     }
 
-    private Long queryFailedStatusId(Long projectId) {
+    private Long queryStatusIdByName(Long projectId, String name) {
         TestStatusDTO dto = new TestStatusDTO();
         dto.setProjectId(projectId);
         dto.setStatusType("CYCLE_CASE");
-        dto.setStatusName("失败");
+        dto.setStatusName(name);
         List<TestStatusDTO> result =testStatusMapper.queryAllUnderProject(dto);
         if (result.isEmpty()) {
             return null;
