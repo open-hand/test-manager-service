@@ -34,6 +34,7 @@ class TestReportStore {
     relatedIssueCount: number
     totalBugCount: number
     solvedBugCount: number
+    passedCaseCount: number
   } = {
     manager: null,
     startDate: '',
@@ -42,6 +43,7 @@ class TestReportStore {
     relatedIssueCount: 0,
     totalBugCount: 0,
     solvedBugCount: 0,
+    passedCaseCount: 0,
   };
 
   @action

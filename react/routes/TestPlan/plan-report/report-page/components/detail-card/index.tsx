@@ -24,6 +24,7 @@ const DetailCard: React.FC<Props> = () => {
     endDate,
     totalCaseCount,
     relatedIssueCount,
+    passedCaseCount,
     totalBugCount,
     solvedBugCount,
   } = baseInfo;
@@ -36,10 +37,10 @@ const DetailCard: React.FC<Props> = () => {
         <DetailItem img={Clock} title="持续时间" content={`${startDate ? moment(startDate).format('YYYY-MM-DD') : '-'} ~ ${endDate ? moment(endDate).format('YYYY-MM-DD') : '-'}`} />
       </Card>
       <Card>
-        <DetailItem img={Analytics} title="测试执行" content={totalCaseCount} />
+        <DetailItem img={Server} title="测试通过/总关联问题" content={`${passedCaseCount || 0}/${relatedIssueCount || 0}`} />
       </Card>
       <Card>
-        <DetailItem img={Server} title="关联问题" content={relatedIssueCount} />
+        <DetailItem img={Analytics} title="测试执行" content={totalCaseCount} />
       </Card>
       <Card>
         <DetailItem img={Bug} title="产生缺陷" content={totalBugCount} />
