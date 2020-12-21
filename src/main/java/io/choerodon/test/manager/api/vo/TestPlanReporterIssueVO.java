@@ -31,6 +31,26 @@ public class TestPlanReporterIssueVO {
 
     private Long executionStatus;
 
+    private Long passStatusId;
+
+    private Integer passedCaseCount;
+
+    public Integer getPassedCaseCount() {
+        return passedCaseCount;
+    }
+
+    public void setPassedCaseCount(Integer passedCaseCount) {
+        this.passedCaseCount = passedCaseCount;
+    }
+
+    public Long getPassStatusId() {
+        return passStatusId;
+    }
+
+    public void setPassStatusId(Long passStatusId) {
+        this.passStatusId = passStatusId;
+    }
+
     public String getCaseSummary() {
         return caseSummary;
     }
