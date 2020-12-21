@@ -1,16 +1,17 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
-import React, { useMemo, useContext } from 'react';
+import React, {
+  useMemo, useContext, useEffect,
+} from 'react';
 import { Table, DataSet, Tooltip } from 'choerodon-ui/pro';
 import { observer } from 'mobx-react-lite';
 import { useHistory } from 'react-router-dom';
-// @ts-ignore
-import Tip from '@/components/Tip';
 // @ts-ignore
 import StatusTag from '@/components/StatusTag';
 // @ts-ignore
 import { getProjectId } from '@/common/utils';
 import { find } from 'lodash';
+import { getStatusList } from '@/api/TestStatusApi';
 import { renderStatus, renderAssignee } from './renderer';
 import context from '../../context';
 import Card from '../card';
@@ -28,8 +29,11 @@ const BugTable: React.FC = () => {
   const { store } = useContext(context);
   const { planId, statusList } = store;
   const history = useHistory();
+  const statusDataSet = useMemo(() => new DataSet({
+    data: [],
+  }), []);
   const dataSet = useMemo(() => new DataSet({
-    autoQuery: true,
+    autoQuery: false,
     selection: false,
     transport: {
       read: () => ({
@@ -68,14 +72,29 @@ const BugTable: React.FC = () => {
       }),
       valueField: 'id',
       textField: 'name',
+    }, {
+      name: 'executionStatus',
+      label: '执行状态',
+      options: statusDataSet,
+      valueField: 'statusId',
+      textField: 'statusName',
     }],
-  }), [planId]);
+  }), [planId, statusDataSet]);
+  useEffect(() => {
+    (async () => {
+      const res = await getStatusList('CYCLE_CASE');
+      statusDataSet.loadData(res);
+      const failedStatus = find(res, ((status) => String(status.projectId) === '0' && status.statusName === '失败'));
+      if (failedStatus) {
+        dataSet?.queryDataSet?.current?.set('executionStatus', failedStatus.statusId);
+      }
+    })();
+  }, [dataSet, statusDataSet]);
   return (
     <Card className={styles.table_card}>
       <div>
         <div className={styles.header}>
-          未通过测试的问题项
-          <Tip title="测试执行失败的的用例所关联的问题项" />
+          关联的问题项
         </div>
         <Table
           dataSet={dataSet}
