@@ -280,7 +280,7 @@ public class TestCaseController {
                                                                        PageRequest pageRequest,
                                                                @ApiParam(value = "搜索内容")
                                                                @RequestParam(required = false) String content,
-                                                               @RequestParam("issueId") Long issueId) {
+                                                               @RequestParam("issueId") @Encrypt Long issueId) {
         return new ResponseEntity<>(testCaseService.queryCaseByContent(projectId, pageRequest, content, issueId), HttpStatus.OK);
     }
 
