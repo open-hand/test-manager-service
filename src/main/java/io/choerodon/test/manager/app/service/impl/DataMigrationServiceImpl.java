@@ -429,9 +429,9 @@ public class DataMigrationServiceImpl implements DataMigrationService {
                 continue;
             }
             if (CollectionUtils.isNotEmpty(entry.getValue())){
-                testCaseMapper.updatePriorityByProject(entry.getValue(), defaultPriority);
-                testCycleCaseMapper.updatePriorityByProject(entry.getValue(), defaultPriority);
-                logger.info("test case and cycle case priority fix: project list: [{}], fix completed", entry.getValue());
+                int caseCount = testCaseMapper.updatePriorityByProject(entry.getValue(), defaultPriority);
+                int cycleCaseCount = testCycleCaseMapper.updatePriorityByProject(entry.getValue(), defaultPriority);
+                logger.info("fix project ===>【{}】<=== priority, test case success: {}, test cycle case success: {}", entry.getValue(), caseCount, cycleCaseCount);
             }
             successCount++;
         }
