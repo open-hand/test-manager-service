@@ -95,4 +95,8 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             }
         }
     }
+
+    changeSet(id: '2020-12-22-test-cycle-case-add-priority-id-default-value', author: 'kaiwen.li@hand-china.com') {
+        addDefaultValue(tableName: 'test_cycle_case', columnName:'priority_id', defaultValue: '0')
+    }
 }
