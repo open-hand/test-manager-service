@@ -32,7 +32,7 @@
         max-width: 100%;
         overflow: hidden;
         white-space: nowrap;
-        color: #000000;
+        color: #000;
         text-overflow: ellipsis;
       }
 
@@ -41,18 +41,17 @@
         max-width: 84%;
         overflow: hidden;
         white-space: nowrap;
-        color: #000000;
+        color: #000;
         text-overflow: ellipsis;
-
       }
 
       &-btn {
+        display: inline-block;
         margin-left: .08rem;
         // color: #fff;
-        cursor: pointer
+        cursor: pointer;
       }
     }
-
   }
 
   &-file {
@@ -61,11 +60,7 @@
     // display: flex;
     > span:first-child {
       height: max-content;
-
     }
-
-
-
   }
 
   .c7n-pro-select-required {
@@ -76,7 +71,6 @@
     .c7n-pro-output-required {
       background-color: transparent !important;
     }
-
   }
 
   table {
