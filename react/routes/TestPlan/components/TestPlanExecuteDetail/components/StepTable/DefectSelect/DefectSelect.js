@@ -74,9 +74,9 @@ function DefectSelect(props) {
       const deleteEle = oldList.filter((old) => !List.includes(old));
       // 如果issue已存在，调用删除接口
       if (defectIds.includes(deleteEle[0])
-        && _.find(defects, { issueId: Number(deleteEle[0]) })) {
+        && _.find(defects, { issueId: deleteEle[0] })) {
         // window.console.log(defects, oldList, deleteEle, List);
-        removeDefect(_.find(defects, { issueId: Number(deleteEle[0]) }).id);
+        removeDefect(_.find(defects, { issueId: deleteEle[0] }).id);
       }
       // window.console.log('delete');
     }
