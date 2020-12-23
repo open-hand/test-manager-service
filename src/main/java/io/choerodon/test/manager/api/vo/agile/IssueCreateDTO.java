@@ -50,6 +50,16 @@ public class IssueCreateDTO {
 
     private String epicName;
 
+    private List<IssueLinkCreateVO> issueLinkCreateVOList;
+
+    public List<IssueLinkCreateVO> getIssueLinkCreateVOList() {
+        return issueLinkCreateVOList;
+    }
+
+    public void setIssueLinkCreateVOList(List<IssueLinkCreateVO> issueLinkCreateVOList) {
+        this.issueLinkCreateVOList = issueLinkCreateVOList;
+    }
+
     public List<TestCaseLinkDTO> getTestCaseLinkDTOList() {
         return testCaseLinkDTOList;
     }
