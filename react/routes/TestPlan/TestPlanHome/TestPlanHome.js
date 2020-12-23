@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-bind */
 import React, {
   useCallback, useContext, useEffect,
 } from 'react';
@@ -5,7 +6,7 @@ import { observer } from 'mobx-react-lite';
 import { withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import {
-  Page, Header, Content, Breadcrumb, Choerodon,
+  Page, Header, Content, Breadcrumb, Choerodon, stores,
 } from '@choerodon/boot';
 import { Icon, Tabs, Card } from 'choerodon-ui';
 import { Modal, Button } from 'choerodon-ui/pro';
@@ -29,6 +30,8 @@ import testCaseEmpty from './testCaseEmpty.svg';
 import Store from '../stores';
 import './TestPlanHome.less';
 import { getDragRank, executeDetailLink } from '../../../common/utils';
+
+const { AppState } = stores;
 
 const { TabPane } = Tabs;
 const { confirm } = Modal;
@@ -130,8 +133,11 @@ function TestPlanHome({ history }) {
   const handleTableSummaryClick = (record) => {
     const lastIndexOf = testPlanStore.currentCycle.id.toString().lastIndexOf('%');
     const cycleId = lastIndexOf === -1 ? '' : testPlanStore.currentCycle.id.substring(lastIndexOf + 1);
-    const assignerId = testPlanStore.getFilters.assignUser;
+    let assignerId = testPlanStore.getFilters.assignUser;
     const { contents, searchArgs: { executionStatus, summary } } = testPlanStore.getSearchObj;
+    if (mainActiveTab === 'mineTestPlanTable') {
+      assignerId = AppState.userInfo.id.toString();
+    }
     const filters = {
       cycle_id: cycleId,
       plan_id: testPlanStore.getCurrentPlanId,

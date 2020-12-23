@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+/* eslint-disable react/jsx-no-bind */
+import React, { memo, useCallback, useState } from 'react';
 import { Choerodon } from '@choerodon/boot';
 import {
   Icon, Tooltip,
 } from 'choerodon-ui';
-import { Button, Select } from 'choerodon-ui/pro';
+import { Button, Select, Table } from 'choerodon-ui/pro';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
-import { Table } from 'choerodon-ui/pro';
+
 import { addDefects } from '../../../../../../api/ExecuteDetailApi';
 import './StepTable.less';
 import {
@@ -17,7 +18,7 @@ import DefectSelect from './DefectSelect';
 const { Text, Edit } = TextEditToggle;
 const { Column } = Table;
 
-const DefectSelectText = ({
+const DefectSelectText = memo(({
   defects, record, visibleDel, onDelete, children: text, isShowContent = true, // 是否展示空白文本内容
 }) => {
   const DefectItem = ({ children, data, delBtnVisible = true }) => (
@@ -43,10 +44,9 @@ const DefectSelectText = ({
       </li>
     </Tooltip>
   );
-
   if (defects && defects.length > 0) {
     return (
-      <ul className="c7n-test-execute-detail-step-table-defects">
+      <ul role="none" className="c7n-test-execute-detail-step-table-defects">
         {
           defects.map((defect) => defect.issueInfosVO && (
             <DefectItem data={defect} delBtnVisible={visibleDel}>
@@ -56,11 +56,11 @@ const DefectSelectText = ({
         }
       </ul>
     );
-  } else if (isShowContent) {
+  } if (isShowContent) {
     return <div style={{ width: 100, color: '#3f51b5' }}>{text}</div>;
   }
   return '';
-};
+});
 
 function StepTable(props) {
   const {
@@ -108,9 +108,8 @@ function StepTable(props) {
   const getActionHidden = () => {
     if (operateStatus && dataSet.length !== 0) {
       return false;
-    } else {
-      return true;
     }
+    return true;
   };
   function renderAction({ record }) {
     return (
@@ -186,7 +185,7 @@ function StepTable(props) {
   };
   /**
    * 渲染缺陷 缺陷只在进行中可增添
-   * @param {*} param0 
+   * @param {*} param0
    */
   function renderDefects({ record, value: defects }) {
     const disabled = !operateStatus;// 用于未完成 已完成 禁止操作
@@ -234,14 +233,13 @@ function StepTable(props) {
   }
   /**
    * 渲染文字部分 无文字显示 -
-   * @param {*} param0 
+   * @param {*} param0
    */
   function renderText({ value }) {
     if (value) {
       return value;
-    } else {
-      return '-';
     }
+    return '-';
   }
   function renderStatus({ value }) {
     const status = testStatusDataSet.toData().length === 0 ? {} : testStatusDataSet.toData().find((item) => item.statusId === value);
