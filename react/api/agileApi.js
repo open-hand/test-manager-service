@@ -55,7 +55,7 @@ export function getIssuesForDefects(summary, { page = 1, size = 20 } = {}) {
   return new Promise(((resolve) => {
     getIssueTypes('agile').then((types) => {
       const advancedSearchArgs = {
-        issueTypeId: types.filter(type => type.typeCode === 'bug').map(type => type.id),
+        issueTypeId: types.filter((type) => type.typeCode === 'bug').map((type) => type.id),
       };
       const searchArgs = {};
       if (summary) {
@@ -95,7 +95,7 @@ export function getIssueCount(search) {
   return new Promise(((resolve) => {
     getIssueTypes('test').then((types) => {
       const advancedSearchArgs = {
-        issueTypeId: types.map(type => type.id),
+        issueTypeId: types.map((type) => type.id),
       };
       const searchArgs = {};
       resolve(getIssues({ advancedSearchArgs, searchArgs }));
@@ -150,7 +150,6 @@ export function getEpics() {
 export function getSprintsUnClosed() {
   return request.get(`/agile/v1/projects/${getProjectId()}/sprint/unclosed`);
 }
-
 
 export function createIssue(issueObj, projectId = getProjectId()) {
   const issue = {
