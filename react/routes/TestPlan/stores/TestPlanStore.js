@@ -206,7 +206,7 @@ class TestPlanStore extends TestPlanTreeStore {
       orderField: '',
       orderType: '',
     };
-    this.testPlanStatus = 'todo';
+    this.testPlanStatus = 'doing';
     this.planInfo = {};
     this.statusRes = {};
     this.mainActiveTab = 'testPlanTable';
@@ -225,9 +225,8 @@ class TestPlanStore extends TestPlanTreeStore {
       }
       if (moment(aData.data.fromDate).isBefore(moment(bData.data.fromDate))) {
         return -1;
-      } else {
-        return 1;
       }
+      return 1;
     });
     this.treeData.treeFolder[root.index].isSort = true;
     this.treeData.treeFolder[root.index].children.splice(0, newChildren.length, ...newChildren);

@@ -282,9 +282,9 @@ function TestPlanHome({ history }) {
     const defaultTreeQueryParams = localPageCacheStore.getItem('testPlan.table.queryParams');
     if (defaultTreeActiveTab) {
       testPlanStore.setTestPlanStatus(defaultTreeActiveTab);
-      testPlanStore.setCurrentCycle(defaultTreeSelected || {});
       testPlanStore.setFilter({});
     }
+    defaultTreeSelected && testPlanStore.setCurrentCycle(defaultTreeSelected || {});
     if (defaultTableActiveTab) {
       testPlanStore.setMainActiveTab(defaultTableActiveTab);
     }
