@@ -280,7 +280,7 @@ function TestPlanHome({ history }) {
     const defaultTreeSelected = localPageCacheStore.getItem('testPlan.tree.selected');
     const defaultTableActiveTab = localPageCacheStore.getItem('testPlan.table.activeTab');
     const defaultTreeQueryParams = localPageCacheStore.getItem('testPlan.table.queryParams');
-    if (defaultTableActiveTab) {
+    if (defaultTreeActiveTab) {
       testPlanStore.setTestPlanStatus(defaultTreeActiveTab);
       testPlanStore.setCurrentCycle(defaultTreeSelected || {});
       testPlanStore.setFilter({});
