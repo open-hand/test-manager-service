@@ -22,6 +22,5 @@ public class TestManagerServiceApplication {
         SpringApplication.run(TestManagerServiceApplication.class, args);
     }
     
-    
 }
 

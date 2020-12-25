@@ -27,14 +27,14 @@ function DefectSelect(props) {
       case 'loaded':
         return {
           ...state,
-          canLoadMore: issueData.hasNextPage,
+          canLoadMore: (issueData.total / issueData.size) > issueData.pageNum,
           issueList: [...state.issueList, ...issueData.list],
           selectLoading: false,
           page: issueData.pageNum,
         };
       case 'filterLoaded':
         return {
-          canLoadMore: issueData.hasNextPage,
+          canLoadMore: (issueData.total / issueData.size) > issueData.pageNum,
           issueList: [...issueData.list],
           selectLoading: false,
           searchValue,
@@ -74,9 +74,9 @@ function DefectSelect(props) {
       const deleteEle = oldList.filter((old) => !List.includes(old));
       // 如果issue已存在，调用删除接口
       if (defectIds.includes(deleteEle[0])
-        && _.find(defects, { issueId: Number(deleteEle[0]) })) {
+        && _.find(defects, { issueId: deleteEle[0] })) {
         // window.console.log(defects, oldList, deleteEle, List);
-        removeDefect(_.find(defects, { issueId: Number(deleteEle[0]) }).id);
+        removeDefect(_.find(defects, { issueId: deleteEle[0] }).id);
       }
       // window.console.log('delete');
     }
@@ -110,11 +110,8 @@ function DefectSelect(props) {
 
   // eslint-disable-next-line consistent-return
   const renderLoadMore = (
-    <Option key="SelectFocusLoad-loadMore" className="SelectFocusLoad-loadMore" disabled>
-      {
-        canLoadMore ? <Button type="primary" style={{ textAlign: 'left', width: '100%', background: 'transparent' }} onClick={loadMore}>更多</Button>
-          : `${selectLoading ? '' : '到底啦'}`
-      }
+    <Option key="SelectFocusLoad-loadMore" className="SelectFocusLoad-loadMore" disabled style={{ display: canLoadMore ? 'block' : 'none' }}>
+      <Button type="primary" style={{ textAlign: 'left', width: '100%', background: 'transparent' }} onClick={loadMore}>更多</Button>
     </Option>
   );
   const loadFilterData = (value) => {

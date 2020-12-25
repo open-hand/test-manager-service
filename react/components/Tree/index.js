@@ -4,6 +4,7 @@ import React, {
 import PropTypes from 'prop-types';
 import { find, pickBy } from 'lodash';
 import { Choerodon } from '@choerodon/boot';
+import { useControllableValue } from 'ahooks';
 import Tree, {
   mutateTree,
   moveItemOnTree,
@@ -89,44 +90,47 @@ function PureTree({
   useEffect(() => {
     setTree(mapDataToTree(data));
   }, [data]);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useControllableValue(restProps, {
+    defaultValue: '',
+    valuePropName: 'search',
+    trigger: 'onSearchChange',
+  });
   const previous = usePrevious(selected);
   const filteredTree = useMemo(() => {
     if (!search || !searchAutoFilter) {
       return tree;
-    } else {
-      const filtered = { ...tree, items: {} };
-      const matchedMap = new Map();
-      const setMatch = (itemId) => {        
-        matchedMap.set(itemId, true);
-        const item = tree.items[itemId];
-        if (item.children) {
-          item.children.forEach((childId) => {
-            setMatch(childId);
-          });
-        }
-        let current = findParent(tree, itemId);
-        while (current) {
-          matchedMap.set(current.id, true);
-          current = findParent(tree, current.id);
-        }
-      };
-      Object.keys(tree.items).forEach((key) => {
-        if (tree.items[key].isMatch) {
-          setMatch(key);
-        }
-      });
-      Object.keys(tree.items).forEach((key) => {
-        if (matchedMap.has(key)) {
-          const item = { ...tree.items[key] };
-          if (item.children) {
-            item.children = item.children.slice().filter((c) => matchedMap.has(c));
-          }
-          filtered.items[key] = item;
-        }
-      });
-      return filtered;
     }
+    const filtered = { ...tree, items: {} };
+    const matchedMap = new Map();
+    const setMatch = (itemId) => {
+      matchedMap.set(itemId, true);
+      const item = tree.items[itemId];
+      if (item.children) {
+        item.children.forEach((childId) => {
+          setMatch(childId);
+        });
+      }
+      let current = findParent(tree, itemId);
+      while (current) {
+        matchedMap.set(current.id, true);
+        current = findParent(tree, current.id);
+      }
+    };
+    Object.keys(tree.items).forEach((key) => {
+      if (tree.items[key].isMatch) {
+        setMatch(key);
+      }
+    });
+    Object.keys(tree.items).forEach((key) => {
+      if (matchedMap.has(key)) {
+        const item = { ...tree.items[key] };
+        if (item.children) {
+          item.children = item.children.slice().filter((c) => matchedMap.has(c));
+        }
+        filtered.items[key] = item;
+      }
+    });
+    return filtered;
   }, [search, searchAutoFilter, tree]);
   const flattenedTree = useMemo(() => flattenTree(filteredTree), [filteredTree]);
 
@@ -345,10 +349,11 @@ function PureTree({
 
   const isEmpty = flattenedTree.length === 0;
   return (
-    <div className={prefix}>      
+    <div className={prefix}>
       <>
         <div className={`${prefix}-top`}>
           <FilterInput
+            value={search}
             onChange={filterTree}
           />
         </div>

@@ -53,7 +53,7 @@ public interface TestCaseMapper extends BaseMapper<TestCaseDTO> {
 
     List<Long> selectALLProjectId();
 
-    void updatePriorityByProject(@Param("projectIds") List<Long> projectIds, @Param("priorityId") Long priorityId);
+    int updatePriorityByProject(@Param("projectIds") List<Long> projectIds, @Param("priorityId") Long priorityId);
 
     List<TestCaseVO> queryCaseByContent(@Param("projectId") Long projectId, @Param("content") String content, @Param("issueId") Long issueId);
 

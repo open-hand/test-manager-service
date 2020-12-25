@@ -2,6 +2,27 @@
 
 All notable changes to choerodon-front-agile will be documented in this file.
 
+## [0.24.0] - 2020-12-24
+
+### Added
+
+- Add test report of test plan
+  
+  
+### Changed
+
+- Issues support association or new test cases.
+  
+
+### Fixed
+
+- Fix test execution progress chart error.
+- Fix test execution new defects cannot be associated with the issues.
+- Fix test plan execution - the associated defects in the step need to click the delete button several times before they can be deleted.
+- Fix test plan execution - the drop-down box associated with the defect in the step has only the first page, and canceling the selected defect is invalid.
+
+
+
 ## [0.21.0] - 2020-03-06
 
 ### Add

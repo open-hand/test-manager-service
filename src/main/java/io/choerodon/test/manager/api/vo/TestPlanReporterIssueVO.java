@@ -23,12 +23,15 @@ public class TestPlanReporterIssueVO {
 
     private List<TestFolderCycleCaseVO> testFolderCycleCases;
 
+    @Encrypt
     private Long statusId;
 
+    @Encrypt
     private Long userId;
 
     private String caseSummary;
 
+    @Encrypt
     private Long executionStatus;
 
     private Long passStatusId;
