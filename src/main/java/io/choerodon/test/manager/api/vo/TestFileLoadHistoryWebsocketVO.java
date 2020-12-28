@@ -21,6 +21,16 @@ public class TestFileLoadHistoryWebsocketVO {
     @ApiModelProperty(value = "错误消息编码")
     private String code;
 
+    private String message;
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
     public Long getId() {
         return id;
     }
