@@ -12,7 +12,7 @@ function updateRecordData(data, dataSet, executeHistoryDataSet, record, name, ol
     executeHistoryDataSet.query();
   }).catch((error) => {
     window.console.log(error);
-    record.set(name, oldValue);
+    // record.set(name, oldValue);
     Choerodon.prompt('网络错误');
   });
 }
@@ -62,7 +62,7 @@ function StepTableDataSet(projectId, orgId, intl, caseId, testStatusDataSet, exe
         //   data: {
         //     statusType: 'CASE_STEP',
         //   },
-        // }),  
+        // }),
       },
       {
         name: 'stepAttachment', type: 'object', label: stepAttachment,
@@ -89,9 +89,9 @@ function StepTableDataSet(projectId, orgId, intl, caseId, testStatusDataSet, exe
         const data = record.toData();
         switch (name) {
           case 'defects': {
-            const arrIDs = [...value].map(i => i.id); // 缺陷,附件使用
+            const arrIDs = [...value].map((i) => i.id); // 缺陷,附件使用
             if (value.length < oldValue.length) {
-              removeDefect(oldValue.find(item => !arrIDs.includes(item.id)).id).then(() => { executeHistoryDataSet.query(); }).catch((error) => {
+              removeDefect(oldValue.find((item) => !arrIDs.includes(item.id)).id).then(() => { executeHistoryDataSet.query(); }).catch((error) => {
                 record.set(name, oldValue);
                 Choerodon.prompt(`${error || '网络异常'}`);
               });
@@ -103,7 +103,7 @@ function StepTableDataSet(projectId, orgId, intl, caseId, testStatusDataSet, exe
               break;
             }
             data.stepStatus = value;
-            const statusItem = testStatusDataSet.find(item => item.get('statusId') === value);
+            const statusItem = testStatusDataSet.find((item) => item.get('statusId') === value);
             data.statusName = statusItem.get('statusName');
             updateRecordData(data, dataSet, executeHistoryDataSet, record, name, oldValue);
             break;
@@ -114,9 +114,9 @@ function StepTableDataSet(projectId, orgId, intl, caseId, testStatusDataSet, exe
             break;
           }
           case 'stepAttachment': {
-            const arrIDs = [...value].map(i => i.id); // 缺陷,附件使用
+            const arrIDs = [...value].map((i) => i.id); // 缺陷,附件使用
             if (value.length < oldValue.length) {
-              deleteFile(oldValue.find(item => !arrIDs.includes(item.id)).id).then(() => {
+              deleteFile(oldValue.find((item) => !arrIDs.includes(item.id)).id).then(() => {
                 executeHistoryDataSet.query();
               }).catch((error) => {
                 window.console.log(error);
@@ -139,7 +139,7 @@ function StepTableDataSet(projectId, orgId, intl, caseId, testStatusDataSet, exe
         transformResponse: (res) => {
           if (typeof res === 'string') {
             const newRes = JSON.parse(res);
-            newRes.content.map(item => ({
+            newRes.content.map((item) => ({
               ...item,
               stepStatus: item.stepStatus === null ? 4 : item.stepStatus,
             }));
