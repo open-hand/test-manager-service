@@ -7,12 +7,15 @@ function updateRecordData(data, dataSet, executeHistoryDataSet, record, name, ol
   delete data.defects;
   // eslint-disable-next-line no-param-reassign
   delete data.stepAttachment;
+  dataSet.setEditStatus && dataSet.setEditStatus(true);
   editCycleStep(data).then(() => {
     dataSet.query(dataSet.currentPage);
     executeHistoryDataSet.query();
+    dataSet.setEditStatus && dataSet.setEditStatus(false);
   }).catch((error) => {
     window.console.log(error);
     // record.set(name, oldValue);
+    dataSet.setEditStatus && dataSet.setEditStatus(false);
     Choerodon.prompt('网络错误');
   });
 }
