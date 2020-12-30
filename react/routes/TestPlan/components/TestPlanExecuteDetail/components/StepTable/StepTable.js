@@ -1,5 +1,7 @@
 /* eslint-disable react/jsx-no-bind */
-import React, { memo, useCallback, useState } from 'react';
+import React, {
+  memo, useCallback, useEffect, useState,
+} from 'react';
 import { Choerodon } from '@choerodon/boot';
 import {
   Icon, Tooltip,
@@ -67,12 +69,14 @@ function StepTable(props) {
     dataSet, ExecuteDetailStore, readOnly = false, operateStatus = false, testStatusDataSet, updateHistory,
   } = props;
   const [lock, setLock] = useState('right');
+  const [editing, setEditing] = useState();
   /**
    * 对当前页刷新
    */
   const onRefreshCurrent = () => {
     dataSet.query(dataSet.currentPage);
     updateHistory();
+    setEditing(false);
   };
   /**
    * 更新表格的高度 防止lock列高度不变
@@ -85,6 +89,7 @@ function StepTable(props) {
   const onQuickPassOrFail = (code, record) => {
     const status = _.find(testStatusDataSet.toData(), { projectId: 0, statusName: code });
     if (status) {
+      // setEditing(true);
       record.set('stepStatus', status.statusId);
     } else {
       Choerodon.prompt('未找到对应状态');
@@ -115,10 +120,10 @@ function StepTable(props) {
     return (
       <>
         <Tooltip title={<FormattedMessage id="execute_quickPass" />}>
-          <Button key="pass" disabled={getActionHidden()} shape="circle" funcType="flat" icon="check_circle" onClick={onQuickPassOrFail.bind(this, '通过', record)} />
+          <Button key="pass" disabled={editing || getActionHidden()} shape="circle" funcType="flat" icon="check_circle" onClick={onQuickPassOrFail.bind(this, '通过', record)} />
         </Tooltip>
         <Tooltip title={<FormattedMessage id="execute_quickFail" />}>
-          <Button key="fail" disabled={getActionHidden()} shape="circle" funcType="flat" icon="cancel" onClick={onQuickPassOrFail.bind(this, '失败', record)} />
+          <Button key="fail" disabled={editing || getActionHidden()} shape="circle" funcType="flat" icon="cancel" onClick={onQuickPassOrFail.bind(this, '失败', record)} />
         </Tooltip>
       </>
     );
@@ -250,16 +255,18 @@ function StepTable(props) {
   function renderIndex({ record }) {
     return record.index + 1;
   }
-
+  useEffect(() => {
+    dataSet.setEditStatus = setEditing;
+  }, [dataSet]);
   return (
     <Table dataSet={dataSet} queryBar="none" className="c7n-test-execute-detail-step-table" rowHeight="auto">
       <Column name="index" width={80} align="left" renderer={renderIndex} />
       <Column name="testStep" align="left" minWidth={200} tooltip="overflow" renderer={renderText} />
       <Column name="testData" align="left" minWidth={120} tooltip="overflow" renderer={renderText} />
       <Column name="expectedResult" align="left" minWidth={150} tooltip="overflow" renderer={renderText} />
-      <Column name="stepStatus" align="left" width={85} className="c7n-test-execute-detail-step-table-status" renderer={renderStatus} editor={operateStatus && <Select optionRenderer={renderStatus} />} />
+      <Column name="stepStatus" align="left" width={85} className="c7n-test-execute-detail-step-table-status" renderer={renderStatus} editor={!editing && operateStatus && <Select optionRenderer={renderStatus} />} />
       <Column name="stepAttachment" renderer={renderAttachment} align="left" width={200} />
-      <Column name="description" editor={!readOnly} align="left" tooltip="overflow" renderer={renderText} />
+      <Column name="description" editor={!editing && !readOnly} align="left" tooltip="overflow" renderer={renderText} />
       <Column name="defects" renderer={renderDefects} width={230} />
       <Column name="action" width={100} lock={lock} renderer={renderAction} hidden={getActionHidden()} />
     </Table>

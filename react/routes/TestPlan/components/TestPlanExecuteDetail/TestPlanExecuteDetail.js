@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-bind */
 import React, {
   useEffect, useContext, useState, useRef, useReducer,
 } from 'react';
@@ -6,9 +7,10 @@ import {
 } from 'choerodon-ui';
 import {
   Page, Header, Content, Breadcrumb,
+  Choerodon,
 } from '@choerodon/boot';
 import JsonBig from 'json-bigint';
-import { Choerodon } from '@choerodon/boot';
+
 import { observer } from 'mobx-react-lite';
 import { withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
@@ -93,6 +95,7 @@ function TestPlanExecuteDetail(props) {
     }
     const detailData = ExecuteDetailStore.getDetailData;
     const newData = { ...detailData, ...updateData };
+    ExecuteDetailStore.enterLoading();
     updateDetail(newData).then(() => {
       ExecuteDetailStore.getInfo();
       executeHistoryDataSet.query();
@@ -108,6 +111,7 @@ function TestPlanExecuteDetail(props) {
       const statusItem = _.find(statusList, { projectId: 0, statusName: text }) || {};
       detailData.executionStatus = statusItem.statusId;
       detailData.executionStatusName = statusItem.statusName;
+      ExecuteDetailStore.enterLoading();
       updateDetail(detailData).then(() => {
         ExecuteDetailStore.getInfo();
         executeHistoryDataSet.query();
@@ -142,8 +146,8 @@ function TestPlanExecuteDetail(props) {
 
   /**
    * 批量删除已上传文件（修改用例 保存）
-   * 
-   * @param {*} files 
+   *
+   * @param {*} files
    */
   async function deleteFiles(files = []) {
     files.forEach((file) => {
@@ -153,7 +157,7 @@ function TestPlanExecuteDetail(props) {
   }
   /**
    * 更新执行用例数据
-   * @param {*} data 
+   * @param {*} data
    */
   function UpdateExecuteData(data) {
     const { executeId } = data;
