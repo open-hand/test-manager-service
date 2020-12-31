@@ -409,4 +409,21 @@
             project_id = #{projectId}
         AND plan_id = #{planId}
     </select>
+
+    <select id="selectAndOrderByIds" resultType="io.choerodon.test.manager.infra.dto.TestCycleDTO">
+        SELECT
+            cycle_id,
+            object_version_number
+        FROM test_cycle
+        WHERE project_id = #{projectId}
+        AND cycle_id IN
+        <foreach collection="cycleIds" item="cycleId" open="(" separator="," close=")">
+            #{cycleId}
+        </foreach>
+        ORDER BY CASE cycle_id
+        <foreach collection="cycleIds" item="cycleId" index="index">
+            WHEN #{cycleId} THEN #{index}
+        </foreach>
+        END
+    </select>
 </mapper>

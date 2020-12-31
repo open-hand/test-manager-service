@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.api.controller.v1;
 
+import java.util.List;
 import java.util.Optional;
 
 import io.choerodon.core.iam.ResourceLevel;
@@ -10,6 +11,7 @@ import io.choerodon.test.manager.api.vo.TestCycleVO;
 import io.choerodon.test.manager.api.vo.TestTreeIssueFolderVO;
 import io.choerodon.test.manager.app.service.TestCycleService;
 import io.choerodon.test.manager.app.service.TestPlanService;
+import io.choerodon.test.manager.infra.dto.TestCycleDTO;
 import io.swagger.annotations.ApiOperation;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,11 +74,13 @@ public class TestCycleController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("移动文件夹")
     @PutMapping("/move")
-    public ResponseEntity<String> moveFolder(@PathVariable(name = "project_id") Long projectId,
-                                             @RequestParam(name = "target_cycle_id", required = false)
-                                             @Encrypt Long targetCycleId,
-                                             @RequestBody TestCycleVO testCycleVO) {
-        return Optional.ofNullable(testCycleService.moveCycle(projectId, targetCycleId, testCycleVO))
+    public ResponseEntity<List<TestCycleDTO>> moveFolder(@PathVariable(name = "project_id") Long projectId,
+                                                         @RequestParam(name = "target_cycle_id", required = false)
+                                                         @Encrypt Long targetCycleId,
+                                                         @RequestParam(name = "last_moved_cycle_id")
+                                                         @Encrypt Long lastMovedCycleId,
+                                                         @RequestBody TestCycleVO testCycleVO) {
+        return Optional.ofNullable(testCycleService.batchMoveCycle(projectId, targetCycleId, lastMovedCycleId, testCycleVO))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.cycle.move"));
     }
