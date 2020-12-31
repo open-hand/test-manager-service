@@ -30,7 +30,6 @@ import {
 } from './components';
 import Store from './stores';
 import EditExecuteIssue from './components/EditExecuteIssue';
-import StepTableDataSet from './stores/StepTableDataSet';
 import AutoHeightPrecondition from './components/auto-height-precondition';
 
 const CardWrapper = ({
