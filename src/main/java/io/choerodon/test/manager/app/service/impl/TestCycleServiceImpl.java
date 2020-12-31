@@ -250,7 +250,7 @@ public class TestCycleServiceImpl implements TestCycleService {
     }
 
     @Override
-    public String moveCycle(Long projectId, Long targetCycleId, TestCycleVO testCycleVO) {
+    public List<TestCycleDTO> batchMoveCycle(Long projectId, Long targetCycleId, Long lastMovedCycleId, TestCycleVO testCycleVO) {
         //设置根节点
         if (ObjectUtils.isEmpty(targetCycleId)) {
             targetCycleId = 0L;
@@ -261,15 +261,27 @@ public class TestCycleServiceImpl implements TestCycleService {
         if (!CollectionUtils.isEmpty(testCycleCaseDTOS)) {
             throw new CommonException("error.issueFolder.has.case");
         }
-        TestCycleDTO testCycleDTO = cycleMapper.selectByPrimaryKey(testCycleVO.getCycleId());
-        testCycleDTO.setParentCycleId(targetCycleId);
-        if (ObjectUtils.isEmpty(testCycleVO.getLastRank()) && ObjectUtils.isEmpty(testCycleVO.getNextRank())) {
-            testCycleDTO.setRank(RankUtil.Operation.INSERT.getRank(testCycleVO.getLastRank(), testCycleVO.getNextRank()));
-        } else {
-            testCycleDTO.setRank(RankUtil.Operation.UPDATE.getRank(testCycleVO.getLastRank(), testCycleVO.getNextRank()));
+
+        String lastRank = testCycleVO.getLastRank();
+        String nextRank = null;
+        List<TestCycleDTO> testCycleDTOList = cycleMapper.selectAndOrderByIds(projectId, testCycleVO.getCycleIds());
+
+        for (TestCycleDTO testCycleDTO : testCycleDTOList) {
+
+            testCycleDTO.setParentCycleId(targetCycleId);
+            //为批量移动的最后一个cycle设置nextRank
+            if (Objects.equals(testCycleDTO.getCycleId(), lastMovedCycleId)) {
+                nextRank = testCycleVO.getNextRank();
+            }
+            if (ObjectUtils.isEmpty(lastRank) && ObjectUtils.isEmpty(nextRank)) {
+                testCycleDTO.setRank(RankUtil.Operation.INSERT.getRank(lastRank, nextRank));
+            } else {
+                testCycleDTO.setRank(RankUtil.Operation.UPDATE.getRank(lastRank, nextRank));
+            }
+            lastRank = testCycleDTO.getRank();
+            baseUpdate(testCycleDTO);
         }
-        baseUpdate(testCycleDTO);
-        return testCycleDTO.getRank();
+        return testCycleDTOList;
     }
 
     @Override

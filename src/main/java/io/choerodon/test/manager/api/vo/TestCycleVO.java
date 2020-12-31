@@ -81,6 +81,9 @@ public class TestCycleVO {
     @Encrypt
     private Long planId;
 
+    @Encrypt
+    private List<Long> cycleIds;
+
     public Long getCycleId() {
         return cycleId;
     }
@@ -263,5 +266,13 @@ public class TestCycleVO {
 
     public void setPlanId(Long planId) {
         this.planId = planId;
+    }
+
+    public List<Long> getCycleIds() {
+        return cycleIds;
+    }
+
+    public void setCycleIds(List<Long> cycleIds) {
+        this.cycleIds = cycleIds;
     }
 }
