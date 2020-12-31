@@ -156,11 +156,16 @@ function DefectSelect(props) {
             onClick={() => {
               handleSubmit(record);
               const { caseNum, summary, description } = ExecuteDetailStore.getDetailData;
-              const { testStep, testData, expectedResult } = record.toData();
               let newDescription = text2Delta(description);
-              const defaultDescription = [{ insert: '测试用例：\n' }, { insert: `${caseNum}-${summary}\n` },
-                { insert: '前置条件：\n' }, { insert: `测试步骤：${testStep}\n` }, { insert: `测试数据：${testData || '无'}\n` }, { insert: `预期结果：${expectedResult}\n` }];
               newDescription = Array.isArray(newDescription) ? newDescription : [{ insert: `${newDescription || ''}` }];
+              let defaultDescription = [{ insert: '测试用例：\n' }, { insert: `${caseNum}-${summary}\n` }, { insert: '前置条件：\n' }];
+              dataSet.toData().forEach((step, i, arr) => {
+                const { testStep, testData, expectedResult } = step;
+                defaultDescription = [...defaultDescription, ...[{ insert: `测试步骤：${testStep}\n` }, { insert: `测试数据：${testData || '无'}\n` }, { insert: `预期结果：${expectedResult}\n` }]];
+                if (i < arr.length - 1) {
+                  defaultDescription = [...defaultDescription, { insert: '\n' }];
+                }
+              });
               defaultDescription.splice(3, 0, ...newDescription, String(newDescription[newDescription.length - 1].insert).lastIndexOf('\n') === 0 ? { insert: '' } : { insert: '\n' });
               ExecuteDetailStore.setDefaultDefectDescription(defaultDescription);
               ExecuteDetailStore.setCreateBugShow(true);
