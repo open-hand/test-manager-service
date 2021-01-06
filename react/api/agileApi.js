@@ -58,10 +58,10 @@ export function getIssuesForDefects(summary, { page = 1, size = 20 } = {}) {
         issueTypeId: types.filter((type) => type.typeCode === 'bug').map((type) => type.id),
       };
       const searchArgs = {};
-      if (summary) {
-        searchArgs.summary = summary;
-      }
-      resolve(getIssues({ advancedSearchArgs, searchArgs }, { page, size }));
+      // if (summary) {
+      //   searchArgs.summary = summary;
+      // }
+      resolve(getIssues({ advancedSearchArgs, searchArgs, contents: summary ? [summary] : undefined }, { page, size }));
     });
   }));
 }

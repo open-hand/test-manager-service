@@ -7,6 +7,7 @@ import { handleRequestFailed } from '@/common/utils';
 import { getPlanTreeById, moveFolder } from '@/api/TestPlanApi';
 import Tree from '@/components/Tree';
 import './index.less';
+import TreePlanNode from './TreePlanNode';
 
 const key = Modal.key();
 
@@ -18,6 +19,14 @@ function DragPlanFolder({
   data,
 }) {
   const treeRef = useRef();
+  const renderTreeNode = (treeNode, { item }) => {
+    const { selected } = item;
+    return (
+      <TreePlanNode>
+        {treeNode}
+      </TreePlanNode>
+    );
+  };
   const handleDrag = useCallback(async (sourceItem, destination) => {
     const folderId = sourceItem.id;
     const { parentId } = destination;
@@ -46,6 +55,7 @@ function DragPlanFolder({
       ref={treeRef}
       data={data}
       selected={{}}
+      renderTreeNode={renderTreeNode}
       setSelected={() => { }}
       treeNodeProps={{
         enableAction: false,
@@ -86,7 +96,7 @@ export default async function openDragPlanFolder({ planId, handleOk, beforeOpen 
     },
     children: <ObserverDragPlanFolder data={data} />,
     okText: '关闭',
-    footer: okBtn => okBtn,
+    footer: (okBtn) => okBtn,
     onOk: handleOk,
   });
 }
