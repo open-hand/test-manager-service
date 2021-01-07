@@ -9,12 +9,12 @@ mvn org.apache.maven.plugins:maven-dependency-plugin:get \
 -Dtransitive=false
 
 java -Dspring.datasource.url="jdbc:mysql://localhost:3306/?serverTimezone=CTT&useUnicode=true&characterEncoding=utf-8&useSSL=false&useInformationSchema=true&remarks=true" \
- -Dspring.datasource.username=choerodon \
- -Dspring.datasource.password=123456 \
+ -Dspring.datasource.username=root \
+ -Dspring.datasource.password=root \
  -Dspring.datasource.driver-class-name=com.mysql.jdbc.Driver \
  -Dinstaller.datasources.platform.url="jdbc:mysql://localhost:3306/?useUnicode=true&characterEncoding=utf-8&useSSL=false&useInformationSchema=true&remarks=true" \
- -Dinstaller.datasources.platform.username=choerodon \
- -Dinstaller.datasources.platform.password=123456 \
+ -Dinstaller.datasources.platform.username=root \
+ -Dinstaller.datasources.platform.password=root \
  -Dinstaller.datasources.platform.driver-class-name=com.mysql.jdbc.Driver \
  -Ddata.init=true \
  -Dlogging.level.root=info \
