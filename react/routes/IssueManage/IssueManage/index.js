@@ -12,16 +12,17 @@ let tabs = [{
 }];
 
 export function inject({ tabs: otherTab }) {
+  console.log(otherTab)
   tabs = [...tabs, ...otherTab];
 }
 
 const { TabPane } = Tabs;
 const Test = (props) => {
   let filteredTabs = tabs;
-  const isNormalProject = AppState.currentMenuType?.category === 'AGILE';
-  if (isNormalProject) {
-    filteredTabs = isNormalProject ? tabs.filter(tab => tab.key !== 'api') : tabs;
-  }
+  // const isNormalProject = AppState.currentMenuType?.category === 'AGILE';
+  // if (isNormalProject) {
+  //   filteredTabs = isNormalProject ? tabs.filter(tab => tab.key !== 'api') : tabs;
+  // }
   const [activeKey, setActiveKey] = useState(filteredTabs[0].key);
   const Component = find(filteredTabs, { key: activeKey }).component;
 
