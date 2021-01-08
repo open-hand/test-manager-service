@@ -20,12 +20,12 @@ export function renderIssueNum(caseNum) {
 }
 /**
  *  自动化测试无法复制与删除
- * @param {*} record 
- * @param {*} history 
- * @param {*} reLoadTable 
+ * @param {*} record
+ * @param {*} history
+ * @param {*} reLoadTable
  */
 export function renderAction(record, history, reLoadTable) {
-  const { caseId, caseNum } = record;  
+  const { caseId, caseNum } = record;
   const handleDeleteIssue = () => {
     confirm({
       width: 560,
@@ -75,7 +75,7 @@ export function renderAction(record, history, reLoadTable) {
     </Menu>
   );
   return (
-    <Dropdown overlay={menu} trigger={['click']} getPopupContainer={trigger => trigger.parentNode}>
+    <Dropdown overlay={menu} trigger={['click']} getPopupContainer={(trigger) => trigger.parentNode}>
       <Button shape="circle" icon="more_vert" />
     </Dropdown>
   );
@@ -93,7 +93,7 @@ export function renderSummary(summary, record, onClick) {
         >
           <span
             onClick={() => onClick(record)}
-            className="c7n-table-issueTreeTtile-table-p-span"
+            className="c7n-agile-table-cell-click"
           >
             {summary}
           </span>

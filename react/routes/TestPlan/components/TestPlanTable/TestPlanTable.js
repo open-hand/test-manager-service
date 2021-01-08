@@ -118,7 +118,7 @@ const TestPlanTable = observer(({
     </span>
   ) : (
     <Tooltip title={text}>
-      <span className="c7ntest-testPlan-table-summary" style={{ cursor: 'pointer', maxWidth: '2rem' }} role="none" onClick={onTableSummaryClick.bind(this, record)}>{text}</span>
+      <span className="c7n-agile-table-cell-click" style={{ cursor: 'pointer', maxWidth: '2rem' }} role="none" onClick={onTableSummaryClick.bind(this, record)}>{text}</span>
     </Tooltip>
   ));
 
@@ -136,50 +136,45 @@ const TestPlanTable = observer(({
     return testPlanStatus !== 'done' && <Action className="action-icon" data={action} />;
   };
 
-
   const renderSource = (source) => {
     if (!source || source === 'none') {
       return '';
-    } else {
-      return (
-        <div className="c7ntest-text-dot">
-          {source === 'auto' ? (
-            <span style={{ display: 'flex', alignItems: 'center' }}>
-              <Icon style={{ color: '#FA8C16', fontSize: 20 }} type="test-automation" />
-              自动测试
-            </span>
-          ) : (
-            <span style={{ display: 'flex', alignItems: 'center' }}>
-              <Icon style={{ color: '#4D90FE', fontSize: 20 }} type="test-case" />
-              手动测试
-            </span>
-          )}
-        </div>
-      );
     }
+    return (
+      <div className="c7ntest-text-dot">
+        {source === 'auto' ? (
+          <span style={{ display: 'flex', alignItems: 'center' }}>
+            <Icon style={{ color: '#FA8C16', fontSize: 20 }} type="test-automation" />
+            自动测试
+          </span>
+        ) : (
+          <span style={{ display: 'flex', alignItems: 'center' }}>
+            <Icon style={{ color: '#4D90FE', fontSize: 20 }} type="test-case" />
+            手动测试
+          </span>
+        )}
+      </div>
+    );
   };
 
   const getSummaryFilterValue = () => {
     if (!isMine) {
       return testPlanStore.filter && testPlanStore.filter.summary ? [testPlanStore.filter.summary] : [];
-    } else {
-      return testPlanStore.mineFilter && testPlanStore.mineFilter.summary ? [testPlanStore.mineFilter.summary] : [];
     }
+    return testPlanStore.mineFilter && testPlanStore.mineFilter.summary ? [testPlanStore.mineFilter.summary] : [];
   };
 
   const getStatusFilteredValue = () => {
     if (!isMine) {
       return testPlanStore.filter && testPlanStore.filter.executionStatus ? [testPlanStore.filter.executionStatus] : [];
-    } else {
-      return testPlanStore.mineFilter && testPlanStore.mineFilter.executionStatus ? [testPlanStore.mineFilter.executionStatus] : [];
     }
+    return testPlanStore.mineFilter && testPlanStore.mineFilter.executionStatus ? [testPlanStore.mineFilter.executionStatus] : [];
   };
   const getPriorityFilteredValue = () => {
     if (!isMine) {
       return testPlanStore.filter && testPlanStore.filter.priorityId ? [testPlanStore.filter.priorityId] : [];
-    } else {
-      return testPlanStore.mineFilter && testPlanStore.mineFilter.priorityId ? [testPlanStore.mineFilter.priorityId] : [];
     }
+    return testPlanStore.mineFilter && testPlanStore.mineFilter.priorityId ? [testPlanStore.mineFilter.priorityId] : [];
   };
   const columns = [{
     title: <span>用例名</span>,
@@ -253,8 +248,8 @@ const TestPlanTable = observer(({
     title: <FormattedMessage id="priority" />,
     dataIndex: 'priorityId',
     key: 'priorityId',
-    filters: priorityList && priorityList.filter(priorityVO => priorityVO.enableFlag)
-      .map(priorityVO => ({ text: priorityVO.name, value: priorityVO.id })),
+    filters: priorityList && priorityList.filter((priorityVO) => priorityVO.enableFlag)
+      .map((priorityVO) => ({ text: priorityVO.name, value: priorityVO.id })),
     filteredValue: getPriorityFilteredValue(),
     flex: 1,
     width: 100,
@@ -271,7 +266,7 @@ const TestPlanTable = observer(({
     title: <FormattedMessage id="status" />,
     dataIndex: 'executionStatus',
     key: 'executionStatus',
-    filters: statusList && statusList.map(status => ({ text: status.statusName, value: status.statusId.toString() })),
+    filters: statusList && statusList.map((status) => ({ text: status.statusName, value: status.statusId.toString() })),
     filteredValue: getStatusFilteredValue(),
     flex: 1,
     width: 100,
@@ -354,7 +349,7 @@ const TestPlanTable = observer(({
   //   });
   // }
 
-  const data = isMine ? testList.filter(item => (item.assignedTo && item.assignedTo.toString() === AppState.userInfo.id.toString())) : testList;
+  const data = isMine ? testList.filter((item) => (item.assignedTo && item.assignedTo.toString() === AppState.userInfo.id.toString())) : testList;
   return (
     <div className={`c7ntest-testPlanTable ${isMine ? 'c7ntest-mineTestPlanTable' : ''}`}>
       {
@@ -369,7 +364,7 @@ const TestPlanTable = observer(({
               style={{ width: 180, zIndex: 100, marginLeft: 10 }}
               placeholder="被指派人"
               loadWhenMount
-              getPopupContainer={trigger => trigger.parentNode}
+              getPopupContainer={(trigger) => trigger.parentNode}
               type="user"
               onChange={onSearchAssign}
               value={testPlanStore.filter.assignUser}
@@ -379,7 +374,7 @@ const TestPlanTable = observer(({
               title=""
               trigger="click"
               visible={tipVisible}
-              getPopupContainer={trigger => trigger.parentNode}
+              getPopupContainer={(trigger) => trigger.parentNode}
             >
               <div
                 ref={divRef}
@@ -391,7 +386,7 @@ const TestPlanTable = observer(({
                   allowClear
                   style={{ display: 'flex' }}
                   placeholder="批量指派"
-                  getPopupContainer={trigger => trigger.parentNode}
+                  getPopupContainer={(trigger) => trigger.parentNode}
                   type="user"
                   onChange={onAssignToChange}
                 />
