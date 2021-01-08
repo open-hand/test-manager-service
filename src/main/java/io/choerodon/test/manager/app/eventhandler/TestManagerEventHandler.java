@@ -81,7 +81,7 @@ public class TestManagerEventHandler {
     public String handleProjectInitByConsumeSagaTask(String message) {
         ProjectEvent projectEvent = JSONObject.parseObject(message, ProjectEvent.class);
         LOGGER.info("接受创建项目消息{}", message);
-        List<ProjectEventCategory> projectEventCategories = projectEvent.getProjectEventCategories();
+        List<ProjectEventCategory> projectEventCategories = projectEvent.getProjectCategoryVOS();
         if (!ObjectUtils.isEmpty(projectEventCategories)) {
             Set<String> codes =
                     projectEventCategories
