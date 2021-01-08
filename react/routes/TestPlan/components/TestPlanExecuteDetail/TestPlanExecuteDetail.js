@@ -308,6 +308,7 @@ function TestPlanExecuteDetail(props) {
 
   function render() {
     // disabled 用于禁止action列
+    const { executeId } = context;
     const { disabled } = props;
     const { loading } = ExecuteDetailStore;
     const detailData = ExecuteDetailStore.getDetailData;
@@ -412,6 +413,7 @@ function TestPlanExecuteDetail(props) {
                     readOnly={planStatus === 'done'} // 数据是否只读
                     operateStatus={planStatus === 'doing'} // 数据是否可以进行状态更改/缺陷更改
                     ExecuteDetailStore={ExecuteDetailStore}
+                    executeId={executeId}
                   />
                 </CardWrapper>
 

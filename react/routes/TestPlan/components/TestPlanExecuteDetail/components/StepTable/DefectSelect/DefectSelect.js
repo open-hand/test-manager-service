@@ -8,11 +8,12 @@ import { FormattedMessage } from 'react-intl';
 import { removeDefect } from '@/api/ExecuteDetailApi';
 import { getIssuesForDefects } from '@/api/agileApi';
 import './DefectSelect.less';
-import { text2Delta } from '../../../../../../../common/utils';
+import { axios } from '@choerodon/boot';
+import { text2Delta, getProjectId, getOrganizationId } from '../../../../../../../common/utils';
 
 const { Option } = Select;
 function DefectSelect(props) {
-  const { defects } = props;
+  const { defects, executeId, currentPageIndex } = props;
   const selectRef = useRef();
   const [defectIds, setDefectIds] = useState(defects ? defects.map((defect) => defect.issueId.toString()) : []);
   const [originDefects, setOriginDefects] = useState(defects ? defects.map((defect) => defect.issueId.toString()) : []);
@@ -155,19 +156,25 @@ function DefectSelect(props) {
             role="none"
             onClick={() => {
               handleSubmit(record);
-              const { caseNum, summary, description } = ExecuteDetailStore.getDetailData;
+              const {
+                caseNum, summary, description,
+              } = ExecuteDetailStore.getDetailData;
               let newDescription = text2Delta(description);
               newDescription = Array.isArray(newDescription) ? newDescription : [{ insert: `${newDescription || ''}` }];
               let defaultDescription = [{ insert: '测试用例：\n' }, { insert: `${caseNum}-${summary}\n` }, { insert: '前置条件：\n' }];
-              dataSet.toData().forEach((step, i, arr) => {
-                const { testStep, testData, expectedResult } = step;
-                defaultDescription = [...defaultDescription, ...[{ insert: `测试步骤：${testStep}\n` }, { insert: `测试数据：${testData || '无'}\n` }, { insert: `预期结果：${expectedResult}\n` }]];
-                if (i < arr.length - 1) {
-                  defaultDescription = [...defaultDescription, { insert: '\n' }];
-                }
+              axios.get(`/test/v1/projects/${getProjectId()}/cycle/case/step/query/${executeId}?organizationId=${getOrganizationId()}&page=0&size=0`).then((res) => {
+                const sliceIndex = (dataSet.currentPage - 1) * dataSet.pageSize + currentPageIndex + 1;
+                (res.list || []).slice(0, sliceIndex).forEach((step, i, arr) => {
+                  const { testStep, testData, expectedResult } = step;
+                  defaultDescription = [...defaultDescription, ...[{ insert: `测试步骤：${testStep}\n` }, { insert: `测试数据：${testData || '无'}\n` }, { insert: `预期结果：${expectedResult}\n` }]];
+                  if (i < arr.length - 1) {
+                    defaultDescription = [...defaultDescription, { insert: '\n' }];
+                  }
+                });
+                defaultDescription.splice(3, 0, ...newDescription, String(newDescription[newDescription.length - 1].insert).lastIndexOf('\n') === 0 ? { insert: '' } : { insert: '\n' });
+                ExecuteDetailStore.setDefaultDefectDescription(defaultDescription);
               });
-              defaultDescription.splice(3, 0, ...newDescription, String(newDescription[newDescription.length - 1].insert).lastIndexOf('\n') === 0 ? { insert: '' } : { insert: '\n' });
-              ExecuteDetailStore.setDefaultDefectDescription(defaultDescription);
+
               ExecuteDetailStore.setCreateBugShow(true);
               ExecuteDetailStore.setDefectType('CASE_STEP');
               ExecuteDetailStore.setCreateDefectTypeId(executeStepId);

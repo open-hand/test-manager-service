@@ -66,7 +66,7 @@ const DefectSelectText = memo(({
 
 function StepTable(props) {
   const {
-    dataSet, ExecuteDetailStore, readOnly = false, operateStatus = false, testStatusDataSet, updateHistory,
+    dataSet, ExecuteDetailStore, readOnly = false, operateStatus = false, testStatusDataSet, updateHistory, executeId,
   } = props;
   const [lock, setLock] = useState('right');
   const [editing, setEditing] = useState();
@@ -192,7 +192,8 @@ function StepTable(props) {
    * 渲染缺陷 缺陷只在进行中可增添
    * @param {*} param0
    */
-  function renderDefects({ record, value: defects }) {
+  function renderDefects({ record, value: defects, dataSet }) {
+    const currentPageIndex = dataSet.toData().findIndex((item) => item.stepId === record.get('stepId'));
     const disabled = !operateStatus;// 用于未完成 已完成 禁止操作
     return (
       <TextEditToggle
@@ -230,6 +231,8 @@ function StepTable(props) {
               dataSet={dataSet}
               executeStepId={record.get('executeStepId')}
               handleSubmit={handleAddDefects}
+              executeId={executeId}
+              currentPageIndex={currentPageIndex}
             />
           </div>
         </Edit>
