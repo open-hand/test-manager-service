@@ -192,8 +192,7 @@ function StepTable(props) {
    * 渲染缺陷 缺陷只在进行中可增添
    * @param {*} param0
    */
-  function renderDefects({ record, value: defects, dataSet }) {
-    const currentPageIndex = dataSet.toData().findIndex((item) => item.stepId === record.get('stepId'));
+  function renderDefects({ record, value: defects, dataSet: stepDataSet }) {
     const disabled = !operateStatus;// 用于未完成 已完成 禁止操作
     return (
       <TextEditToggle
@@ -232,7 +231,7 @@ function StepTable(props) {
               executeStepId={record.get('executeStepId')}
               handleSubmit={handleAddDefects}
               executeId={executeId}
-              currentPageIndex={currentPageIndex}
+              currentPageIndex={record.index}
             />
           </div>
         </Edit>
