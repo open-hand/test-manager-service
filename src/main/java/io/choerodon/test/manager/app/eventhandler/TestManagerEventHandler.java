@@ -2,6 +2,7 @@ package io.choerodon.test.manager.app.eventhandler;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -10,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.choerodon.test.manager.api.vo.TestPlanVO;
 import io.choerodon.test.manager.api.vo.event.OrganizationCreateEventPayload;
 import io.choerodon.test.manager.api.vo.event.ProjectEvent;
+import io.choerodon.test.manager.api.vo.event.ProjectEventCategory;
 import io.choerodon.test.manager.infra.constant.SagaTaskCodeConstants;
 import io.choerodon.test.manager.infra.constant.SagaTopicCodeConstants;
 import io.choerodon.test.manager.infra.dto.*;
@@ -26,6 +28,7 @@ import io.choerodon.asgard.saga.annotation.SagaTask;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.api.vo.event.InstancePayload;
 import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
 
 /**
  * Created by WangZhe@choerodon.io on 2018/6/25.
@@ -37,6 +40,11 @@ public class TestManagerEventHandler {
     public static final String TASK_PROJECT_CREATE = "test-create-project";
 
     public static final String PROJECT_CREATE = "iam-create-project";
+
+    /**
+     * 测试管理模块
+     */
+    private static final String MODULE_TEST = "N_TEST";
 
     @Autowired
     private TestAppInstanceService testAppInstanceService;
@@ -73,8 +81,18 @@ public class TestManagerEventHandler {
     public String handleProjectInitByConsumeSagaTask(String message) {
         ProjectEvent projectEvent = JSONObject.parseObject(message, ProjectEvent.class);
         LOGGER.info("接受创建项目消息{}", message);
-        testProjectInfoService.initializationProjectInfo(projectEvent);
-        testIssueFolderService.initializationFolderInfo(projectEvent);
+        List<ProjectEventCategory> projectEventCategories = projectEvent.getProjectEventCategories();
+        if (!ObjectUtils.isEmpty(projectEventCategories)) {
+            Set<String> codes =
+                    projectEventCategories
+                            .stream()
+                            .map(ProjectEventCategory::getCode)
+                            .collect(Collectors.toSet());
+            if (codes.contains(MODULE_TEST)) {
+                testProjectInfoService.initializationProjectInfo(projectEvent);
+                testIssueFolderService.initializationFolderInfo(projectEvent);
+            }
+        }
         return message;
     }
 
