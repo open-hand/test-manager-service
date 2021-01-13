@@ -93,7 +93,7 @@ const TestPlanTable = observer(({
 
   const renderMenu = (text, record) => (testPlanStatus !== 'done' ? (
     <span style={{ display: 'flex', overflow: 'hidden', alignItems: 'center' }}>
-      <Tooltip title={text}><span style={{ cursor: 'pointer' }} className="c7ntest-testPlan-table-summary" role="none" onClick={onTableSummaryClick.bind(this, record)}>{text}</span></Tooltip>
+      <Tooltip title={text}><span style={{ cursor: 'pointer' }} className="c7n-agile-table-cell-click" role="none" onClick={onTableSummaryClick.bind(this, record)}>{text}</span></Tooltip>
       <Tooltip title="此用例需更新">
         <span
           style={
