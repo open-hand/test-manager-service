@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Card, Tooltip } from 'choerodon-ui';
+import moment from 'moment';
 import User from '../../../../components/User';
 import SmartToolTip from '../../../../components/SmartTooltip';
 import './TestPlanDetailCard.less';
@@ -16,7 +17,7 @@ export default observer(() => {
           <div className="c7ntest-testPlan-detailCard-content-item">
             <span className="c7ntest-testPlan-detailCard-content-item-field">起止时间</span>
             <span className="c7ntest-testPlan-detailCard-content-item-value">
-              <Tooltip title={`${planInfo.startDate || ''} ~ ${planInfo.endDate || ''}`}>
+              <Tooltip title={`${moment(planInfo.startDate).format('YYYY-MM-DD') || ''} ~ ${moment(planInfo.endDate).format('YYYY-MM-DD') || ''}`}>
                 {`${(planInfo.startDate && planInfo.startDate.split(' ')[0]) || ''}～${(planInfo.endDate && planInfo.endDate.split(' ')[0]) || ''}`}
               </Tooltip>
             </span>
