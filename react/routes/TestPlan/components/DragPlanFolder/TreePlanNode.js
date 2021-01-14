@@ -1,6 +1,9 @@
 import React from 'react';
+import { set } from 'lodash';
 
-function TreePlanNode({ children }) {
+function TreePlanNode({
+  children, onSelect, data, selected,
+}) {
   function handleSelect() {
 
   }
@@ -9,9 +12,11 @@ function TreePlanNode({ children }) {
     if (!(e.shiftKey && (e.ctrlKey || e.metaKey))) {
       if (e.shiftKey) {
         console.log('shift');
+        onSelect(data, 'shift');
         // this.dealWithMultiSelect(sprintId, item, 'shift');
       } else if (e.ctrlKey || e.metaKey) {
         console.log('ctrl');
+        onSelect(data, 'ctrl');
 
         // this.dealWithMultiSelect(sprintId, item, 'ctrl');
       } else {
@@ -25,6 +30,7 @@ function TreePlanNode({ children }) {
     <div
       role="none"
       onClick={handleClick}
+      className={selected ? 'c7ntest-DragPlanFolder-item-selected' : ''}
     >
       {children}
     </div>
