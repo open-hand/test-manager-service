@@ -14,12 +14,12 @@ const TestLink = ({
   const testLinkStore = useTestLinkStore(issueId);
   useEffect(() => {
     if (typeof (ref) === 'function') {
-      ref(testLinkStore);
-      return () => ref && ref(undefined);
+      ref({ testLinkStore });
+      return () => ref && ref({});
     }
     if (typeof (ref) === 'object' && ref.current) {
-      set(ref, 'current', testLinkStore);
-      return () => typeof (ref) === 'object' && set(ref, 'current', undefined);
+      set(ref, 'current', { testLinkStore });
+      return () => typeof (ref) === 'object' && set(ref, 'current', {});
     }
     return () => {};
   }, [ref, testLinkStore]);

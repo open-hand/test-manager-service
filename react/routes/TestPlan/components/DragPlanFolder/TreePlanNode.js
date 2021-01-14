@@ -30,6 +30,7 @@ function TreePlanNode({
     <div
       role="none"
       onClick={handleClick}
+      onKeyDown={(e) => e.isPropagationStopped()}
       className={selected ? 'c7ntest-DragPlanFolder-item-selected' : ''}
     >
       {children}
