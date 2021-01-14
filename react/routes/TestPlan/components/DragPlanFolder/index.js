@@ -44,11 +44,10 @@ function DragPlanFolder({
     }
     if (trigger === 'shift') { /** 1.  选第一个节点到 第三个  检查父节点是否是选中状态 是的话， 单选去除，多选  */
       if (lastSelectNode) {
-        const { index: lastSelectNodeIndex } = getTreePosition(treeRef.current.flattenedTree, lastSelectNode.path);
-        const { index: valueIndex } = getTreePosition(treeRef.current.flattenedTree, value.path);
-        // const difference = lastSelectNodeIndex - valueIndex;
-
-        const originNodes = treeRef.current.flattenedTree.slice(Math.min(lastSelectNodeIndex, valueIndex), Math.max(lastSelectNodeIndex, valueIndex));
+        const lastSelectNodeIndex = findIndex(treeRef.current.flattenedTree, (item) => String(item.path) === String(lastSelectNode.path));//  getTreePosition(treeRef.current.treeData, lastSelectNode.path);
+        const valueIndex = findIndex(treeRef.current.flattenedTree, (item) => String(item.path) === String(value.path));
+        const originNodes = treeRef.current.flattenedTree.slice(Math.min(lastSelectNodeIndex, valueIndex), Math.max(lastSelectNodeIndex, valueIndex) + 1);
+        console.log('originNodes', lastSelectNodeIndex, valueIndex, treeRef.current.getItem(value.id), treeRef.current.flattenedTree, lastSelectNodeIndex, valueIndex, originNodes);
         originNodes.length > 0 && select(originNodes.map(({ item, path }) => ({ ...item, path })));
       } else {
         select(value);
@@ -81,7 +80,7 @@ function DragPlanFolder({
     const nextRank = nextId ? treeData.items[nextId].data.rank : null;
     // const rank = '111';
     const folderIds = [];
-    console.log('folderId..', folderId, selectedNodeMaps.list(), selectedNodeMaps.has(folderId));
+    console.log('folderId..', destination, folderId, selectedNodeMaps.list(), selectedNodeMaps.has(folderId));
     if (selectedNodeMaps.has(folderId)) {
       const folderList = selectedNodeMaps.list();
       // moveItemOnTree(treeRef.treeData);
