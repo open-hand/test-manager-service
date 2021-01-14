@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Icon, Button, Tooltip } from 'choerodon-ui';
-import { map } from 'lodash';
+import { map, set } from 'lodash';
 import { injectIntl } from 'react-intl';
 
 import CaseListItem from './CaseListItem';
@@ -9,10 +9,20 @@ import { openTestCaseModal } from './TestCaseModal';
 import useTestLinkStore from './TestLinkStore';
 
 const TestLink = ({
-  reloadIssue, issueId, disabled, intl,
+  reloadIssue, issueId, disabled, intl, ref,
 }) => {
   const testLinkStore = useTestLinkStore(issueId);
-
+  useEffect(() => {
+    if (typeof (ref) === 'function') {
+      ref(testLinkStore);
+      return () => ref && ref(undefined);
+    }
+    if (typeof (ref) === 'object' && ref.current) {
+      set(ref, 'current', testLinkStore);
+      return () => typeof (ref) === 'object' && set(ref, 'current', undefined);
+    }
+    return () => {};
+  }, [ref, testLinkStore]);
   useEffect(() => {
     if (issueId) {
       testLinkStore.loadData();

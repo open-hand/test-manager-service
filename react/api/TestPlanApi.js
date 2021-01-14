@@ -1,5 +1,5 @@
+import queryString from 'query-string';
 import { getProjectId, request } from '../common/utils';
-
 /**
  * 根据状态获取测试计划树
  *
@@ -35,11 +35,16 @@ export function addFolder(data) {
 export function editFolder(data) {
   return request.put(`/test/v1/projects/${getProjectId()}/cycle`, data);
 }
-export function moveFolder(folderId, targetFolderId, lastRank, nextRank) {
-  const requestParam = (targetFolderId && Number(targetFolderId) !== 0) ? `?target_cycle_id=${targetFolderId}` : '';
+export function moveFolder(folderIds = [], targetFolderId, lastRank, nextRank) {
+  const urlParamStr = queryString.stringify({
+    target_cycle_id: targetFolderId && Number(targetFolderId) !== 0 ? targetFolderId : undefined,
+    last_moved_cycle_id: folderIds[folderIds.length - 1],
+  });
+  console.log('urlParamStr', folderIds, urlParamStr);
+  const requestParam = urlParamStr && urlParamStr !== '' ? `?${urlParamStr}` : '';
   return request.put(`/test/v1/projects/${getProjectId()}/cycle/move${requestParam}`,
     {
-      cycleId: folderId,
+      cycleIds: folderIds,
       lastRank,
       nextRank,
     });
@@ -84,7 +89,6 @@ export function getStatusByFolder({ planId, folderId }) {
 export function getPlanDetail(planId) {
   return request.get(`/test/v1/projects/${getProjectId()}/plan/${planId}/info`);
 }
-
 
 /**
  * 批量给执行指定执行人
@@ -159,7 +163,7 @@ export function updateFoldRangeDate(isCycle, data) {
 }
 /**
  * 按时间排序
- * @param {*} planId 
+ * @param {*} planId
  */
 export function getRankByDate(planId) {
   return request.post(`/test//v1/projects/${getProjectId()}/plan/${planId}/order_by_from_date`);
