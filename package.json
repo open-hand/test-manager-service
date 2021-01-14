@@ -32,7 +32,7 @@
     "@choerodon/agile": "^0.24.0",
     "@choerodon/boot": "^0.22.0",
     "@choerodon/compiler": "^0.0.1",
-    "@choerodon/master": "^0.24.0",
+    "@choerodon/master": "^0.25.0",
     "@types/echarts": "^4.6.5",
     "@types/lodash": "^4.14.165",
     "@types/quill": "^2.0.3",

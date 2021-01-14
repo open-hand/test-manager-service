@@ -8,6 +8,7 @@ import {
 } from 'choerodon-ui';
 import { Button, Select, Table } from 'choerodon-ui/pro';
 import { FormattedMessage } from 'react-intl';
+import useHasAgile from '@/hooks/useHasAgile';
 import _ from 'lodash';
 
 import { addDefects } from '../../../../../../api/ExecuteDetailApi';
@@ -260,6 +261,7 @@ function StepTable(props) {
   useEffect(() => {
     dataSet.setEditStatus = setEditing;
   }, [dataSet]);
+  const hasAgile = useHasAgile();
   return (
     <Table dataSet={dataSet} queryBar="none" className="c7n-test-execute-detail-step-table" rowHeight="auto">
       <Column name="index" width={80} align="left" renderer={renderIndex} />
@@ -269,7 +271,7 @@ function StepTable(props) {
       <Column name="stepStatus" align="left" width={85} className="c7n-test-execute-detail-step-table-status" renderer={renderStatus} editor={!editing && operateStatus && <Select optionRenderer={renderStatus} />} />
       <Column name="stepAttachment" renderer={renderAttachment} align="left" width={200} />
       <Column name="description" editor={!editing && !readOnly} align="left" tooltip="overflow" renderer={renderText} />
-      <Column name="defects" renderer={renderDefects} width={230} />
+      {hasAgile && <Column name="defects" renderer={renderDefects} width={230} />}
       <Column name="action" width={100} lock={lock} renderer={renderAction} hidden={getActionHidden()} />
     </Table>
   );

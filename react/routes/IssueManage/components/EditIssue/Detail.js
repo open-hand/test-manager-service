@@ -11,6 +11,7 @@ import {
   delta2Html, text2Delta,
 } from '@/common/utils';
 import Timeago from '@/components/DateTimeAgo/DateTimeAgo';
+import useHasAgile from '@/hooks/useHasAgile';
 import { uploadFile } from '@/api/IssueManageApi';
 import { openFullEditor, WYSIWYGEditor } from '@/components';
 import UserHead from '@/components/UserHead';
@@ -30,7 +31,7 @@ const { TitleWrap, ContentWrap, PropertyWrap } = EditDetailWrap;
  * 问题详情
  * folder
  * @param {*} linkIssues
- * @param {*} reloadIssue  重载问题  
+ * @param {*} reloadIssue  重载问题
  */
 function Detail({
   onUpdate, handleCreateLinkIssue,
@@ -38,6 +39,7 @@ function Detail({
   const {
     store, caseId, prefixCls,
   } = useContext(EditIssueContext);
+  const hasAgile = useHasAgile();
   const { issueInfo, linkIssues } = store;
   const {
     folder, attachment, createUser, priorityVO,
@@ -181,22 +183,24 @@ function Detail({
         </section>
         <Divider />
         {/** 问题链接 */}
-        <section id="link_task" style={{ marginBottom: 20 }}>
-          <TitleWrap title="问题链接">
-            <div style={{ marginLeft: '14px' }}>
-              <Tooltip title="问题链接" getPopupContainer={(triggerNode) => triggerNode.parentNode}>
-                <Button icon="playlist_add" onClick={() => setCreateLinkTaskShow(true)} />
-              </Tooltip>
+        {hasAgile && (
+          <section id="link_task" style={{ marginBottom: 20 }}>
+            <TitleWrap title="问题链接">
+              <div style={{ marginLeft: '14px' }}>
+                <Tooltip title="问题链接" getPopupContainer={(triggerNode) => triggerNode.parentNode}>
+                  <Button icon="playlist_add" onClick={() => setCreateLinkTaskShow(true)} />
+                </Tooltip>
+              </div>
+            </TitleWrap>
+            <div className="c7ntest-tasks">
+              <LinkIssues
+                issueId={issueId}
+                linkIssues={linkIssues}
+                reloadIssue={store.loadIssueData}
+              />
             </div>
-          </TitleWrap>
-          <div className="c7ntest-tasks">
-            <LinkIssues
-              issueId={issueId}
-              linkIssues={linkIssues}
-              reloadIssue={store.loadIssueData}
-            />
-          </div>
-        </section>
+          </section>
+        )}
         {
           createLinkTaskShow ? (
             <CreateLinkTask
