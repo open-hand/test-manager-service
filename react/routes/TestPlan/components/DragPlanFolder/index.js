@@ -4,7 +4,7 @@ import React, {
 import {
   Modal,
 } from 'choerodon-ui/pro';
-import { findIndex } from 'lodash';
+import { findIndex, sortBy } from 'lodash';
 import { observer } from 'mobx-react-lite';
 import { handleRequestFailed } from '@/common/utils';
 import { getPlanTreeById, moveFolder } from '@/api/TestPlanApi';
@@ -32,23 +32,27 @@ function DragPlanFolder({
         return undefined;
       }
       const { item, path } = treeRef.current.getItem(searchId);
-      return { ...item, path };
+      const valueIndex = findIndex(treeRef.current.flattenedTree, (i) => String(i.path) === String(path));
+
+      return { ...item, path, index: valueIndex };
     },
   });
   /**   父节点检查 */
   function handleSelectNode(value, trigger = 'click') {
     console.log('treeRef.current', value, treeRef.current);
     if (trigger === 'ctrl') {
-      select(value);
+      const valueIndex = findIndex(treeRef.current.flattenedTree, (item) => String(item.path) === String(value.path));
+      select({ ...value, index: valueIndex });
       return;
     }
     if (trigger === 'shift') { /** 1.  选第一个节点到 第三个  检查父节点是否是选中状态 是的话， 单选去除，多选  */
       if (lastSelectNode) {
         const lastSelectNodeIndex = findIndex(treeRef.current.flattenedTree, (item) => String(item.path) === String(lastSelectNode.path));//  getTreePosition(treeRef.current.treeData, lastSelectNode.path);
         const valueIndex = findIndex(treeRef.current.flattenedTree, (item) => String(item.path) === String(value.path));
-        const originNodes = treeRef.current.flattenedTree.slice(Math.min(lastSelectNodeIndex, valueIndex), Math.max(lastSelectNodeIndex, valueIndex) + 1);
+        const startIndex = Math.min(lastSelectNodeIndex, valueIndex);
+        const originNodes = treeRef.current.flattenedTree.slice(startIndex, Math.max(lastSelectNodeIndex, valueIndex) + 1);
         console.log('originNodes', lastSelectNodeIndex, valueIndex, treeRef.current.getItem(value.id), treeRef.current.flattenedTree, lastSelectNodeIndex, valueIndex, originNodes);
-        originNodes.length > 0 && select(originNodes.map(({ item, path }) => ({ ...item, path })));
+        originNodes.length > 0 && select(originNodes.map(({ item, path }, index) => ({ ...item, path, index: index + startIndex })));
       } else {
         select(value);
       }
@@ -58,7 +62,7 @@ function DragPlanFolder({
   const renderTreeNode = (treeNode, { item }) => {
     const { id } = item;
     return (
-      <TreePlanNode data={item} onSelect={handleSelectNode} selected={selectedNodeMaps.has(id, item.path)}>
+      <TreePlanNode data={item} onSelect={handleSelectNode} onExpandCollapse={() => selectedNodeMaps.clear()} selected={selectedNodeMaps.has(id, item.path)}>
         {treeNode}
       </TreePlanNode>
     );
@@ -82,7 +86,8 @@ function DragPlanFolder({
     const folderIds = [];
     console.log('folderId..', destination, folderId, selectedNodeMaps.list(), selectedNodeMaps.has(folderId));
     if (selectedNodeMaps.has(folderId)) {
-      const folderList = selectedNodeMaps.list();
+      const folderList = sortBy(selectedNodeMaps.list(), ['index']);
+      console.log('sort folder', folderList);
       // moveItemOnTree(treeRef.treeData);
       folderList.forEach((item) => {
         folderIds.push(item.id);
@@ -90,37 +95,38 @@ function DragPlanFolder({
         const newTreeData = moveItemOnTree(treeRef.current.treeData, pos, destination);
         console.log('getTreePosition(treeRef.treeData, item.path)', item.path, pos, newTreeData);
       });
+      const rank = await handleRequestFailed(moveFolder(folderIds, parentId, lastRank, nextRank));
+      console.log('new Rank', rank, folderIds);
+      const planTree = await getPlanTreeById(planId);
+      const { rootIds, treeFolder } = planTree;
+      const newData = {
+        rootIds,
+        treeFolder: treeFolder.map((folder) => {
+          const {
+            issueFolderVO, expanded, children, ...other
+          } = folder;
+          const result = {
+            children: children || [],
+            data: issueFolderVO,
+            isExpanded: expanded,
+            ...other,
+          };
+          return result;
+        }),
+      };
+      setTreeData(newData);
+      selectedNodeMaps.clear();
+      throw new Error('move position error');
     } else {
       folderIds.push(folderId);
     }
     selectedNodeMaps.clear();
 
     const rank = await handleRequestFailed(moveFolder(folderIds, parentId, lastRank, nextRank));
-    console.log('new Rank', rank, folderIds);
-    const planTree = await getPlanTreeById(planId);
-    const { rootIds, treeFolder } = planTree;
-    const newData = {
-      rootIds,
-      treeFolder: treeFolder.map((folder) => {
-        const {
-          issueFolderVO, expanded, children, ...other
-        } = folder;
-        const result = {
-          children: children || [],
-          data: issueFolderVO,
-          isExpanded: expanded,
-          ...other,
-        };
-        return result;
-      }),
-    };
-    setTreeData(newData);
-    throw new Error('move position error');
-
     return {
       data: {
         ...sourceItem.data,
-        // rank,
+        rank: rank[0].rank,
       },
     };
   }, [planId, selectedNodeMaps]);
