@@ -1,3 +1,4 @@
+/* eslint-disable react/require-default-props */
 import React, {
   useState, useEffect, useCallback, useMemo, useImperativeHandle, forwardRef, Fragment,
 } from 'react';
@@ -59,6 +60,7 @@ const propTypes = {
   onEdit: PropTypes.func,
   onDelete: PropTypes.func,
   afterDrag: PropTypes.func,
+  beforeDrag: PropTypes.func,
   selected: PropTypes.shape({
     id: PropTypes.number,
   }),
@@ -76,6 +78,7 @@ function PureTree({
   onEdit,
   onDelete,
   afterDrag,
+  beforeDrag,
   selected,
   setSelected,
   updateItem,
@@ -233,7 +236,10 @@ function PureTree({
       if (parent && parent.path.length >= 9) {
         return;
       }
-
+      const isCloseBlock = await beforeDrag(sourceItem, destination);
+      if (!isCloseBlock) {
+        return;
+      }
       setTree((oldTree) => moveItemOnTree(oldTree, source, destination));
       const newItem = await afterDrag(sourceItem, destination);
       setTree((oldTree) => mutateTree(oldTree, sourceItem.id, { ...sourceItem, ...newItem }));
