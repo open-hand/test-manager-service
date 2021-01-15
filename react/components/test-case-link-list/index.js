@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Icon, Button, Tooltip } from 'choerodon-ui';
-import { map, set } from 'lodash';
+import { map } from 'lodash';
 import { injectIntl } from 'react-intl';
 
 import CaseListItem from './CaseListItem';
@@ -9,20 +9,12 @@ import { openTestCaseModal } from './TestCaseModal';
 import useTestLinkStore from './TestLinkStore';
 
 const TestLink = ({
-  reloadIssue, issueId, disabled, intl, ref,
+  reloadIssue, issueId, disabled, intl, testLinkStoreRef,
 }) => {
   const testLinkStore = useTestLinkStore(issueId);
   useEffect(() => {
-    if (typeof (ref) === 'function') {
-      ref({ testLinkStore });
-      return () => ref && ref({});
-    }
-    if (typeof (ref) === 'object' && ref.current) {
-      set(ref, 'current', { testLinkStore });
-      return () => typeof (ref) === 'object' && set(ref, 'current', {});
-    }
-    return () => {};
-  }, [ref, testLinkStore]);
+    Object.assign(testLinkStoreRef, { current: testLinkStore });
+  }, [testLinkStoreRef, testLinkStore]);
   useEffect(() => {
     if (issueId) {
       testLinkStore.loadData();
@@ -43,7 +35,7 @@ const TestLink = ({
 
   const renderLinkIssues = () => (
     <div className="c7n-tasks">
-      { map(testLinkStore.data, (linkIssue, i) => renderLinkList(linkIssue, i))}
+      { map(testLinkStore.data || [], (linkIssue, i) => renderLinkList(linkIssue, i))}
     </div>
   );
 
