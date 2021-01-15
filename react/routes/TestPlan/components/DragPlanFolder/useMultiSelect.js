@@ -3,57 +3,46 @@ import { toJS } from 'mobx';
 /**
  *
  *
- *1-2--
+ *
  */
-const defaultConfig = { primaryKey: 'id', onLoadNode: () => undefined, onFilterNode: (key) => undefined };
-function useMultiSelect({ primaryKey = 'id', onLoadNode, onFilterNode } = defaultConfig) {
-  const selectedPaths = useMemo(() => new Array(10).fill([]), []);
-  const indeterminateNodes = useMemo(() => new Set(), []);
-  function handleFilterNode(parentKey, maps = new Map(), operationType = 'del', { addValue, deleteValue, ignoreKeys = [] } = { addValue: undefined, deleteValue: undefined }) {
+const defaultConfig = { primaryKey: 'id', onLoadNode: () => undefined };
+function useMultiSelect({ primaryKey = 'id', onLoadNode } = defaultConfig) {
+  function handleOperationNode(key, maps = new Map(), operationType = 'del', { addValue } = { addValue: undefined }) {
     if (operationType === 'del') {
-      const delItem = maps.get(parentKey) || deleteValue;
+      const delItem = maps.get(key);
       if (delItem) {
         const delItemParentId = delItem.data.parentId;
         const delItemChildren = [...(delItem.children || [])];
 
-        // 如果父节点有选中，则代表此节点没有加入maps， 更新父兄弟节点，兄弟节点状态
-        maps.has(delItemParentId) && handleFilterNode(delItemParentId, maps, 'update-parent-other', { ignoreKeys: [parentKey] });
-        maps.delete(parentKey);
-        console.log('del...', delItemChildren, delItem);
-        // 更新子节点状态 增添
+        // 如果父节点有选中，则代表此节点没有加入maps， 更新兄弟节点，兄弟节点状态为选中
+        if (maps.has(delItemParentId)) {
+          const delItemParent = maps.get(delItemParentId);
+          delItemParent.children.forEach((item) => {
+            item !== key && handleOperationNode(item, maps, 'add');
+          });
+        }
+        // 更新子节点状态 删除
         delItemChildren.forEach((childrenKey) => {
-          handleFilterNode(childrenKey, maps, 'del');
+          handleOperationNode(childrenKey, maps, 'del');
         });
       }
-      maps.delete(parentKey);
-      // return delItem ? handleFilterNode(delItemParentId, maps, 'del') : maps;
+      maps.delete(key);
     }
-    if (operationType === 'add' && !maps.has(parentKey)) {
-      const addItem = addValue || onLoadNode(parentKey);
-      console.log('add ...', addItem);
+    if (operationType === 'add' && !maps.has(key)) {
+      const addItem = addValue || onLoadNode(key);
       if (!addItem || maps.has(addItem.data.parentId)) {
         return maps;
       }
       // 增添完成后 判断是否有子节点，即此父节点下的所有子节点 全部删除
-      maps.set(parentKey, addItem);
+      maps.set(key, addItem);
       const addItemPathMinLength = addItem.path.length;
       const addItemPathParentIndex = addItem.path[addItemPathMinLength - 1];
       // 更新父节点状态
       // ………………
-      maps.forEach((value, key, selfMaps) => {
+      maps.forEach((value, childrenKey, selfMaps) => {
         if (value.path.length > addItemPathMinLength && value.path[addItemPathMinLength - 1] === addItemPathParentIndex) {
-          selfMaps.delete(key);
+          selfMaps.delete(childrenKey);
         }
-      });
-    }
-    if (operationType === 'update-parent-other' && maps.has(parentKey)) {
-      const parentItem = maps.get(parentKey);
-      const addItems = [...(parentItem.children || [])];
-      maps.delete(parentKey);
-
-      // debugger;
-      addItems.forEach((item) => {
-        !ignoreKeys.some((i) => i === item) && handleFilterNode(item, maps, 'add');
       });
     }
     return maps;
@@ -63,30 +52,24 @@ function useMultiSelect({ primaryKey = 'id', onLoadNode, onFilterNode } = defaul
     switch (type) {
       case 'add': {
         const {
-          key, value, values, uniq,
+          key, value, values,
         } = otherData;
         const newMaps = new Map(state.selectedNodeMaps.entries());
         let newLastSelectNode = value;
         if (values && Array.isArray(values)) {
           values.forEach((itemValue = {}) => {
             const iKey = itemValue[primaryKey];
-            handleFilterNode(iKey, newMaps, 'add', { addValue: itemValue });
-            // handleCheckHasNode(iKey, itemValue.path, newMaps) ? handleFilterNode(iKey, newMaps, 'del', { deleteValue: itemValue }) : handleFilterNode(iKey, newMaps, 'add', { addValue: itemValue });
+            handleOperationNode(iKey, newMaps, 'add', { addValue: itemValue });
           });
           newLastSelectNode = values[values.length - 1];
         } else if (typeof (key) !== 'undefined') {
-          if (handleCheckHasNode(key, value.path, newMaps)) {
-            // const deleteItem = newMaps.get(key);
-            // 非根节点 则判断父元素有没有选上  有的话 则去掉父节点选择 并选上节点的兄弟节点
-            console.log('del dom', value);
-            // handleFilterNode(value.data.parentId, newMaps, 'del');
-            handleFilterNode(key, newMaps, 'del', { deleteValue: value });
+          if (newMaps.has(key)) {
+            // 已选则删除
+            handleOperationNode(key, newMaps, 'del');
           } else {
-            handleFilterNode(key, newMaps, 'add', { addValue: value });
+            handleOperationNode(key, newMaps, 'add', { addValue: value });
           }
-          //  ?  : newMaps.set(key, value);
         }
-        console.log('newMaps..', newMaps);
         return { ...state, lastSelectNode: newLastSelectNode, selectedNodeMaps: newMaps };
       }
       case 'clear': {
@@ -112,37 +95,20 @@ function useMultiSelect({ primaryKey = 'id', onLoadNode, onFilterNode } = defaul
     return false;
   }
   const selectedNodeMaps = {
-    set: (key, value) => dispatch({ key, value }),
+    set: (key, value) => dispatch({ type: 'add', key, value }),
     delete: (key) => dispatch({ key }),
     clear: () => dispatch({ type: 'clear' }),
     list: () => [...originSelectedNodeMaps.values()],
     get: (key) => originSelectedNodeMaps.get(key),
-    has: (key, nodePath = []) => {
-      if (originSelectedNodeMaps.has(key)) {
-        return true;
-      }
-      for (const [, item] of originSelectedNodeMaps) {
-        if (nodePath.length > item.path.length && nodePath[item.path.length - 1] === item.path[item.path.length - 1]) {
-          return true;
-        }
-      }
-      return false;
-    },
+    has: handleCheckHasNode,
     originSelectedNodeMaps,
   };
-  const handleSelect = (value = {}) => {
-    if (Array.isArray(value)) {
-      dispatch({ values: value });
-    } else {
-      const key = value[primaryKey];
-      selectedNodeMaps.set(key, value);
-    }
-  };
+
   /**
    * 多选 不去重  单选去重
    * @param {*} value
    */
-  const handleUniqSelect = (value = {}) => {
+  const handleSelect = (value = {}) => {
     if (Array.isArray(toJS(value))) {
       dispatch({ type: 'add', values: value });
     } else {
@@ -152,6 +118,6 @@ function useMultiSelect({ primaryKey = 'id', onLoadNode, onFilterNode } = defaul
     }
   };
 
-  return [{ selectedNodeMaps, lastSelectNode }, { select: handleUniqSelect }];
+  return [{ selectedNodeMaps, lastSelectNode }, { select: handleSelect }];
 }
 export default useMultiSelect;

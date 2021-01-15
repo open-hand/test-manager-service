@@ -39,7 +39,6 @@ function DragPlanFolder({
   });
   /**   父节点检查 */
   function handleSelectNode(value, trigger = 'click') {
-    console.log('treeRef.current', value, treeRef.current);
     if (trigger === 'ctrl') {
       const valueIndex = findIndex(treeRef.current.flattenedTree, (item) => String(item.path) === String(value.path));
       select({ ...value, index: valueIndex });
@@ -51,7 +50,6 @@ function DragPlanFolder({
         const valueIndex = findIndex(treeRef.current.flattenedTree, (item) => String(item.path) === String(value.path));
         const startIndex = Math.min(lastSelectNodeIndex, valueIndex);
         const originNodes = treeRef.current.flattenedTree.slice(startIndex, Math.max(lastSelectNodeIndex, valueIndex) + 1);
-        console.log('originNodes', lastSelectNodeIndex, valueIndex, treeRef.current.getItem(value.id), treeRef.current.flattenedTree, lastSelectNodeIndex, valueIndex, originNodes);
         originNodes.length > 0 && select(originNodes.map(({ item, path }, index) => ({ ...item, path, index: index + startIndex })));
       } else {
         select(value);
@@ -84,45 +82,47 @@ function DragPlanFolder({
     const nextRank = nextId ? treeData.items[nextId].data.rank : null;
     // const rank = '111';
     const folderIds = [];
-    console.log('folderId..', destination, folderId, selectedNodeMaps.list(), selectedNodeMaps.has(folderId));
     if (selectedNodeMaps.has(folderId)) {
       const folderList = sortBy(selectedNodeMaps.list(), ['index']);
-      console.log('sort folder', folderList);
       // moveItemOnTree(treeRef.treeData);
+      const shows = [];
       folderList.forEach((item) => {
         folderIds.push(item.id);
-        const pos = getTreePosition(treeRef.current.treeData, item.path);
-        const newTreeData = moveItemOnTree(treeRef.current.treeData, pos, destination);
-        console.log('getTreePosition(treeRef.treeData, item.path)', item.path, pos, newTreeData);
+        shows.push(item);
+        // const pos = getTreePosition(treeRef.current.treeData, item.path);
+        // const newTreeData = moveItemOnTree(treeRef.current.treeData, pos, destination);
       });
-      const rank = await handleRequestFailed(moveFolder(folderIds, parentId, lastRank, nextRank));
-      console.log('new Rank', rank, folderIds);
-      const planTree = await getPlanTreeById(planId);
-      const { rootIds, treeFolder } = planTree;
-      const newData = {
-        rootIds,
-        treeFolder: treeFolder.map((folder) => {
-          const {
-            issueFolderVO, expanded, children, ...other
-          } = folder;
-          const result = {
-            children: children || [],
-            data: issueFolderVO,
-            isExpanded: expanded,
-            ...other,
-          };
-          return result;
-        }),
-      };
-      setTreeData(newData);
+      console.log('select nodes:', shows);
+      console.log('select folder names:', shows.map((item) => item.data.name), shows.map((item) => item.index));
+
+      // const rank = await handleRequestFailed(moveFolder(folderIds, parentId, lastRank, nextRank));
       selectedNodeMaps.clear();
-      throw new Error('move position error');
-    } else {
-      folderIds.push(folderId);
+      // return false;
     }
+    folderIds.push(folderId);
+
     selectedNodeMaps.clear();
 
     const rank = await handleRequestFailed(moveFolder(folderIds, parentId, lastRank, nextRank));
+    const planTree = await getPlanTreeById(planId);
+    const { rootIds, treeFolder } = planTree;
+    const newData = {
+      rootIds,
+      treeFolder: treeFolder.map((folder) => {
+        const {
+          issueFolderVO, expanded, children, ...other
+        } = folder;
+        const result = {
+          children: children || [],
+          data: issueFolderVO,
+          isExpanded: expanded,
+          ...other,
+        };
+        return result;
+      }),
+    };
+    setTreeData(newData);
+    return false;
     return {
       data: {
         ...sourceItem.data,
@@ -140,7 +140,7 @@ function DragPlanFolder({
       treeNodeProps={{
         enableAction: false,
       }}
-      afterDrag={handleDrag}
+      beforeDrag={handleDrag}
     />
   );
 }

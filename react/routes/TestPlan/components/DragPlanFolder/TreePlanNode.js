@@ -4,9 +4,6 @@ import { omit } from 'lodash';
 function TreePlanNode({
   children, onSelect, data, selected, onExpandCollapse,
 }) {
-  function handleSelect() {
-
-  }
   function handleClick(e) {
     e.stopPropagation();
     if (!(e.shiftKey && (e.ctrlKey || e.metaKey))) {
@@ -17,7 +14,6 @@ function TreePlanNode({
       } else if (e.ctrlKey || e.metaKey) {
         console.log('ctrl');
         onSelect(data, 'ctrl');
-
         // this.dealWithMultiSelect(sprintId, item, 'ctrl');
       } else {
         console.log('click');

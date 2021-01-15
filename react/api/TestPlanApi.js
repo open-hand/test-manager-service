@@ -40,7 +40,6 @@ export function moveFolder(folderIds = [], targetFolderId, lastRank, nextRank) {
     target_cycle_id: targetFolderId && Number(targetFolderId) !== 0 ? targetFolderId : undefined,
     last_moved_cycle_id: folderIds[folderIds.length - 1],
   });
-  console.log('urlParamStr', folderIds, urlParamStr);
   const requestParam = urlParamStr && urlParamStr !== '' ? `?${urlParamStr}` : '';
   return request.put(`/test/v1/projects/${getProjectId()}/cycle/move${requestParam}`,
     {
