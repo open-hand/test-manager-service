@@ -1,8 +1,8 @@
-import React from 'react';
-import { set } from 'lodash';
+import React, { useMemo } from 'react';
+import { omit } from 'lodash';
 
 function TreePlanNode({
-  children, onSelect, data, selected,
+  children, onSelect, data, selected, onExpandCollapse,
 }) {
   function handleSelect() {
 
@@ -26,6 +26,20 @@ function TreePlanNode({
       }
     }
   }
+
+  const Children = useMemo(() => {
+    const { onExpand, onCollapse, ...otherOriginProps } = children.props;
+    function handleExpand(itemId) {
+      onExpandCollapse();
+      onExpand(itemId);
+    }
+    function handleCollapse(itemId) {
+      onExpandCollapse();
+      onCollapse(itemId);
+    }
+    const newChildren = omit(children, 'props');
+    return React.cloneElement(newChildren, { ...otherOriginProps, onExpand: handleExpand, onCollapse: handleCollapse });
+  }, [children, onExpandCollapse]);
   return (
     <div
       role="none"
@@ -33,7 +47,7 @@ function TreePlanNode({
       onKeyDown={(e) => e.isPropagationStopped()}
       className={selected ? 'c7ntest-DragPlanFolder-item-selected' : ''}
     >
-      {children}
+      {Children}
     </div>
   );
 }
