@@ -81,6 +81,7 @@ function DragPlanFolder({
     const lastRank = lastId ? treeData.items[lastId].data.rank : null;
     const nextRank = nextId ? treeData.items[nextId].data.rank : null;
     // const rank = '111';
+    console.log('...', selectedNodeMaps.list(), treeRef.current);
     const folderIds = [];
     if (selectedNodeMaps.has(folderId)) {
       const folderList = sortBy(selectedNodeMaps.list(), ['index']);
@@ -98,37 +99,50 @@ function DragPlanFolder({
       // const rank = await handleRequestFailed(moveFolder(folderIds, parentId, lastRank, nextRank));
       selectedNodeMaps.clear();
       // return false;
+    } else {
+      folderIds.push(folderId);
     }
-    folderIds.push(folderId);
 
     selectedNodeMaps.clear();
+    try {
+      const rank = await handleRequestFailed(moveFolder(folderIds, parentId, lastRank, nextRank));
+      // if (Array.isArray(rank) && rank.length === 1) {
+      //   return {
+      //     data: {
+      //       ...sourceItem.data,
+      //       rank: rank[0].rank,
+      //     },
+      //   };
+      // }
+      const planTree = await getPlanTreeById(planId);
+      const { rootIds, treeFolder } = planTree;
+      const newData = {
+        rootIds,
+        treeFolder: treeFolder.map((folder) => {
+          const {
+            issueFolderVO, expanded, children, ...other
+          } = folder;
+          const result = {
+            children: children || [],
+            data: issueFolderVO,
+            isExpanded: expanded,
+            ...other,
+          };
+          return result;
+        }),
+      };
+      setTreeData(newData);
 
-    const rank = await handleRequestFailed(moveFolder(folderIds, parentId, lastRank, nextRank));
-    const planTree = await getPlanTreeById(planId);
-    const { rootIds, treeFolder } = planTree;
-    const newData = {
-      rootIds,
-      treeFolder: treeFolder.map((folder) => {
-        const {
-          issueFolderVO, expanded, children, ...other
-        } = folder;
-        const result = {
-          children: children || [],
-          data: issueFolderVO,
-          isExpanded: expanded,
-          ...other,
-        };
-        return result;
-      }),
-    };
-    setTreeData(newData);
-    return false;
-    return {
-      data: {
-        ...sourceItem.data,
-        rank: rank[0].rank,
-      },
-    };
+      return false;
+    } catch (error) {
+      return false;
+    }
+    // return {
+    //   data: {
+    //     ...sourceItem.data,
+    //     rank: rank[0].rank,
+    //   },
+    // };
   }, [planId, selectedNodeMaps]);
   return (
     <Tree
