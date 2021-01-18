@@ -236,8 +236,8 @@ function PureTree({
       if (parent && parent.path.length >= 9) {
         return;
       }
-      const isCloseBlock = beforeDrag && await beforeDrag(sourceItem, destination);
-      if (!isCloseBlock) {
+      const blockDrag = beforeDrag && await beforeDrag(sourceItem, destination);
+      if (typeof (blockDrag) !== 'undefined' && (!!blockDrag) === false) {
         return;
       }
       setTree((oldTree) => moveItemOnTree(oldTree, source, destination));
