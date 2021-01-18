@@ -236,7 +236,7 @@ function PureTree({
       if (parent && parent.path.length >= 9) {
         return;
       }
-      const isCloseBlock = await beforeDrag(sourceItem, destination);
+      const isCloseBlock = beforeDrag && await beforeDrag(sourceItem, destination);
       if (!isCloseBlock) {
         return;
       }
