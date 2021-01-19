@@ -77,10 +77,8 @@ public class TestCycleController {
     public ResponseEntity<List<TestCycleDTO>> moveFolder(@PathVariable(name = "project_id") Long projectId,
                                                          @RequestParam(name = "target_cycle_id", required = false)
                                                          @Encrypt Long targetCycleId,
-                                                         @RequestParam(name = "last_moved_cycle_id")
-                                                         @Encrypt Long lastMovedCycleId,
                                                          @RequestBody TestCycleVO testCycleVO) {
-        return Optional.ofNullable(testCycleService.batchMoveCycle(projectId, targetCycleId, lastMovedCycleId, testCycleVO))
+        return Optional.ofNullable(testCycleService.batchMoveCycle(projectId, targetCycleId, testCycleVO))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.cycle.move"));
     }

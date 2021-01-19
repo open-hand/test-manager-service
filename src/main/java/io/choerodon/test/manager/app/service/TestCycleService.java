@@ -42,7 +42,7 @@ public interface TestCycleService {
 
     TestTreeIssueFolderVO queryTreeByPlanId(Long planId,Long projectId);
 
-    List<TestCycleDTO> batchMoveCycle(Long projectId, Long targetCycleId, Long lastMovedCycleId, TestCycleVO testCycleVO);
+    List<TestCycleDTO> batchMoveCycle(Long projectId, Long targetCycleId, TestCycleVO testCycleVO);
 
     void baseUpdate(TestCycleDTO testCycleDTO);
 }
