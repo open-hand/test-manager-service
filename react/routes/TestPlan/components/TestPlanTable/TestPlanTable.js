@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-bind */
 import React, {
   useContext, useRef, useEffect, useState,
 } from 'react';
@@ -92,8 +93,27 @@ const TestPlanTable = observer(({
   };
 
   const renderMenu = (text, record) => (testPlanStatus !== 'done' ? (
-    <span style={{ display: 'flex', overflow: 'hidden', alignItems: 'center' }}>
-      <Tooltip title={text}><span style={{ cursor: 'pointer' }} className="c7n-agile-table-cell-click" role="none" onClick={onTableSummaryClick.bind(this, record)}>{text}</span></Tooltip>
+    <span style={{
+      display: 'flex', overflow: 'hidden', alignItems: 'center',
+    }}
+    >
+      <Tooltip title={text}>
+        <span
+          style={{
+            cursor: 'pointer',
+            width: testPlanStatus !== 'done' && record.hasChange ? 'calc(100% - 46px)' : '100%',
+            textOverflow: 'ellipsis',
+            overflow: 'hidden',
+            whiteSpace: 'nowrap',
+          }}
+          className="c7n-agile-table-cell-click"
+          role="none"
+          onClick={onTableSummaryClick.bind(this, record)}
+        >
+          {text}
+        </span>
+
+      </Tooltip>
       <Tooltip title="此用例需更新">
         <span
           style={
@@ -118,7 +138,16 @@ const TestPlanTable = observer(({
     </span>
   ) : (
     <Tooltip title={text}>
-      <span className="c7n-agile-table-cell-click" style={{ cursor: 'pointer', maxWidth: '2rem' }} role="none" onClick={onTableSummaryClick.bind(this, record)}>{text}</span>
+      <span
+        className="c7n-agile-table-cell-click"
+        style={{
+          cursor: 'pointer', maxWidth: '3rem', textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden', width: '100%',
+        }}
+        role="none"
+        onClick={onTableSummaryClick.bind(this, record)}
+      >
+        {text}
+      </span>
     </Tooltip>
   ));
 
@@ -304,7 +333,7 @@ const TestPlanTable = observer(({
         title: '',
         dataIndex: 'more',
         key: 'more',
-        width: 55,
+        width: 50,
         render: (text, record) => renderMoreAction(record),
       });
     } else {
@@ -312,7 +341,7 @@ const TestPlanTable = observer(({
         title: '',
         dataIndex: 'more',
         key: 'more',
-        width: 55,
+        width: 50,
         render: (text, record) => renderMoreAction(record),
       });
     }

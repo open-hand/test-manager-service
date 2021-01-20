@@ -41,7 +41,7 @@ function TreePlanNode({
       role="none"
       onClick={handleClick}
       onKeyDown={(e) => e.isPropagationStopped()}
-      className={selected ? 'c7ntest-DragPlanFolder-item-selected' : ''}
+      className={selected ? 'c7ntest-DragPlanFolder-item-selected c7ntest-DragPlanFolder-item' : 'c7ntest-DragPlanFolder-item'}
     >
       {Children}
     </div>

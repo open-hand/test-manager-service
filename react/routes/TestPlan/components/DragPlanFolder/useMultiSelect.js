@@ -7,16 +7,16 @@ import { toJS } from 'mobx';
  */
 const defaultConfig = { primaryKey: 'id', onLoadNode: () => undefined };
 function useMultiSelect({ primaryKey = 'id', onLoadNode } = defaultConfig) {
-  function handleOperationNode(key, maps = new Map(), operationType = 'del', { addValue } = { addValue: undefined }) {
+  function handleOperationNode(key, maps = new Map(), operationType = 'del', { localValue } = { localValue: undefined }) {
     if (operationType === 'del') {
-      const delItem = maps.get(key);
+      const delItem = localValue || maps.get(key);
       if (delItem) {
         const delItemParentId = delItem.data.parentId;
         const delItemChildren = [...(delItem.children || [])];
-
         // 如果父节点有选中，则代表此节点没有加入maps， 更新兄弟节点，兄弟节点状态为选中
         if (maps.has(delItemParentId)) {
           const delItemParent = maps.get(delItemParentId);
+          maps.delete(delItemParentId);
           delItemParent.children.forEach((item) => {
             item !== key && handleOperationNode(item, maps, 'add');
           });
@@ -29,7 +29,7 @@ function useMultiSelect({ primaryKey = 'id', onLoadNode } = defaultConfig) {
       maps.delete(key);
     }
     if (operationType === 'add' && !maps.has(key)) {
-      const addItem = addValue || onLoadNode(key);
+      const addItem = localValue || onLoadNode(key);
       if (!addItem || maps.has(addItem.data.parentId)) {
         return maps;
       }
@@ -63,11 +63,11 @@ function useMultiSelect({ primaryKey = 'id', onLoadNode } = defaultConfig) {
           });
           newLastSelectNode = values[values.length - 1];
         } else if (typeof (key) !== 'undefined') {
-          if (newMaps.has(key)) {
+          if (handleCheckHasNode(key, value.path, newMaps)) {
             // 已选则删除
-            handleOperationNode(key, newMaps, 'del');
+            handleOperationNode(key, newMaps, 'del', { localValue: value });
           } else {
-            handleOperationNode(key, newMaps, 'add', { addValue: value });
+            handleOperationNode(key, newMaps, 'add', { localValue: value });
           }
         }
         return { ...state, lastSelectNode: newLastSelectNode, selectedNodeMaps: newMaps };
