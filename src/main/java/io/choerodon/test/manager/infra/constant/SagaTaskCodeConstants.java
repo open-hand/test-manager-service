@@ -30,4 +30,14 @@ public class SagaTaskCodeConstants {
      */
     public static final String TASK_ORG_CREATE = "agile-create-organization";
 
+    /**
+     * iam更新项目类型code
+     */
+    public static final String PROJECT_UPDATE = "iam-update-project";
+
+    /**
+     * 更新项目SagaTaskCode
+     */
+    public static final String TASK_PROJECT_UPDATE = "test-update-project";
+
 }

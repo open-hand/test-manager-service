@@ -34,4 +34,12 @@ public class TestProjectInfoController {
                 .orElseThrow(() -> new CommonException("error.projectInfo.update"));
     }
 
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @ApiOperation("查询projectinfo")
+    @GetMapping
+    public ResponseEntity<ProjectInfoVO> queryProjectInfo(@ApiParam(value = "项目id", required = true)
+                                                           @PathVariable(name = "project_id") Long projectId) {
+        return new ResponseEntity<>(testProjectInfoService.queryProjectInfo(projectId),HttpStatus.OK);
+    }
+
 }

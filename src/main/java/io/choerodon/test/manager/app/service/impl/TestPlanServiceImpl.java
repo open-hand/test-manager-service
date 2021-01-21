@@ -6,11 +6,12 @@ import java.util.stream.Collectors;
 
 import com.netflix.hystrix.exception.HystrixRuntimeException;
 import io.choerodon.core.domain.Page;
+import io.choerodon.core.exception.ServiceUnavailableException;
 import io.choerodon.core.utils.PageUtils;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.api.vo.agile.StatusVO;
 import io.choerodon.test.manager.app.assembler.TestCycleAssembler;
-import io.choerodon.test.manager.infra.feign.IssueFeignClient;
+import io.choerodon.test.manager.infra.feign.operator.AgileClientOperator;
 import io.choerodon.test.manager.infra.mapper.*;
 import io.choerodon.test.manager.infra.util.PageUtil;
 import io.choerodon.test.manager.infra.util.RankUtil;
@@ -88,7 +89,7 @@ public class TestPlanServiceImpl implements TestPlanService {
     @Autowired
     private TestCaseLinkMapper testCaseLinkMapper;
     @Autowired
-    private IssueFeignClient issueFeignClient;
+    private AgileClientOperator agileClientOperator;
     @Autowired
     private TestCycleCaseDefectRelMapper testCycleCaseDefectRelMapper;
 
@@ -350,8 +351,8 @@ public class TestPlanServiceImpl implements TestPlanService {
         if (!allIssueIds.isEmpty()) {
             List<IssueLinkVO> issueInfos;
             try {
-                issueInfos = issueFeignClient.queryIssues(projectId, new ArrayList<>(allIssueIds)).getBody();
-            } catch (HystrixRuntimeException e) {
+                issueInfos = agileClientOperator.queryIssues(projectId, new ArrayList<>(allIssueIds));
+            } catch (ServiceUnavailableException e) {
                 LOGGER.error("feign exception: {}", e);
                 result.setRelatedIssueCount(relatedIssueCount);
                 result.setTotalBugCount(totalBugCount);
@@ -408,9 +409,8 @@ public class TestPlanServiceImpl implements TestPlanService {
         query.setPassStatusId(statusId);
         Page<IssueLinkVO> page;
         try {
-            page = issueFeignClient
-                    .pagedQueryIssueByOptions(projectId, pageRequest.getPage(), pageRequest.getSize(), new IssueQueryVO(issueIds, query))
-                    .getBody();
+            page = agileClientOperator
+                    .pagedQueryIssueByOptions(projectId, pageRequest.getPage(), pageRequest.getSize(), new IssueQueryVO(issueIds, query));
             List<IssueLinkVO> content = page.getContent();
             if (content.isEmpty()) {
                 return PageUtil.empty(pageRequest);

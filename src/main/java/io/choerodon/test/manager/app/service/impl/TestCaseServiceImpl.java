@@ -7,11 +7,11 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import io.choerodon.test.manager.infra.feign.operator.AgileClientOperator;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -39,8 +39,6 @@ import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.enums.IssueTypeCode;
 import io.choerodon.test.manager.infra.feign.ApplicationFeignClient;
 import io.choerodon.test.manager.infra.feign.BaseFeignClient;
-import io.choerodon.test.manager.infra.feign.IssueFeignClient;
-import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import io.choerodon.test.manager.infra.mapper.*;
 import io.choerodon.test.manager.infra.util.ConvertUtils;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
@@ -59,16 +57,13 @@ public class TestCaseServiceImpl implements TestCaseService {
     private static final String UI="ui";
 
     @Autowired
-    private TestCaseFeignClient testCaseFeignClient;
-
-    @Autowired
     private BaseFeignClient baseFeignClient;
 
     @Autowired
     private ApplicationFeignClient applicationFeignClient;
 
     @Autowired
-    private IssueFeignClient issueFeignClient;
+    private AgileClientOperator agileClientOperator;
 
     @Autowired
     private TestCaseMapper testCaseMapper;
@@ -119,7 +114,7 @@ public class TestCaseServiceImpl implements TestCaseService {
     private String attachmentUrl;
 
     @Override
-    public ResponseEntity<Page<IssueListTestVO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId) {
+    public Page<IssueListTestVO> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId) {
         Assert.notNull(projectId, "error.TestCaseService.listIssueWithoutSub.param.projectId.not.null");
         Assert.notNull(pageRequest, "error.TestCaseService.listIssueWithoutSub.param.pageRequest.not.null");
         Sort sort = pageRequest.getSort();
@@ -128,26 +123,21 @@ public class TestCaseServiceImpl implements TestCaseService {
             sortSql = PageableHelper.getSortSql(sort);
             sortSql = sortSql.replace(" ", ",");
         }
-        return testCaseFeignClient.listIssueWithoutSubToTestComponent(projectId, searchDTO, organizationId, pageRequest.getPage(), pageRequest.getSize(), sortSql);
+        return agileClientOperator.listIssueWithoutSubToTestComponent(projectId, searchDTO, organizationId, pageRequest.getPage(), pageRequest.getSize(), sortSql);
     }
 
     @Override
-    public ResponseEntity<Page<IssueComponentDetailVO>> listIssueWithoutSubDetail(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId) {
+    public Page<IssueComponentDetailVO> listIssueWithoutSubDetail(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId) {
         Assert.notNull(projectId, "error.TestCaseService.listIssueWithoutSubDetail.param.projectId.not.null");
         Assert.notNull(pageRequest, "error.TestCaseService.listIssueWithoutSubDetail.param.pageRequest.not.null");
-        return testCaseFeignClient.listIssueWithoutSubDetail(pageRequest.getPage(), pageRequest.getSize(), PageUtil.sortToSql(pageRequest.getSort()), projectId, searchDTO, organizationId);
+        return agileClientOperator.listIssueWithoutSubDetail(pageRequest.getPage(), pageRequest.getSize(), PageUtil.sortToSql(pageRequest.getSort()), projectId, searchDTO, organizationId);
     }
 
     @Override
-    public ResponseEntity<IssueDTO> queryIssue(Long projectId, Long issueId, Long organizationId) {
+    public IssueDTO queryIssue(Long projectId, Long issueId, Long organizationId) {
         Assert.notNull(projectId, "error.TestCaseService.queryIssue.param.projectId.not.null");
         Assert.notNull(issueId, "error.TestCaseService.queryIssue.param.issueId.not.null");
-        return testCaseFeignClient.queryIssue(projectId, issueId, organizationId);
-    }
-
-    @Override
-    public Map<Long, IssueInfosVO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId) {
-        return listIssueWithoutSub(projectId, searchDTO, pageRequest, organizationId).getBody().getContent().stream().collect(Collectors.toMap(IssueListTestVO::getIssueId, IssueInfosVO::new));
+        return agileClientOperator.queryIssue(projectId, issueId, organizationId);
     }
 
     /**
@@ -160,7 +150,7 @@ public class TestCaseServiceImpl implements TestCaseService {
      */
     @Override
     public <T> Map<Long, IssueInfosVO> getIssueInfoMapAndPopulatePageInfo(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Page page, Long organizationId) {
-        Page<IssueListTestWithSprintVersionDTO> returnDto = listIssueWithLinkedIssues(projectId, searchDTO, pageRequest, organizationId).getBody();
+        Page<IssueListTestWithSprintVersionDTO> returnDto = listIssueWithLinkedIssues(projectId, searchDTO, pageRequest, organizationId);
         Assert.notNull(returnDto, "error.TestCaseService.getIssueInfoMapAndPopulatePageInfo.param.page.not.be.null");
         page.setNumber(returnDto.getNumber());
         page.setSize(returnDto.getSize());
@@ -173,9 +163,9 @@ public class TestCaseServiceImpl implements TestCaseService {
     public Map<Long, IssueInfosVO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, boolean needDetail, Long organizationId) {
         PageRequest pageRequest = new PageRequest(0, 999999999, Sort.Direction.DESC, "issueId");
         if (needDetail) {
-            return listIssueWithoutSubDetail(projectId, searchDTO, pageRequest, organizationId).getBody().getContent().stream().collect(Collectors.toMap(IssueComponentDetailVO::getIssueId, IssueInfosVO::new));
+            return listIssueWithoutSubDetail(projectId, searchDTO, pageRequest, organizationId).getContent().stream().collect(Collectors.toMap(IssueComponentDetailVO::getIssueId, IssueInfosVO::new));
         } else {
-            return listIssueWithoutSub(projectId, searchDTO, pageRequest, organizationId).getBody().getContent().stream().collect(Collectors.toMap(IssueListTestVO::getIssueId, IssueInfosVO::new));
+            return listIssueWithoutSub(projectId, searchDTO, pageRequest, organizationId).getContent().stream().collect(Collectors.toMap(IssueListTestVO::getIssueId, IssueInfosVO::new));
         }
     }
 
@@ -185,14 +175,6 @@ public class TestCaseServiceImpl implements TestCaseService {
             return new HashMap<>();
         }
         return getIssueInfoMap(projectId, buildIdsSearchDTO(issueIds), needDetail, organizationId);
-    }
-
-    @Override
-    public Map<Long, IssueInfosVO> getIssueInfoMap(Long projectId, Long[] issueIds, PageRequest pageRequest, Long organizationId) {
-        if (ObjectUtils.isEmpty(issueIds)) {
-            return new HashMap<>();
-        }
-        return getIssueInfoMap(projectId, buildIdsSearchDTO(issueIds), pageRequest, organizationId);
     }
 
     private SearchDTO buildIdsSearchDTO(Long[] issueIds) {
@@ -210,22 +192,18 @@ public class TestCaseServiceImpl implements TestCaseService {
         if (ObjectUtils.isEmpty(issueId)) {
             return new ArrayList<>();
         }
-        return testCaseFeignClient.listIssueLinkByBatch(projectId, issueId).getBody();
-    }
-
-    public List<IssueInfoDTO> listByIssueIds(Long projectId, List<Long> issueIds) {
-        return testCaseFeignClient.listByIssueIds(projectId, issueIds).getBody();
+        return agileClientOperator.listIssueLinkByBatch(projectId, issueId);
     }
 
     @Override
     public LookupTypeWithValuesDTO queryLookupValueByCode(String typeCode) {
-        return testCaseFeignClient.queryLookupValueByCode(typeCode).getBody();
+        return agileClientOperator.queryLookupValueByCode(typeCode);
     }
 
 
     @Override
     public List<IssueStatusDTO> listStatusByProjectId(Long projectId) {
-        return testCaseFeignClient.listStatusByProjectId(projectId).getBody();
+        return agileClientOperator.listStatusByProjectId(projectId);
     }
 
     @Override
@@ -514,13 +492,13 @@ public class TestCaseServiceImpl implements TestCaseService {
     @Override
     public List<Long> queryIssueIdsByOptions(SearchDTO searchDTO, Long projectId) {
         Assert.notNull(projectId, "error.TestCaseService.queryIssueIdsByOptions.param.projectId.not.be.null");
-        return testCaseFeignClient.queryIssueIdsByOptions(projectId, searchDTO).getBody();
+        return agileClientOperator.queryIssueIdsByOptions(projectId, searchDTO);
     }
 
     @Override
     public IssueDTO createTest(IssueCreateDTO issueCreateDTO, Long projectId, String applyType) {
         Assert.notNull(projectId, "error.TestCaseService.createTest.param.projectId.not.be.null");
-        return testCaseFeignClient.createIssue(projectId, applyType, issueCreateDTO).getBody();
+        return agileClientOperator.createIssue(projectId, applyType, issueCreateDTO);
     }
 
     @Override
@@ -532,10 +510,10 @@ public class TestCaseServiceImpl implements TestCaseService {
         }
     }
 
-    private ResponseEntity<Page<IssueListTestWithSprintVersionDTO>> listIssueWithLinkedIssues(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId) {
+    private Page<IssueListTestWithSprintVersionDTO> listIssueWithLinkedIssues(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId) {
         Assert.notNull(projectId, "error.TestCaseService.listIssueWithLinkedIssues.param.projectId.not.null");
         Assert.notNull(pageRequest, "error.TestCaseService.listIssueWithLinkedIssues.param.pageRequest.not.null");
-        return testCaseFeignClient.listIssueWithLinkedIssues(pageRequest.getPage(), pageRequest.getSize(), PageUtil.sortToSql(pageRequest.getSort()), projectId, searchDTO, organizationId);
+        return agileClientOperator.listIssueWithLinkedIssues(pageRequest.getPage(), pageRequest.getSize(), PageUtil.sortToSql(pageRequest.getSort()), projectId, searchDTO, organizationId);
     }
 
     private TestCaseDTO baseInsert(TestCaseVO testCaseVO) {
@@ -573,11 +551,10 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     @Override
     public Page<IssueNumDTO> queryIssueByOptionForAgile(Long projectId, Long issueId, String issueNum, Boolean self, String content, PageRequest pageRequest) {
-        return issueFeignClient
+        return agileClientOperator
                 .queryIssueByOptionForAgile(
                         pageRequest.getPage(),
-                        pageRequest.getSize(), projectId, issueId, issueNum, self, content)
-                .getBody();
+                        pageRequest.getSize(), projectId, issueId, issueNum, self, content);
     }
 
     @Override

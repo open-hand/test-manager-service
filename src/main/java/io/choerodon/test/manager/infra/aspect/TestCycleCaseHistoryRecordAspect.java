@@ -2,6 +2,7 @@ package io.choerodon.test.manager.infra.aspect;
 
 import java.util.List;
 
+import io.choerodon.test.manager.api.vo.agile.IssueDTO;
 import org.apache.commons.lang.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -123,8 +124,11 @@ public class TestCycleCaseHistoryRecordAspect {
         TestCycleCaseStepDTO testCycleCaseStepDTO = testCycleCaseStepMapper.selectByPrimaryKey(testCycleCaseDefectRelVO.getDefectLinkId());
         historyDTO.setExecuteId(testCycleCaseStepDTO.getExecuteId());
         historyDTO.setOldValue(TestCycleCaseHistoryType.FIELD_NULL);
-        String defectName = testCaseService.queryIssue((Long) jp.getArgs()[1], testCycleCaseDefectRelVO.getIssueId(), (Long) jp.getArgs()[2]).getBody().getIssueNum();
-        historyDTO.setNewValue(defectName);
+        IssueDTO issueDTO = testCaseService.queryIssue((Long) jp.getArgs()[1], testCycleCaseDefectRelVO.getIssueId(), (Long) jp.getArgs()[2]);
+        if (ObjectUtils.isEmpty(issueDTO)) {
+            return;
+        }
+        historyDTO.setNewValue(issueDTO.getIssueNum());
         testCycleCaseHistoryService.insert(historyDTO);
     }
 
@@ -137,11 +141,13 @@ public class TestCycleCaseHistoryRecordAspect {
         historyDTO.setField(TestCycleCaseHistoryType.FIELD_DEFECT);
         TestCycleCaseStepDTO testCycleCaseStepDTO = testCycleCaseStepMapper.selectByPrimaryKey(testCycleCaseDefectRelE.getDefectLinkId());
         historyDTO.setExecuteId(testCycleCaseStepDTO.getExecuteId());
-        String defectName = testCaseService.queryIssue(projectId, testCycleCaseDefectRelE.getIssueId(), organizationId).getBody().getIssueNum();
-        historyDTO.setOldValue(defectName);
-        historyDTO.setNewValue(TestCycleCaseHistoryType.FIELD_NULL);
+        IssueDTO issueDTO = testCaseService.queryIssue(projectId, testCycleCaseDefectRelE.getIssueId(), organizationId);
+        if (!ObjectUtils.isEmpty(issueDTO)) {
+            historyDTO.setOldValue(issueDTO.getIssueNum());
+            historyDTO.setNewValue(TestCycleCaseHistoryType.FIELD_NULL);
+            testCycleCaseHistoryService.insert(historyDTO);
+        }
         Object o = pjp.proceed();
-        testCycleCaseHistoryService.insert(historyDTO);
         return o;
     }
 }
