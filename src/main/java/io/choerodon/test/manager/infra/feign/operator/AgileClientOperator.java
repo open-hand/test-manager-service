@@ -119,15 +119,6 @@ public class AgileClientOperator {
         }
     }
 
-    public List<IssueSearchDTO> batchIssueToVersion(Long projectId, Long versionId, List<Long> issueIds) {
-        try {
-            return FeignClientUtils.doRequest(() -> testCaseFeignClient.batchIssueToVersion(projectId, versionId, issueIds), new TypeReference<List<IssueSearchDTO>>() {
-            });
-        } catch (ServiceUnavailableException e) {
-            return new ArrayList<>();
-        }
-    }
-
     public Page<IssueListTestWithSprintVersionDTO> listIssueWithLinkedIssues(int page, int size, String orders, Long projectId, SearchDTO searchDTO, Long organizationId) {
         try {
             return FeignClientUtils.doRequest(() -> testCaseFeignClient.listIssueWithLinkedIssues(page, size, orders, projectId, searchDTO, organizationId), new TypeReference<Page<IssueListTestWithSprintVersionDTO>>() {

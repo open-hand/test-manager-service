@@ -72,61 +72,6 @@ public interface TestCaseFeignClient {
                                                       @ApiParam(value = "查询参数", required = true)
                                                       @RequestBody SearchDTO searchDTO);
 
-
-    /**
-     * 将issues的version改为目标version
-     *
-     * @param projectId
-     * @param versionId 目标version
-     * @param issueIds
-     * @return
-     */
-    @PostMapping(value = "/v1/projects/{project_id}/issues/to_version/{versionId}")
-    ResponseEntity<String> batchIssueToVersion(@ApiParam(value = "项目id", required = true)
-                                                             @PathVariable(name = "project_id") Long projectId,
-                                                             @ApiParam(value = "versionId", required = true)
-                                                             @PathVariable(name = "versionId") Long versionId,
-                                                             @ApiParam(value = "issue id", required = true)
-                                                             @RequestBody List<Long> issueIds);
-
-    /**
-     * 克隆issue并将他们的version改为目标version
-     *
-     * @param projectId
-     * @param versionId
-     * @param issueIds
-     * @return
-     */
-    @PostMapping(value = "/v1/projects/{project_id}/issues/batch_clone_issue/{versionId}")
-    ResponseEntity<List<Long>> batchCloneIssue(@PathVariable(name = "project_id") Long projectId,
-                                               @PathVariable(name = "versionId") Long versionId,
-                                               @RequestBody Long[] issueIds);
-
-    /**
-     * 批量删除issue
-     *
-     * @param projectId
-     * @param issueIds
-     * @return
-     */
-    @DeleteMapping(value = "/v1/projects/{project_id}/issues/to_version_test")
-    ResponseEntity batchDeleteIssues(@PathVariable(name = "project_id") Long projectId,
-                                     @RequestBody List<Long> issueIds);
-
-    /**
-     * 批量替换issue的version
-     *
-     * @param projectId
-     * @param versionId
-     * @param issueIds
-     * @return
-     */
-    @PostMapping(value = "/v1/projects/{project_id}/issues/to_version_test/{versionId}")
-    ResponseEntity batchIssueToVersionTest(@PathVariable(name = "project_id") Long projectId,
-                                           @PathVariable(name = "versionId") Long versionId,
-                                           @RequestBody List<Long> issueIds);
-
-
     /**
      * 报表从issue到缺陷获取初始issue
      *
@@ -143,19 +88,6 @@ public interface TestCaseFeignClient {
                                                                                           @PathVariable(name = "project_id") Long projectId,
                                                                                           @RequestBody(required = false) SearchDTO searchDTO,
                                                                                           @RequestParam(name = "organizationId") Long organizationId);
-
-    /**
-     * 得到所有projectId各自的component
-     *
-     * @param projectId
-     * @return
-     */
-    @PostMapping(value = "/v1/projects/{project_id}/component/query_all")
-    ResponseEntity<Page<ComponentForListDTO>> listByProjectId(@PathVariable(name = "project_id") Long projectId,
-                                                                  @RequestBody(required = false) SearchDTO searchDTO);
-
-    @GetMapping(value = "/v1/projects/{project_id}/issue_labels")
-    ResponseEntity<List<IssueLabelDTO>> listIssueLabel(@PathVariable(name = "project_id") Long projectId);
 
     @GetMapping(value = "/v1/projects/{project_id}/issue_status/list")
     ResponseEntity<String> listStatusByProjectId(@PathVariable(name = "project_id") Long projectId);

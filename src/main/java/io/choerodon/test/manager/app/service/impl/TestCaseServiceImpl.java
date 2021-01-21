@@ -39,7 +39,6 @@ import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.enums.IssueTypeCode;
 import io.choerodon.test.manager.infra.feign.ApplicationFeignClient;
 import io.choerodon.test.manager.infra.feign.BaseFeignClient;
-import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import io.choerodon.test.manager.infra.mapper.*;
 import io.choerodon.test.manager.infra.util.ConvertUtils;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
@@ -56,9 +55,6 @@ public class TestCaseServiceImpl implements TestCaseService {
     private static final String API_TYPE = "api";
     private static final String REPLAY = "replay";
     private static final String UI="ui";
-
-    @Autowired
-    private TestCaseFeignClient testCaseFeignClient;
 
     @Autowired
     private BaseFeignClient baseFeignClient;
@@ -144,11 +140,6 @@ public class TestCaseServiceImpl implements TestCaseService {
         return agileClientOperator.queryIssue(projectId, issueId, organizationId);
     }
 
-    @Override
-    public Map<Long, IssueInfosVO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId) {
-        return listIssueWithoutSub(projectId, searchDTO, pageRequest, organizationId).getContent().stream().collect(Collectors.toMap(IssueListTestVO::getIssueId, IssueInfosVO::new));
-    }
-
     /**
      * 获取issue信息并且更新分页信息
      *
@@ -186,14 +177,6 @@ public class TestCaseServiceImpl implements TestCaseService {
         return getIssueInfoMap(projectId, buildIdsSearchDTO(issueIds), needDetail, organizationId);
     }
 
-    @Override
-    public Map<Long, IssueInfosVO> getIssueInfoMap(Long projectId, Long[] issueIds, PageRequest pageRequest, Long organizationId) {
-        if (ObjectUtils.isEmpty(issueIds)) {
-            return new HashMap<>();
-        }
-        return getIssueInfoMap(projectId, buildIdsSearchDTO(issueIds), pageRequest, organizationId);
-    }
-
     private SearchDTO buildIdsSearchDTO(Long[] issueIds) {
         SearchDTO searchDTO = new SearchDTO();
         Map map = new HashMap();
@@ -210,10 +193,6 @@ public class TestCaseServiceImpl implements TestCaseService {
             return new ArrayList<>();
         }
         return agileClientOperator.listIssueLinkByBatch(projectId, issueId);
-    }
-
-    public List<IssueInfoDTO> listByIssueIds(Long projectId, List<Long> issueIds) {
-        return agileClientOperator.listByIssueIds(projectId, issueIds);
     }
 
     @Override
