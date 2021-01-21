@@ -4,6 +4,7 @@ import io.choerodon.test.manager.api.vo.agile.ProjectInfoVO;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.validator.ProjectInfoValidator;
 import io.choerodon.test.manager.api.vo.event.ProjectEvent;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,9 @@ import io.choerodon.test.manager.app.service.TestProjectInfoService;
 import io.choerodon.test.manager.infra.dto.TestProjectInfoDTO;
 import io.choerodon.test.manager.infra.mapper.TestProjectInfoMapper;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+
+import java.util.List;
 
 /**
  * @author: 25499
@@ -26,6 +30,9 @@ public class TestProjectInfoServiceImpl implements TestProjectInfoService {
 
     @Autowired
     private ProjectInfoValidator projectInfoValidator;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     @Override
     public void initializationProjectInfo(ProjectEvent projectEvent) {
@@ -47,5 +54,17 @@ public class TestProjectInfoServiceImpl implements TestProjectInfoService {
             throw new CommonException("error.projectInfoCode.update");
         }
         return projectInfoVO;
+    }
+
+    @Override
+    public ProjectInfoVO queryProjectInfo(Long projectId) {
+        TestProjectInfoDTO testProjectInfoDTO = new TestProjectInfoDTO();
+        testProjectInfoDTO.setProjectId(projectId);
+        List<TestProjectInfoDTO> list = testProjectInfoMapper.select(testProjectInfoDTO);
+        if (CollectionUtils.isEmpty(list)) {
+            return null;
+        } else {
+            return modelMapper.map(list.get(0), ProjectInfoVO.class);
+        }
     }
 }

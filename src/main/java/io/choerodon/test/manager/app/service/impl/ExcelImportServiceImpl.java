@@ -18,6 +18,7 @@ import io.choerodon.test.manager.infra.enums.TestAttachmentCode;
 import io.choerodon.test.manager.infra.enums.TestFileLoadHistoryEnums;
 import io.choerodon.test.manager.infra.feign.BaseFeignClient;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
+import io.choerodon.test.manager.infra.feign.operator.AgileClientOperator;
 import io.choerodon.test.manager.infra.mapper.TestFileLoadHistoryMapper;
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
 import io.choerodon.test.manager.infra.mapper.TestPriorityMapper;
@@ -118,7 +119,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     private TestIssueFolderMapper testIssueFolderMapper;
 
     @Autowired
-    private TestCaseFeignClient testCaseFeignClient;
+    private AgileClientOperator agileClientOperator;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -624,7 +625,11 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             IssueNumDTO issueNumDTO;
 
             try {
-                issueNumDTO = testCaseFeignClient.queryIssueByIssueNum(projectId, issueNumString).getBody();
+                issueNumDTO = agileClientOperator.queryIssueByIssueNum(projectId, issueNumString);
+                if (ObjectUtils.isEmpty(issueNumDTO)) {
+                    markAsError(row, "关联问题编号有误，仅支持关联故事、任务、缺陷类型，请检查录入的关联问题编号。");
+                    return null;
+                }
             } catch (FeignException e) {
                 markAsError(row, "关联问题编号有误，仅支持关联故事、任务、缺陷类型，请检查录入的关联问题编号。");
                 return null;
@@ -632,8 +637,8 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
             // Todo:重构
             // 查询所有的linktype
-            List<IssueLinkTypeDTO> issueLinkTypeDTOList = testCaseFeignClient.listIssueLinkType(projectId, null,
-                    new IssueLinkTypeSearchDTO()).getBody().getContent();
+            List<IssueLinkTypeDTO> issueLinkTypeDTOList = agileClientOperator.listIssueLinkType(projectId, null,
+                    new IssueLinkTypeSearchDTO()).getContent();
 
             TestCaseLinkDTO testCaseLinkDTO = new TestCaseLinkDTO();
             testCaseLinkDTO.setIssueId(issueNumDTO.getIssueId());

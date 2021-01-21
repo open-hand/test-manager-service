@@ -21,43 +21,43 @@ public class TestCaseFeignClientFallback implements TestCaseFeignClient {
     private static final String CREATE_ERROR = "error.baseFeign.create";
 
     @Override
-    public ResponseEntity<IssueDTO> createIssue(Long projectId, String applyType, IssueCreateDTO issueCreateDTO) {
+    public ResponseEntity<String> createIssue(Long projectId, String applyType, IssueCreateDTO issueCreateDTO) {
         throw new CommonException(CREATE_ERROR);
     }
 
 
     @Override
-    public ResponseEntity<IssueDTO> queryIssue(Long projectId, Long issueId, Long organizationId) {
+    public ResponseEntity<String> queryIssue(Long projectId, Long issueId, Long organizationId) {
         throw new CommonException(QUERY_ERROR);
     }
 
     @Override
-    public ResponseEntity<Page<IssueListTestVO>> listIssueWithoutSubToTestComponent(Long projectId, SearchDTO searchDTO, Long organizationId, int page, int size, String sort) {
+    public ResponseEntity<String> listIssueWithoutSubToTestComponent(Long projectId, SearchDTO searchDTO, Long organizationId, int page, int size, String sort) {
         throw new CommonException(QUERY_ERROR);
     }
 
     @Override
-    public ResponseEntity<List<IssueInfoDTO>> listByIssueIds(Long projectId, List<Long> issueIds) {
+    public ResponseEntity<String> listByIssueIds(Long projectId, List<Long> issueIds) {
         throw new CommonException(QUERY_ERROR);
     }
 
     @Override
-    public ResponseEntity<List<IssueLinkDTO>> listIssueLinkByBatch(Long projectId, List<Long> issueIds) {
+    public ResponseEntity<String> listIssueLinkByBatch(Long projectId, List<Long> issueIds) {
         throw new CommonException(QUERY_ERROR);
     }
 
     @Override
-    public ResponseEntity<Page<IssueComponentDetailVO>> listIssueWithoutSubDetail(int page, int size, String orders, Long projectId, SearchDTO searchDTO, Long organizationId) {
+    public ResponseEntity<String> listIssueWithoutSubDetail(int page, int size, String orders, Long projectId, SearchDTO searchDTO, Long organizationId) {
         throw new CommonException(QUERY_ERROR);
     }
 
     @Override
-    public ResponseEntity<List<Long>> queryIssueIdsByOptions(Long projectId, SearchDTO searchDTO) {
+    public ResponseEntity<String> queryIssueIdsByOptions(Long projectId, SearchDTO searchDTO) {
         throw new CommonException(QUERY_ERROR);
     }
 
     @Override
-    public ResponseEntity<List<IssueSearchDTO>> batchIssueToVersion(Long projectId, Long versionId, List<Long> issueIds) {
+    public ResponseEntity<String> batchIssueToVersion(Long projectId, Long versionId, List<Long> issueIds) {
         throw new CommonException(UPDATE_ERROR);
     }
 
@@ -77,7 +77,7 @@ public class TestCaseFeignClientFallback implements TestCaseFeignClient {
     }
 
     @Override
-    public ResponseEntity<Page<IssueListTestWithSprintVersionDTO>> listIssueWithLinkedIssues(int page, int size, String orders, Long projectId, SearchDTO searchDTO, Long organizationId) {
+    public ResponseEntity<String> listIssueWithLinkedIssues(int page, int size, String orders, Long projectId, SearchDTO searchDTO, Long organizationId) {
         throw new CommonException(QUERY_ERROR);
     }
 
@@ -92,22 +92,22 @@ public class TestCaseFeignClientFallback implements TestCaseFeignClient {
     }
 
     @Override
-    public ResponseEntity<LookupTypeWithValuesDTO> queryLookupValueByCode(String typeCode) {
+    public ResponseEntity<String> queryLookupValueByCode(String typeCode) {
         throw new CommonException(QUERY_ERROR);
     }
 
     @Override
-    public ResponseEntity<List<IssueStatusDTO>> listStatusByProjectId(Long projectId) {
+    public ResponseEntity<String> listStatusByProjectId(Long projectId) {
         throw new CommonException(QUERY_ERROR);
     }
 
     @Override
-    public ResponseEntity<Page<IssueLinkTypeDTO>> listIssueLinkType(Long projectId, Long issueLinkTypeId, IssueLinkTypeSearchDTO issueLinkTypeSearchDTO) {
+    public ResponseEntity<String> listIssueLinkType(Long projectId, Long issueLinkTypeId, IssueLinkTypeSearchDTO issueLinkTypeSearchDTO) {
         throw new CommonException(QUERY_ERROR);
     }
 
     @Override
-    public ResponseEntity<IssueNumDTO> queryIssueByIssueNum(Long projectId, String issueNum) {
+    public ResponseEntity<String> queryIssueByIssueNum(Long projectId, String issueNum) {
         throw new CommonException(QUERY_ERROR);
     }
 }

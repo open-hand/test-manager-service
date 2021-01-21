@@ -24,11 +24,11 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public interface TestCaseService {
 
-    ResponseEntity<Page<IssueListTestVO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId);
+    Page<IssueListTestVO> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId);
 
-    ResponseEntity<Page<IssueComponentDetailVO>> listIssueWithoutSubDetail(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId);
+    Page<IssueComponentDetailVO> listIssueWithoutSubDetail(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId);
 
-    ResponseEntity<IssueDTO> queryIssue(Long projectId, Long issueId, Long organizationId);
+    IssueDTO queryIssue(Long projectId, Long issueId, Long organizationId);
 
     Map<Long, IssueInfosVO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId);
 

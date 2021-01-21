@@ -13,4 +13,6 @@ public interface TestProjectInfoService {
     void initializationProjectInfo(ProjectEvent projectEvent);
 
     ProjectInfoVO updateProjectInfo(Long projectId, ProjectInfoVO projectInfoVO);
+
+    ProjectInfoVO queryProjectInfo(Long projectId);
 }

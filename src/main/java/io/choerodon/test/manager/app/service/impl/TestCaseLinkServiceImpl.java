@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import io.choerodon.test.manager.api.vo.TestCaseLinkVO;
 import io.choerodon.test.manager.api.vo.TestCaseVO;
 import io.choerodon.test.manager.app.service.TestCaseService;
+import io.choerodon.test.manager.infra.feign.operator.AgileClientOperator;
 import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,10 +37,7 @@ public class TestCaseLinkServiceImpl implements TestCaseLinkService {
     private TestCaseLinkMapper testCaseLinkMapper;
 
     @Autowired
-    private IssueFeignClient issueFeignClient;
-
-    @Autowired
-    private TestCaseFeignClient testCaseFeignClient;
+    private AgileClientOperator agileClientOperator;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -79,7 +77,7 @@ public class TestCaseLinkServiceImpl implements TestCaseLinkService {
             return new ArrayList<>();
         }
         List<Long> collect = testCaseLinkDTOS.stream().map(TestCaseLinkDTO::getLinkCaseId).collect(Collectors.toList());
-        return testCaseFeignClient.listByIssueIds(projectId, collect).getBody();
+        return agileClientOperator.listByIssueIds(projectId, collect);
     }
 
     @Override
@@ -111,7 +109,7 @@ public class TestCaseLinkServiceImpl implements TestCaseLinkService {
             return new ArrayList<>();
         }
         List<Long> issueIds = caseLinkList.stream().map(TestCaseLinkDTO::getIssueId).collect(Collectors.toList());
-        List<IssueLinkVO> issueInfos = issueFeignClient.queryIssues(projectId, issueIds).getBody();
+        List<IssueLinkVO> issueInfos = agileClientOperator.queryIssues(projectId, issueIds);
         Map<Long, List<IssueLinkVO>> collect = issueInfos.stream().collect(Collectors.groupingBy(IssueLinkVO::getIssueId));
         List<IssueLinkVO> result = new ArrayList<>();
         caseLinkList.forEach(v -> {
