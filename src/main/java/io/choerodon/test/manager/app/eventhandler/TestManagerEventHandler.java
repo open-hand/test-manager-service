@@ -8,9 +8,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.corba.se.impl.orbutil.concurrent.Sync;
 import io.choerodon.test.manager.api.vo.TestPlanVO;
-import io.choerodon.test.manager.api.vo.agile.ProjectInfoVO;
 import io.choerodon.test.manager.api.vo.event.OrganizationCreateEventPayload;
 import io.choerodon.test.manager.api.vo.event.ProjectEvent;
 import io.choerodon.test.manager.api.vo.event.ProjectEventCategory;
@@ -18,7 +16,6 @@ import io.choerodon.test.manager.infra.constant.SagaTaskCodeConstants;
 import io.choerodon.test.manager.infra.constant.SagaTopicCodeConstants;
 import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.enums.TestPlanInitStatus;
-import io.choerodon.test.manager.infra.feign.operator.AgileClientOperator;
 import io.choerodon.test.manager.infra.mapper.TestPlanMapper;
 import io.choerodon.test.manager.infra.mapper.TestProjectInfoMapper;
 import org.hzero.core.base.BaseConstants;
@@ -32,6 +29,7 @@ import io.choerodon.asgard.saga.annotation.SagaTask;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.api.vo.event.InstancePayload;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 /**
@@ -49,14 +47,6 @@ public class TestManagerEventHandler {
      * 测试管理模块
      */
     private static final String MODULE_TEST = "N_TEST";
-    /**
-     * 敏捷模块
-     */
-    private static final String AGILE = "N_AGILE";
-    /**
-     * 敏捷项目群模块
-     */
-    private static final String PROGRAM = "N_PROGRAM";
 
     @Autowired
     private TestAppInstanceService testAppInstanceService;
@@ -84,9 +74,6 @@ public class TestManagerEventHandler {
 
     @Autowired
     private TestProjectInfoMapper testProjectInfoMapper;
-
-    @Autowired
-    private AgileClientOperator agileClientOperator;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -204,15 +191,13 @@ public class TestManagerEventHandler {
         Long projectId = projectEvent.getProjectId();
         TestProjectInfoDTO dto = new TestProjectInfoDTO();
         dto.setProjectId(projectId);
-        if (testProjectInfoMapper.select(dto).isEmpty()) {
+        if (testProjectInfoMapper.select(dto).isEmpty() && !CollectionUtils.isEmpty(projectEvent.getProjectCategoryVOS())) {
             Set<String> codes =
                     projectEvent.getProjectCategoryVOS()
                             .stream()
                             .map(ProjectEventCategory::getCode)
                             .collect(Collectors.toSet());
             if (codes.contains(MODULE_TEST)) {
-                // 同步前缀
-                syncProjectCode(codes,projectEvent,projectId);
                 testProjectInfoService.initializationProjectInfo(projectEvent);
                 testIssueFolderService.initializationFolderInfo(projectEvent);
             }
@@ -220,15 +205,6 @@ public class TestManagerEventHandler {
             LOGGER.info("项目{}已初始化，跳过项目初始化", projectEvent.getProjectCode());
         }
         return message;
-    }
-
-    private void syncProjectCode(Set<String> codes, ProjectEvent projectEvent, Long projectId) {
-        if (codes.contains(AGILE) || codes.contains(PROGRAM)) {
-            ProjectInfoVO projectInfoVO = agileClientOperator.queryProjectInfoByProjectId(projectId);
-            if (!ObjectUtils.isEmpty(projectInfoVO)) {
-                projectEvent.setProjectCode(projectInfoVO.getProjectCode());
-            }
-        }
     }
 
 }
