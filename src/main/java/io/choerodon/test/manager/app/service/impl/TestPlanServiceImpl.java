@@ -377,10 +377,39 @@ public class TestPlanServiceImpl implements TestPlanService {
                 }
             }
         }
+        result.setPassedIssueCount(calculatePassedIssueCount(issueIds, planId, projectId));
         result.setRelatedIssueCount(relatedIssueCount);
         result.setTotalBugCount(totalBugCount);
         result.setSolvedBugCount(solvedBugCount);
         return result;
+    }
+
+    private Integer calculatePassedIssueCount(List<Long> issueIds,
+                                              Long planId,
+                                              Long projectId) {
+        int count = 0;
+        if (ObjectUtils.isEmpty(issueIds)) {
+            return count;
+        }
+        String statusName = "通过";
+        Long statusId = queryStatusIdByName(projectId, statusName);
+        if (statusId == null) {
+            throw new CommonException("error.test.status.not.existed.name." + statusName);
+        }
+        List<TestPlanReporterIssueVO> issues = queryIssue(issueIds, planId, null, ISSUE);
+        for (TestPlanReporterIssueVO vo : issues) {
+            boolean passed = true;
+            for (TestFolderCycleCaseVO testFolderCycleCase : vo.getTestFolderCycleCases()) {
+                if (!statusId.equals(testFolderCycleCase.getExecutionStatus())) {
+                    passed = false;
+                    break;
+                }
+            }
+            if (passed) {
+                count++;
+            }
+        }
+        return count;
     }
 
     @Override
