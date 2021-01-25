@@ -24,6 +24,16 @@ public class TestPlanReporterInfoVO {
 
     private Integer solvedBugCount;
 
+    private Integer passedIssueCount;
+
+    public Integer getPassedIssueCount() {
+        return passedIssueCount;
+    }
+
+    public void setPassedIssueCount(Integer passedIssueCount) {
+        this.passedIssueCount = passedIssueCount;
+    }
+
     public UserDO getManager() {
         return manager;
     }
