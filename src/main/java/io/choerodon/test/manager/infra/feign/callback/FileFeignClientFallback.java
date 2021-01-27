@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by HuangFuqiang on 2018/1/15.
@@ -17,5 +18,10 @@ public class FileFeignClientFallback implements FileFeignClient {
     @Override
     public ResponseEntity<String> deleteFileByUrl(Long organizationId, String bucketName, List<String> urls) {
         throw new CommonException("error.delete.file");
+    }
+
+    @Override
+    public ResponseEntity<String> fragmentCombineBlock(Long organizationId, String guid, String fileName, Map<String, String> args) {
+        throw new CommonException("error.combine.file");
     }
 }

@@ -8,6 +8,7 @@ import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.swagger.annotation.Permission;
 
 import io.choerodon.core.exception.CommonException;
+import io.choerodon.test.manager.api.vo.TestCaseAttachmentCombineVO;
 import io.choerodon.test.manager.app.service.TestCaseAttachmentService;
 import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
 import io.swagger.annotations.ApiOperation;
@@ -62,6 +63,19 @@ public class TestCaseAttachmentController {
                                                          @PathVariable(name = "project_id") Long projectId,
                                                          HttpServletRequest request) {
         return Optional.ofNullable(testCaseAttachmentService.uploadForAddress(projectId, request))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
+                .orElseThrow(() -> new CommonException("error.attachment.upload"));
+    }
+
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @ApiOperation("合并上传切片，创建附件记录")
+    @PostMapping("/combine")
+    public ResponseEntity<TestCaseAttachmentDTO> attachmentCombineBlock(@ApiParam(value = "项目id", required = true)
+                                                                        @PathVariable(name = "project_id") Long projectId,
+                                                                        @ApiParam(value = "分片合并参数", required = true)
+                                                                        @RequestBody TestCaseAttachmentCombineVO testCaseAttachmentCombineVO) {
+        testCaseAttachmentService.validCombineUpload(testCaseAttachmentCombineVO);
+        return Optional.ofNullable(testCaseAttachmentService.attachmentCombineUpload(projectId, testCaseAttachmentCombineVO))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.attachment.upload"));
     }
