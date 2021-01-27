@@ -1,16 +1,29 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import javax.servlet.http.HttpServletRequest;
+import org.hzero.boot.file.FileClient;
+import org.hzero.core.util.ResponseUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletRequest;
+
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.oauth.CustomUserDetails;
 import io.choerodon.core.oauth.DetailsHelper;
+import io.choerodon.test.manager.api.vo.TestCaseAttachmentCombineVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseAttachmentRelVO;
 import io.choerodon.test.manager.api.vo.agile.ProjectDTO;
 import io.choerodon.test.manager.app.assembler.TestCaseAssembler;
@@ -24,23 +37,13 @@ import io.choerodon.test.manager.infra.dto.TestCaseDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseAttachmentRelDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.infra.feign.BaseFeignClient;
-//import io.choerodon.test.manager.infra.feign.FileFeignClient;
 import io.choerodon.test.manager.infra.feign.FileFeignClient;
 import io.choerodon.test.manager.infra.mapper.TestAttachmentMapper;
+import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseAttachmentRelMapper;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper;
-import org.hzero.boot.file.FileClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
+
+//import io.choerodon.test.manager.infra.feign.FileFeignClient;
 
 /**
  * @author zhaotianxin
@@ -69,6 +72,9 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
     private TestCaseService testCaseService;
 
     @Autowired
+    private TestCaseMapper testCaseMapper;
+
+    @Autowired
     private TestCycleCaseMapper testCycleCaseMapper;
 
     @Autowired
@@ -83,13 +89,13 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
 
 
     @Override
-    public void dealIssue(Long projectId, Long issueId, String fileName, String url) {
+    public TestCaseAttachmentDTO dealIssue(Long projectId, Long issueId, String fileName, String url) {
         TestCaseAttachmentDTO issueAttachmentDTO = new TestCaseAttachmentDTO();
         issueAttachmentDTO.setProjectId(projectId);
         issueAttachmentDTO.setCaseId(issueId);
         issueAttachmentDTO.setFileName(fileName);
         issueAttachmentDTO.setUrl(url);
-        iIssueAttachmentService.createBase(issueAttachmentDTO);
+        return iIssueAttachmentService.createBase(issueAttachmentDTO);
     }
 
 //    @DataLog(type = "createAttachment")
@@ -233,6 +239,57 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
         if(!CollectionUtils.isEmpty(testCycleCaseDTOS)){
             List<TestCycleCaseDTO> list = testCycleCaseDTOS.stream().filter(v -> !executeId.equals(v.getExecuteId())).collect(Collectors.toList());
             testCaseAssembler.autoAsyncCase(list,false,false,true);
+        }
+    }
+
+    @Override
+    public TestCaseAttachmentDTO attachmentCombineUpload(Long projectId, TestCaseAttachmentCombineVO testCaseAttachmentCombineVO) {
+        Long caseId = testCaseAttachmentCombineVO.getCaseId();
+        ProjectDTO projectDTO = baseFeignClient.queryProject(projectId).getBody();
+        if (ObjectUtils.isEmpty(projectDTO)) {
+            throw new CommonException("error.attachmentRule.project");
+        }
+        String fileName = testCaseAttachmentCombineVO.getFileName();
+
+        Map<String, String> args = new HashMap<>(1);
+        args.put("bucketName", BACKETNAME);
+        String path = ResponseUtils.getResponse(fileFeignClient.fragmentCombineBlock(
+                projectDTO.getOrganizationId(),
+                testCaseAttachmentCombineVO.getGuid(),
+                testCaseAttachmentCombineVO.getFileName(),
+                args),
+                String.class,
+                (httpStatus, response) -> {
+                }, exceptionResponse -> {
+                    LOGGER.error("combine fragment failed: {}", exceptionResponse.getMessage());
+                    throw new CommonException("error.attachment.combine.failed");
+                });
+
+        TestCaseAttachmentDTO attachment = dealIssue(projectId, caseId, fileName, dealUrl(path));
+        attachment.setUrl(attachmentUrl + attachment.getUrl());
+        testCaseService.updateVersionNum(caseId);
+
+        List<TestCycleCaseDTO> testCycleCases = testCycleCaseMapper.listAsyncCycleCase(projectId, caseId);
+        if (!CollectionUtils.isEmpty(testCycleCases)) {
+            testCaseAssembler.autoAsyncCase(testCycleCases, false, false, true);
+        }
+        return attachment;
+    }
+
+    @Override
+    public void validCombineUpload(TestCaseAttachmentCombineVO testCaseAttachmentCombineVO) {
+        if (testCaseAttachmentCombineVO.getCaseId() == null) {
+            throw new CommonException("error.attachmentRule.caseId");
+        }
+        if (testCaseAttachmentCombineVO.getFileName() == null) {
+            throw new CommonException("error.attachmentRule.fileName");
+        }
+        if (testCaseAttachmentCombineVO.getGuid() == null) {
+            throw new CommonException("error.attachmentRule.guId");
+        }
+        TestCaseDTO testCaseDTO = testCaseMapper.selectByPrimaryKey(testCaseAttachmentCombineVO.getCaseId());
+        if (ObjectUtils.isEmpty(testCaseDTO)) {
+            throw new CommonException("error.attachmentRule.testCase");
         }
     }
 
