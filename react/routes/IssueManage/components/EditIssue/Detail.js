@@ -1,30 +1,29 @@
 import React, {
-  Fragment, useState, useContext,
+  useState, useContext, useEffect,
 } from 'react';
 import { observer } from 'mobx-react-lite';
-import { Choerodon } from '@choerodon/boot';
 import { FormattedMessage } from 'react-intl';
 import {
   Button, Tooltip, Icon,
 } from 'choerodon-ui';
 import {
-  delta2Html, text2Delta,
+  getProjectId,
 } from '@/common/utils';
 import Timeago from '@/components/DateTimeAgo/DateTimeAgo';
 import useHasAgile from '@/hooks/useHasAgile';
-import { uploadFile } from '@/api/IssueManageApi';
-import { openFullEditor, WYSIWYGEditor } from '@/components';
 import UserHead from '@/components/UserHead';
+import ChunkUploader from '@/components/chunk-uploader';
 import CreateLinkTask from '../CreateLinkTask';
-import IssueDescription from './Component/IssueDescription';
-import { UploadButtonNow, FileList } from '../UploadButtonNow/UploadButtonNow';
+import { FileList } from '../UploadButtonNow/UploadButtonNow';
 import Divider from './Component/Divider';
 import EditIssueContext from './stores';
 import EditDetailWrap from './Component/EditDetailWrap';
 import './Detail.less';
 import LinkIssues from './link-issues';
-import PriorityTag from '../../../../components/PriorityTag';
 import FieldPriority from './Component/FieldPriority';
+
+// eslint-disable-next-line no-underscore-dangle
+const { API_HOST } = window._env_;
 
 const { TitleWrap, ContentWrap, PropertyWrap } = EditDetailWrap;
 /**
@@ -46,55 +45,26 @@ function Detail({
     lastUpdateUser, creationDate, lastUpdateDate, description, caseId: issueId,
   } = issueInfo;
 
-  const [editDescriptionShow, setEditDescriptionShow] = useState(false);
   const [createLinkTaskShow, setCreateLinkTaskShow] = useState(false);
   const [showMore, setShowMore] = useState(false);
 
-  const setFileList = (newFileList) => {
+  const [fileList, setFileList] = useState([]);
+
+  useEffect(() => {
+    const initialFileList = (attachment || []).map((item) => ({
+      uid: item.attachmentId || item.uid,
+      name: item.fileName || item.name,
+      url: item.url,
+      userId: item.createdBy || item.userId,
+    }));
+    setFileList(initialFileList);
+  }, [attachment]);
+
+  const setIssueInfo = (newFileList) => {
     store.setIssueInfo({
       ...issueInfo,
-      issueAttachmentVOList: newFileList,
+      attachment: newFileList,
     });
-  };
-
-  /**
- * 适用于富文本附件上传以及回调
- * @param {any []} propFileList 文件列表
- * @param {function} func 回调
- */
-  const handleFileUpload = (propFileList, func) => {
-    const fileList = propFileList.filter((i) => !i.url);
-    const formData = new FormData();
-    fileList.forEach((file) => {
-      // file.name = encodeURI(encodeURI(file.name));
-      formData.append('file', file);
-    });
-    uploadFile(issueId, formData)
-      .then(() => {
-        Choerodon.prompt('上传成功');
-        func(issueId);
-      })
-      .catch((error) => {
-        if (error.response) {
-          Choerodon.prompt(error.response.data.message);
-        } else {
-          Choerodon.prompt(error.message);
-        }
-        const temp = propFileList.slice();
-        temp.forEach((one) => {
-          if (!one.url) {
-            const tmp = one;
-            tmp.status = 'error';
-          }
-        });
-        func(temp);
-      });
-  };
-
-  const onUploadFiles = (arr) => {
-    if (arr.length > 0 && arr.some((one) => !one.url)) {
-      handleFileUpload(arr, store.loadIssueData);
-    }
   };
 
   const handleCreateLinkIssueOk = () => {
@@ -105,12 +75,6 @@ function Detail({
       setCreateLinkTaskShow(false);
     }
   };
-  function handleOpenFullEditor() {
-    openFullEditor({
-      initValue: description,
-      onOk: async (value) => { await onUpdate({ description: value }); },
-    });
-  }
 
   function render() {
     return (
@@ -169,16 +133,31 @@ function Detail({
         <section id="attachment">
           <TitleWrap title={<FormattedMessage id="attachment" />}>
             <span>
-              <UploadButtonNow onUpload={onUploadFiles} fileList={attachment || []} />
+              <ChunkUploader
+                prefixPatch="/hfle"
+                showUploadList={false}
+                fileList={fileList}
+                setFileList={setFileList}
+                combine={{
+                  url: `${API_HOST}/test/v1/projects/${getProjectId()}/attachment/combine`,
+                  requestData: {
+                    caseId: issueId,
+                  },
+                }}
+              />
             </span>
           </TitleWrap>
           <ContentWrap>
-            <FileList
-              onRemove={setFileList}
-              fileList={attachment}
-              store={store}
-              issueId={issueId}
-            />
+            <span>
+              <FileList
+                setFileList={setFileList}
+                fileList={fileList}
+                store={store}
+                issueId={issueId}
+                setIssueInfo={setIssueInfo}
+              />
+            </span>
+
           </ContentWrap>
         </section>
         <Divider />
