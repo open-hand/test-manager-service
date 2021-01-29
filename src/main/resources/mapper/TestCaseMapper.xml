@@ -435,4 +435,12 @@
                 #{linkCaseId}
             </foreach>
     </select>
+
+    <update id="updateVersionNumNotObjectVersion">
+        UPDATE test_case
+        SET version_num = version_num + 1,
+            last_updated_by = #{userId},
+            last_update_date = current_timestamp
+        WHERE case_id = #{caseId}
+    </update>
 </mapper>

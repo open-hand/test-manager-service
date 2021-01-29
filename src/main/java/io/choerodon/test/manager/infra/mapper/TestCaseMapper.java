@@ -6,6 +6,7 @@ import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.api.vo.agile.SearchDTO;
 import io.choerodon.mybatis.common.BaseMapper;
 import io.choerodon.test.manager.infra.dto.TestCaseDTO;
+
 import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Param;
 
@@ -16,7 +17,7 @@ import org.apache.ibatis.annotations.Param;
 public interface TestCaseMapper extends BaseMapper<TestCaseDTO> {
     List<TestCaseDTO> listCaseByFolderIds(@Param("projectId") Long projectId, @Param("folderIds") Set<Long> folderIds, @Param("searchDTO") SearchDTO searchDTO);
 
-    List<TestCaseDTO> listCopyCase(@Param("projectId") Long projectId ,@Param("caseIds") List<Long> caseIds);
+    List<TestCaseDTO> listCopyCase(@Param("projectId") Long projectId, @Param("caseIds") List<Long> caseIds);
 
     void batchInsertTestCase(TestCaseMigrateDTO testCaseMigrateDTO);
 
@@ -30,18 +31,18 @@ public interface TestCaseMapper extends BaseMapper<TestCaseDTO> {
 
     List<Long> queryFolderId(@Param("projectId") Long projectId);
 
-    List<TestCaseDTO> listByCaseIds(@Param("projectId") Long projectId ,@Param("caseIds") List<Long> caseIds,@Param("isDesc")Boolean isDesc);
+    List<TestCaseDTO> listByCaseIds(@Param("projectId") Long projectId, @Param("caseIds") List<Long> caseIds, @Param("isDesc") Boolean isDesc);
 
-    List<ExcelCaseVO> excelCaseList(@Param("projectId") Long projectId , @Param("caseIds") List<Long> caseIds);
+    List<ExcelCaseVO> excelCaseList(@Param("projectId") Long projectId, @Param("caseIds") List<Long> caseIds);
 
     List<TestCaseDTO> listByProject(@Param("projectId") Long projectId);
 
     @MapKey("caseId")
-    Map<Long, CaseCompareVO> queryTestCaseMap(@Param("list") List<Long> caseIds,@Param("executedIds") List<Long> executedId);
+    Map<Long, CaseCompareVO> queryTestCaseMap(@Param("list") List<Long> caseIds, @Param("executedIds") List<Long> executedId);
 
-    void updateAuditFields(@Param("projectId") Long projectId,@Param("caseIds") Long[] caseIds,@Param("userId") Long userId,@Param("date") Date date);
+    void updateAuditFields(@Param("projectId") Long projectId, @Param("caseIds") Long[] caseIds, @Param("userId") Long userId, @Param("date") Date date);
 
-    List<Long> listUnSelectCaseId(@Param("projectId") Long projectId,@Param("caseIds") List<Long> unSelectCaseIds,@Param("folderIds") Set<Long> unSelectFolderIds);
+    List<Long> listUnSelectCaseId(@Param("projectId") Long projectId, @Param("caseIds") List<Long> unSelectCaseIds, @Param("folderIds") Set<Long> unSelectFolderIds);
 
     int countByProjectIdAndCaseIds(@Param("projectId") Long projectId, @Param("caseIds") List<Long> caseIds);
 
@@ -58,4 +59,12 @@ public interface TestCaseMapper extends BaseMapper<TestCaseDTO> {
     List<TestCaseVO> queryCaseByContent(@Param("projectId") Long projectId, @Param("content") String content, @Param("issueId") Long issueId);
 
     List<TestCaseLinkVO> listByLinkCaseIds(@Param("projectId") Long projectId, @Param("linkCaseIds") List<Long> linkCaseIds);
+
+    /**
+     * 更新用例的版本但不更新乐观锁的版本号
+     *
+     * @param userId 用户id
+     * @param caseId 用例id
+     */
+    void updateVersionNumNotObjectVersion(@Param("caseId") Long caseId, @Param("userId") Long userId);
 }

@@ -267,7 +267,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
 
         TestCaseAttachmentDTO attachment = dealIssue(projectId, caseId, fileName, dealUrl(path));
         attachment.setUrl(attachmentUrl + attachment.getUrl());
-        testCaseService.updateVersionNum(caseId);
+        testCaseService.updateVersionNumNotObjectVersion(caseId, DetailsHelper.getUserDetails().getUserId());
 
         List<TestCycleCaseDTO> testCycleCases = testCycleCaseMapper.listAsyncCycleCase(projectId, caseId);
         if (!CollectionUtils.isEmpty(testCycleCases)) {
