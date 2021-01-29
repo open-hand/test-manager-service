@@ -461,6 +461,11 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
+    public void updateVersionNumNotObjectVersion(Long caseId, Long userId) {
+        testCaseMapper.updateVersionNumNotObjectVersion(caseId, userId);
+    }
+
+    @Override
     public List<IssueLinkDTO> getLinkIssueFromIssueToTest(Long projectId, List<Long> issueId) {
         return listIssueLinkByIssueId(projectId, issueId).stream()
                 .filter(u -> u.getTypeCode().matches(IssueTypeCode.ISSUE_TEST + "|" + IssueTypeCode.ISSUE_AUTO_TEST)).collect(Collectors.toList());
