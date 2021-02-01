@@ -921,6 +921,9 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         }
         String firstRank = testCycleCaseMapper.getFirstRank(planId);
         List<TestCycleCaseDTO> testCycleCaseDTOS = new ArrayList<>();
+        if (firstRank == null){
+            firstRank = RankUtil.mid();
+        }
         String preRank = firstRank;
         for (TestCaseDTO v : testCaseDTOS) {
             TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
