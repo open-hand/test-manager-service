@@ -17,6 +17,7 @@ import context from '../../context';
 import Card from '../card';
 import styles from './index.less';
 import { issueLink, executeDetailLink } from '../../../../../../common/utils';
+import PreviewFailedTable from './preview-table/PreviewFailedTable';
 
 const { Column } = Table;
 const lineHeight = 25;
@@ -26,7 +27,7 @@ const style = {
   alignItems: 'center',
 };
 const BugTable: React.FC = () => {
-  const { store } = useContext(context);
+  const { store, preview } = useContext(context);
   const { planId, statusList } = store;
   const history = useHistory();
   const statusDataSet = useMemo(() => new DataSet({
@@ -92,77 +93,78 @@ const BugTable: React.FC = () => {
   }, [dataSet, statusDataSet]);
   return (
     <Card className={styles.table_card}>
-      <div>
+      <div style={{ width: '100%' }}>
         <div className={styles.header}>
           关联的问题项
         </div>
-        <Table
-          dataSet={dataSet}
-          rowHeight="auto"
-        >
-          <Column
-            name="summary"
-            renderer={({ value, record }) => (
-              <Tooltip title={value}>
-                <span
-                  className="c7n-test-table-cell-click"
-                  onClick={() => {
-                    history.push(issueLink(record?.get('issueId'), null, value));
-                  }}
-                  style={{
-                    whiteSpace: 'nowrap',
-                    display: 'inline-block',
-                    maxWidth: '100%',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                  }}
-                >
-                  {value}
-                </span>
-              </Tooltip>
-            )}
-          />
-          {/* @ts-ignore */}
-          <Column name="statusMapVO" width={150} renderer={renderStatus} />
-          {/* @ts-ignore */}
-          <Column name="assignee" width={150} style={{ color: 'rgba(0, 0, 0, 0.65)' }} renderer={renderAssignee} />
-          <Column
-            name="testFolderCycleCases"
-            renderer={({ value }) => (
-              <div>
-                {/* @ts-ignore */}
-                {value.map((v) => (
-                  <div
-                    style={style}
+        {preview ? <PreviewFailedTable /> : (
+          <Table
+            dataSet={dataSet}
+            rowHeight="auto"
+          >
+            <Column
+              name="summary"
+              renderer={({ value, record }) => (
+                <Tooltip title={value}>
+                  <span
                     className="c7n-test-table-cell-click"
                     onClick={() => {
-                      history.push(executeDetailLink(v.executeId, {
-                        plan_id: planId,
-                        cycle_id: '',
-                      }));
+                      history.push(issueLink(record?.get('issueId'), null, value));
+                    }}
+                    style={{
+                      whiteSpace: 'nowrap',
+                      display: 'inline-block',
+                      maxWidth: '100%',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
                     }}
                   >
-                    {v.summary}
-                  </div>
-                ))}
-              </div>
-            )}
-          />
-          <Column
-            name="testStatus"
-            width={150}
-            renderer={({ record }) => {
-              // @ts-ignore
-              const testFolderCycleCases = record.get('testFolderCycleCases');
-              return (
+                    {value}
+                  </span>
+                </Tooltip>
+              )}
+            />
+            {/* @ts-ignore */}
+            <Column name="statusMapVO" width={150} renderer={renderStatus} />
+            {/* @ts-ignore */}
+            <Column name="assignee" width={150} style={{ color: 'rgba(0, 0, 0, 0.65)' }} renderer={renderAssignee} />
+            <Column
+              name="testFolderCycleCases"
+              renderer={({ value }) => (
                 <div>
                   {/* @ts-ignore */}
-                  {testFolderCycleCases.map((cycle) => {
-                    const { executionStatus } = cycle;
-                    const status = find(statusList, { statusId: executionStatus });
-                    return (
-                      <div style={style}>
-                        {status && (
+                  {value.map((v) => (
+                    <div
+                      style={style}
+                      className="c7n-test-table-cell-click"
+                      onClick={() => {
+                        history.push(executeDetailLink(v.executeId, {
+                          plan_id: planId,
+                          cycle_id: '',
+                        }));
+                      }}
+                    >
+                      {v.summary}
+                    </div>
+                  ))}
+                </div>
+              )}
+            />
+            <Column
+              name="testStatus"
+              width={150}
+              renderer={({ record }) => {
+                // @ts-ignore
+                const testFolderCycleCases = record.get('testFolderCycleCases');
+                return (
+                  <div>
+                    {/* @ts-ignore */}
+                    {testFolderCycleCases.map((cycle) => {
+                      const { executionStatus } = cycle;
+                      const status = find(statusList, { statusId: executionStatus });
+                      return (
+                        <div style={style}>
+                          {status && (
                           <StatusTag
                             // @ts-ignore
                             style={{
@@ -176,15 +178,17 @@ const BugTable: React.FC = () => {
                               colour: status.statusColor,
                             }}
                           />
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              );
-            }}
-          />
-        </Table>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              }}
+            />
+          </Table>
+        )}
+
       </div>
     </Card>
   );
