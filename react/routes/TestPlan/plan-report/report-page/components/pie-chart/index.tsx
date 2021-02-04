@@ -8,8 +8,9 @@ import Card from '../card';
 import styles from './index.less';
 
 export interface Props {
+  style?:React.CSSProperties
 }
-const PieChart: React.FC<Props> = () => {
+const PieChart: React.FC<Props> = ({ style }) => {
   const { store } = useContext(context);
   const { pieData } = store;
   const { total, statusVOList } = pieData;
@@ -82,7 +83,7 @@ const PieChart: React.FC<Props> = () => {
     }],
   }), [data, total]);
   return (
-    <Card className={styles.pie_chart}>
+    <Card className={styles.pie_chart} style={style}>
       <div className={styles.left}>
         <div className={styles.title}>
           计划执行情况
