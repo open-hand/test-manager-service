@@ -69,7 +69,7 @@ export default observer((props) => {
     if (column.title === '' || !column.dataIndex) {
       return true;
     }
-    return filteredColumns.length === 0 ? true : filteredColumns.includes(column.dataIndex);
+    return filteredColumns.length === 0 ? true : filteredColumns.includes(column.key);
   });
 
   const handleSortByField = (key) => {
@@ -156,15 +156,14 @@ export default observer((props) => {
     const rows = data.map((issue, index) => {
       if (disabled) {
         return tds(index);
-      } else {
-        return (
-          // 由于drag结束后要经过一段时间，由于有动画，所以大约33-400ms后才执行onDragEnd,
-          // 所以在这期间如果获取用例的接口速度很快，重新渲染table中的项，会无法执行onDragEnd,故加此key
-          <TableDraggleItem key={`${issue.caseId}-${issue.objectVersionNumber}`} handleClickIssue={handleClickIssue.bind(this)} issue={issue} index={index} instanceRef={instance} onRow={onRow}>
-            {tds(index)}
-          </TableDraggleItem>
-        );
       }
+      return (
+      // 由于drag结束后要经过一段时间，由于有动画，所以大约33-400ms后才执行onDragEnd,
+      // 所以在这期间如果获取用例的接口速度很快，重新渲染table中的项，会无法执行onDragEnd,故加此key
+        <TableDraggleItem key={`${issue.caseId}-${issue.objectVersionNumber}`} handleClickIssue={handleClickIssue.bind(this)} issue={issue} index={index} instanceRef={instance} onRow={onRow}>
+          {tds(index)}
+        </TableDraggleItem>
+      );
     });
 
     return rows;

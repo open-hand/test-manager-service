@@ -1,14 +1,14 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 import {
-  Progress, Icon, Button, Tooltip, 
+  Progress, Icon, Button, Tooltip,
 } from 'choerodon-ui/pro';
 import { Menu, Dropdown } from 'choerodon-ui';
 import SmartTooltip from '@/components/SmartTooltip';
 
 const prefix = 'c7ntest-tree';
 function TreeNode({
-  children, nodeProps, item, onMenuClick, 
+  children, nodeProps, item, onMenuClick,
 }) {
   const { provided } = nodeProps;
   if (item.data.initStatus === 'creating') {
@@ -29,7 +29,9 @@ function TreeNode({
               <Icon type="insert_invitation" style={{ marginRight: 5, marginLeft: 22 }} />
             </span>
             <span className={`${prefix}-tree-item-title`} style={{ color: 'rgba(0,0,0,0.54)' }}><SmartTooltip title={item.data.name}>{item.data.name}</SmartTooltip></span>
-            <Progress type="loading" size="small" />
+            <Tooltip title="创建计划需要一定的时间，请手动刷新">
+              <Icon type="error" style={{ color: 'rgba(0, 0, 0, 0.54)' }} />
+            </Tooltip>
           </div>
         </div>
       </div>
@@ -65,7 +67,7 @@ function TreeNode({
                 </Menu>
               )}
               trigger={['click']}
-              getPopupContainer={trigger => trigger.parentNode}
+              getPopupContainer={(trigger) => trigger.parentNode}
             >
               <Button funcType="flat" icon="more_vert" size="small" />
             </Dropdown>
