@@ -29,7 +29,7 @@ const CreateBug = ({
       onCancel={onCancel}
       request={request}
       defaultTypeCode="bug"
-      hiddenIssueType
+      enabledTypeCodes={['bug']}
       title="创建缺陷"
     />
   );
