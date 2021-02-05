@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-bind */
 import React, { useContext, useCallback, useEffect } from 'react';
 import {
   Choerodon, axios, stores,
@@ -6,7 +7,6 @@ import { observer } from 'mobx-react-lite';
 import { FormattedMessage } from 'react-intl';
 import { Button, Modal } from 'choerodon-ui/pro';
 import { useHistory } from 'react-router-dom';
-
 import queryString from 'query-string';
 import { updatePlanStatus } from '@/api/TestPlanApi';
 import { openEditPlan } from '../TestPlanModal';
@@ -20,7 +20,7 @@ const confirmCompletePlanModalKey = Modal.key();
 function TestPlanHeader() {
   const { testPlanStore, createAutoTestStore } = useContext(Store);
   const history = useHistory();
-  const { testPlanStatus, getCurrentPlanId } = testPlanStore;
+  const { testPlanStatus, getCurrentPlanId, getCurrentCycle } = testPlanStore;
   const {
     id, name, category, organizationId,
   } = AppState.currentMenuType;
@@ -28,6 +28,7 @@ function TestPlanHeader() {
     id,
     name,
     category,
+    planName: getCurrentCycle.data.name,
     type: 'project',
     organizationId,
   });
