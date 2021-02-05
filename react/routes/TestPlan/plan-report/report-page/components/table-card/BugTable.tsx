@@ -89,7 +89,7 @@ const BugTable: React.FC = () => {
       <div style={{ width: '100%' }}>
         <div className={styles.header}>
           缺陷
-          <Tip title="测试执行所关联的缺陷" />
+          {!preview ? <Tip title="测试执行所关联的缺陷" /> : null}
         </div>
         {preview ? <PreviewBugTable /> : (
           <Table

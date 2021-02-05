@@ -13,9 +13,10 @@ import context from '../../context';
 import styles from './index.less';
 
 export interface Props {
+  style?: React.CSSProperties
 }
 
-const DetailCard: React.FC<Props> = () => {
+const DetailCard: React.FC<Props> = ({ style }) => {
   const { store } = useContext(context);
   const { baseInfo } = store;
   const {
@@ -29,7 +30,7 @@ const DetailCard: React.FC<Props> = () => {
     solvedBugCount,
   } = baseInfo;
   return (
-    <div className={styles.detail_card}>
+    <div className={styles.detail_card} style={style}>
       <Card>
         <DetailItem img={User} title="测试负责人" content={manager?.realName || ''} />
       </Card>

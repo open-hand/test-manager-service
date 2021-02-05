@@ -7,8 +7,11 @@ import { useMount, useCreation } from 'ahooks';
 import { Button, Modal } from 'choerodon-ui/pro/lib';
 import html2canvas from 'html2canvas';
 import JsPDF from 'jspdf';
-
+// @ts-ignore
+import queryString from 'query-string';
 import { getProjectName } from '@/common/utils';
+import { useHistory } from 'react-router-dom';
+
 import TestReportContext, { BaseInfoRef } from './context';
 import TestReportStore from './store';
 import DetailCard from './components/detail-card';
@@ -23,6 +26,7 @@ interface Props {
 }
 const ReportPage: React.FC<Props> = ({ preview: forcePreview, planId }) => {
   const baseInfoRef = useRef<BaseInfoRef>({} as BaseInfoRef);
+  const history = useHistory();
   const [preview, setPreview] = useState(forcePreview !== undefined ? forcePreview : false);
   const store = useCreation(() => new TestReportStore({ planId }), [planId]);
   useMount(() => {
@@ -33,10 +37,19 @@ const ReportPage: React.FC<Props> = ({ preview: forcePreview, planId }) => {
     newEm.style.width = 'max-content';
     newEm.style.height = 'max-content';
     document.body.appendChild(newEm);
-
+    const { planName } = queryString.parse(history.location.search);
     const loadTask: (number | string)[] = new Array<number>(5).fill(0);
+    // Modal.open({
+    //   title: 'yulan',
+    //   drawer: true,
+    //   style: {
+    //     width: 1020,
+    //   },
+    //   children: <PreviewPage store={store} baseInfoRef={baseInfoRef} loadTask={loadTask} planName={planName} />,
+    // });
+    // return;
     ReactDOM.render((
-      <PreviewPage store={store} baseInfoRef={baseInfoRef} loadTask={loadTask} />
+      <PreviewPage store={store} baseInfoRef={baseInfoRef} loadTask={loadTask} planName={planName} />
     ), newEm);
 
     console.log('em', loadTask, newEm);

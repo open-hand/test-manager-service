@@ -10,11 +10,14 @@ import TestReportStore from '../../store';
 import styles from './index.less';
 
 interface Props {
-    store: TestReportStore
-    baseInfoRef: React.MutableRefObject<BaseInfoRef>
-    loadTask: (number | string)[]
+  store: TestReportStore
+  baseInfoRef: React.MutableRefObject<BaseInfoRef>
+  loadTask: (number | string)[]
+  planName: string
 }
-const PreviewPage: React.FC<Props> = ({ store, baseInfoRef, loadTask }) => {
+const PreviewPage: React.FC<Props> = ({
+  store, baseInfoRef, loadTask, planName,
+}) => {
   useEffect(() => {
     if (loadTask.length < 5) {
       loadTask.push(...new Array(5 - loadTask.length).fill(0));
@@ -32,10 +35,10 @@ const PreviewPage: React.FC<Props> = ({ store, baseInfoRef, loadTask }) => {
       <div className={styles.page}>
         <div className={styles.title}>
           <h3>测试报告</h3>
-          <span>测试计划名称</span>
+          <span>{planName || '暂无名称'}</span>
         </div>
         <div className={styles.content}>
-          <DetailCard />
+          <DetailCard style={{ maxHeight: 355 }} />
           <PieChart style={{ height: 'auto' }} />
         </div>
         <FailedTable />
