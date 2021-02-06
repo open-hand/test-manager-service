@@ -28,7 +28,7 @@ function TestPlanHeader() {
     id,
     name,
     category,
-    planName: getCurrentCycle.data.name,
+    planName: getCurrentCycle && getCurrentCycle.data ? getCurrentCycle.data.name : '',
     type: 'project',
     organizationId,
   });
