@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useCallback, useMemo,
+  useEffect, useCallback, useMemo, useRef,
 } from 'react';
 import {
   DataSet, Modal, Table, Form,
@@ -32,6 +32,7 @@ interface Props {
 const { Column } = Table;
 const LinkIssueModal: React.FC<Props> = (props) => {
   const { modal, issueId, onSubmit } = props;
+  const dataSetRef = useRef<DataSet>();
   const handleSubmit = useCallback(async () => false, []);
   useEffect(() => {
     modal?.handleOk(handleSubmit);
@@ -57,6 +58,11 @@ const LinkIssueModal: React.FC<Props> = (props) => {
       label: '冲刺',
       multiple: true,
     }],
+    events: {
+      update() {
+        dataSetRef.current?.query();
+      },
+    },
   }), []);
   const dataSet = useMemo(() => new DataSet({
     autoQuery: true,
@@ -81,6 +87,7 @@ const LinkIssueModal: React.FC<Props> = (props) => {
         method: 'post',
         url: `/test/v1/projects/${getProjectId()}/case/agile/un_link_issue/${issueId}`,
         data: {
+          contents: data.content ? [data.content] : undefined,
           advancedSearchArgs: {
             statusId: data.status,
             priorityId: data.priority,
@@ -97,7 +104,7 @@ const LinkIssueModal: React.FC<Props> = (props) => {
     },
     queryDataSet,
   }), [issueId, queryDataSet]);
-
+  dataSetRef.current = dataSet;
   const handleOk = useCallback(async () => {
     if (dataSet.selected.length > 0) {
       await createLink(issueId, dataSet.selected.map((record) => record.get('issueId')));
@@ -111,14 +118,18 @@ const LinkIssueModal: React.FC<Props> = (props) => {
   }, [handleOk, modal]);
   return (
     <div>
-      <Form dataSet={queryDataSet} columns={5}>
-        <TextField name="content" prefix={<Icon type="search" />} />
-        <SelectStatus name="status" request={() => statusApi.loadByProject('agile')} />
-        <SelectPriority name="priority" />
-        <SelectUser name="assignee" />
-        <SelectSprint name="sprint" />
-      </Form>
-      <Table dataSet={dataSet} queryBar={'none' as TableQueryBarType}>
+      <Table
+        dataSet={dataSet}
+        queryBar={() => (
+          <Form dataSet={queryDataSet} columns={5}>
+            <TextField name="content" prefix={<Icon type="search" />} />
+            <SelectStatus name="status" request={() => statusApi.loadByProject('agile')} />
+            <SelectPriority name="priority" />
+            <SelectUser name="assignee" />
+            <SelectSprint name="sprint" />
+          </Form>
+        )}
+      >
         <Column name="summary" renderer={({ record }) => renderSummary({ record, clickable: false })} />
         <Column name="issueNum" sortable width={135} />
         <Column name="statusId" sortable width={135} renderer={renderStatus} />
