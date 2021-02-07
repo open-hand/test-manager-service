@@ -1,20 +1,23 @@
 package io.choerodon.test.manager.infra.feign.operator;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.ServiceUnavailableException;
 import io.choerodon.core.utils.FeignClientUtils;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.test.manager.api.vo.IssueLinkVO;
 import io.choerodon.test.manager.api.vo.IssueQueryVO;
 import io.choerodon.test.manager.api.vo.agile.*;
 import io.choerodon.test.manager.infra.feign.IssueFeignClient;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-import com.fasterxml.jackson.core.type.TypeReference;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author zhaotianxin
@@ -162,4 +165,22 @@ public class AgileClientOperator {
         }
     }
 
+    public Page<IssueListFieldKVVO> queryListIssueWithSub(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId) {
+        String orderStr = "";
+        Iterator<Sort.Order> sortIterator = pageRequest.getSort().iterator();
+        if (sortIterator.hasNext()) {
+            Sort.Order order = sortIterator.next();
+            orderStr = order.getProperty() + "," + order.getDirection();
+        }
+        try {
+            String finalOrderStr = orderStr;
+            return FeignClientUtils.doRequest(() -> testCaseFeignClient.queryListIssueWithSub(
+                    projectId, searchDTO,
+                    pageRequest.getPage(), pageRequest.getSize(), finalOrderStr,
+                    organizationId), new TypeReference<Page<IssueListFieldKVVO>>() {
+            });
+        } catch (ServiceUnavailableException e) {
+            return null;
+        }
+    }
 }

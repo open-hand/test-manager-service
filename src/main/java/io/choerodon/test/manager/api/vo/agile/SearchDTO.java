@@ -1,5 +1,7 @@
 package io.choerodon.test.manager.api.vo.agile;
 
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.test.manager.infra.util.StringUtil;
 
 import javax.persistence.Transient;
@@ -34,6 +36,34 @@ public class SearchDTO {
     private String[] defectStatus;
 
     private String content;
+
+    private int page;
+    private int size;
+    private Sort sort;
+
+    public int getPage() {
+        return page;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    public Sort getSort() {
+        return sort;
+    }
+
+    public void setSort(Sort sort) {
+        this.sort = sort;
+    }
 
     /**
      * issueNum+summary模糊搜索

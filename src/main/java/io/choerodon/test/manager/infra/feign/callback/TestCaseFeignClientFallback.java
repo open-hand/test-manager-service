@@ -2,7 +2,8 @@ package io.choerodon.test.manager.infra.feign.callback;
 
 import java.util.List;
 
-import io.choerodon.core.domain.Page;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.test.manager.api.vo.agile.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -63,6 +64,11 @@ public class TestCaseFeignClientFallback implements TestCaseFeignClient {
 
     @Override
     public ResponseEntity<String> queryLookupValueByCode(String typeCode) {
+        throw new CommonException(QUERY_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<String> queryListIssueWithSub(Long projectId, SearchDTO searchDTO, int page, int size, String sort, Long organizationId) {
         throw new CommonException(QUERY_ERROR);
     }
 

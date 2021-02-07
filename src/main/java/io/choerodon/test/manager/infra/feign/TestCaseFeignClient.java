@@ -2,7 +2,8 @@ package io.choerodon.test.manager.infra.feign;
 
 import java.util.List;
 
-import io.choerodon.core.domain.Page;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.test.manager.api.vo.agile.*;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -107,6 +108,12 @@ public interface TestCaseFeignClient {
     @GetMapping(value = "/v1/lookup_values/{typeCode}")
     ResponseEntity<String> queryLookupValueByCode(@PathVariable(name = "typeCode") String typeCode);
 
-
-
+    @PostMapping(value = "/v1/projects/{project_id}/issues/include_sub")
+    ResponseEntity<String> queryListIssueWithSub(
+            @PathVariable(name = "project_id") Long projectId,
+            @RequestBody SearchDTO searchDTO,
+            @RequestParam(value = "page") int page,
+            @RequestParam(value = "size") int size,
+            @RequestParam(value = "sort") String sort,
+            @RequestParam(value = "organizationId") Long organizationId);
 }

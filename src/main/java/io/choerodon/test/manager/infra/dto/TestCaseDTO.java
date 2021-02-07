@@ -25,6 +25,7 @@ public class TestCaseDTO extends AuditDomain {
     private String caseNum;
     private String summary;
     private String description;
+    @Column(name = "`rank`")
     private String rank;
     private Long folderId;
     private Long versionNum;
