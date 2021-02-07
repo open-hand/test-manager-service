@@ -13,7 +13,7 @@ import Timeago from '@/components/DateTimeAgo/DateTimeAgo';
 import useHasAgile from '@/hooks/useHasAgile';
 import UserHead from '@/components/UserHead';
 import ChunkUploader from '@/components/chunk-uploader';
-import CreateLinkTask from '../CreateLinkTask';
+import openLinkIssueModal from '../CreateLinkTask';
 import { FileList } from '../UploadButtonNow/UploadButtonNow';
 import Divider from './Component/Divider';
 import EditIssueContext from './stores';
@@ -45,7 +45,6 @@ function Detail({
     lastUpdateUser, creationDate, lastUpdateDate, description, caseId: issueId,
   } = issueInfo;
 
-  const [createLinkTaskShow, setCreateLinkTaskShow] = useState(false);
   const [showMore, setShowMore] = useState(false);
 
   const [fileList, setFileList] = useState([]);
@@ -70,9 +69,6 @@ function Detail({
   const handleCreateLinkIssueOk = () => {
     if (handleCreateLinkIssue) {
       handleCreateLinkIssue();
-      setCreateLinkTaskShow(false);
-    } else {
-      setCreateLinkTaskShow(false);
     }
   };
 
@@ -167,7 +163,15 @@ function Detail({
             <TitleWrap title="问题链接">
               <div style={{ marginLeft: '14px' }}>
                 <Tooltip title="问题链接" getPopupContainer={(triggerNode) => triggerNode.parentNode}>
-                  <Button icon="playlist_add" onClick={() => setCreateLinkTaskShow(true)} />
+                  <Button
+                    icon="playlist_add"
+                    onClick={() => {
+                      openLinkIssueModal({
+                        issueId,
+                        onSubmit: handleCreateLinkIssueOk,
+                      });
+                    }}
+                  />
                 </Tooltip>
               </div>
             </TitleWrap>
@@ -180,16 +184,7 @@ function Detail({
             </div>
           </section>
         )}
-        {
-          createLinkTaskShow ? (
-            <CreateLinkTask
-              issueId={issueId}
-              visible={createLinkTaskShow}
-              onCancel={() => setCreateLinkTaskShow(false)}
-              onOk={handleCreateLinkIssueOk}
-            />
-          ) : null
-        }
+
       </>
     );
   }
