@@ -466,6 +466,22 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
+    public Page<IssueListFieldKVVO> listUnLinkIssue(Long caseId, Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId) {
+        List<Long> issueIds = new ArrayList<>();
+        TestCaseLinkDTO testCaseLinkDTO = new TestCaseLinkDTO();
+        testCaseLinkDTO.setLinkCaseId(caseId);
+        testCaseLinkDTO.setProjectId(projectId);
+        List<TestCaseLinkDTO> caseLinkList = testCaseLinkMapper.select(testCaseLinkDTO);
+        if(!CollectionUtils.isEmpty(caseLinkList)){
+            caseLinkList.forEach(caseLink -> {
+                issueIds.add(caseLink.getIssueId());
+            });
+        }
+        searchDTO.getOtherArgs().put("excludeIssueIds", issueIds);
+        return agileClientOperator.queryListIssueWithSub(projectId, searchDTO, pageRequest, organizationId);
+    }
+
+    @Override
     public List<IssueLinkDTO> getLinkIssueFromIssueToTest(Long projectId, List<Long> issueId) {
         return listIssueLinkByIssueId(projectId, issueId).stream()
                 .filter(u -> u.getTypeCode().matches(IssueTypeCode.ISSUE_TEST + "|" + IssueTypeCode.ISSUE_AUTO_TEST)).collect(Collectors.toList());

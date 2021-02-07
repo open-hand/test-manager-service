@@ -1,23 +1,22 @@
 package io.choerodon.test.manager.app.service;
 
-import io.choerodon.core.domain.Page;
-import io.choerodon.test.manager.api.vo.agile.*;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
-import io.choerodon.test.manager.api.vo.devops.AppServiceDeployVO;
-import io.choerodon.test.manager.api.vo.devops.AppServiceVersionRespVO;
-import io.choerodon.test.manager.api.vo.devops.ApplicationRepDTO;
-import io.choerodon.test.manager.api.vo.devops.InstanceValueVO;
-import io.choerodon.test.manager.api.vo.IssueInfosVO;
-import io.choerodon.test.manager.api.vo.TestCaseInfoVO;
-import io.choerodon.test.manager.api.vo.TestCaseRepVO;
-import io.choerodon.test.manager.api.vo.TestCaseVO;
-import io.choerodon.test.manager.infra.dto.TestCaseDTO;
-import org.springframework.http.ResponseEntity;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
+
+import io.choerodon.core.domain.Page;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.test.manager.api.vo.IssueInfosVO;
+import io.choerodon.test.manager.api.vo.TestCaseInfoVO;
+import io.choerodon.test.manager.api.vo.TestCaseRepVO;
+import io.choerodon.test.manager.api.vo.TestCaseVO;
+import io.choerodon.test.manager.api.vo.agile.*;
+import io.choerodon.test.manager.api.vo.devops.AppServiceDeployVO;
+import io.choerodon.test.manager.api.vo.devops.AppServiceVersionRespVO;
+import io.choerodon.test.manager.api.vo.devops.ApplicationRepDTO;
+import io.choerodon.test.manager.api.vo.devops.InstanceValueVO;
+import io.choerodon.test.manager.infra.dto.TestCaseDTO;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -224,4 +223,16 @@ public interface TestCaseService {
      * @param userId 用户id
      */
     void updateVersionNumNotObjectVersion(Long caseId, Long userId);
+
+    /**
+     * 查询未测试用例未关联的问题
+     *
+     * @param caseId 测试用例id
+     * @param projectId 项目id
+     * @param searchDTO 查询参数
+     * @param pageRequest 分页参数
+     * @param organizationId 组织id
+     * @return 测试用例未关联的问题
+     */
+    Page<IssueListFieldKVVO> listUnLinkIssue(Long caseId, Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId);
 }

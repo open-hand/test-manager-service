@@ -10,6 +10,7 @@ import io.choerodon.core.domain.Page;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.swagger.annotation.CustomPageRequest;
 import io.choerodon.test.manager.api.vo.*;
+import io.choerodon.test.manager.api.vo.agile.IssueListFieldKVVO;
 import io.choerodon.test.manager.api.vo.agile.IssueNumDTO;
 import io.choerodon.test.manager.infra.util.EncryptUtil;
 import io.choerodon.test.manager.infra.util.VerifyUpdateUtil;
@@ -282,6 +283,27 @@ public class TestCaseController {
                                                                @RequestParam(required = false) String content,
                                                                @RequestParam("issueId") @Encrypt Long issueId) {
         return new ResponseEntity<>(testCaseService.queryCaseByContent(projectId, pageRequest, content, issueId), HttpStatus.OK);
+    }
+
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @ApiOperation("分页查询未关联问题列表")
+    @PostMapping(value = "/agile/un_link_issue/{case_id}")
+    public ResponseEntity<Page<IssueListFieldKVVO>> listUnLinkIssue(@ApiIgnore
+                                                                     @ApiParam(value = "分页信息", required = true)
+                                                                     @SortDefault(value = "issueNum", direction = Sort.Direction.DESC)
+                                                                             PageRequest pageRequest,
+                                                                     @ApiParam(value = "项目id", required = true)
+                                                                     @PathVariable(name = "project_id") Long projectId,
+                                                                     @ApiParam(value = "项目id", required = true)
+                                                                        @PathVariable(name = "case_id") @Encrypt Long caseId,
+                                                                     @ApiParam(value = "查询参数", required = true)
+                                                                     @RequestBody(required = false) SearchDTO searchDTO,
+                                                                     @ApiParam(value = "查询参数", required = true)
+                                                                     @RequestParam(required = false) Long organizationId) {
+        encryptUtil.decryptSearchDTO(searchDTO);
+        return Optional.ofNullable(testCaseService.listUnLinkIssue(caseId, projectId, searchDTO, pageRequest, organizationId))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.Issue.listUnLinkIssue"));
     }
 
 }
