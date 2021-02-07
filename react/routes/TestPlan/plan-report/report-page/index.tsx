@@ -80,21 +80,44 @@ const ReportPage: React.FC<Props> = ({ preview: forcePreview, planId }) => {
       }
       f1();
     });
-    await html2canvas(newEm.childNodes.item(0) as HTMLElement, {
+    const htmlElement = newEm.childNodes.item(0) as HTMLElement;
+    console.log(`html_em_width:${htmlElement.clientWidth} html_em_height:${htmlElement.clientHeight}`);
+    await html2canvas(htmlElement, {
       useCORS: true,
       allowTaint: true,
-      // height: newEm.scrollHeight,
-      // width: newEm.scrollWidth,
+      height: htmlElement.clientHeight,
+      width: htmlElement.clientWidth,
       scale: 2,
     }).then((canvas) => {
-      const contentWidth = canvas.width;
-      const contentHeight = canvas.height;
+      let contentWidth = canvas.width;
+      let contentHeight = canvas.height;
       console.log(`width:${contentWidth} height:${contentHeight}`);
+      const pdfWidth = contentWidth * 0.75;
+      const pdfHeight = contentHeight * 0.75;
+      console.log(`pdf_width:${pdfWidth} pdf_height:${pdfHeight}`);
+      const limit = 14400;
 
+      if (contentHeight > limit) {
+        const contentScale = limit / contentHeight;
+        contentHeight = limit;
+        contentWidth = (contentScale || 1) * (contentWidth || 1);
+      }
+
+      // let orientation = 'p';
+      // // 在 jspdf 源码里，如果是 orientation = 'p' 且 width > height 时， 会把 width 和 height 值交换，
+      // // 类似于 把 orientation 的值修改为 'l' , 反之亦同。
+      // if (contentWidth > contentHeight) {
+      //   orientation = 'l';
+      // }
+
+      // // orientation Possible values are "portrait" or "landscape" (or shortcuts "p" or "l")
+      // pdf = new jsPDF(orientation, 'pt', [contentWidth, contentHeight]); // 下载尺寸 a4 纸 比例
+
+      // // pdf.addImage(pageData, 'JPEG', 左，上，宽度，高度)设置
+      // pdf.addImage(pageData, 'JPEG', 0, 0, contentWidth, contentHeight);
       // 将canvas转为base64图片
       const pageData = canvas.toDataURL('image/jpeg', 1.0);
-
-      const pdf = new JsPDF('l', 'pt', [contentWidth, contentHeight]);
+      const pdf = new JsPDF('p', 'pt', [contentWidth, contentHeight]);
       // 将内容图片添加到pdf中，因为内容宽高和pdf宽高一样，就只需要一页，位置就是 0,0
       pdf.addImage(pageData, 'jpeg', 0, 0, contentWidth, contentHeight);
       pdf.save(`${getProjectName()}-测试计划报告.pdf`);
