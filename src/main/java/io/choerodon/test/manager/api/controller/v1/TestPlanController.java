@@ -96,9 +96,10 @@ public class TestPlanController {
     @PostMapping("/{plan_id}/clone")
     public ResponseEntity<TestPlanVO> clonePlan(@PathVariable(name = "project_id") Long projectId,
                                                 @PathVariable(name = "plan_id")
-                                                @Encrypt Long planId) {
+                                                @Encrypt Long planId,
+                                                @RequestParam("name") String name) {
 
-        return new ResponseEntity<>(testPlanService.clone(projectId, planId), HttpStatus.OK);
+        return new ResponseEntity<>(testPlanService.clone(projectId, planId, name), HttpStatus.OK);
     }
 
     @Permission(level = ResourceLevel.ORGANIZATION)
@@ -146,5 +147,13 @@ public class TestPlanController {
                                                                        @SortDefault PageRequest pageRequest,
                                                                        @RequestBody TestPlanReporterIssueVO query) {
         return ResponseEntity.ok(testPlanService.pagedQueryBugs(projectId, planId, pageRequest, query));
+    }
+
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @ApiOperation(value = "校验计划名称是否重复")
+    @GetMapping(value = "/check_name")
+    public ResponseEntity<Boolean> checkName(@PathVariable("project_id") Long projectId,
+                                             @RequestParam("name") String name) {
+        return new ResponseEntity<>(testPlanService.checkName(projectId, name), HttpStatus.OK);
     }
 }

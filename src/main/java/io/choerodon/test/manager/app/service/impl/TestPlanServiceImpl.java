@@ -101,6 +101,9 @@ public class TestPlanServiceImpl implements TestPlanService {
 
     @Override
     public TestPlanVO update(Long projectId, TestPlanVO testPlanVO) {
+        if (Boolean.TRUE.equals(checkName(projectId, testPlanVO.getName()))) {
+            throw new CommonException("error.update.plan.name.exist");
+        }
         TestPlanDTO testPlan = testPlanMapper.selectByPrimaryKey(testPlanVO.getPlanId());
         if (TestPlanStatus.DOING.getStatus().equals(testPlan.getInitStatus())) {
             throw new CommonException("The plan is currently being operated");
@@ -154,9 +157,9 @@ public class TestPlanServiceImpl implements TestPlanService {
     @Saga(code = SagaTopicCodeConstants.TEST_MANAGER_CREATE_PLAN,
             description = "test-manager创建测试计划", inputSchema = "{}")
     public TestPlanDTO create(Long projectId, TestPlanVO testPlanVO) {
+        testPlanVO.setProjectId(projectId);
         checkPlan(testPlanVO);
         // 创建计划
-        testPlanVO.setProjectId(projectId);
         TestPlanDTO testPlan = modelMapper.map(testPlanVO, TestPlanDTO.class);
         testPlan.setStatusCode(TestPlanStatus.TODO.getStatus());
         testPlan.setInitStatus("creating");
@@ -185,6 +188,9 @@ public class TestPlanServiceImpl implements TestPlanService {
 
         if (ObjectUtils.isEmpty(testPlanVO.getStartDate()) || ObjectUtils.isEmpty(testPlanVO.getEndDate())) {
             throw new CommonException("error.create.plan.date.scope.null");
+        }
+        if (Boolean.TRUE.equals(checkName(testPlanVO.getProjectId(), testPlanVO.getName()))) {
+            throw new CommonException("error.create.plan.name.exist");
         }
     }
     @Override
@@ -513,6 +519,14 @@ public class TestPlanServiceImpl implements TestPlanService {
         return pagedQueryByIssueIds(projectId, planId, pageRequest, query, new ArrayList<>(bugIds), BUG);
     }
 
+    @Override
+    public Boolean checkName(Long projectId, String name) {
+        TestPlanDTO search = new TestPlanDTO();
+        search.setProjectId(projectId);
+        search.setName(name);
+        return testPlanMapper.selectOne(search) != null;
+    }
+
     private Long queryStatusIdByName(Long projectId, String name) {
         TestStatusDTO dto = new TestStatusDTO();
         dto.setProjectId(projectId);
@@ -535,7 +549,10 @@ public class TestPlanServiceImpl implements TestPlanService {
     @Override
     @Saga(code = SagaTopicCodeConstants.TEST_MANAGER_CLONE_PLAN,
             description = "test-manager 复制测试计划", inputSchema = "{}")
-    public TestPlanVO clone(Long projectId, Long planId) {
+    public TestPlanVO clone(Long projectId, Long planId, String name) {
+        if (Boolean.TRUE.equals(checkName(projectId, name))) {
+            throw new CommonException("error.clone.plan.name.exist");
+        }
         TestPlanDTO testPlanDTO = testPlanMapper.selectByPrimaryKey(planId);
         testPlanDTO.setPlanId(null);
         testPlanDTO.setCreatedBy(null);
@@ -543,7 +560,7 @@ public class TestPlanServiceImpl implements TestPlanService {
         testPlanDTO.setCreationDate(null);
         testPlanDTO.setLastUpdatedBy(null);
         testPlanDTO.setObjectVersionNumber(null);
-        testPlanDTO.setName(String.format("%s-副本",testPlanDTO.getName()));
+        testPlanDTO.setName(name);
         testPlanDTO.setInitStatus(TestPlanInitStatus.CREATING);
         testPlanDTO.setStatusCode(TestPlanStatus.TODO.getStatus());
         baseCreate(testPlanDTO);

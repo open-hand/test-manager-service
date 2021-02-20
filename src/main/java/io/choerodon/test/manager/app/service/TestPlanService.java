@@ -51,9 +51,10 @@ public interface TestPlanService {
      * 复制计划
      * @param projectId
      * @param planId
+     * @param name
      * @return
      */
-    TestPlanVO clone(Long projectId, Long planId);
+    TestPlanVO clone(Long projectId, Long planId, String name);
 
     /**
      * saga复制计划
@@ -114,4 +115,13 @@ public interface TestPlanService {
                                                  Long planId,
                                                  PageRequest pageRequest,
                                                  TestPlanReporterIssueVO query);
+
+    /**
+     * 项目下计划重名校验
+     *
+     * @param projectId
+     * @param name
+     * @return
+     */
+    Boolean checkName(Long projectId, String name);
 }
