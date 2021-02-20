@@ -295,7 +295,7 @@ public class TestCaseController {
                                                                      @ApiParam(value = "项目id", required = true)
                                                                      @PathVariable(name = "project_id") Long projectId,
                                                                      @ApiParam(value = "项目id", required = true)
-                                                                        @PathVariable(name = "case_id") @Encrypt Long caseId,
+                                                                        @PathVariable(name = "case_id") @Encrypt(ignoreValue = "0") Long caseId,
                                                                      @ApiParam(value = "查询参数", required = true)
                                                                      @RequestBody(required = false) SearchDTO searchDTO,
                                                                      @ApiParam(value = "查询参数", required = true)
