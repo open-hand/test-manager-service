@@ -29,27 +29,29 @@ const PreTextIcon = styled.span`
 const prefix = 'c7ntest-tree';
 
 const getAction = (item, menuItems, enableAddFolder, onMenuClick) => {
+  const menus = menuItems ? callFunction(menuItems, item) : [
+    <Menu.Item key="rename">
+      重命名
+    </Menu.Item>,
+    <Menu.Item key="delete">
+      删除
+    </Menu.Item>];
   const menu = (
     <Menu onClick={(target) => { onMenuClick(item, target); }}>
-      {menuItems ? callFunction(menuItems, item) : [
-        <Menu.Item key="rename">
-          重命名
-        </Menu.Item>,
-        <Menu.Item key="delete">
-          删除
-        </Menu.Item>]}
+      {menus}
     </Menu>
   );
   return (
     <div key={item.id} role="none" onClick={(e) => { e.stopPropagation(); }} className={`${prefix}-tree-item-action`}>
       {(callFunction(enableAddFolder, item)) && <Icon type="create_new_folder" style={{ marginRight: 6 }} onClick={() => { onMenuClick(item, { key: 'add' }); }} />}
-      <Dropdown overlay={menu} trigger={['click']} getPopupContainer={trigger => trigger.parentNode}>
-        <Button funcType="flat" icon="more_vert" size="small" />
-      </Dropdown>
+      {menus && (
+        <Dropdown overlay={menu} trigger={['click']} getPopupContainer={(trigger) => trigger.parentNode}>
+          <Button funcType="flat" icon="more_vert" size="small" />
+        </Dropdown>
+      )}
     </div>
   );
 };
-
 
 function TreeNode(props) {
   const {
@@ -79,17 +81,17 @@ function TreeNode(props) {
     const folderIcon = getFolderIcon ? callFunction(getFolderIcon, item, defaultIcon) : defaultIcon;
     if (item.children && item.children.length > 0) {
       return (
-        <Fragment>
+        <>
           {expandIcon}
           {folderIcon}
-        </Fragment>
+        </>
       );
     }
     return (
-      <Fragment>
+      <>
         <PreTextIcon>&bull;</PreTextIcon>
         {folderIcon}
-      </Fragment>
+      </>
     );
   }, [getFolderIcon, item, onCollapse, onExpand]);
   const onSave = (e) => {
@@ -136,7 +138,7 @@ function TreeNode(props) {
       </div>
     </div>
   );
-  return (    
+  return (
     <div
       ref={provided.innerRef}
       {...provided.draggableProps}
