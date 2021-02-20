@@ -3,7 +3,7 @@ import React, {
 } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Modal, Form, DataSet, TextArea, DatePicker, Select, Radio,
+  Modal, Form, DataSet, TextArea, DatePicker, Select, Radio, TextField,
 } from 'choerodon-ui/pro';
 import { Choerodon } from '@choerodon/boot';
 import { observer } from 'mobx-react-lite';
@@ -14,6 +14,7 @@ import { PromptInput } from '@/components';
 import { getProjectId } from '@/common/utils';
 import {
   createPlan, getPlan, editPlan, clonePlan,
+  checkPlanName,
 } from '@/api/TestPlanApi';
 import DataSetFactory from './dataSet';
 import SelectIssue from './SelectIssue';
@@ -34,7 +35,7 @@ function TestPlanModal({
 }) {
   const { caseSelected: initCaseSelected } = initValue;
   const selectIssueStore = useMemo(() => new SelectIssueStore(), []);
-  const dataSet = useMemo(() => new DataSet(DataSetFactory({ initValue })), [initValue]);
+  const dataSet = useMemo(() => new DataSet(DataSetFactory({ initValue }, mode)), [initValue, mode]);
   useEffect(() => {
     if (mode === 'create') {
       selectIssueStore.loadIssueTree(initCaseSelected);
@@ -160,15 +161,55 @@ export async function openEditPlan({ planId, onEdit }) {
     />,
   });
 }
-export async function openClonePlan({ planId, onCLone }) {
-  // const planDetail = await getPlan(planId);
+const ClonePlan = ({ modal, data: defaultValue, onCLone }) => {
+  const { id: planId, data: { name } } = defaultValue;
+  const dataSet = useMemo(() => new DataSet({
+    autoCreate: true,
+    fields: [{
+      name: 'name',
+      type: 'string',
+      label: '计划名称',
+      defaultValue: `${name}-副本`,
+      required: true,
+      validator: async (value) => {
+        const hasSame = await checkPlanName(value);
+        return hasSame ? '计划名称重复' : true;
+      },
+    }],
+    transport: {
+      submit: ({ data }) => ({
+        method: 'POST',
+        url: `/test/v1/projects/${getProjectId()}/plan/${planId}/clone`,
+        params: {
+          name: data[0].name,
+        },
+        data: {},
+      }),
+    },
+  }), [name, planId]);
+
+  const handleSubmit = useCallback(async () => {
+    const success = await dataSet.submit();
+    if (success) {
+      onCLone();
+    }
+    return success;
+  },
+  [dataSet, onCLone]);
+  useEffect(() => {
+    modal.handleOk(handleSubmit);
+  }, [modal, handleSubmit]);
+
+  return (
+    <Form dataSet={dataSet}>
+      <PromptInput name="name" required maxLength={44} />
+    </Form>
+  );
+};
+export async function openClonePlan({ data, onCLone }) {
   Modal.open({
     title: '复制计划',
     key,
-    children: '确认复制计划',
-    onOk: async () => {
-      await clonePlan(planId);
-      onCLone();
-    },
+    children: <ClonePlan data={data} onCLone={onCLone} />,
   });
 }

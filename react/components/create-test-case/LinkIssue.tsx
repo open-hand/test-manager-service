@@ -18,16 +18,18 @@ import renderSummary from '@choerodon/agile/lib/components/column-renderer/summa
 import renderPriority from '@choerodon/agile/lib/components/column-renderer/priority';
 import renderSprint from '@choerodon/agile/lib/components/column-renderer/sprint';
 import { getProjectId } from '@/common/utils';
-import { createLink } from '@/api/IssueManageApi';
+import Record from 'choerodon-ui/pro/lib/data-set/Record';
+import { find } from 'lodash';
 
 interface Props {
   modal?: IModalProps,
-  issueId: string
-  onSubmit: () => void
+  selected?: Record[]
+  onSubmit: (selected: Record[]) => void
 }
 const { Column } = Table;
 const LinkIssueModal: React.FC<Props> = (props) => {
-  const { modal, issueId, onSubmit } = props;
+  const { modal, onSubmit, selected } = props;
+  console.log(selected);
   const dataSetRef = useRef<DataSet>();
   const queryDataSet = useMemo(() => new DataSet({
     fields: [{
@@ -58,6 +60,8 @@ const LinkIssueModal: React.FC<Props> = (props) => {
   }), []);
   const dataSet = useMemo(() => new DataSet({
     autoQuery: true,
+    cacheSelection: true,
+    primaryKey: 'issueId',
     fields: [{
       name: 'summary',
       label: '概要',
@@ -77,7 +81,7 @@ const LinkIssueModal: React.FC<Props> = (props) => {
     transport: {
       read: ({ data }) => ({
         method: 'post',
-        url: `/test/v1/projects/${getProjectId()}/case/agile/un_link_issue/${issueId}`,
+        url: `/test/v1/projects/${getProjectId()}/case/agile/un_link_issue/${'134393135265628160'}`,
         data: {
           contents: data.content ? [data.content] : undefined,
           advancedSearchArgs: {
@@ -95,16 +99,22 @@ const LinkIssueModal: React.FC<Props> = (props) => {
       }),
     },
     queryDataSet,
-  }), [issueId, queryDataSet]);
+    events: {
+      load: () => {
+        dataSet.forEach((record) => {
+          const checked = find(selected, (r) => record.get('issueId') === r.get('issueId'));
+          if (checked) {
+            dataSet.select(record);
+          }
+        });
+      },
+    },
+  }), [queryDataSet, selected]);
   dataSetRef.current = dataSet;
   const handleOk = useCallback(async () => {
-    if (dataSet.selected.length > 0) {
-      await createLink(issueId, dataSet.selected.map((record) => record.get('issueId')));
-      onSubmit();
-      return true;
-    }
+    onSubmit(dataSet.selected || []);
     return true;
-  }, [dataSet.selected, issueId, onSubmit]);
+  }, [dataSet.selected, onSubmit]);
   useEffect(() => {
     modal?.handleOk(handleOk);
   }, [handleOk, modal]);

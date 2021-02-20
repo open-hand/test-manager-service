@@ -167,3 +167,6 @@ export function updateFoldRangeDate(isCycle, data) {
 export function getRankByDate(planId) {
   return request.post(`/test//v1/projects/${getProjectId()}/plan/${planId}/order_by_from_date`);
 }
+export function checkPlanName(name) {
+  return request.get('/test/v1/projects/1528/plan/check_name', { params: { name } });
+}
