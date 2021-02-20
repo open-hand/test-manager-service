@@ -1,10 +1,11 @@
 import React, { Component, createRef } from 'react';
 import { observer } from 'mobx-react';
 import { Menu, Icon } from 'choerodon-ui';
+import { Choerodon } from '@choerodon/master';
 import { handleRequestFailed, getProjectId } from '@/common/utils';
 import './TestPlanTree.less';
 import {
-  editPlan, deletePlan, addFolder, editFolder, deleteFolder,
+  editPlan, deletePlan, addFolder, editFolder, deleteFolder, checkPlanName,
 } from '@/api/TestPlanApi';
 import { Loading } from '@/components';
 import Tree from '@/components/Tree';
@@ -69,6 +70,12 @@ class TestPlanTree extends Component {
   handleReName = async (newName, item) => {
     const { context: { testPlanStore } } = this.props;
     const isPlan = testPlanStore.isPlan(item.id);
+    if (isPlan && newName !== item.data.name) {
+      if (await checkPlanName(newName)) {
+        Choerodon.prompt('计划名称重复');
+        return item;
+      }
+    }
     return isPlan ? this.editPlanName(newName, item) : this.editFolderName(newName, item);
   }
 
@@ -133,7 +140,7 @@ class TestPlanTree extends Component {
     switch (key) {
       case 'copy': {
         openClonePlan({
-          planId: nodeItem.id,
+          data: nodeItem,
           onCLone: () => {
             testPlanStore.loadAllData();
           },

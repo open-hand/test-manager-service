@@ -3,12 +3,15 @@ import React, {
 } from 'react';
 import { withRouter } from 'react-router-dom';
 import {
-  Form, DataSet, Icon, message, Select,
+  Form, DataSet, Icon, message, Select, Button,
 } from 'choerodon-ui/pro';
 import { PromptInput } from '@/components';
 import { observer } from 'mobx-react-lite';
-import { beforeTextUpload, returnBeforeTextUpload } from '@/common/utils';
+import { returnBeforeTextUpload } from '@/common/utils';
 import { uploadFile } from '@/api/IssueManageApi';
+import LinkList from '@/components/LinkList';
+import { remove } from 'lodash';
+import openLinkIssueModal from './LinkIssue';
 import UploadButton from './UploadButton';
 import CreateIssueDataSet from './store/CreateIssueDataSet';
 import CreateTestStepTable from './CreateTestStepTable';
@@ -20,6 +23,7 @@ const WYSIWYGEditor = C7NTryImport('@/components/WYSIWYGEditor', <div />);
 
 function CreateIssue(props) {
   const [visibleDetail, setVisibleDetail] = useState(true);
+  const [linkIssues, setLinkIssues] = useState([]);
   const {
     intl, caseId, defaultFolderValue, onOk = (v1, v2) => v1, modal, request,
   } = props;
@@ -77,12 +81,11 @@ function CreateIssue(props) {
         return true;
       })) {
         return true;
-      } else {
-        // error 时 重新将描述恢复富文本格式
-
-        createDataset.current.set('description', oldDes);
-        return false;
       }
+      // error 时 重新将描述恢复富文本格式
+
+      createDataset.current.set('description', oldDes);
+      return false;
     } catch (e) {
       message.error(e);
       return false;
@@ -100,33 +103,68 @@ function CreateIssue(props) {
   }, [handleCreateIssue, modal]);
 
   return (
-    <Form dataSet={createDataset} className={`test-create-issue-form ${visibleDetail ? '' : 'test-create-issue-form-hidden'}`}>
-      <PromptInput name="summary" maxLength={44} />
-      <SelectTree name="folder" parentDataSet={createDataset} defaultValue={defaultFolderValue ? defaultFolderValue.id : undefined} />
-      <Select name="priorityId" />
-      <div role="none" style={{ cursor: 'pointer' }} onClick={() => setVisibleDetail(!visibleDetail)}>
-        <div className="test-create-issue-line" />
-        <span className="test-create-issue-head">
-          <Icon type={`${visibleDetail ? 'expand_less' : 'expand_more'}`} />
-          用例前置条件
-        </span>
+    <>
+      <Form dataSet={createDataset} className={`test-create-issue-form ${visibleDetail ? '' : 'test-create-issue-form-hidden'}`}>
+        <PromptInput name="summary" maxLength={44} />
+        <SelectTree name="folder" parentDataSet={createDataset} defaultValue={defaultFolderValue ? defaultFolderValue.id : undefined} />
+        <Select name="priorityId" />
+        <div role="none" style={{ cursor: 'pointer' }} onClick={() => setVisibleDetail(!visibleDetail)}>
+          <div className="test-create-issue-line" />
+          <span className="test-create-issue-head">
+            <Icon type={`${visibleDetail ? 'expand_less' : 'expand_more'}`} />
+            用例前置条件
+          </span>
 
+        </div>
+        <WYSIWYGEditor
+          style={{ height: 200, width: '100%' }}
+          onChange={handleChangeDes}
+        />
+        {/* //  这里逻辑待处理， DataSet提交  */}
+        <div className="test-create-issue-form-file">
+          <span className="test-create-issue-head">附件</span>
+          <UploadButton onChange={onUploadFile} />
+        </div>
+
+        <div className="test-create-issue-form-step">
+          <div className="test-create-issue-line" />
+          <span className="test-create-issue-head">测试步骤</span>
+          <CreateTestStepTable name="caseStepVOS" parentDataSet={createDataset} caseId={caseId} />
+        </div>
+
+      </Form>
+      <div role="none" style={{ display: 'flex' }}>
+        <span className="test-create-issue-head">
+          问题链接
+        </span>
+        <Button
+          style={{ marginLeft: 'auto' }}
+          icon="playlist_add"
+          color="blue"
+          onClick={() => {
+            openLinkIssueModal({
+              selected: linkIssues,
+              onSubmit: (records) => {
+                setLinkIssues(records);
+              },
+            });
+          }}
+        />
       </div>
-      <WYSIWYGEditor
-        style={{ height: 200, width: '100%' }}
-        onChange={handleChangeDes}
-      />
-      {/* //  这里逻辑待处理， DataSet提交  */}
-      <div className="test-create-issue-form-file">
-        <span className="test-create-issue-head">附件</span>
-        <UploadButton onChange={onUploadFile} />
+      <div>
+        {linkIssues.map((record, i) => (
+          <LinkList
+            key={record.get('issueId')}
+            issue={record.toData()}
+            i={i}
+            deleteLink={() => {
+              remove(linkIssues, record);
+              setLinkIssues([...linkIssues]);
+            }}
+          />
+        ))}
       </div>
-      <div className="test-create-issue-form-step">
-        <div className="test-create-issue-line" />
-        <span className="test-create-issue-head">测试步骤</span>
-        <CreateTestStepTable name="caseStepVOS" parentDataSet={createDataset} caseId={caseId} />
-      </div>
-    </Form>
+    </>
   );
 }
 export default withRouter(observer(CreateIssue));

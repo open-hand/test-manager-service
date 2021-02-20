@@ -1,7 +1,8 @@
 import { getProjectId } from '@/common/utils';
 import { toJS } from 'mobx';
+import { checkPlanName } from '@/api/TestPlanApi';
 
-export default function DataSetFactory({ initValue = {} } = {}) {
+export default function DataSetFactory({ initValue = {} }, mode) {
   const {
     startDate, endDate,
   } = initValue;
@@ -14,7 +15,17 @@ export default function DataSetFactory({ initValue = {} } = {}) {
     data: [initValue],
     fields: [
       {
-        name: 'name', type: 'string', label: '计划名称', required: true,
+        name: 'name',
+        type: 'string',
+        label: '计划名称',
+        required: true,
+        validator: async (value) => {
+          if (mode === 'edit' && value === initValue.name) {
+            return true;
+          }
+          const hasSame = await checkPlanName(value);
+          return hasSame ? '计划名称重复' : true;
+        },
       },
       {
         name: 'range',
@@ -23,11 +34,10 @@ export default function DataSetFactory({ initValue = {} } = {}) {
         label: '持续时间',
         required: true,
         validator: (value) => {
-          if (!value || (value && toJS(value).some(item => !item))) {
+          if (!value || (value && toJS(value).some((item) => !item))) {
             return '请输入持续时间';
-          } else {
-            return true;
           }
+          return true;
         },
       },
       {
