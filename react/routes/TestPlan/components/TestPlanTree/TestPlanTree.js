@@ -1,14 +1,14 @@
 import React, { Component, createRef } from 'react';
 import { observer } from 'mobx-react';
 import { Menu, Icon } from 'choerodon-ui';
-import { handleRequestFailed } from '@/common/utils';
+import { handleRequestFailed, getProjectId } from '@/common/utils';
 import './TestPlanTree.less';
 import {
   editPlan, deletePlan, addFolder, editFolder, deleteFolder,
 } from '@/api/TestPlanApi';
 import { Loading } from '@/components';
 import Tree from '@/components/Tree';
-import { getProjectId } from '@/common/utils';
+
 import { localPageCacheStore } from '@choerodon/agile/lib/stores/common/LocalPageCacheStore';
 import { openClonePlan } from '../TestPlanModal';
 import openDragPlanFolder from '../DragPlanFolder';
@@ -187,22 +187,28 @@ class TestPlanTree extends Component {
       return (
         node
       );
-    } else {
-      return (
-        <TreeNode
-          item={item}
-          nodeProps={node.props}
-          onMenuClick={this.handleMenuClick}
-        >
-          {node}
-        </TreeNode>
-      );
     }
+    return (
+      <TreeNode
+        item={item}
+        nodeProps={node.props}
+        onMenuClick={this.handleMenuClick}
+      >
+        {node}
+      </TreeNode>
+    );
   }
 
   getMenuItems = (item) => {
     const isPlan = item.topLevel;
-    const { context: { testPlanStore } } = this.props;
+    const { status, context: { testPlanStore } } = this.props;
+    if (status === 'done') {
+      return isPlan ? [
+        <Menu.Item key="copy">
+          复制此计划
+        </Menu.Item>,
+      ] : null;
+    }
     if (isPlan) {
       return [
         <Menu.Item key="copy">
@@ -221,31 +227,30 @@ class TestPlanTree extends Component {
           删除
         </Menu.Item>,
       ];
-    } else {
-      const canImport = item.children.length === 0;
-      return canImport ? [
-        <Menu.Item key="rename">
-          重命名
-        </Menu.Item>,
-        <Menu.Item key="delete">
-          删除
-        </Menu.Item>,
-        <Menu.Item key="import">
-          导入用例
-        </Menu.Item>,
-      ] : [
-        <Menu.Item key="rename">
-          重命名
-        </Menu.Item>,
-        <Menu.Item key="delete">
-          删除
-        </Menu.Item>,
-      ];
     }
+    const canImport = item.children.length === 0;
+    return canImport ? [
+      <Menu.Item key="rename">
+        重命名
+      </Menu.Item>,
+      <Menu.Item key="delete">
+        删除
+      </Menu.Item>,
+      <Menu.Item key="import">
+        导入用例
+      </Menu.Item>,
+    ] : [
+      <Menu.Item key="rename">
+        重命名
+      </Menu.Item>,
+      <Menu.Item key="delete">
+        删除
+      </Menu.Item>,
+    ];
   }
 
   render() {
-    const { context: { testPlanStore } } = this.props;
+    const { context: { testPlanStore }, status } = this.props;
     const { treeLoading } = testPlanStore;
     const { treeData } = testPlanStore;
     return (
@@ -272,7 +277,7 @@ class TestPlanTree extends Component {
               getFolderIcon: (item, defaultIcon) => (item.topLevel ? <Icon type="insert_invitation" style={{ marginRight: 5 }} /> : defaultIcon),
               // 计划和没有执行的，可以添加子目录
               // 最多8层
-              enableAddFolder: (item) => item.path.length < 9 && (item.topLevel || !item.hasCase),
+              enableAddFolder: status === 'done' ? false : (item) => item.path.length < 9 && (item.topLevel || !item.hasCase),
             }
           }
           onMenuClick={this.handleMenuClick}
