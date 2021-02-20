@@ -470,7 +470,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         List<Long> issueIds = new ArrayList<>();
         TestCaseLinkDTO testCaseLinkDTO = new TestCaseLinkDTO();
         testCaseLinkDTO.setProjectId(projectId);
-        if (projectId != 0L) {
+        if (caseId != 0L) {
             testCaseLinkDTO.setLinkCaseId(caseId);
         }
         List<TestCaseLinkDTO> caseLinkList = testCaseLinkMapper.select(testCaseLinkDTO);
