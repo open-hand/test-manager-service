@@ -8,7 +8,7 @@ import {
 import { PromptInput } from '@/components';
 import { observer } from 'mobx-react-lite';
 import { returnBeforeTextUpload } from '@/common/utils';
-import { uploadFile } from '@/api/IssueManageApi';
+import { uploadFile, createLink } from '@/api/IssueManageApi';
 import LinkList from '@/components/LinkList';
 import { remove } from 'lodash';
 import openLinkIssueModal from './LinkIssue';
@@ -37,7 +37,7 @@ function CreateIssue(props) {
       createDataset.current.set('priorityId', defaultRecord.get('id'));
     }
   }, [priorityOptionsDataSet.length]);
-  const handleUploadFile = async (currentCaseId) => {
+  const handleUploadFile = useCallback(async (currentCaseId) => {
     const fileList = createDataset.current.get('fileList');
     const formData = new FormData();
 
@@ -47,7 +47,7 @@ function CreateIssue(props) {
       });
       uploadFile(currentCaseId, formData);
     }
-  };
+  }, [createDataset]);
   const handleCreateIssue = useCallback(async () => {
     try {
       if (!await createDataset.current.validate()) {
@@ -67,14 +67,20 @@ function CreateIssue(props) {
           })),
         };
         const reqResult = await request(newData);
+        if (linkIssues.length > 0) {
+          await createLink(reqResult.caseId, linkIssues.map((record) => record.get('issueId')));
+        }
         // eslint-disable-next-line no-unused-expressions
         reqResult && handleUploadFile((reqResult || {}).caseId);
         onOk(reqResult, createDataset.current.get('folderId'));
         return typeof (reqResult) !== 'undefined' ? reqResult : true;
       }
-      if (await createDataset.submit().then((res) => {
+      if (await createDataset.submit().then(async (res) => {
         if (!res) {
           throw new Error('create error');
+        }
+        if (linkIssues.length > 0) {
+          await createLink(res[0].caseId, linkIssues.map((record) => record.get('issueId')));
         }
         handleUploadFile(res[0].caseId);
         onOk(res[0], createDataset.current.get('folderId'));
@@ -90,7 +96,7 @@ function CreateIssue(props) {
       message.error(e);
       return false;
     }
-  }, [createDataset, onOk]);
+  }, [createDataset, handleUploadFile, linkIssues, onOk, request]);
   const handleChangeDes = (value) => {
     createDataset.current.set('description', value);
   };
