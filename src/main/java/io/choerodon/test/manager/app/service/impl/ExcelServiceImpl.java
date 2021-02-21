@@ -362,7 +362,7 @@ public class ExcelServiceImpl implements ExcelService {
             String path = fileClient.uploadFile(organizationId,TestAttachmentCode.ATTACHMENT_BUCKET,null, fileName, file);
 
             //判断是否返回是url
-            String regex = "(https?)://[-A-Za-z0-9\\u4E00-\\u9FA5+&@#/%?=~_|!:,.;]+[-A-Za-z0-9\\u4E00-\\u9FA5+&@#/%=~_|]+[.]xlsx";//设置正则表达式
+            String regex = "(https?)://[-A-Za-z0-9\\u4E00-\\u9FA5+&@#/%?=~_|!:,.;]+[-A-Za-z0-9\\u4E00-\\u9FA5+&@#/%=~_| ]+[.]xlsx";//设置正则表达式
             Pattern pat = Pattern.compile(regex.trim());//比对
             Matcher mat = pat.matcher(Optional.ofNullable(path).orElseGet(String::new).trim());
             if (mat.matches()) {
