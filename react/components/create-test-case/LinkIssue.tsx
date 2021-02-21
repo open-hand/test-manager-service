@@ -81,7 +81,7 @@ const LinkIssueModal: React.FC<Props> = (props) => {
     transport: {
       read: ({ data }) => ({
         method: 'post',
-        url: `/test/v1/projects/${getProjectId()}/case/agile/un_link_issue/${'134393135265628160'}`,
+        url: `/test/v1/projects/${getProjectId()}/case/agile/un_link_issue/0`,
         data: {
           contents: data.content ? [data.content] : undefined,
           advancedSearchArgs: {
