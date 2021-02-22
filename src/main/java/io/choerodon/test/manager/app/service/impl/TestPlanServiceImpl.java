@@ -101,7 +101,7 @@ public class TestPlanServiceImpl implements TestPlanService {
 
     @Override
     public TestPlanVO update(Long projectId, TestPlanVO testPlanVO) {
-        if (Boolean.TRUE.equals(checkName(projectId, testPlanVO.getName()))) {
+        if (Boolean.TRUE.equals(checkNameUpdate(projectId, testPlanVO.getName(), testPlanVO.getPlanId()))) {
             throw new CommonException("error.update.plan.name.exist");
         }
         TestPlanDTO testPlan = testPlanMapper.selectByPrimaryKey(testPlanVO.getPlanId());
@@ -115,6 +115,14 @@ public class TestPlanServiceImpl implements TestPlanService {
         }
         testCycleAssembler.updatePlanTime(projectId,testPlanVO);
         return modelMapper.map(testPlanMapper.selectByPrimaryKey(testPlanDTO.getPlanId()), TestPlanVO.class);
+    }
+
+    private boolean checkNameUpdate(Long projectId, String name, Long planId) {
+        TestPlanDTO search = new TestPlanDTO();
+        search.setProjectId(projectId);
+        search.setName(name);
+        TestPlanDTO testPlanDTO = testPlanMapper.selectOne(search);
+        return testPlanDTO != null && !planId.equals(testPlanDTO.getPlanId());
     }
 
     @Override
