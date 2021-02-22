@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.api.controller.v1;
 
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.test.manager.api.vo.TestTreeIssueFolderVO;
@@ -25,6 +26,8 @@ import io.choerodon.test.manager.app.service.TestIssueFolderService;
 @RestController
 @RequestMapping(value = "/v1/projects/{project_id}/issueFolder")
 public class TestIssueFolderController {
+
+    public static final String TEST_ISSUE_FOLDER_NAME_REG = "^[-—.\\w\\s\\u0800-\\u9fa5]{1,110}$";
 
     @Autowired
     private TestIssueFolderService testIssueFolderService;
@@ -54,6 +57,9 @@ public class TestIssueFolderController {
     @PostMapping
     public ResponseEntity<TestIssueFolderVO> create(@PathVariable(name = "project_id") Long projectId,
                                                     @RequestBody TestIssueFolderVO testIssueFolderVO) {
+        if (!Pattern.matches(TEST_ISSUE_FOLDER_NAME_REG, testIssueFolderVO.getName())) {
+            throw new CommonException("error.testIssueFolder.name.invalid");
+        }
         return Optional.ofNullable(testIssueFolderService.create(projectId, testIssueFolderVO))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.testIssueFolder.insert"));
@@ -64,6 +70,9 @@ public class TestIssueFolderController {
     @PutMapping("/update")
     public ResponseEntity<TestIssueFolderVO> update(@PathVariable(name = "project_id") Long projectId,
                                                     @RequestBody TestIssueFolderVO testIssueFolderVO) {
+        if (!Pattern.matches(TEST_ISSUE_FOLDER_NAME_REG, testIssueFolderVO.getName())) {
+            throw new CommonException("error.testIssueFolder.name.invalid");
+        }
         return Optional.ofNullable(testIssueFolderService.update(testIssueFolderVO))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.testIssueFolder.update"));
