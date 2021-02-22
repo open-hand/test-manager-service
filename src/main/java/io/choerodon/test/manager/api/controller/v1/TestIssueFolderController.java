@@ -27,7 +27,7 @@ import io.choerodon.test.manager.app.service.TestIssueFolderService;
 @RequestMapping(value = "/v1/projects/{project_id}/issueFolder")
 public class TestIssueFolderController {
 
-    public static final String TEST_ISSUE_FOLDER_NAME_REG = "^[-—.\\w\\s\\u0800-\\u9fa5]{1,110}$";
+    public static final String TEST_ISSUE_FOLDER_NAME_REG = "^[^/%]{1,110}$";
 
     @Autowired
     private TestIssueFolderService testIssueFolderService;
