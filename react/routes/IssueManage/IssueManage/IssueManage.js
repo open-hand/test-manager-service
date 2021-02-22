@@ -10,6 +10,7 @@ import Empty from '@/components/Empty';
 import empty from '@/assets/empty.png';
 import priorityApi from '@/api/priority';
 import { localPageCacheStore } from '@choerodon/agile/lib/stores/common/LocalPageCacheStore';
+import ResizeContainer from '@/components/ResizeDivider/ResizeContainer';
 import CreateIssue from '@/components/create-test-case';
 import IssueStore from '../stores/IssueStore';
 import { getParams } from '../../../common/utils';
@@ -22,6 +23,8 @@ import TestCaseDetail from '../components/TestCaseDetail';
 import openCreateFolder from '../components/CreateFolder';
 import './IssueManage.less';
 import IssueTreeStore from '../stores/IssueTreeStore';
+
+const { Section, Divider } = ResizeContainer;
 
 @injectIntl
 @observer
@@ -227,13 +230,32 @@ class IssueManage extends Component {
         </Header>
         <Breadcrumb />
         <Content style={{ display: 'flex', padding: '0', borderTop: '0.01rem solid rgba(0,0,0,0.12)' }}>
-          <>
-            <div className="c7ntest-Issue-content-left">
-              {tabs.length > 1 && tab}
-              <IssueTree />
-            </div>
-            <>
-              {
+          <ResizeContainer type="horizontal">
+            <Section
+              size={{
+                width: 240,
+                minWidth: 240,
+                maxWidth: 600,
+              }}
+              style={{
+                minWidth: 240,
+                maxWidth: 600,
+              }}
+            >
+              <div className="c7ntest-Issue-content-left">
+                {tabs.length > 1 && tab}
+                <IssueTree />
+              </div>
+            </Section>
+            <Divider />
+            <Section
+              style={{ flex: 1 }}
+              size={{
+                width: 'auto',
+              }}
+            >
+              <div>
+                {
                 noFolder ? (
                   <Empty
                     loading={loading}
@@ -262,8 +284,10 @@ class IssueManage extends Component {
                   </div>
                 )
               }
-            </>
-          </>
+              </div>
+            </Section>
+          </ResizeContainer>
+
           <TestCaseDetail visible={clickIssue && clickIssue.caseId} onClose={this.handleClose} />
         </Content>
       </Page>
