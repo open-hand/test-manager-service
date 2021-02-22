@@ -202,11 +202,14 @@ function TestPlanHome({ history }) {
   };
 
   const handleDeleteExecute = (record) => {
-    const { executeId } = record;
+    const { executeId, summary } = record;
     confirm({
-      width: 560,
-      title: Choerodon.getMessage('确认删除吗?', 'Confirm delete'),
-      content: Choerodon.getMessage('当您点击删除后，该条执行将从此计划阶段中移除!', 'When you click delete, after which the data will be deleted !'),
+      className: 'c7n-deleteExecute-confirm',
+      style: {
+        width: 560,
+      },
+      title: Choerodon.getMessage('确认删除?', 'Confirm delete'),
+      children: Choerodon.getMessage(`确认要删除“${summary}”吗?`),
       onOk: () => {
         deleteExecute(executeId)
           .then(() => {
@@ -217,7 +220,16 @@ function TestPlanHome({ history }) {
           });
       },
       okText: '删除',
-      okType: 'danger',
+      okProps: {
+        style: {
+          color: '#d50000',
+        },
+      },
+      cancelProps: {
+        style: {
+          color: '#000',
+        },
+      },
     });
   };
 
