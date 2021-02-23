@@ -7,8 +7,8 @@ import {
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import useClickOnce from '@/hooks/useClickOnce';
-import { DragTable } from '..';
-import { TextEditToggle } from '..';
+import { DragTable, TextEditToggle } from '..';
+
 import './TestStepTable.less';
 
 const { confirm } = Modal;
@@ -105,6 +105,7 @@ function TestStepTable(props) {
   };
 
   const onCreateStep = async (newStep, index) => {
+    const lastRank = data[index - 1]?.rank;
     const { expectedResult, testStep, testData } = newStep;
     // 特殊字符判断 全为空格时，则进行提示
     if (checkAllSpace(expectedResult, testStep, testData)) {
@@ -113,7 +114,7 @@ function TestStepTable(props) {
     }
     if (expectedResult && testStep) {
       try {
-        const newStepResult = await onCreate(newStep, index);
+        const newStepResult = await onCreate({ ...newStep, lastRank }, index);
         if (newStepResult) {
           delete newStepResult.stepIsCreating;
           data[index] = newStepResult;
