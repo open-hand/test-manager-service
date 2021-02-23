@@ -3,11 +3,12 @@ import { WSHandler, Choerodon } from '@choerodon/boot';
 import { observer } from 'mobx-react';
 import { Menu } from 'choerodon-ui';
 import { handleRequestFailed } from '@/common/utils';
-import { preCopyFolder, copyFolder } from '@/api/IssueManageApi';
-import './IssueTree.less';
 import {
+  preCopyFolder, copyFolder,
   addFolder, editFolder, deleteFolder, moveFolder,
 } from '@/api/IssueManageApi';
+import './IssueTree.less';
+
 import { Loading } from '@/components';
 import Tree from '@/components/Tree';
 import IssueStore from '../../stores/IssueStore';
@@ -23,8 +24,8 @@ class IssueTree extends Component {
   }
 
   handleCreate = async (value, parentId) => {
-    if (value && value.indexOf('/') > -1) {
-      Choerodon.prompt('目录名不能包含/');
+    if (value && (value.indexOf('/') > -1 || value.indexOf('%') > -1)) {
+      Choerodon.prompt('目录名不能包含/和%');
       return false;
     }
 
@@ -57,8 +58,8 @@ class IssueTree extends Component {
   }
 
   handleEdit = async (newName, item) => {
-    if (newName && newName.indexOf('/') > -1) {
-      Choerodon.prompt('目录名不能包含/');
+    if (newName && (newName.indexOf('/') > -1 || newName.indexOf('%') > -1)) {
+      Choerodon.prompt('目录名不能包含/和%');
       return false;
     }
     const { objectVersionNumber } = item.data;

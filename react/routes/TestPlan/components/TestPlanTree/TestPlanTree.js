@@ -228,7 +228,7 @@ class TestPlanTree extends Component {
           {testPlanStore.getFolderDataById(item.id).isSort ? '默认排序' : '时间排序'}
         </Menu.Item>,
         <Menu.Item key="drag">
-          调整结构
+          调整计划结构
         </Menu.Item>,
         <Menu.Item key="delete">
           删除

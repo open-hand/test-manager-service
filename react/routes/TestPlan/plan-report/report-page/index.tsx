@@ -52,7 +52,6 @@ const ReportPage: React.FC<Props> = ({ preview: forcePreview, planId }) => {
       <PreviewPage store={store} baseInfoRef={baseInfoRef} loadTask={loadTask} planName={planName} />
     ), newEm);
 
-    console.log('em', loadTask, newEm);
     // loadTask.length
     await new Promise((r) => {
       let maxWaitTimes = 100; /** 最大等待任务完成循环时间次数 */
@@ -81,7 +80,6 @@ const ReportPage: React.FC<Props> = ({ preview: forcePreview, planId }) => {
       f1();
     });
     const htmlElement = newEm.childNodes.item(0) as HTMLElement;
-    console.log(`html_em_width:${htmlElement.clientWidth} html_em_height:${htmlElement.clientHeight}`);
     await html2canvas(htmlElement, {
       useCORS: true,
       allowTaint: true,
