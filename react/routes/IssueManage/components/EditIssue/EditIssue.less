@@ -89,8 +89,20 @@
     &-bottom {
       width: 100%;
       flex: 1;
-      overflow-y: scroll;
-      overflow-x: hidden;
+      overflow: hidden;
+      // overflow-y: scroll;
+      // overflow-x: hidden;
+      & >div {
+        height: 100%;
+      }
+      .c7n-tabs-content {
+        height: ~'calc(100% - 50px)';
+      }
+      .c7n-tabs-tabpane-active {
+        height: 100%;
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
     }
   }
 

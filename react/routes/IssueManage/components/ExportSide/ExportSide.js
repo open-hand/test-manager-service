@@ -61,9 +61,8 @@ function ExportSide(props) {
     if (await dataSet.submit()) {
       // exportSideDataSet.query();
       return true;
-    } else {
-      return false;
     }
+    return false;
   }
 
   const handleDownload = (record) => {
@@ -80,7 +79,7 @@ function ExportSide(props) {
   };
   /**
  * 计算耗时
- * @param {*} record 
+ * @param {*} record
  */
   const onHumanizeDuration = (record) => {
     const { creationDate, lastUpdateDate } = record;
@@ -102,7 +101,7 @@ function ExportSide(props) {
     const data = JSON.parse(res);
     const { id, rate, successfulCount } = data;
     if (data.code === 'no-case-in-folder') {
-      const record = exportSideDataSet.find(item => item.get('id') === id);
+      const record = exportSideDataSet.find((item) => item.get('id') === id);
       exportSideDataSet.remove(record);
       message.warn(data.message);
       return;
@@ -112,7 +111,7 @@ function ExportSide(props) {
       lastUpdateDate: moment(data.creationDate).format('YYYY-MM-DD HH:mm:ss'),
       during: onHumanizeDuration(data),
     };
-    const index = exportSideDataSet.findIndex(record => record.get('id') === id);
+    const index = exportSideDataSet.findIndex((record) => record.get('id') === id);
     // 存在记录就更新，不存在则新增记录
     if (index >= 0) {
       exportSideDataSet.get(index).set('rate', rate);
@@ -129,13 +128,12 @@ function ExportSide(props) {
     }
   };
 
-
   function renderStatus({ value, record }) {
     // record.get('rate') Prgoress
     return (value === 2
       ? <div>已完成</div>
       : (
-        <Tooltip title={`进度：${record.get('rate') ? record.get('rate').toFixed(1) : 0}%`} getPopupContainer={ele => ele.parentNode}>
+        <Tooltip title={`进度：${record.get('rate') ? record.get('rate').toFixed(1) : 0}%`} getPopupContainer={(ele) => ele.parentNode}>
           <Progress percent={record.get('rate')} showInfo={false} />
         </Tooltip>
       ));
@@ -161,6 +159,7 @@ function ExportSide(props) {
           </Form>
           <Button className="test-export-issue-btn" type="primary" icon="playlist_add" onClick={handleCreateExport}>新建导出</Button>
         </div>
+        <h3 className="test-export-issue-table-title">导出记录</h3>
         <WSHandler
           messageKey="test-issue-export"
           onMessage={handleMessage}
@@ -180,6 +179,5 @@ function ExportSide(props) {
 
   return render();
 }
-
 
 export default ExportSide;

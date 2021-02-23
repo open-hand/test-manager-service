@@ -139,7 +139,9 @@ function CreateIssue(props) {
         </div>
 
       </Form>
-      <div role="none" style={{ display: 'flex' }}>
+      <div className="test-create-issue-line" />
+
+      <div role="none" style={{ display: 'flex', marginTop: '.195rem' }}>
         <span className="test-create-issue-head">
           问题链接
         </span>
