@@ -68,7 +68,7 @@ class PriorityList extends Component {
 
     PriorityStore.setPriorityList(priorityListAfterDrag);
     // 更新顺序
-    priorityApi.sort(PriorityStore.getPriorityList.map(item => ({
+    priorityApi.sort(PriorityStore.getPriorityList.map((item) => ({
       id: item.id,
       sequence: item.sequence,
       objectVersionNumber: item.objectVersionNumber,
@@ -92,7 +92,7 @@ class PriorityList extends Component {
 
   renderMenu = (text, record) => {
     const { PriorityStore, intl } = this.props;
-    const enableList = PriorityStore.getPriorityList.filter(item => item.enableFlag);
+    const enableList = PriorityStore.getPriorityList.filter((item) => item.enableFlag);
     let name;
     if (record.defaultFlag) {
       name = `${text} ${intl.formatMessage({ id: 'priority.default' })}`;
@@ -100,7 +100,7 @@ class PriorityList extends Component {
       name = text;
     }
     const menu = (
-      <Menu onClick={item => this.handleChooseMenu(item.key, record)}>
+      <Menu onClick={(item) => this.handleChooseMenu(item.key, record)}>
         {record.enableFlag && enableList && enableList.length === 1
           ? null
           : (
@@ -109,16 +109,14 @@ class PriorityList extends Component {
                 <FormattedMessage id={record.enableFlag ? 'disable' : 'enable'} />
               </span>
             </Menu.Item>
-          )
-        }
+          )}
         {record.enableFlag && enableList && enableList.length === 1
           ? null
           : (
             <Menu.Item key="del">
               <span>删除</span>
             </Menu.Item>
-          )
-        }
+          )}
       </Menu>
     );
     return (
@@ -133,7 +131,7 @@ class PriorityList extends Component {
 
   getColumns = () => {
     const { PriorityStore, intl } = this.props;
-    const enableList = PriorityStore.getPriorityList.filter(item => item.enableFlag);
+    const enableList = PriorityStore.getPriorityList.filter((item) => item.enableFlag);
     return [
       {
         title: <FormattedMessage id="priority.name" />,
@@ -182,8 +180,9 @@ class PriorityList extends Component {
     const orgId = AppState.currentMenuType.organizationId;
     const that = this;
     const count = await priorityApi.checkBeforeDel(priority.id);
-    const priorityList = PriorityStore.getPriorityList.filter(item => item.id !== priority.id);
+    const priorityList = PriorityStore.getPriorityList.filter((item) => item.id !== priority.id);
     confirm({
+      className: 'c7n-deletePriority-confirm',
       title: intl.formatMessage({ id: 'priority.delete.title' }),
       content: (
         <div>
@@ -205,8 +204,7 @@ class PriorityList extends Component {
                 <span style={{ color: 'red' }}>{count}</span>
                 {intl.formatMessage({ id: 'priority.delete.used.tip.suffix' })}
               </div>
-            )
-          }
+            )}
           <div style={{ marginBottom: 15 }}>
             {intl.formatMessage({ id: 'priority.delete.notice' })}
             {count !== 0 && intl.formatMessage({ id: 'priority.delete.used.notice' })}
@@ -222,13 +220,11 @@ class PriorityList extends Component {
                   defaultValue={priorityList[0].id}
                 >
                   {priorityList.map(
-                    item => <Option value={item.id} key={String(item.id)}>{item.name}</Option>,
-                  )
-                  }
+                    (item) => <Option value={item.id} key={String(item.id)}>{item.name}</Option>,
+                  )}
                 </Select>
               </div>
-            )
-          }
+            )}
         </div>),
       width: 520,
       onOk() {
@@ -349,7 +345,7 @@ class PriorityList extends Component {
             filterBarPlaceholder="过滤表"
             columns={this.getColumns()}
             dataSource={getPriorityList}
-            rowKey={record => record.id}
+            rowKey={(record) => record.id}
             loading={onLoadingList}
             pagination={false}
             components={this.components}
