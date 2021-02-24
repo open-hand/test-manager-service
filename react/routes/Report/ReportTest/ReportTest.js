@@ -1,9 +1,9 @@
-
 import React, { Component } from 'react';
 import {
   Page, Header, Content, stores, Breadcrumb,
+  Choerodon,
 } from '@choerodon/boot';
-import { Choerodon } from '@choerodon/boot';
+
 import { Link } from 'react-router-dom';
 import {
   Table, Button, Icon, Collapse, Tooltip,
@@ -28,6 +28,7 @@ export const STATUS = {
   done: '#00bfa5',
 };
 class ReportTest extends Component {
+  // eslint-disable-next-line react/state-in-constructor
   state = {
     selectVisible: false,
     loading: false,
@@ -360,7 +361,7 @@ class ReportTest extends Component {
               </div>
               <div style={{ display: 'flex' }}>
                 {
-                  Object.keys(executeStatus).map(key => (
+                  Object.keys(executeStatus).map((key) => (
                     <div>
                       <span>
                         {key}
@@ -523,7 +524,7 @@ class ReportTest extends Component {
         title: '状态',
         dataIndex: 'statusId',
         key: 'statusId',
-        filters: issueStatusList.map(status => ({ text: status.name, value: status.id.toString() })),
+        filters: issueStatusList.map((status) => ({ text: status.name, value: status.id.toString() })),
         filterMultiple: true,
         // filteredValue: IssueStore.filteredInfo.statusId || null,
       },
@@ -572,11 +573,11 @@ class ReportTest extends Component {
           </Button>
         </Header>
         <Breadcrumb title="可跟踪性报告：缺陷 -> 执行 -> 测试 -> 要求" />
-        <Content>
+        <Content style={{ paddingTop: 0 }}>
           <div style={{ display: 'flex' }} />
           <div className="c7ntest-report-test-filter-table">
             <Table
-              rowKey={record => record.id}
+              rowKey={(record) => record.id}
               columns={filterColumns}
               dataSource={[]}
               filterBar
@@ -601,6 +602,5 @@ class ReportTest extends Component {
     );
   }
 }
-
 
 export default ReportTest;
