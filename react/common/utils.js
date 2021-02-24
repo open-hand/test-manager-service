@@ -176,10 +176,9 @@ export function returnBeforeTextUpload(text, data, func, pro = 'description') {
       send[pro] = JSON.stringify(deltaOps);
       return func(send);
     });
-  } else {
-    send[pro] = JSON.stringify(deltaOps);
-    return func(send);
   }
+  send[pro] = JSON.stringify(deltaOps);
+  return func(send);
 }
 
 /**
@@ -227,7 +226,7 @@ export function handleFileUpload(propFileList, func, config) {
 /**
  * 获取 blob
  * @param  {String} url 目标文件地址
- * @return {Promise} 
+ * @return {Promise}
  */
 function getBlob(url) {
   return new Promise((resolve) => {
@@ -247,7 +246,7 @@ function getBlob(url) {
 
 /**
 * 保存
-* @param  {Blob} blob     
+* @param  {Blob} blob
 * @param  {String} filename 想要保存的文件名称
 */
 function saveAs(blob, filename) {
@@ -272,7 +271,7 @@ function saveAs(blob, filename) {
 }
 
 /**
-* 重命名下载文件 
+* 重命名下载文件
 * @param  {String} url 目标文件地址
 * @param  {String} filename 想要保存的文件名称
 */
@@ -309,7 +308,7 @@ export function getParams(url) {
     const str = url.split('?')[1];
     const strs = str.split('&');
     for (let i = 0; i < strs.length; i += 1) {
-      theRequest[strs[i].split('=')[0]] = decodeURI(strs[i].split('=')[1]);
+      theRequest[strs[i].split('=')[0]] = decodeURIComponent(strs[i].split('=')[1]);
     }
   }
   return theRequest;
@@ -329,11 +328,10 @@ export function issueLink(issueId, typeCode, issueName, folderId) {
   } = menu;
   if (typeCode === 'issue_test' || typeCode === 'issue_auto_test') {
     return encodeURI(`/testManager/IssueManage?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&orgId=${organizationId}&paramIssueId=${issueId}&paramName=${issueName}&folderId=${folderId}`);
-  } else if (issueName) {
+  } if (issueName) {
     return encodeURI(`/agile/work-list/issue?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&orgId=${organizationId}&paramIssueId=${issueId}&paramName=${issueName}`);
-  } else {
-    return encodeURI(`/agile/work-list/issue?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&orgId=${organizationId}&paramIssueId=${issueId}`);
   }
+  return encodeURI(`/agile/work-list/issue?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&orgId=${organizationId}&paramIssueId=${issueId}`);
 }
 export function createIssueLink() {
   const menu = AppState.currentMenuType;
@@ -460,10 +458,10 @@ class Request {
     ['get', 'post', 'options', 'delete', 'put'].forEach((type) => {
       this[type] = (...args) => new Promise((resolve, reject) => {
         // const CancelToken = axios.CancelToken;
-        // const source = CancelToken.source();       
+        // const source = CancelToken.source();
         let url = args[0];
 
-        // const preSameRequest = _.find(this.requestQueue, { url, type });       
+        // const preSameRequest = _.find(this.requestQueue, { url, type });
         // if (preSameRequest) {
         //   this.requestQueue.splice(_.findIndex(this.requestQueue, { url, type }), 1);
         //   preSameRequest.cancel(`Request canceled ${url} ${type}`);
@@ -472,8 +470,8 @@ class Request {
         //   url,
         //   type,
         //   cancel: source.cancel,
-        // };       
-        // this.requestQueue.push(requestObject);       
+        // };
+        // this.requestQueue.push(requestObject);
         if (Object.keys(getParams(url)).length > 0) {
           url += `&organizationId=${getOrganizationId()}`;
         } else {
@@ -481,7 +479,7 @@ class Request {
         }
         // eslint-disable-next-line no-param-reassign
         args[0] = url;
-        // const cancelToken = source.token;        
+        // const cancelToken = source.token;
         // args.push({
         //   cancelToken,
         // });
@@ -500,9 +498,9 @@ class Request {
           reject(error);
           // }
         }).finally(() => {
-          // this.requestQueue.splice(_.findIndex(this.requestQueue, { 
+          // this.requestQueue.splice(_.findIndex(this.requestQueue, {
           //   url,
-          //   type,  
+          //   type,
           // }), 1);
         });
       });
