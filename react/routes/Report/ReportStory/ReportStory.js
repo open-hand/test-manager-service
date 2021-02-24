@@ -389,7 +389,7 @@ class ReportStory extends Component {
                       }}
                     >
                       <Tooltip title={`${execute.cycleName}${execute.folderName ? `/${execute.folderName}` : ''}`}>
-                        <Link className="c7ntest-showId" to={executeDetailLink(execute.executeId,filters)}>
+                        <Link className="c7ntest-showId" to={executeDetailLink(execute.executeId, filters)}>
                           {execute.cycleName}
                           {execute.folderName ? `/${execute.folderName}` : ''}
                         </Link>
@@ -403,7 +403,7 @@ class ReportStory extends Component {
                     </div>
                     <Link
                       style={{ lineHeight: '13px' }}
-                      to={executeDetailLink(execute.executeId,filters)}
+                      to={executeDetailLink(execute.executeId, filters)}
                     >
                       <Icon type="explicit2" style={{ marginLeft: 10, color: 'black' }} />
                     </Link>
@@ -568,7 +568,7 @@ class ReportStory extends Component {
           </Button>
         </Header>
         <Breadcrumb title="可跟踪性报告：要求 -> 测试 -> 执行 -> 缺陷" />
-        <Content>
+        <Content style={{ paddingTop: 0 }}>
           <div style={{ display: 'flex' }} />
           <div className="c7ntest-report-story-filter-table">
             <Table
