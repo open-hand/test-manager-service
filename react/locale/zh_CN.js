@@ -49,7 +49,7 @@ const zhCN = {
   cycle: '测试循环',
   type: '类型',
   color: '颜色',
-  comment: '说明',
+  comment: '描述',
   name: '名称',
   day: '天',
   today: '今日',
@@ -100,7 +100,6 @@ const zhCN = {
   execute_quickPass: '测试通过',
   execute_quickFail: '测试失败',
 
-
   // 测试摘要
   summary_title: '测试摘要',
   summary_totalTest: '总测试数量',
@@ -141,7 +140,7 @@ const zhCN = {
   status_name: '状态名称',
   status_comment: '描述',
   status_color: '颜色',
-  // 自定义状态侧边栏 
+  // 自定义状态侧边栏
   status_side_content_title: '在项目“{name}”中创建状态',
   status_side_edit_content_title: '编辑项目“{name}”中的状态',
   status_side_content_description: '您可以创建自定义状态，包括执行状态和步骤状态。',
@@ -176,7 +175,6 @@ const zhCN = {
   report_progress_table_title: '数据统计',
   report_progress_table_statusTd: '测试执行状态',
   report_progress_table_countTd: '执行数量',
-
 
   // 测试计划
   testPlan_name: '测试计划',
@@ -256,7 +254,6 @@ const zhCN = {
   cycle_createExecute_yes: '是',
   cycle_createExecute_no: '否',
   cycle_createExecute_defectStatus: '缺陷状态',
-
 
   // 测试用例
   issue_name: '测试用例',
@@ -369,7 +366,7 @@ const zhCN = {
   issue_edit_step_title: '测试详细信息',
   issue_edit_step_content_title: '编辑步骤“{testStep}”的详细信息',
   issue_edit_step_content_description: '您可以编辑测试步骤的详细信息。',
-  // 
+  //
   issue_create_bug: '新建缺陷',
   // issue树
   issue_tree_rename: '重命名',
@@ -433,7 +430,6 @@ const zhCN = {
   createBug_field_component: '模块',
   createBug_field_label: '标签',
   createBug_field_annex: '附件',
-
 
   // yaml
   'yaml.new': '新增',
