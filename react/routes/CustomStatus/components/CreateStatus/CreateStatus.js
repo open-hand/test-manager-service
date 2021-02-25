@@ -1,6 +1,6 @@
 /*
- * @Author: LainCarl 
- * @Date: 2019-01-25 11:36:56 
+ * @Author: LainCarl
+ * @Date: 2019-01-25 11:36:56
  * @Last Modified by: LainCarl
  * @Last Modified time: 2019-01-25 13:56:36
  * @Feature: 创建状态侧边栏
@@ -11,6 +11,8 @@ import PropTypes from 'prop-types';
 import {
   Form, Input, Select, Modal,
 } from 'choerodon-ui';
+import { Button } from 'choerodon-ui/pro';
+
 import { FormattedMessage } from 'react-intl';
 import { ColorPicker } from '../../../../components';
 import './CreateStatus.less';
@@ -30,7 +32,7 @@ const propTypes = {
   onSubmit: PropTypes.func.isRequired,
 };
 class CreateStatus extends Component {
-  componentWillReceiveProps(nextProps) {
+  componentDidUpdate(nextProps) {
     const { resetFields } = this.props.form;
     if (this.props.visible === false && nextProps.visible === true) {
       resetFields();
@@ -46,17 +48,17 @@ class CreateStatus extends Component {
     }, 0);
   }
 
-  validateColor=() => {
+  validateColor = () => {
     this.props.form.validateFields(['statusColor'], { force: true });
   }
 
   handleCheckColor = (rule, statusColor, callback) => {
     const { getFieldValue } = this.props.form;
-    const statusType = getFieldValue('statusType');    
-    this.props.onCheckStatusRepeat({ statusType, statusColor })(rule, statusColor, callback);    
+    const statusType = getFieldValue('statusType');
+    this.props.onCheckStatusRepeat({ statusType, statusColor })(rule, statusColor, callback);
   }
 
-  handleOk = () => {  
+  handleOk = () => {
     const { onSubmit } = this.props;
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
@@ -78,17 +80,23 @@ class CreateStatus extends Component {
     const {
       visible, onCancel, loading, activeKey,
     } = this.props;
-    const { getFieldDecorator, getFieldValue } = this.props.form;    
+    const { getFieldDecorator, getFieldValue } = this.props.form;
     return (
       <div>
         <Sidebar
           title={`创建${getFieldValue('statusType') === 'CYCLE_CASE' ? '执行' : '步骤'}状态`}
           visible={visible}
-          onOk={this.handleOk}
-          onCancel={onCancel}
-          confirmLoading={loading}
+          // onOk={this.handleOk}
+          // onCancel={onCancel}
+          // confirmLoading={loading}
+          footer={[
+            <Button key="submit" color="primary" funcType="raised" loading={loading} onClick={this.handleOk}>
+              <FormattedMessage id="save" />
+            </Button>,
+            <Button key="back" funcType="raised" onClick={onCancel}><FormattedMessage id="cancel" /></Button>,
+          ]}
           width={380}
-        >         
+        >
           <Form>
             <FormItem>
               {getFieldDecorator('statusType', {
@@ -134,8 +142,8 @@ class CreateStatus extends Component {
               })(
                 <ColorPicker />,
               )}
-            </FormItem>    
-          </Form>          
+            </FormItem>
+          </Form>
         </Sidebar>
       </div>
     );
