@@ -1,4 +1,5 @@
 import React, { memo } from 'react';
+import { Tooltip } from 'choerodon-ui/pro';
 import './StatusTags.less';
 
 const Color = {
@@ -17,7 +18,7 @@ const StatusTags = ({
       ...style,
     }}
   >
-    <div>{ name || '' }</div>
+    <Tooltip title={name || ''}><div>{ name || '' }</div></Tooltip>
   </div>
 );
 export default memo(StatusTags);
