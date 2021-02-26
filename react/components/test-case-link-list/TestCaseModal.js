@@ -30,29 +30,6 @@ function TestCaseForm({ testLinkStore, modal, intl }) {
     paging: true,
     optionRenderer: (item = {}) => `${item.caseNum} ${item.summary}`,
   });
-  async function handleCreateIssue(data) {
-    return testLinkStore.createCaseAndLink(data);
-  }
-  const handleOpenCreateIssue = () => {
-    Modal.open({
-      key: 'createCase_link_Issue',
-      // title:<FormattedMessage id='issue_create_name'  />,
-      title: intl.formatMessage({ id: 'issue_create_name', defaultMessage: '创建测试用例并关联' }),
-      drawer: true,
-      style: {
-        width: 740,
-      },
-      children: (
-        <CreateIssue
-          request={handleCreateIssue.bind(this)}
-          intl={intl}
-          onOk={(res) => res && modal.close()}
-        // caseId={clickIssue && clickIssue.caseId}
-        />
-      ),
-      okText: '创建',
-    });
-  };
   return (
     <Form dataSet={ds}>
       <Select
@@ -85,6 +62,7 @@ const openTestCaseModal = (testLinkStore, intl) => {
           request={handleCreateIssue.bind(this)}
           intl={intl}
           onOk={(res) => res && modal.close()}
+          noCreateLink
         // caseId={clickIssue && clickIssue.caseId}
         />
       ),
@@ -96,7 +74,7 @@ const openTestCaseModal = (testLinkStore, intl) => {
     title: (
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <span>关联测试用例</span>
-     
+
         <Tooltip title="创建测试用例并关联到问题项" arrowPointAtCenter>
           <Button color="primary" icon="playlist_add" onClick={handleOpenCreateIssue} />
         </Tooltip>
