@@ -101,12 +101,12 @@ const ReportPage: React.FC<Props> = ({ preview: forcePreview, planId }) => {
         contentWidth = (contentScale || 1) * (contentWidth || 1);
       }
 
-      // let orientation = 'p';
+      let orientation:'p'|'l' = 'p';
       // // 在 jspdf 源码里，如果是 orientation = 'p' 且 width > height 时， 会把 width 和 height 值交换，
       // // 类似于 把 orientation 的值修改为 'l' , 反之亦同。
-      // if (contentWidth > contentHeight) {
-      //   orientation = 'l';
-      // }
+      if (contentWidth > contentHeight) {
+        orientation = 'l';
+      }
 
       // // orientation Possible values are "portrait" or "landscape" (or shortcuts "p" or "l")
       // pdf = new jsPDF(orientation, 'pt', [contentWidth, contentHeight]); // 下载尺寸 a4 纸 比例
@@ -115,7 +115,7 @@ const ReportPage: React.FC<Props> = ({ preview: forcePreview, planId }) => {
       // pdf.addImage(pageData, 'JPEG', 0, 0, contentWidth, contentHeight);
       // 将canvas转为base64图片
       const pageData = canvas.toDataURL('image/jpeg', 1.0);
-      const pdf = new JsPDF('p', 'pt', [contentWidth, contentHeight]);
+      const pdf = new JsPDF(orientation, 'pt', [contentWidth, contentHeight]);
       // 将内容图片添加到pdf中，因为内容宽高和pdf宽高一样，就只需要一页，位置就是 0,0
       pdf.addImage(pageData, 'jpeg', 0, 0, contentWidth, contentHeight);
       pdf.save(`${getProjectName()}-测试计划报告.pdf`);
