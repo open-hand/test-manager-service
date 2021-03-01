@@ -6,6 +6,7 @@ import io.choerodon.test.manager.api.vo.agile.SearchDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -16,8 +17,11 @@ import org.hzero.starter.keyencrypt.core.EncryptionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -61,6 +65,53 @@ public class EncryptUtil {
         Optional<Map<String, Object>> searchArgs = Optional.ofNullable(search).map(SearchDTO::getSearchArgs);
         if (searchArgs.isPresent()) {
             decryptSa(search, searchArgs);
+        }
+        Optional<Map<String, Object>> otherArgs = Optional.ofNullable(search).map(SearchDTO::getOtherArgs);
+        if (otherArgs.isPresent()) {
+            decryptOa(search, otherArgs);
+        }
+    }
+
+    private void decryptOa(SearchDTO search, Optional<Map<String, Object>> oaMapOptional) {
+        List<String> temp;
+        String tempStr;
+
+        // priorityId
+        temp = oaMapOptional.map(ad -> (List<String>) (ad.get("priorityId"))).orElse(null);
+        if (CollectionUtils.isNotEmpty(temp)) {
+            search.getOtherArgs().put("priorityId",
+                    temp.stream().map(item -> encryptionService.decrypt(item, BLANK_KEY)).collect(Collectors.toList()));
+        }
+
+        // sprint
+        temp = oaMapOptional.map(ad -> (List<String>) (ad.get("sprint"))).orElse(null);
+        if (CollectionUtils.isNotEmpty(temp)) {
+            search.getOtherArgs().put("sprint",
+                    temp.stream().map(item -> Arrays.asList(IGNORE_VALUES).contains(item) ? item : encryptionService.decrypt(item, BLANK_KEY)).collect(Collectors.toList()));
+        }
+
+        // issueIds
+        temp = oaMapOptional.map(ad -> (List<String>) (ad.get("issueIds"))).orElse(null);
+        if (CollectionUtils.isNotEmpty(temp)) {
+            search.getOtherArgs().put("issueIds",
+                    temp.stream().map(item -> encryptionService.decrypt(item, BLANK_KEY)).collect(Collectors.toList()));
+        }
+
+        // assigneeId
+        temp = oaMapOptional.map(ad -> (List<String>) (ad.get("assigneeId"))).orElse(null);
+        if (CollectionUtils.isNotEmpty(temp)) {
+            search.getOtherArgs().put("assigneeId",
+                    temp.stream().map(item -> Arrays.asList(IGNORE_VALUES).contains(item) ? item : encryptionService.decrypt(item, BLANK_KEY)).collect(Collectors.toList()));
+        }
+
+        //userId
+        decryptUserId(search, oaMapOptional);
+    }
+
+    private void decryptUserId(SearchDTO search, Optional<Map<String, Object>> oaMapOptional) {
+        String tempStr = oaMapOptional.map(ad -> (String) ad.get("userId")).orElse(null);
+        if (!Objects.isNull(tempStr)) {
+            search.getOtherArgs().put("userId", Arrays.asList(IGNORE_VALUES).contains(tempStr) ? tempStr : encryptionService.decrypt(tempStr, BLANK_KEY));
         }
     }
 

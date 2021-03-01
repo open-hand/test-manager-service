@@ -25,7 +25,7 @@ function CreateIssue(props) {
   const [visibleDetail, setVisibleDetail] = useState(true);
   const [linkIssues, setLinkIssues] = useState([]);
   const {
-    intl, caseId, defaultFolderValue, onOk = (v1, v2) => v1, modal, request,
+    intl, caseId, defaultFolderValue, onOk = (v1, v2) => v1, modal, request, noCreateLink,
   } = props;
   const priorityOptionsDataSet = useMemo(() => new DataSet(PriorityOptionDataSet()), []);
   const createDataset = useMemo(() => new DataSet(CreateIssueDataSet('issue', intl, priorityOptionsDataSet)), [intl]);
@@ -140,38 +140,42 @@ function CreateIssue(props) {
 
       </Form>
       <div className="test-create-issue-line" />
+      {!noCreateLink && (
+        <>
+          <div role="none" style={{ display: 'flex', marginTop: '.195rem' }}>
+            <span className="test-create-issue-head">
+              问题链接
+            </span>
+            <Button
+              style={{ marginLeft: 'auto' }}
+              icon="playlist_add"
+              color="blue"
+              onClick={() => {
+                openLinkIssueModal({
+                  selected: linkIssues,
+                  onSubmit: (records) => {
+                    setLinkIssues(records);
+                  },
+                });
+              }}
+            />
+          </div>
+          <div>
+            {linkIssues.map((record, i) => (
+              <LinkList
+                key={record.get('issueId')}
+                issue={record.toData()}
+                i={i}
+                deleteLink={() => {
+                  remove(linkIssues, record);
+                  setLinkIssues([...linkIssues]);
+                }}
+              />
+            ))}
+          </div>
+        </>
+      )}
 
-      <div role="none" style={{ display: 'flex', marginTop: '.195rem' }}>
-        <span className="test-create-issue-head">
-          问题链接
-        </span>
-        <Button
-          style={{ marginLeft: 'auto' }}
-          icon="playlist_add"
-          color="blue"
-          onClick={() => {
-            openLinkIssueModal({
-              selected: linkIssues,
-              onSubmit: (records) => {
-                setLinkIssues(records);
-              },
-            });
-          }}
-        />
-      </div>
-      <div>
-        {linkIssues.map((record, i) => (
-          <LinkList
-            key={record.get('issueId')}
-            issue={record.toData()}
-            i={i}
-            deleteLink={() => {
-              remove(linkIssues, record);
-              setLinkIssues([...linkIssues]);
-            }}
-          />
-        ))}
-      </div>
     </>
   );
 }
