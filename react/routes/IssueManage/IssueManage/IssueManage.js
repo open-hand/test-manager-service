@@ -104,7 +104,8 @@ class IssueManage extends Component {
   }
 
   handleRefresh = () => {
-    IssueTreeStore.loadIssueTree();
+    this.getTestCase();
+    // IssueTreeStore.loadIssueTree();
   }
 
   handleClose = (issueInfo) => {
@@ -130,6 +131,7 @@ class IssueManage extends Component {
       },
       children: (
         <CreateIssue
+          // eslint-disable-next-line react/jsx-no-bind
           onOk={this.handleCreateIssue.bind(this)}
           intl={intl}
           caseId={clickIssue && clickIssue.caseId}
