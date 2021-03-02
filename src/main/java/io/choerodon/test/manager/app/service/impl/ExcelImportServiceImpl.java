@@ -49,6 +49,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING;
@@ -61,13 +62,21 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     private static final String IMPORT_ERROR = "test-issue-import-error";
     private static final String HIDDEN_USER = "hidden_user";
     private static final String HIDDEN_PRIORITY = "hidden_priority";
-    private static final ExcelReadMeOptionVO[] README_OPTIONS = new ExcelReadMeOptionVO[6];
+    private static final ExcelReadMeOptionVO[] README_OPTIONS = new ExcelReadMeOptionVO[7];
     private static final TestCaseStepDTO[] EXAMPLE_TEST_CASE_STEPS = new TestCaseStepDTO[3];
     private static final IssueCreateDTO[] EXAMPLE_ISSUES = new IssueCreateDTO[3];
     private static final String TYPE_CYCLE = "cycle";
     public static final int EXCEL_WIDTH_PX = 256;
-    protected static final String[] EXCEL_HEADERS = new String[]{ExcelTitleName.CASE_SUMMARY, ExcelTitleName.PRIORITY,
-            ExcelTitleName.CASE_DESCRIPTION, ExcelTitleName.TEST_STEP, ExcelTitleName.TEST_DATA, ExcelTitleName.EXPECT_RESULT};
+    protected static final String[] EXCEL_HEADERS = new String[]
+            {
+                    ExcelTitleName.CASE_SUMMARY,
+                    ExcelTitleName.PRIORITY,
+                    ExcelTitleName.CASE_DESCRIPTION,
+                    ExcelTitleName.LINK_ISSUE,
+                    ExcelTitleName.TEST_STEP,
+                    ExcelTitleName.TEST_DATA,
+                    ExcelTitleName.EXPECT_RESULT
+            };
 
     static {
         README_OPTIONS[0] = new ExcelReadMeOptionVO("用例概要*", true);
@@ -76,10 +85,10 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         //README_OPTIONS[2] = new ExcelReadMeOptionVO("优先级", false);
 //        README_OPTIONS[2] = new ExcelReadMeOptionVO("被指定人", false);
         //README_OPTIONS[3] = new ExcelReadMeOptionVO("模块", false);
-//        README_OPTIONS[3] = new ExcelReadMeOptionVO("关联的issue", false);
-        README_OPTIONS[3] = new ExcelReadMeOptionVO("测试步骤", false);
-        README_OPTIONS[4] = new ExcelReadMeOptionVO("测试数据", false);
-        README_OPTIONS[5] = new ExcelReadMeOptionVO("预期结果", false);
+        README_OPTIONS[3] = new ExcelReadMeOptionVO("关联问题", false);
+        README_OPTIONS[4] = new ExcelReadMeOptionVO("测试步骤", false);
+        README_OPTIONS[5] = new ExcelReadMeOptionVO("测试数据", false);
+        README_OPTIONS[6] = new ExcelReadMeOptionVO("预期结果", false);
 
 
         for (int i = 0; i < EXAMPLE_TEST_CASE_STEPS.length; i++) {
@@ -94,6 +103,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             EXAMPLE_ISSUES[i].setSummary("概要" + (i + 1));
             EXAMPLE_ISSUES[i].setPriorityCode("优先级" + (i + 1));
             EXAMPLE_ISSUES[i].setDescription("前置条件" + (i + 1));
+            EXAMPLE_ISSUES[i].setRelateIssueNums((i+1) + "," + (i + 2));
         }
     }
 
@@ -379,9 +389,10 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         testCaseSheet.setColumnWidth(0,EXCEL_WIDTH_PX * 48);
         testCaseSheet.setColumnWidth(1,EXCEL_WIDTH_PX * 16);
         testCaseSheet.setColumnWidth(2,EXCEL_WIDTH_PX * 32);
-        testCaseSheet.setColumnWidth(3,EXCEL_WIDTH_PX * 48);
-        testCaseSheet.setColumnWidth(4,EXCEL_WIDTH_PX * 16);
-        testCaseSheet.setColumnWidth(5,EXCEL_WIDTH_PX * 48);
+        testCaseSheet.setColumnWidth(3,EXCEL_WIDTH_PX * 32);
+        testCaseSheet.setColumnWidth(4,EXCEL_WIDTH_PX * 48);
+        testCaseSheet.setColumnWidth(5,EXCEL_WIDTH_PX * 16);
+        testCaseSheet.setColumnWidth(6,EXCEL_WIDTH_PX * 48);
 
         CellStyle cellStyle = testCaseSheet.getWorkbook().createCellStyle();
         cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
@@ -416,8 +427,14 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
         writeHeader(readMeSheet, 0, 0);
 
+        Row row = ExcelUtil.getOrCreateRow(readMeSheet, 6);
+        row.createCell(0, CELL_TYPE_STRING).setCellValue("注意");
+        readMeSheet.addMergedRegion(new CellRangeAddress(6, 7, 0, 0));
+        row.createCell(1, CELL_TYPE_STRING).setCellValue("关联问题直接输入问题的数字编号即可；\n可用逗号（支持中英文）连接多个。");
+        readMeSheet.addMergedRegion(new CellRangeAddress(6, 7, 1, 7));
+
         readMeSheet.createRow(8).createCell(1, CELL_TYPE_STRING).setCellValue("示例");
-        readMeSheet.addMergedRegion(new CellRangeAddress(8, 8, 1, 9));
+        readMeSheet.addMergedRegion(new CellRangeAddress(8, 8, 1, 10));
         writeExample(readMeSheet, 9, 1, EXAMPLE_ISSUES[0], EXAMPLE_TEST_CASE_STEPS);
         writeExample(readMeSheet, 10, 1, EXAMPLE_ISSUES[1], EXAMPLE_TEST_CASE_STEPS[0]);
         writeExample(readMeSheet, 11, 1, EXAMPLE_ISSUES[2],
@@ -431,15 +448,16 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         row.createCell(colNum, CELL_TYPE_STRING).setCellValue(issueCreateDTO.getSummary());
         row.createCell(colNum + 1, CELL_TYPE_STRING).setCellValue(issueCreateDTO.getPriorityCode());
         row.createCell(colNum + 2, CELL_TYPE_STRING).setCellValue(issueCreateDTO.getDescription());
+        row.createCell(colNum + 3, CELL_TYPE_STRING).setCellValue(issueCreateDTO.getRelateIssueNums());
 //        row.createCell(colNum + 2, CELL_TYPE_STRING).setCellValue("1234张三");
         //row.createCell(colNum + 3, CELL_TYPE_STRING).setCellValue("测试模块");
 //        row.createCell(colNum + 2, CELL_TYPE_STRING).setCellValue("XX-111");
 
         for (int i = 0; i < steps.length; i++) {
             row = ExcelUtil.getOrCreateRow(sheet, i + rowNum);
-            row.createCell(colNum + 3, CELL_TYPE_STRING).setCellValue(steps[i].getTestStep());
-            row.createCell(colNum + 4, CELL_TYPE_STRING).setCellValue(steps[i].getTestData());
-            row.createCell(colNum + 5, CELL_TYPE_STRING).setCellValue(steps[i].getExpectedResult());
+            row.createCell(colNum + 4, CELL_TYPE_STRING).setCellValue(steps[i].getTestStep());
+            row.createCell(colNum + 5, CELL_TYPE_STRING).setCellValue(steps[i].getTestData());
+            row.createCell(colNum + 6, CELL_TYPE_STRING).setCellValue(steps[i].getExpectedResult());
         }
     }
 
@@ -618,38 +636,48 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         issueCreateDTO.setPriorityId(priorityMap.get(priority));
 
         if (!ExcelUtil.isBlank(excelTitleUtil.getCell(ExcelTitleName.LINK_ISSUE, row))) {
+            //处理关联问题
             String issueNumString = ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.LINK_ISSUE, row));
-            if (issueNumString.contains("-")) {
-                issueNumString = issueNumString.split("-")[1];
-            }
-            IssueNumDTO issueNumDTO;
-
-            try {
-                issueNumDTO = agileClientOperator.queryIssueByIssueNum(projectId, issueNumString);
-                if (ObjectUtils.isEmpty(issueNumDTO)) {
-                    markAsError(row, "关联问题编号有误，仅支持关联故事、任务、缺陷类型，请检查录入的关联问题编号。");
-                    return null;
+            String regex = "([0-9]+(，|,))*([0-9]+)";
+            if (Pattern.matches(regex, issueNumString)) {
+                List<String> relatedIssueNums = splitByRegex(issueNumString);
+                List<TestCaseLinkDTO> testCaseLinkDTOList = new ArrayList<>();
+                for (String issueNum : relatedIssueNums) {
+                    IssueNumDTO issueNumDTO;
+                    try {
+                        issueNumDTO = agileClientOperator.queryIssueByIssueNum(projectId, issueNum);
+                        if (ObjectUtils.isEmpty(issueNumDTO)) {
+                            markAsError(row, "关联问题编号有误，仅支持关联故事、任务、子任务、缺陷类型，请检查录入的关联问题编号。");
+                            return null;
+                        }
+                        TestCaseLinkDTO testCaseLinkDTO = new TestCaseLinkDTO();
+                        testCaseLinkDTO.setIssueId(issueNumDTO.getIssueId());
+                        testCaseLinkDTOList.add(testCaseLinkDTO);
+                    } catch (FeignException e) {
+                        markAsError(row, "关联问题编号有误，仅支持关联故事、任务、子任务、缺陷类型，请检查录入的关联问题编号。");
+                        return null;
+                    }
                 }
-            } catch (FeignException e) {
-                markAsError(row, "关联问题编号有误，仅支持关联故事、任务、缺陷类型，请检查录入的关联问题编号。");
+                issueCreateDTO.setTestCaseLinkDTOList(testCaseLinkDTOList);
+            } else {
+                markAsError(row, "关联问题编号格式错误！");
                 return null;
             }
-
-            // Todo:重构
-            // 查询所有的linktype
-            List<IssueLinkTypeDTO> issueLinkTypeDTOList = agileClientOperator.listIssueLinkType(projectId, null,
-                    new IssueLinkTypeSearchDTO()).getContent();
-
-            TestCaseLinkDTO testCaseLinkDTO = new TestCaseLinkDTO();
-            testCaseLinkDTO.setIssueId(issueNumDTO.getIssueId());
-            testCaseLinkDTO.setLinkTypeId(issueLinkTypeDTOList.get(0).getLinkTypeId());
-            List<TestCaseLinkDTO> testCaseLinkDTOList = new ArrayList<>();
-            testCaseLinkDTOList.add(testCaseLinkDTO);
-            issueCreateDTO.setTestCaseLinkDTOList(testCaseLinkDTOList);
 
         }
         TestCaseDTO testCaseDTO = testCaseService.importTestCase(issueCreateDTO, projectId, "test");
         return testCaseDTO;
+    }
+
+    private List<String> splitByRegex(String value) {
+        String regex1 = ",";
+        String regex2 = "，";
+        List<String> result = new ArrayList<>();
+        String[] array = value.split(regex1);
+        for (String str : array) {
+            result.addAll(Arrays.asList(str.split(regex2)));
+        }
+        return result;
     }
 
     private void processRow(TestCaseDTO testCaseDTO, Row row, List<Integer> errorRowIndexes, ExcelTitleUtil excelTitleUtil) {

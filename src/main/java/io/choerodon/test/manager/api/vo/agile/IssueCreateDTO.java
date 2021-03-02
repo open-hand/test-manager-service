@@ -36,6 +36,8 @@ public class IssueCreateDTO {
     @Encrypt
     private Long folderId;
 
+    private String relateIssueNums;
+
     private List<VersionIssueRelVO> versionIssueRelVOList;
 
     private List<LabelIssueRelVO> labelIssueRelVOList;
@@ -215,5 +217,13 @@ public class IssueCreateDTO {
 
     public void setFolderId(Long folderId) {
         this.folderId = folderId;
+    }
+
+    public String getRelateIssueNums() {
+        return relateIssueNums;
+    }
+
+    public void setRelateIssueNums(String relateIssueNums) {
+        this.relateIssueNums = relateIssueNums;
     }
 }
