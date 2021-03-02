@@ -13,7 +13,7 @@ public class ExcelTitleName {
     public static final String CASE_DESCRIPTION = "前置条件";
     public static final String CASE_CODE = "用例编号";
     public static final String ASSIGNER = "执行人";
-    public static final String LINK_ISSUE = "关联的issue";
+    public static final String LINK_ISSUE = "关联问题";
     public static final String TEST_STEP = "测试步骤";
     public static final String TEST_DATA = "测试数据";
     public static final String EXPECT_RESULT = "预期结果";
