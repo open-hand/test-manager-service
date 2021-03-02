@@ -86,7 +86,7 @@ const PieChart: React.FC<Props> = ({ style }) => {
     <Card className={styles.pie_chart} style={style}>
       <div className={styles.left}>
         <div className={styles.title}>
-          计划执行情况
+          测试计划执行情况
         </div>
         <ReactEcharts
           style={{ width: 200, height: 200 }}
@@ -99,7 +99,7 @@ const PieChart: React.FC<Props> = ({ style }) => {
             <table>
               <thead>
                 <tr>
-                  <th>状态</th>
+                  <th>测试执行状态</th>
                   <th>百分比</th>
                   <th>执行数</th>
                 </tr>
