@@ -3,8 +3,9 @@ import React, {
 } from 'react';
 import {
   WSHandler, stores,
+  Choerodon,
 } from '@choerodon/boot';
-import { Choerodon } from '@choerodon/boot';
+
 import { Progress, Divider } from 'choerodon-ui';
 import {
   DataSet, Form, Button, message,
@@ -60,7 +61,7 @@ function ImportIssue(props) {
         method: 'get',
         transformResponse: (res) => {
           const resObj = JSON.parse(res);
-          const newArr = resObj.treeFolder.map(item => ({
+          const newArr = resObj.treeFolder.map((item) => ({
             folder: {
               fileName: item.name,
               folderId: item.folderId,
@@ -96,9 +97,8 @@ function ImportIssue(props) {
     if (fileUrl && isAutoDown && autoDownRef.current) {
       autoDownRef.current.click();
       return true;
-    } else {
-      return false;
     }
+    return false;
   });
   const [importBtn, dispatch] = useReducer((state, action) => {
     switch (action.type) {
@@ -110,12 +110,12 @@ function ImportIssue(props) {
       case 'process':
         if (state.visibleCancelBtn === true && state.visibleImportBtn === false) {
           return state;
-        } else {
-          return {
-            visibleImportBtn: false,
-            visibleCancelBtn: true,
-          };
         }
+        return {
+          visibleImportBtn: false,
+          visibleCancelBtn: true,
+        };
+
       case 'finish':
         loadImportHistory(true);
         return {
@@ -138,7 +138,6 @@ function ImportIssue(props) {
   });
   const { visibleImportBtn, visibleCancelBtn } = importBtn;
 
-
   const upload = (file) => {
     if (!folder) {
       Choerodon.prompt('请选择目录');
@@ -158,14 +157,13 @@ function ImportIssue(props) {
     });
   };
 
-
   const onHumanizeDuration = (record) => {
     const { creationDate, lastUpdateDate } = record;
     const startTime = moment(creationDate);
     const lastTime = moment(lastUpdateDate);
     let diff = lastTime.diff(startTime);
     // console.log(diff);
-    if (diff <= 0) {
+    if (diff < 0) {
       diff = moment().diff(startTime);
     }
     return creationDate && lastUpdateDate
@@ -203,14 +201,12 @@ function ImportIssue(props) {
               <a className="c7ntest-ImportIssue-text c7ntest-ImportIssue-text-down-load" href={fileUrl} ref={autoDownRef}>
                 点击下载失败详情
               </a>
-            ) : ''
-          }
+            ) : ''}
         </div>
       );
     }
     return <span>暂无导入记录</span>;
   };
-
 
   const beforeUpload = (e) => {
     if (e.target.files[0]) {
@@ -247,7 +243,6 @@ function ImportIssue(props) {
     }
   };
 
-
   const handleCancelImport = () => {
     // debounceSetImportRecord.cancel();
     cancelImport(importRecord.id).then((res) => {
@@ -269,7 +264,6 @@ function ImportIssue(props) {
       dispatch({ type: 'cancel' });
     });
   };
-
 
   const exportExcel = () => {
     downloadTemplate().then((excel) => {
@@ -313,7 +307,7 @@ function ImportIssue(props) {
           </div>
         </WSHandler>
       );
-    } else if (status === 2) {
+    } if (status === 2) {
       // loadImportHistory();
       setImportRecord({});
       dispatch({ type: 'finish' });
@@ -351,11 +345,6 @@ function ImportIssue(props) {
       <Divider />
       <ImportIssueForm
         title="导入测试用例"
-        bottom={visibleImportBtn && (
-          <Button icon="file_upload" funcType="flat" color="primary" onClick={() => importExcel()}>
-            <FormattedMessage id="issue_import" />
-          </Button>
-        )}
       >
         <Form dataSet={dataSet}>
           <SelectTree
@@ -378,12 +367,17 @@ function ImportIssue(props) {
 
       </ImportIssueForm>
       <div className="c7ntest-ImportIssue-form-modal-footer">
-        <Button disabled={!visibleCancelBtn} hidden={!visibleCancelBtn} funcType="raised" color="primary" onClick={handleCancelImport}>取消导入</Button>
+        {visibleCancelBtn
+          ? <Button disabled={!visibleCancelBtn} hidden={!visibleCancelBtn} funcType="raised" color="primary" onClick={handleCancelImport}>取消导入</Button>
+          : (
+            <Button funcType="raised" color="primary" onClick={() => importExcel()}>
+              <FormattedMessage id="issue_import" />
+            </Button>
+          )}
         <Button funcType="raised" onClick={handleCloseModal}>关闭</Button>
       </div>
     </div>
   );
 }
-
 
 export default ImportIssue;
