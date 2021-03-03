@@ -811,6 +811,44 @@
         SELECT project_id FROM test_cycle_case GROUP BY project_id
     </select>
 
+    <select id="pagedQueryMyExecutionalCase" resultType="io.choerodon.test.manager.api.vo.TestFolderCycleCaseVO">
+        SELECT
+            tp.plan_id,
+            tp.name AS plan_name,
+            tp.status_code AS plan_status,
+            tcc.summary,
+            tcc.execute_id,
+            tcc.cycle_id,
+            tcc.case_id,
+            tcc.project_id,
+            tcc.rank,
+            tcc.execution_status,
+            tcc.assigned_to,
+            tcc.object_version_number,
+            tcc.source,
+            tcc.priority_id,
+            tpy.name AS priority_name,
+            tpy.colour AS priority_colour,
+            tpy.sequence,
+            ts.status_color AS statusColor,
+            ts.status_name AS executionStatusName
+        FROM
+            test_cycle_case tcc
+            JOIN test_priority tpy ON tcc.priority_id = tpy.id
+            LEFT JOIN test_cycle tc ON tc.cycle_id = tcc.cycle_id
+            LEFT JOIN test_status ts ON ts.status_id = tcc.execution_status
+            LEFT JOIN test_plan tp ON tp.plan_id = tc.plan_id
+        WHERE
+            tcc.assigned_to = #{userId}
+            AND tcc.project_id IN
+            <foreach collection="projectIds" item="projectId" open="(" separator="," close=")">
+                #{projectId}
+            </foreach>
+            AND organization_id = #{organizationId}
+        ORDER BY
+            tcc.rank
+    </select>
+
     <update id="updateExecuteStatus">
          UPDATE test_cycle_case
         SET execution_status = (

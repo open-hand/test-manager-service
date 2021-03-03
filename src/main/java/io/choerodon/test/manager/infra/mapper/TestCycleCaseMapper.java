@@ -7,6 +7,7 @@ import java.util.Set;
 
 import io.choerodon.test.manager.api.vo.CaseCompareVO;
 import io.choerodon.test.manager.api.vo.CaseSearchVO;
+import io.choerodon.test.manager.api.vo.TestFolderCycleCaseVO;
 import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Param;
 
@@ -137,4 +138,8 @@ public interface TestCycleCaseMapper extends BaseMapper<TestCycleCaseDTO> {
     int updatePriorityByProject(@Param("projectIds") List<Long> projectIds, @Param("priorityId") Long priorityId);
 
     Integer selectCaseCount(@Param("planId") Long planId);
+
+    List<TestFolderCycleCaseVO> pagedQueryMyExecutionalCase(@Param("userId") Long userId,
+                                                            @Param("projectIds") List<Long> projectIds,
+                                                            @Param("organizationId") Long organizationId);
 }

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 
+import io.choerodon.test.manager.api.vo.agile.ProjectDTO;
 import io.swagger.annotations.ApiModelProperty;
 
 import io.choerodon.test.manager.infra.dto.UserMessageDTO;
@@ -87,6 +88,15 @@ public class TestFolderCycleCaseVO {
     private Long folderId;
 
     private String caseNum;
+
+    @Encrypt
+    private Long planId;
+
+    private String planName;
+
+    private String planStatus;
+
+    private ProjectDTO projectDTO;
 
     public String getCaseNum() {
         return caseNum;
@@ -295,5 +305,37 @@ public class TestFolderCycleCaseVO {
 
     public void setLastUpdateUser(UserMessageDTO lastUpdateUser) {
         this.lastUpdateUser = lastUpdateUser;
+    }
+
+    public Long getPlanId() {
+        return planId;
+    }
+
+    public void setPlanId(Long planId) {
+        this.planId = planId;
+    }
+
+    public String getPlanName() {
+        return planName;
+    }
+
+    public void setPlanName(String planName) {
+        this.planName = planName;
+    }
+
+    public String getPlanStatus() {
+        return planStatus;
+    }
+
+    public void setPlanStatus(String planStatus) {
+        this.planStatus = planStatus;
+    }
+
+    public ProjectDTO getProjectDTO() {
+        return projectDTO;
+    }
+
+    public void setProjectDTO(ProjectDTO projectDTO) {
+        this.projectDTO = projectDTO;
     }
 }

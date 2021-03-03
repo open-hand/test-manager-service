@@ -4,9 +4,12 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import io.swagger.annotations.ApiModelProperty;
 import org.springframework.util.StringUtils;
 
 import io.choerodon.core.exception.CommonException;
+
+import java.util.List;
 
 /**
  * @author flyleft
@@ -33,6 +36,9 @@ public class ProjectDTO {
     private Boolean enabled;
 
     private Long objectVersionNumber;
+
+    @ApiModelProperty(value = "项目类型(非开源，一对多)")
+    private List<ProjectCategoryDTO> categories;
 
     public Long getId() {
         return id;
@@ -80,6 +86,14 @@ public class ProjectDTO {
 
     public void setObjectVersionNumber(Long objectVersionNumber) {
         this.objectVersionNumber = objectVersionNumber;
+    }
+
+    public List<ProjectCategoryDTO> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(List<ProjectCategoryDTO> categories) {
+        this.categories = categories;
     }
 
     public void updateCheck() {
