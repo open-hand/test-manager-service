@@ -55,5 +55,9 @@ public interface BaseFeignClient {
 
     @GetMapping(value = "/choerodon/v1/projects/ids")
     ResponseEntity<List<ProjectDTO>> queryProjects(Set<Long> ids);
+
+    @GetMapping("/choerodon/v1/organizations/{organization_id}/users/{user_id}/projects")
+    ResponseEntity<List<ProjectDTO>> queryOrgProjects(@PathVariable("organization_id") Long organizationId,
+                                                      @PathVariable("user_id") Long userId);
 }
 

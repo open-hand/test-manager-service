@@ -12,7 +12,8 @@ import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.oauth.CustomUserDetails;
 import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.test.manager.api.vo.*;
-import io.choerodon.test.manager.api.vo.agile.SearchDTO;
+import io.choerodon.test.manager.api.vo.agile.ProjectCategoryDTO;
+import io.choerodon.test.manager.api.vo.agile.ProjectDTO;
 import io.choerodon.test.manager.api.vo.agile.UserDO;
 import io.choerodon.test.manager.app.assembler.TestCaseAssembler;
 import io.choerodon.test.manager.app.service.*;
@@ -20,6 +21,7 @@ import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.enums.TestAttachmentCode;
 import io.choerodon.test.manager.infra.enums.TestCycleCaseDefectCode;
 import io.choerodon.test.manager.infra.enums.TestStatusType;
+import io.choerodon.test.manager.infra.feign.BaseFeignClient;
 import io.choerodon.test.manager.infra.mapper.*;
 import io.choerodon.test.manager.infra.util.*;
 import org.apache.commons.lang.StringUtils;
@@ -116,7 +118,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     @Autowired
     private VerifyUpdateUtil verifyUpdateUtil;
 
-
+    @Autowired
+    private BaseFeignClient baseFeignClient;
 
     @Override
     public void delete(Long cycleCaseId, Long projectId) {
@@ -977,4 +980,55 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         }
     }
 
+    @Override
+    public Page<TestFolderCycleCaseVO> pagedQueryMyExecutionalCase(Long organizationId, Long projectId, PageRequest pageRequest) {
+        if (ObjectUtils.isEmpty(organizationId)) {
+            throw new CommonException("error.organizationId.is.null");
+        }
+        List<Long> projectIds = new ArrayList<>();
+        List<ProjectDTO> projects = new ArrayList<>();
+        Long userId = DetailsHelper.getUserDetails().getUserId();
+
+        queryUserProjects(organizationId, projectId, projectIds, projects, userId);
+        if (CollectionUtils.isEmpty(projectIds)) {
+            return new Page<>();
+        }
+
+        Map<Long, ProjectDTO> projectVOMap = projects.stream().collect(Collectors.toMap(ProjectDTO::getId, Function.identity()));
+        Page<TestFolderCycleCaseVO> caseVOPageInfo = PageHelper.doPageAndSort(pageRequest,() ->
+                testCycleCaseMapper.pagedQueryMyExecutionalCase(userId, projectIds, organizationId));
+        caseVOPageInfo.getContent().forEach(v -> v.setProjectDTO(projectVOMap.get(v.getProjectId())));
+
+        return caseVOPageInfo;
+    }
+
+    private void queryUserProjects(Long organizationId, Long projectId, List<Long> projectIds, List<ProjectDTO> projects, Long userId) {
+        if (ObjectUtils.isEmpty(projectId)) {
+            List<ProjectDTO> projectVOS = baseFeignClient.queryOrgProjects(organizationId,userId).getBody();
+            if (!CollectionUtils.isEmpty(projectVOS)) {
+                projectVOS
+                        .stream()
+                        .filter(v ->(!checkContainProjectCategory(v.getCategories(),"N_PROGRAM") && Boolean.TRUE.equals(v.getEnabled())))
+                        .forEach(obj -> {
+                            projectIds.add(obj.getId());
+                            projects.add(obj);
+                        });
+            }
+        } else {
+            ProjectDTO projectVO = baseFeignClient.queryProject(projectId).getBody();
+            if (!organizationId.equals(projectVO.getOrganizationId())) {
+                throw new CommonException("error.organization.illegal");
+            }
+            projects.add(projectVO);
+            projectIds.add(projectId);
+        }
+    }
+
+    private Boolean checkContainProjectCategory(List<ProjectCategoryDTO> categories, String category){
+        if (CollectionUtils.isEmpty(categories)) {
+            throw new CommonException("error.categories.is.null");
+        }
+        Set<String> codes = categories.stream().map(ProjectCategoryDTO::getCode).collect(Collectors.toSet());
+        return codes.contains(category);
+    }
 }
