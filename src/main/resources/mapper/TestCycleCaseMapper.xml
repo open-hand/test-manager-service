@@ -845,6 +845,7 @@
                 #{projectId}
             </foreach>
             AND organization_id = #{organizationId}
+            AND tp.status_code = 'doing'
         ORDER BY
             tcc.rank
     </select>
