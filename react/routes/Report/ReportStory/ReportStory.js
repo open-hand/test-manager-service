@@ -550,11 +550,7 @@ class ReportStory extends Component {
     }];
 
     return (
-      <Page className="c7ntest-report-story"
-        service={[
-          'choerodon.code.project.operation.chart.ps.choerodon.code.project.operation.chart.ps.reportfromissue',
-        ]}
-      >
+      <Page className="c7ntest-report-story">
         <Header
           title={<FormattedMessage id="report_demandToDefect" />}
           backPath={`/charts?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}&orgId=${organizationId}`}

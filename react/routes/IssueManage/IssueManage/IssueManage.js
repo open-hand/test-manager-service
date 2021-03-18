@@ -201,9 +201,6 @@ class IssueManage extends Component {
     return (
       <Page
         className="c7ntest-Issue c7ntest-region"
-        service={[
-          'choerodon.code.project.test.manager.ps.default',
-        ]}
       >
         <Header
           title={<FormattedMessage id="issue_name" />}

@@ -324,9 +324,6 @@ function TestPlanExecuteDetail(props) {
     return (
       <Page
         className="c7n-test-execute-detail"
-        service={[
-          'choerodon.code.project.test.test-plan.ps.default',
-        ]}
       >
         <Header
           title={<FormattedMessage id="execute_detail" />}

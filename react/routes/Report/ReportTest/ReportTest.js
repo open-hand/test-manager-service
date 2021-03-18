@@ -556,9 +556,6 @@ class ReportTest extends Component {
     return (
       <Page
         className="c7ntest-report-test"
-        service={[
-          'choerodon.code.project.operation.chart.ps.choerodon.code.project.operation.chart.ps.reportfromdefect',
-        ]}
       >
         <Header
           title={<FormattedMessage id="report_defectToDemand" />}

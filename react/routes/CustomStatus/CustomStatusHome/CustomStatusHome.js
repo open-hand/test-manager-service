@@ -1,6 +1,6 @@
 /*
- * @Author: LainCarl 
- * @Date: 2019-01-25 11:36:04 
+ * @Author: LainCarl
+ * @Date: 2019-01-25 11:36:04
  * @Last Modified by: LainCarl
  * @Last Modified time: 2019-02-26 15:30:47
  * @Feature: 用户自定义状态展示组件
@@ -81,9 +81,6 @@ const CustomStatusHome = ({
     />
     <Page
       className="c7ntest-custom-status"
-      service={[
-        'choerodon.code.project.setting.test.ps.default',
-      ]}
     >
       <Header>
         <Button icon="playlist_add" onClick={onShowCreateClick}>

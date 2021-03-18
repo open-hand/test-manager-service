@@ -332,9 +332,6 @@ function TestPlanHome({ history }) {
   return (
     <Page
       className={prefixCls}
-      service={[
-        'choerodon.code.project.test.test-plan.ps.default',
-      ]}
     >
       <Header
         title={<FormattedMessage id="testPlan_name" />}

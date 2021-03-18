@@ -1,8 +1,9 @@
 import React from 'react';
-import { Choerodon } from '@choerodon/boot';
 import {
+  Choerodon,
   Page, Header, Content, Breadcrumb,
 } from '@choerodon/boot';
+
 import moment from 'moment';
 import {
   Icon, Button, Table, Select, Menu, Dropdown,
@@ -41,7 +42,7 @@ const AutoTestList = ({
   onSaveLogRef,
   onAutoRefreshChange,
 }) => {
-  const getMenu = record => (
+  const getMenu = (record) => (
     <Menu onClick={({ item, key, keyPath }) => { onItemClick(record, { item, key, keyPath }); }} style={{ margin: '10px 0 0 28px' }}>
       <MenuItem key="log" disabled={record.testAppInstanceVO.podStatus === 0 || (record.testAppInstanceVO.podStatus !== 1 && !record.testAppInstanceVO.logId)}>
         查看日志
@@ -55,8 +56,8 @@ const AutoTestList = ({
     </Menu>
   );
 
-  const appOptions = appList.map(app => <Option value={app.id}>{app.name}</Option>);
-  const ENVS = envList.map(env => ({ text: env.name, value: env.id.toString() }));
+  const appOptions = appList.map((app) => <Option value={app.id}>{app.name}</Option>);
+  const ENVS = envList.map((env) => ({ text: env.name, value: env.id.toString() }));
   const columns = [{
     title: '运行状态',
     dataIndex: 'podStatus',
@@ -97,7 +98,7 @@ const AutoTestList = ({
     title: '执行方',
     dataIndex: 'createUser',
     key: 'createUser',
-    render: createUser => <User user={createUser} />,
+    render: (createUser) => <User user={createUser} />,
   },
   {
     title: '测试框架',
@@ -132,7 +133,7 @@ const AutoTestList = ({
     title: '执行时间',
     dataIndex: 'creationDate',
     key: 'creationDate',
-    render: creationDate => (
+    render: (creationDate) => (
       <TimeAgo
         datetime={creationDate}
         locale={Choerodon.getMessage('zh_CN', 'en')}
@@ -144,14 +145,11 @@ const AutoTestList = ({
     dataIndex: 'testStatus',
     key: 'testStatus',
     filters: TESTRESULT,
-    render: testStatus => TestResult(testStatus),
+    render: (testStatus) => TestResult(testStatus),
   }];
   return (
     <Page
       className="c7ntest-AutoTestList"
-      service={[
-        'choerodon.code.project.test.autotest.ps.default',
-      ]}
     >
       <Header title={<FormattedMessage id="autotestlist_title" />}>
         <Button onClick={toCreateAutoTest}>
@@ -169,7 +167,7 @@ const AutoTestList = ({
           loading={selectLoading}
           onChange={onAppChange}
           onFilterChange={onFilterChange}
-          getPopupContainer={trigger => trigger.parentNode}
+          getPopupContainer={(trigger) => trigger.parentNode}
         >
           {appOptions}
         </Select>
@@ -182,6 +180,5 @@ const AutoTestList = ({
     </Page>
   );
 };
-
 
 export default AutoTestList;
