@@ -11,7 +11,6 @@ import { returnBeforeTextUpload } from '@/common/utils';
 import { uploadFile, createLink } from '@/api/IssueManageApi';
 import LinkList from '@/components/LinkList';
 import { remove } from 'lodash';
-import openLinkIssueModal from './LinkIssue';
 import UploadButton from './UploadButton';
 import CreateIssueDataSet from './store/CreateIssueDataSet';
 import CreateTestStepTable from './CreateTestStepTable';
@@ -19,7 +18,11 @@ import SelectTree from '../../routes/IssueManage/components/SelectTree';
 import './CreateIssue.less';
 import PriorityOptionDataSet from './store/PriorityOptionDataSet';
 // eslint-disable-next-line no-undef
+const isHasAgile = C7NTryImport('@/components/WYSIWYGEditor', false);
+
+// eslint-disable-next-line no-undef
 const WYSIWYGEditor = C7NTryImport('@/components/WYSIWYGEditor', <div />);
+const openLinkIssueModal = isHasAgile ? require('./LinkIssue').default : () => { };
 
 function CreateIssue(props) {
   const [visibleDetail, setVisibleDetail] = useState(true);
