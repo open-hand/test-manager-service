@@ -21,6 +21,14 @@
         </foreach>
     </select>
 
+    <select id="selectByUrls" resultType="io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO">
+        SELECT *
+        FROM test_case_attachment
+        WHERE url IN
+        <foreach collection="urlList" item="url" open="(" separator="," close=")">
+            #{url}
+        </foreach>
+    </select>
 
     <delete id="deleteByCaseId">
         delete from test_case_attachment

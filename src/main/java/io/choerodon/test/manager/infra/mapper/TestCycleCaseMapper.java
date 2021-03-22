@@ -142,4 +142,6 @@ public interface TestCycleCaseMapper extends BaseMapper<TestCycleCaseDTO> {
     List<TestFolderCycleCaseVO> pagedQueryMyExecutionalCase(@Param("userId") Long userId,
                                                             @Param("projectIds") List<Long> projectIds,
                                                             @Param("organizationId") Long organizationId);
+
+    void batchDelete(@Param("projectId") Long projectId, @Param("cycleCaseIds") List<Long> cycleCaseIds);
 }

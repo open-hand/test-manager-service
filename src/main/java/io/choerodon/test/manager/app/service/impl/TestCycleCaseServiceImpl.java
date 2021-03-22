@@ -1,5 +1,7 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -22,6 +24,7 @@ import io.choerodon.test.manager.infra.enums.TestAttachmentCode;
 import io.choerodon.test.manager.infra.enums.TestCycleCaseDefectCode;
 import io.choerodon.test.manager.infra.enums.TestStatusType;
 import io.choerodon.test.manager.infra.feign.BaseFeignClient;
+import io.choerodon.test.manager.infra.feign.FileFeignClient;
 import io.choerodon.test.manager.infra.mapper.*;
 import io.choerodon.test.manager.infra.util.*;
 import org.apache.commons.lang.StringUtils;
@@ -29,6 +32,7 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +48,11 @@ import org.springframework.util.ObjectUtils;
 public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
     private static final  double AVG_NUM = 500.00;
+
+    @Value("${services.attachment.url}")
+    private String attachmentUrl;
+
+    private static final String BACKETNAME = "test";
 
     @Autowired
     private TestCycleCaseDefectRelService testCycleCaseDefectRelService;
@@ -120,6 +129,12 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
     @Autowired
     private BaseFeignClient baseFeignClient;
+
+    @Autowired
+    private TestCycleCaseAttachmentRelMapper testCycleCaseAttachmentRelMapper;
+
+    @Autowired
+    private FileFeignClient fileFeignClient;
 
     @Override
     public void delete(Long cycleCaseId, Long projectId) {
@@ -1030,5 +1045,39 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         }
         Set<String> codes = categories.stream().map(ProjectCategoryDTO::getCode).collect(Collectors.toSet());
         return codes.contains(category);
+    }
+
+    @Override
+    public void batchDelete(List<Long> cycleCaseIds, Long projectId) {
+        ProjectDTO projectDTO= baseFeignClient.queryProject(projectId).getBody();
+        if (Objects.isNull(projectDTO)) {
+            throw new CommonException("error.project.not.exist");
+        }
+        List<TestCycleCaseAttachmentRelDTO> testCycleCaseAttachmentRelDTOList = testCycleCaseAttachmentRelMapper.selectByCycleCaseIds(projectId, cycleCaseIds);
+        if (!CollectionUtils.isEmpty(testCycleCaseAttachmentRelDTOList)) {
+            List<String> urlList = new ArrayList<>();
+            List<String> decodeUrlList = new ArrayList<>();
+            testCycleCaseAttachmentRelDTOList.forEach(v -> {
+                String url1 = v.getUrl();
+                String[] split = url1.split("/"+attachmentUrl);
+                if(split.length==2) {
+                    urlList.add(split[1]);
+                }
+            });
+            List<TestCaseAttachmentDTO> testCaseAttachmentDTOList = testAttachmentMapper.selectByUrls(urlList);
+            Map<String, List<TestCaseAttachmentDTO>> listMap = testCaseAttachmentDTOList.stream().collect(Collectors.groupingBy(TestCaseAttachmentDTO::getUrl));
+            urlList.forEach(url -> {
+                if (CollectionUtils.isEmpty(listMap.get(url))) {
+                    try {
+                        decodeUrlList.add(URLDecoder.decode(url, "UTF-8"));
+                    } catch (IOException i) {
+                        throw new CommonException(i);
+                    }
+                }
+            });
+            fileFeignClient.deleteFileByUrl(projectDTO.getOrganizationId(), BACKETNAME, decodeUrlList);
+        }
+
+        testCycleCaseMapper.batchDelete(projectId, cycleCaseIds);
     }
 }
