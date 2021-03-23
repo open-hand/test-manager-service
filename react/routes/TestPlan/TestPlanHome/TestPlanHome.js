@@ -208,8 +208,8 @@ function TestPlanHome({ history }) {
       style: {
         width: 560,
       },
-      title: Choerodon.getMessage('确认删除?', 'Confirm delete'),
-      children: Choerodon.getMessage(`确认要删除“${summary}”吗?`),
+      title: Choerodon.getMessage('确认移除?', 'Confirm delete'),
+      children: Choerodon.getMessage(`确认要移除“${summary}”吗?`),
       onOk: () => {
         deleteExecute(executeId)
           .then(() => {

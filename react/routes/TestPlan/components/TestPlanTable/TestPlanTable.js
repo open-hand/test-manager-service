@@ -153,7 +153,7 @@ const TestPlanTable = observer(({
 
   const renderMoreAction = (record) => {
     const action = [{
-      text: '删除',
+      text: '移除',
       action: () => onDeleteExecute(record),
     }];
     if (testPlanStatus !== 'done' && record.hasChange) {
