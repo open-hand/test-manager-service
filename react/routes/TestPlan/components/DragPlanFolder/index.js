@@ -1,5 +1,5 @@
 import React, {
-  useCallback, useMemo, useRef, useState,
+  useCallback, useRef, useState,
 } from 'react';
 import {
   Modal,
@@ -9,9 +9,8 @@ import { observer } from 'mobx-react-lite';
 import { handleRequestFailed } from '@/common/utils';
 import { getPlanTreeById, moveFolder } from '@/api/TestPlanApi';
 import Tree from '@/components/Tree';
+import Loading from '@/components/Loading';
 import './index.less';
-import { moveItemOnTree } from '@atlaskit/tree';
-import { getTreePosition } from '@atlaskit/tree/dist/cjs/utils/tree';
 import TreePlanNode from './TreePlanNode';
 import useMultiSelect from './useMultiSelect';
 
@@ -26,6 +25,7 @@ function DragPlanFolder({
 }) {
   const treeRef = useRef();
   const [data, setTreeData] = useState(propsData);
+  const [loading, setLoading] = useState(false);
   const [{ selectedNodeMaps, lastSelectNode }, { select }] = useMultiSelect({
     onLoadNode: (searchId) => {
       if (!treeRef.current || !treeRef.current.getItem) {
@@ -65,7 +65,8 @@ function DragPlanFolder({
       </TreePlanNode>
     );
   };
-  const handleDrag = useCallback(async (sourceItem, destination) => {
+  const move = useCallback(async (sourceItem, destination) => {
+    setLoading(true);
     const folderId = sourceItem.id;
     const { parentId } = destination;
     const { treeData } = treeRef.current;
@@ -80,8 +81,6 @@ function DragPlanFolder({
     }
     const lastRank = lastId ? treeData.items[lastId].data.rank : null;
     const nextRank = nextId ? treeData.items[nextId].data.rank : null;
-    // const rank = '111';
-    console.log('...', selectedNodeMaps.list(), treeRef.current);
     const folderIds = [];
     if (selectedNodeMaps.has(folderId)) {
       const folderList = sortBy(selectedNodeMaps.list(), ['index']);
@@ -90,13 +89,7 @@ function DragPlanFolder({
       folderList.forEach((item) => {
         folderIds.push(item.id);
         shows.push(item);
-        // const pos = getTreePosition(treeRef.current.treeData, item.path);
-        // const newTreeData = moveItemOnTree(treeRef.current.treeData, pos, destination);
       });
-      console.log('select nodes:', shows);
-      console.log('select folder names:', shows.map((item) => item.data.name), shows.map((item) => item.index));
-
-      // const rank = await handleRequestFailed(moveFolder(folderIds, parentId, lastRank, nextRank));
       selectedNodeMaps.clear();
       // return false;
     } else {
@@ -106,14 +99,6 @@ function DragPlanFolder({
     selectedNodeMaps.clear();
     try {
       const rank = await handleRequestFailed(moveFolder(folderIds, parentId, lastRank, nextRank));
-      // if (Array.isArray(rank) && rank.length === 1) {
-      //   return {
-      //     data: {
-      //       ...sourceItem.data,
-      //       rank: rank[0].rank,
-      //     },
-      //   };
-      // }
       const planTree = await getPlanTreeById(planId);
       const { rootIds, treeFolder } = planTree;
       const newData = {
@@ -122,10 +107,11 @@ function DragPlanFolder({
           const {
             issueFolderVO, expanded, children, ...other
           } = folder;
+          const oldFolder = treeData.items[folder.id];
           const result = {
             children: children || [],
             data: issueFolderVO,
-            isExpanded: expanded,
+            isExpanded: expanded || oldFolder?.isExpanded,
             ...other,
           };
           return result;
@@ -133,29 +119,31 @@ function DragPlanFolder({
       };
       setTreeData(newData);
 
-      return false;
+      setLoading(false);
     } catch (error) {
-      return false;
+      setLoading(false);
     }
-    // return {
-    //   data: {
-    //     ...sourceItem.data,
-    //     rank: rank[0].rank,
-    //   },
-    // };
   }, [planId, selectedNodeMaps]);
+  const handleDrag = useCallback(async (sourceItem, destination) => {
+    move(sourceItem, destination);
+    return true;
+  }, [move]);
   return (
-    <Tree
-      ref={treeRef}
-      data={data}
-      selected={{}}
-      renderTreeNode={renderTreeNode}
-      setSelected={() => { }}
-      treeNodeProps={{
-        enableAction: false,
-      }}
-      beforeDrag={handleDrag}
-    />
+    <>
+      <Loading loading={loading} />
+      <Tree
+        ref={treeRef}
+        data={data}
+        selected={{}}
+        renderTreeNode={renderTreeNode}
+        setSelected={() => { }}
+        treeNodeProps={{
+          enableAction: false,
+        }}
+        beforeDrag={handleDrag}
+        afterDrag={(s) => s}
+      />
+    </>
   );
 }
 DragPlanFolder.propTypes = propTypes;
