@@ -21,7 +21,6 @@
         </foreach>
     </select>
 
-
     <delete id="deleteByCaseId">
         delete from test_case_attachment
         where case_id = #{caseId}

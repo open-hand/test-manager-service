@@ -25,11 +25,14 @@ import io.choerodon.test.manager.infra.feign.BaseFeignClient;
 import io.choerodon.test.manager.infra.mapper.*;
 import io.choerodon.test.manager.infra.util.*;
 import org.apache.commons.lang.StringUtils;
+import org.hzero.boot.message.MessageClient;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -44,6 +47,8 @@ import org.springframework.util.ObjectUtils;
 public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
     private static final  double AVG_NUM = 500.00;
+
+    private static final String WEBSOCKET_BATCH_DELETE_CYClE_CASE = "test-batch-delete-cycle-case";
 
     @Autowired
     private TestCycleCaseDefectRelService testCycleCaseDefectRelService;
@@ -120,6 +125,9 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
     @Autowired
     private BaseFeignClient baseFeignClient;
+
+    @Autowired
+    private MessageClient messageClient;
 
     @Override
     public void delete(Long cycleCaseId, Long projectId) {
@@ -1030,5 +1038,34 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         }
         Set<String> codes = categories.stream().map(ProjectCategoryDTO::getCode).collect(Collectors.toSet());
         return codes.contains(category);
+    }
+
+    @Async
+    @Override
+    public void asyncBatchDelete(List<Long> cycleCaseIds, Long projectId) {
+        if (CollectionUtils.isEmpty(cycleCaseIds)) {
+            return;
+        }
+        Long userId = DetailsHelper.getUserDetails().getUserId();
+        WebSocketMeaasgeVO messageVO = new WebSocketMeaasgeVO(userId, "deleting", 0.0);
+        messageClient.sendByUserId(userId, WEBSOCKET_BATCH_DELETE_CYClE_CASE, JSON.toJSONString(messageVO));
+        double incremental = Math.ceil(cycleCaseIds.size() <= 10 ? 1 : (cycleCaseIds.size()*1.0) / 10);
+        try {
+            for (int i=1; i<=cycleCaseIds.size(); i++) {
+                delete(cycleCaseIds.get(i-1), projectId);
+                if (i % incremental == 0) {
+                    messageVO.setRate((i * 1.0) / cycleCaseIds.size());
+                    messageClient.sendByUserId(userId, WEBSOCKET_BATCH_DELETE_CYClE_CASE, JSON.toJSONString(messageVO));
+                }
+            }
+            messageVO.setStatus("success");
+            messageVO.setRate(1.0);
+        } catch (Exception e) {
+            messageVO.setStatus("failed");
+            messageVO.setError(e.getMessage());
+            throw new CommonException("batch delete cycle case failed, exception: {}", e);
+        } finally {
+            messageClient.sendByUserId(userId, WEBSOCKET_BATCH_DELETE_CYClE_CASE, JSON.toJSONString(messageVO));
+        }
     }
 }

@@ -141,4 +141,6 @@ public interface TestCycleCaseService {
     void batchUpdateCycleCasePriority(Long organizationId, Long priorityId, Long changePriorityId, Long userId, List<Long> projectIds);
 
     Page<TestFolderCycleCaseVO> pagedQueryMyExecutionalCase(Long organizationId, Long projectId, PageRequest pageRequest);
+
+    void asyncBatchDelete(List<Long> cycleCaseIds, Long projectId);
 }

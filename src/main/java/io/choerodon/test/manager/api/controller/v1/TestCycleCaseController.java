@@ -196,4 +196,13 @@ public class TestCycleCaseController {
         testCycleCaseService.importCase(projectId, cycleId, testPlanVO.getCaseSelected(), planId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @ApiOperation("批量异步删除测试循环用例")
+    @DeleteMapping("/async_batch_delete")
+    public ResponseEntity asyncBatchDelete(@PathVariable(name = "project_id") Long projectId,
+                                           @RequestBody @Encrypt List<Long> cycleCaseIds) {
+        testCycleCaseService.asyncBatchDelete(cycleCaseIds, projectId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }

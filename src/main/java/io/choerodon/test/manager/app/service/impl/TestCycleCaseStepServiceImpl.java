@@ -68,9 +68,6 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
     private TestCycleCaseAttachmentRelService testCycleCaseAttachmentRelService;
 
     @Autowired
-    private TestCycleCaseService testCycleCaseService;
-
-    @Autowired
     private TestCycleCaseMapper testCycleCaseMapper;
     @Override
     public void update(TestCycleCaseStepVO testCycleCaseStepVO) {
