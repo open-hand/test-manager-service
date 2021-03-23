@@ -1,7 +1,5 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import java.io.IOException;
-import java.net.URLDecoder;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -24,16 +22,17 @@ import io.choerodon.test.manager.infra.enums.TestAttachmentCode;
 import io.choerodon.test.manager.infra.enums.TestCycleCaseDefectCode;
 import io.choerodon.test.manager.infra.enums.TestStatusType;
 import io.choerodon.test.manager.infra.feign.BaseFeignClient;
-import io.choerodon.test.manager.infra.feign.FileFeignClient;
 import io.choerodon.test.manager.infra.mapper.*;
 import io.choerodon.test.manager.infra.util.*;
 import org.apache.commons.lang.StringUtils;
+import org.hzero.boot.message.MessageClient;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -49,10 +48,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
     private static final  double AVG_NUM = 500.00;
 
-    @Value("${services.attachment.url}")
-    private String attachmentUrl;
-
-    private static final String BACKETNAME = "test";
+    private static final String WEBSOCKET_BATCH_DELETE_CYClE_CASE = "test-batch-delete-cycle-case";
 
     @Autowired
     private TestCycleCaseDefectRelService testCycleCaseDefectRelService;
@@ -131,10 +127,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     private BaseFeignClient baseFeignClient;
 
     @Autowired
-    private TestCycleCaseAttachmentRelMapper testCycleCaseAttachmentRelMapper;
-
-    @Autowired
-    private FileFeignClient fileFeignClient;
+    private MessageClient messageClient;
 
     @Override
     public void delete(Long cycleCaseId, Long projectId) {
@@ -1047,37 +1040,29 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         return codes.contains(category);
     }
 
+    @Async
     @Override
-    public void batchDelete(List<Long> cycleCaseIds, Long projectId) {
-        ProjectDTO projectDTO= baseFeignClient.queryProject(projectId).getBody();
-        if (Objects.isNull(projectDTO)) {
-            throw new CommonException("error.project.not.exist");
-        }
-        List<TestCycleCaseAttachmentRelDTO> testCycleCaseAttachmentRelDTOList = testCycleCaseAttachmentRelMapper.selectByCycleCaseIds(projectId, cycleCaseIds);
-        if (!CollectionUtils.isEmpty(testCycleCaseAttachmentRelDTOList)) {
-            List<String> urlList = new ArrayList<>();
-            List<String> decodeUrlList = new ArrayList<>();
-            testCycleCaseAttachmentRelDTOList.forEach(v -> {
-                String url1 = v.getUrl();
-                String[] split = url1.split("/"+attachmentUrl);
-                if(split.length==2) {
-                    urlList.add(split[1]);
+    public void asyncBatchDelete(List<Long> cycleCaseIds, Long projectId) {
+        Long userId = DetailsHelper.getUserDetails().getUserId();
+        WebSocketMeaasgeVO messageVO = new WebSocketMeaasgeVO(userId, "deleting", 0.0);
+        messageClient.sendByUserId(userId, WEBSOCKET_BATCH_DELETE_CYClE_CASE, JSON.toJSONString(messageVO));
+        double incremental = Math.ceil(cycleCaseIds.size() <= 10 ? 1 : (cycleCaseIds.size()*1.0) / 10);
+        try {
+            for (int i=1; i<=cycleCaseIds.size(); i++) {
+                delete(cycleCaseIds.get(i-1), projectId);
+                if (i % incremental == 0) {
+                    messageVO.setRate((i * 1.0) / cycleCaseIds.size());
+                    messageClient.sendByUserId(userId, WEBSOCKET_BATCH_DELETE_CYClE_CASE, JSON.toJSONString(messageVO));
                 }
-            });
-            List<TestCaseAttachmentDTO> testCaseAttachmentDTOList = testAttachmentMapper.selectByUrls(urlList);
-            Map<String, List<TestCaseAttachmentDTO>> listMap = testCaseAttachmentDTOList.stream().collect(Collectors.groupingBy(TestCaseAttachmentDTO::getUrl));
-            urlList.forEach(url -> {
-                if (CollectionUtils.isEmpty(listMap.get(url))) {
-                    try {
-                        decodeUrlList.add(URLDecoder.decode(url, "UTF-8"));
-                    } catch (IOException i) {
-                        throw new CommonException(i);
-                    }
-                }
-            });
-            fileFeignClient.deleteFileByUrl(projectDTO.getOrganizationId(), BACKETNAME, decodeUrlList);
+            }
+            messageVO.setStatus("success");
+            messageVO.setRate(1.0);
+        } catch (Exception e) {
+            messageVO.setStatus("failed");
+            messageVO.setError(e.getMessage());
+            throw new CommonException("batch delete cycle case failed, exception: {}", e);
+        } finally {
+            messageClient.sendByUserId(userId, WEBSOCKET_BATCH_DELETE_CYClE_CASE, JSON.toJSONString(messageVO));
         }
-
-        testCycleCaseMapper.batchDelete(projectId, cycleCaseIds);
     }
 }

@@ -16,6 +16,4 @@ public interface TestCycleCaseAttachmentRelMapper extends BaseMapper<TestCycleCa
     List<TestCycleCaseAttachmentRelDTO> listByExecuteIds(@Param("list") List<Long> olderExecuteId,@Param("type") String attachmentCaseStep);
 
     void batchDeleteByLinkIdsAndType(@Param("list") List<Long> needDeleteExecutedStepIds, @Param("type") String attachmentCaseStep);
-
-    List<TestCycleCaseAttachmentRelDTO> selectByCycleCaseIds(@Param("projectId") Long projectId, @Param("cycleCaseIds") List<Long> cycleCaseIds);
 }

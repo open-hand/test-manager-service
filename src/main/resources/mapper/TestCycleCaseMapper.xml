@@ -668,25 +668,6 @@
         </foreach>
     </delete>
 
-    <delete id="batchDelete">
-        DELETE
-         tcs,
-         tccs,
-         tccar,
-         tccdr
-        FROM test_cycle_case tcs
-        LEFT JOIN test_cycle_case_step tccs ON tcs.execute_id = tccs.execute_id
-        LEFT JOIN test_cycle_case_attach_rel tccar ON (tccar.attachment_link_id = tccs.execute_step_id AND tccar.attachment_type = 'CYCLE_STEP')
-        OR (tccar.attachment_link_id = tcs.execute_id AND tccar.attachment_type = 'CYCLE_CASE')
-        LEFT JOIN test_cycle_case_defect_rel tccdr ON (tccdr.defect_link_id = tcs.execute_id OR tccdr.defect_link_id = tccs.execute_step_id)
-        AND tccdr.defect_type = 'CYCLE_CASE'
-        WHERE tcs.project_id = #{projectId}
-        AND tcs.execute_id IN
-        <foreach collection="cycleCaseIds" item="id" open="(" separator="," close=")">
-            #{id}
-        </foreach>
-    </delete>
-
     <resultMap id="testCaseMap" type="io.choerodon.test.manager.api.vo.CaseCompareVO">
         <result  column="case_id" property="caseId"/>
         <association property="testCase" javaType="io.choerodon.test.manager.api.vo.TestCaseVO">

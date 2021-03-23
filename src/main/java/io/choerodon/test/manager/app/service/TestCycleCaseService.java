@@ -142,5 +142,5 @@ public interface TestCycleCaseService {
 
     Page<TestFolderCycleCaseVO> pagedQueryMyExecutionalCase(Long organizationId, Long projectId, PageRequest pageRequest);
 
-    void batchDelete(List<Long> cycleCaseIds, Long projectId);
+    void asyncBatchDelete(List<Long> cycleCaseIds, Long projectId);
 }

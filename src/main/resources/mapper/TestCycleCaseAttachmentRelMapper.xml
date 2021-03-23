@@ -28,18 +28,6 @@
         </foreach>
     </select>
 
-    <select id="selectByCycleCaseIds" resultType="io.choerodon.test.manager.infra.dto.TestCycleCaseAttachmentRelDTO">
-        SELECT tccar.*
-        FROM test_cycle_case tcs
-        LEFT JOIN test_cycle_case_step tccs ON tccs.execute_id = tcs.execute_id
-        JOIN test_cycle_case_attach_rel tccar ON tccar.attachment_link_id = tcs.execute_id OR tccar.attachment_link_id = tccs.execute_step_id
-        WHERE tcs.project_id = #{projectId}
-        AND tcs.execute_id IN
-        <foreach collection="cycleCaseIds" item="id" open="(" close=")" separator=",">
-            #{id}
-        </foreach>
-    </select>
-
     <delete id="batchDeleteByLinkIdsAndType">
         delete from test_cycle_case_attach_rel where
         attachment_type = #{type}
