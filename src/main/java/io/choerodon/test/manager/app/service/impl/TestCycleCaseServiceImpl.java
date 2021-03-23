@@ -1043,6 +1043,9 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     @Async
     @Override
     public void asyncBatchDelete(List<Long> cycleCaseIds, Long projectId) {
+        if (CollectionUtils.isEmpty(cycleCaseIds)) {
+            return;
+        }
         Long userId = DetailsHelper.getUserDetails().getUserId();
         WebSocketMeaasgeVO messageVO = new WebSocketMeaasgeVO(userId, "deleting", 0.0);
         messageClient.sendByUserId(userId, WEBSOCKET_BATCH_DELETE_CYClE_CASE, JSON.toJSONString(messageVO));

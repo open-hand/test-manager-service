@@ -198,8 +198,8 @@ public class TestCycleCaseController {
     }
 
     @Permission(level = ResourceLevel.ORGANIZATION)
-    @ApiOperation("批量删除测试循环用例")
-    @DeleteMapping("/batch_delete")
+    @ApiOperation("批量异步删除测试循环用例")
+    @DeleteMapping("/async_batch_delete")
     public ResponseEntity asyncBatchDelete(@PathVariable(name = "project_id") Long projectId,
                                            @RequestBody @Encrypt List<Long> cycleCaseIds) {
         testCycleCaseService.asyncBatchDelete(cycleCaseIds, projectId);
