@@ -320,6 +320,14 @@ export default observer((props) => {
       render: (caseNum) => renderIssueNum(caseNum),
     },
     {
+      title: '自定义编号',
+      dataIndex: 'customNum',
+      key: 'customNum',
+      sorter: true,
+      filters: [],
+      render: (customNum) => renderIssueNum(customNum),
+    },
+    {
       title: '优先级',
       dataIndex: 'priorityId',
       key: 'sequence',
