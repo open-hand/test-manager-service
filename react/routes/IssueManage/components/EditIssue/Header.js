@@ -1,7 +1,8 @@
-import React, { useContext } from 'react';
+import React, { useCallback, useContext } from 'react';
 import { Input, Icon } from 'choerodon-ui';
+import { TextField } from 'choerodon-ui/pro';
 import { observer } from 'mobx-react-lite';
-import { TextEditToggle } from '@/components';
+import { TextEditToggle, TextEditTogglePro } from '@/components';
 import EditIssueContext from './stores';
 import './Header.less';
 import TypeTag from '../../../../components/TypeTag';
@@ -16,7 +17,13 @@ function Header({
     store, disabled, prefixCls, onClose,
   } = useContext(EditIssueContext);
   const { issueInfo } = store;
-  const { caseNum, summary } = issueInfo;
+  const { caseNum, summary, customNum } = issueInfo;
+
+  const handleValidateCustomNum = useCallback((value, name, form) => {
+    console.log(value, name);
+    return '自定义编号应该由大小写字母、数字、"-"组成，且不能以"-"开头或结尾';
+  }, []);
+
   return (
     <div className={`${prefixCls}-content-header`}>
       <div
@@ -60,6 +67,39 @@ function Header({
             <TextArea style={{ fontSize: '20px', fontWeight: 500, padding: '0.04rem' }} maxLength={44} autosize autoFocus />
           </Edit>
         </TextEditToggle>
+      </div>
+      <div className={`${prefixCls}-content-header-customNum`}>
+        <span className={`${prefixCls}-content-header-customNum-field`}>自定义编号：</span>
+        <div
+          style={{
+            width: '150px',
+          }}
+        >
+          <TextEditTogglePro
+            disabled={disabled}
+            formKey="customNum"
+            onSubmit={(value, done) => { onUpdate({ customNum: value }, done); }}
+            initValue={customNum ? String(customNum) : undefined}
+            editor={({ submit }) => (
+              <TextField
+                style={{
+                  height: 32,
+                }}
+                maxLength={16}
+                autoFocus
+                clearButton
+                pattern={/^(?!-)(?!.*?-$)[a-zA-Z0-9|-]{1,}$/}
+                validationRenderer={() => (
+                  <span>自定义编号应该由大小写字母、数字、-组成，且不能以-开头或结尾</span>
+                )}
+              />
+            )}
+          >
+            <div style={{ whiteSpace: 'nowrap' }}>
+              {customNum || '无'}
+            </div>
+          </TextEditTogglePro>
+        </div>
       </div>
     </div>
   );

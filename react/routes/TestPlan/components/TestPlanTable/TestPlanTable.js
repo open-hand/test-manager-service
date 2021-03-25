@@ -11,6 +11,7 @@ import {
 } from 'choerodon-ui';
 import { Action, stores, Choerodon } from '@choerodon/boot';
 import _ from 'lodash';
+import { renderIssueNum } from '@/routes/IssueManage/components/IssueTable/tags';
 import {
   SelectFocusLoad, StatusTags, DragTable,
 } from '../../../../components';
@@ -216,6 +217,13 @@ const TestPlanTable = observer(({
       overflow: 'hidden',
     },
     render: (text, record) => renderMenu(record.summary, record),
+  }, {
+    title: '自定义编号',
+    dataIndex: 'customNum',
+    key: 'customNum',
+    flex: 1.2,
+    filters: [],
+    render: (customNum) => renderIssueNum(customNum),
   }, {
     title: <span>被指派人</span>,
     dataIndex: 'assignedUser',
