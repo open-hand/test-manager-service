@@ -4,12 +4,12 @@ import React, {
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { observer } from 'mobx-react-lite';
-import { throttle } from 'lodash';
+import { throttle, find } from 'lodash';
 import {
   Button, Tooltip,
 } from 'choerodon-ui';
 import { stores } from '@choerodon/boot';
-import { find } from 'lodash';
+
 import { delta2Html, issueLink } from '../../../../../../common/utils';
 import {
   StatusTags, DateTimeAgo, User, RichTextShow,
@@ -86,7 +86,7 @@ function ExecuteDetailSide(props) {
     return a + ele.offsetHeight > target.scrollTop;
   }
 
-  const getCurrentNav = useCallback(() => find(navs.map(nav => nav.code), i => isInLook(document.getElementById(i))), []);
+  const getCurrentNav = useCallback(() => find(navs.map((nav) => nav.code), (i) => isInLook(document.getElementById(i))), []);
 
   const handleScroll = useCallback((e) => {
     if (sign) {
@@ -126,7 +126,6 @@ function ExecuteDetailSide(props) {
     }
   }, [detailData]);
 
-
   const scrollToAnchor = (anchorName) => {
     if (anchorName) {
       const anchorElement = document.getElementById(anchorName);
@@ -144,7 +143,6 @@ function ExecuteDetailSide(props) {
     }
   };
 
-
   const handleResizeEnd = ({ width }) => {
     localStorage.setItem('agile.ExecuteDetail.width', `${width}px`);
   };
@@ -154,14 +152,13 @@ function ExecuteDetailSide(props) {
     // console.log(width, parseInt(width / 100) * 100);
   }, 150);
 
-
   function render() {
     const {
       fileList, status, onClose,
     } = props;
     const { statusColor, statusName } = status;
     const {
-      executor, description, executorDate, summary, caseId, caseFolderId, caseNum, caseHasExist, priorityVO,
+      executor, description, executorDate, summary, caseId, caseFolderId, caseNum, caseHasExist, priorityVO, customNum,
     } = detailData;
     // 默认18个字启动省略
     const renderIssueSummary = (text) => {
@@ -173,7 +170,6 @@ function ExecuteDetailSide(props) {
         </Tooltip>
       );
     };
-
 
     return (
       <div style={{
@@ -214,8 +210,7 @@ function ExecuteDetailSide(props) {
                     >
                       <span>相关用例:</span>
                       {caseHasExist ? <Link className="primary c7ntest-text-dot" style={{ marginLeft: 5 }} to={issueLink(caseId, 'issue_test', caseNum, caseFolderId)}>{caseNum}</Link>
-                        : '用例已被删除'
-                      }
+                        : '用例已被删除'}
                     </div>
                   </div>
                   <Button funcType="flat" icon="last_page" onClick={onClose}>
@@ -224,6 +219,10 @@ function ExecuteDetailSide(props) {
                 </div>
                 <div style={{ fontSize: '20px', marginRight: '5px', marginBottom: '15px' }}>
                   {summary}
+                </div>
+                <div style={{ marginRight: '5px', marginBottom: '15px' }}>
+                  <span>自定义编号：</span>
+                  {customNum || '无'}
                 </div>
               </div>
               <div className="c7ntest-content-bottom" id="scroll-area" style={{ position: 'relative' }}>
@@ -260,7 +259,7 @@ function ExecuteDetailSide(props) {
                       {priorityVO && (
                         <PriorityTag
                           priority={priorityVO}
-                  
+
                         />
                       )}
                     </div>
