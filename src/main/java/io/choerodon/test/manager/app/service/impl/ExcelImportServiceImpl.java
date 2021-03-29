@@ -41,6 +41,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -62,7 +63,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     private static final String IMPORT_ERROR = "test-issue-import-error";
     private static final String HIDDEN_USER = "hidden_user";
     private static final String HIDDEN_PRIORITY = "hidden_priority";
-    private static final ExcelReadMeOptionVO[] README_OPTIONS = new ExcelReadMeOptionVO[7];
+    private static final ExcelReadMeOptionVO[] README_OPTIONS = new ExcelReadMeOptionVO[8];
     private static final TestCaseStepDTO[] EXAMPLE_TEST_CASE_STEPS = new TestCaseStepDTO[3];
     private static final IssueCreateDTO[] EXAMPLE_ISSUES = new IssueCreateDTO[3];
     private static final String TYPE_CYCLE = "cycle";
@@ -70,6 +71,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     protected static final String[] EXCEL_HEADERS = new String[]
             {
                     ExcelTitleName.CASE_SUMMARY,
+                    ExcelTitleName.CUSTOM_NUM,
                     ExcelTitleName.PRIORITY,
                     ExcelTitleName.CASE_DESCRIPTION,
                     ExcelTitleName.LINK_ISSUE,
@@ -79,16 +81,17 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             };
 
     static {
-        README_OPTIONS[0] = new ExcelReadMeOptionVO("用例概要*", true);
-        README_OPTIONS[1] = new ExcelReadMeOptionVO("优先级*", true);
-        README_OPTIONS[2] = new ExcelReadMeOptionVO("前置条件", false);
+        README_OPTIONS[0] = new ExcelReadMeOptionVO("自定义编号", true);
+        README_OPTIONS[1] = new ExcelReadMeOptionVO("用例概要*", true);
+        README_OPTIONS[2] = new ExcelReadMeOptionVO("优先级*", true);
+        README_OPTIONS[3] = new ExcelReadMeOptionVO("前置条件", false);
         //README_OPTIONS[2] = new ExcelReadMeOptionVO("优先级", false);
 //        README_OPTIONS[2] = new ExcelReadMeOptionVO("被指定人", false);
         //README_OPTIONS[3] = new ExcelReadMeOptionVO("模块", false);
-        README_OPTIONS[3] = new ExcelReadMeOptionVO("关联问题", false);
-        README_OPTIONS[4] = new ExcelReadMeOptionVO("测试步骤", false);
-        README_OPTIONS[5] = new ExcelReadMeOptionVO("测试数据", false);
-        README_OPTIONS[6] = new ExcelReadMeOptionVO("预期结果", false);
+        README_OPTIONS[4] = new ExcelReadMeOptionVO("关联问题", false);
+        README_OPTIONS[5] = new ExcelReadMeOptionVO("测试步骤", false);
+        README_OPTIONS[6] = new ExcelReadMeOptionVO("测试数据", false);
+        README_OPTIONS[7] = new ExcelReadMeOptionVO("预期结果", false);
 
 
         for (int i = 0; i < EXAMPLE_TEST_CASE_STEPS.length; i++) {
@@ -347,7 +350,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         fillTestCaseSheet(testCaseSheet);
         setTestCaseSheetStyle(testCaseSheet);
 
-        ExcelUtil.dropDownList2007(workbook, testCaseSheet, priorityNameList, 1, 500, 1, 1, HIDDEN_PRIORITY, 2);
+        ExcelUtil.dropDownList2007(workbook, testCaseSheet, priorityNameList, 1, 500, 2, 2, HIDDEN_PRIORITY, 2);
 //        ExcelUtil.dropDownList2007(workbook, testCaseSheet, userNameList, 1, 500, 2, 2, HIDDEN_USER, 2);
     }
 
@@ -622,6 +625,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         String description = ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.CASE_DESCRIPTION, row));
         String summary = ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.CASE_SUMMARY, row));
         String priority = ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.PRIORITY, row));
+        String customNum = ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.CUSTOM_NUM, row));
 
         if (Objects.isNull(priorityMap.get(priority))) {
             markAsError(row, "优先级不存在");
@@ -634,7 +638,14 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         issueCreateDTO.setDescription(description);
         issueCreateDTO.setFolderId(folderId);
         issueCreateDTO.setPriorityId(priorityMap.get(priority));
-
+        issueCreateDTO.setCustomNum(customNum);
+        // 校验custom重复
+        if(ObjectUtils.isEmpty(customNum)){
+            List<TestCaseDTO> testCaseDTOS = testCaseService.queryByCustomNum(projectId, customNum);
+            if(!CollectionUtils.isEmpty(testCaseDTOS)){
+                markAsError(row, "自定义编号有误,不能重复");
+            }
+        }
         if (!ExcelUtil.isBlank(excelTitleUtil.getCell(ExcelTitleName.LINK_ISSUE, row))) {
             //处理关联问题
             String issueNumString = ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.LINK_ISSUE, row));

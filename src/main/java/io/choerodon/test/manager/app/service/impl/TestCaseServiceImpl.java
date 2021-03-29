@@ -238,6 +238,7 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     @Override
     public TestCaseRepVO createTestCase(Long projectId, TestCaseVO testCaseVO, AtomicLong outsideCount) {
+        checkCustomNum(projectId, testCaseVO.getCustomNum());
         Long caseNum;
         if (Objects.isNull(outsideCount)){
             TestProjectInfoDTO testProjectInfoDTO = new TestProjectInfoDTO();
@@ -268,6 +269,18 @@ public class TestCaseServiceImpl implements TestCaseService {
         Map<Long, TestIssueFolderDTO> folderMap = testIssueFolderDTOS.stream().collect(Collectors.toMap(TestIssueFolderDTO::getFolderId, Function.identity()));
         TestCaseRepVO testCaseRepVO = testCaseAssembler.dtoToRepVo(testCaseDTO, folderMap);
         return testCaseRepVO;
+    }
+
+    private void checkCustomNum(Long projectId, String customNum){
+        if (!ObjectUtils.isEmpty(customNum)) {
+            TestCaseDTO testCaseDTO = new TestCaseDTO();
+            testCaseDTO.setProjectId(projectId);
+            testCaseDTO.setCustomNum(customNum);
+            List<TestCaseDTO> testCaseDTOS = testCaseMapper.select(testCaseDTO);
+            if (CollectionUtils.isEmpty(testCaseDTOS)) {
+                throw new CommonException("error.case.custom.num.exist");
+            }
+        }
     }
 
     @Override
@@ -365,6 +378,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         if (ObjectUtils.isEmpty(testCaseRepVO) || ObjectUtils.isEmpty(testCaseRepVO.getCaseId())) {
             throw new CommonException("error.case.is.not.null");
         }
+        checkCustomNum(projectId, testCaseRepVO.getCustomNum());
         TestCaseDTO testCaseDTO = baseQuery(testCaseRepVO.getCaseId());
         TestCaseDTO map = modelMapper.map(testCaseRepVO, TestCaseDTO.class);
         map.setVersionNum(testCaseDTO.getVersionNum() + 1);
@@ -481,6 +495,17 @@ public class TestCaseServiceImpl implements TestCaseService {
         }
         searchDTO.getOtherArgs().put("excludeIssueIds", issueIds);
         return agileClientOperator.queryListIssueWithSub(projectId, searchDTO, pageRequest, organizationId);
+    }
+
+    @Override
+    public List<TestCaseDTO> queryByCustomNum(Long projectId, String customNum) {
+        if (ObjectUtils.isEmpty(customNum)) {
+            return new ArrayList<>();
+        }
+        TestCaseDTO testCaseDTO = new TestCaseDTO();
+        testCaseDTO.setProjectId(projectId);
+        testCaseDTO.setCustomNum(customNum);
+        return testCaseMapper.select(testCaseDTO);
     }
 
     @Override

@@ -38,6 +38,8 @@ public class TestCaseDTO extends AuditDomain {
     @Transient
     private String priorityColour;
 
+    private String customNum;
+
     public String getPriorityColour() {
         return priorityColour;
     }
@@ -133,6 +135,14 @@ public class TestCaseDTO extends AuditDomain {
     public void setProjectId(Long projectId) {
         this.projectId = projectId;
 
+    }
+
+    public String getCustomNum() {
+        return customNum;
+    }
+
+    public void setCustomNum(String customNum) {
+        this.customNum = customNum;
     }
 }
 

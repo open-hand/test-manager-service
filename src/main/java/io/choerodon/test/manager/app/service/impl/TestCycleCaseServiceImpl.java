@@ -374,7 +374,14 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         //3.更新执行用例
         TestCycleCaseDTO testCycleCaseDTO = modelMapper.map(testCycleCaseUpdateVO, TestCycleCaseDTO.class);
         baseUpdate(testCycleCaseDTO);
-
+        // 处理自定义编号
+        TestCycleCaseDTO oldCycleCase = testCycleCaseMapper.selectByPrimaryKey(testCycleCaseDTO.getExecuteId());
+        if (!StringUtils.isEmpty(oldCycleCase.getCustomNum()) && StringUtils.isEmpty(testCycleCaseDTO.getCustomNum())) {
+            oldCycleCase.setCustomNum(testCycleCaseDTO.getCustomNum());
+            if (testCycleCaseMapper.updateByPrimaryKey(oldCycleCase) != 1) {
+                throw new CommonException("error.update.cycle.case");
+            }
+        }
         if (isAsync) {
             TestCycleCaseDTO testCycleCase = testCycleCaseMapper.selectByPrimaryKey(testCycleCaseDTO.getExecuteId());
             CaseCompareRepVO caseCompareRepVO = new CaseCompareRepVO();
@@ -617,6 +624,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                 testCycleCase.setDescription(testCaseDTO.getDescription());
                 testCycleCase.setVersionNum(testCaseDTO.getVersionNum());
                 testCycleCase.setPriorityId(testCaseDTO.getPriorityId());
+                testCycleCase.setCustomNum(testCaseDTO.getCustomNum());
             }
             if (caseCompareRepVO.getChangeAttach()) {
                 testCycleCaseAttachmentRelService.snycByCase(testCycleCaseDTO, testCaseDTO);
@@ -639,6 +647,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                 testCaseRepVO.setObjectVersionNumber(testCaseDTO.getObjectVersionNumber());
                 testCaseRepVO.setExecuteId(testCycleCaseDTO.getExecuteId());
                 testCaseRepVO.setPriorityId(testCycleCaseDTO.getPriorityId());
+                testCaseRepVO.setCustomNum(testCycleCaseDTO.getCustomNum());
                 List<String> fieldList = verifyUpdateUtil.verifyUpdateData((JSONObject) JSON.toJSON(testCaseRepVO), testCaseRepVO);
                 testCaseService.updateCase(testCaseDTO.getProjectId(), testCaseRepVO, fieldList.toArray(new String[fieldList.size()]));
                 testCycleCaseDTO.setVersionNum(testCaseDTO.getVersionNum() + 1);
@@ -916,6 +925,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                 testCycleCaseDTO.setLastUpdatedBy(testCycleDTO.getLastUpdatedBy());
                 testCycleCaseDTO.setSummary(v.getSummary());
                 testCycleCaseDTO.setSource("none");
+                testCycleCaseDTO.setCustomNum(v.getCustomNum());
                 testCycleCaseDTO.setRank(RankUtil.Operation.INSERT.getRank(lastedRank, null));
                 testCycleCaseDTO.setPriorityId(v.getPriorityId());
                 lastedRank = testCycleCaseDTO.getRank();

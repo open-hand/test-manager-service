@@ -98,6 +98,8 @@ public class TestFolderCycleCaseVO {
 
     private ProjectDTO projectDTO;
 
+    private String customNum;
+
     public String getCaseNum() {
         return caseNum;
     }
@@ -337,5 +339,13 @@ public class TestFolderCycleCaseVO {
 
     public void setProjectDTO(ProjectDTO projectDTO) {
         this.projectDTO = projectDTO;
+    }
+
+    public String getCustomNum() {
+        return customNum;
+    }
+
+    public void setCustomNum(String customNum) {
+        this.customNum = customNum;
     }
 }

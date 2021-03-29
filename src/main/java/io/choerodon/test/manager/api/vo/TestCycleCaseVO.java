@@ -126,6 +126,9 @@ public class TestCycleCaseVO {
     @ApiModelProperty(value = "优先级")
     private PriorityVO priorityVO;
 
+    @ApiModelProperty(value = "自定义编号")
+    private String customNum;
+
     public PriorityVO getPriorityVO() {
         return priorityVO;
     }
@@ -413,5 +416,13 @@ public class TestCycleCaseVO {
 
     public void setPlanId(Long planId) {
         this.planId = planId;
+    }
+
+    public String getCustomNum() {
+        return customNum;
+    }
+
+    public void setCustomNum(String customNum) {
+        this.customNum = customNum;
     }
 }

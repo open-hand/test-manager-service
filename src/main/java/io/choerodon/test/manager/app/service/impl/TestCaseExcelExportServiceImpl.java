@@ -79,7 +79,7 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
     private static final String UI = "ui";
 
     private enum CaseHeader {
-        COLUMN1("文件夹*"), COLUMN2("用例概要*"), COLUMN11("用例优先级*"), COLUMN3("用例编号"),
+        COLUMN1("文件夹*"), COLUMN12("自定义编号"),COLUMN2("用例概要*"), COLUMN11("用例优先级*"), COLUMN3("用例编号"),
         COLUMN5("前置条件"), COLUMN6("执行人"), COLUMN8("测试步骤"), COLUMN9("测试数据"),
         COLUMN10("预期结果");
         private String chinese;
@@ -228,12 +228,13 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
         Row row = ExcelUtil.createRow(sheet, columnNum, rowStyles);
         if (!ObjectUtils.isEmpty(excelCaseVO)) {
             Optional.ofNullable(excelCaseVO.getFolderName()).ifPresent(v -> ExcelUtil.createCell(row, 0, ExcelUtil.CellType.TEXT, v));
-            Optional.ofNullable(excelCaseVO.getSummary()).ifPresent(v -> ExcelUtil.createCell(row, 1, ExcelUtil.CellType.TEXT, v));
-            Optional.ofNullable(excelCaseVO.getPriorityName()).ifPresent(v -> ExcelUtil.createCell(row, 2, ExcelUtil.CellType.TEXT, v));
-            Optional.ofNullable(excelCaseVO.getCaseNum()).ifPresent(v -> ExcelUtil.createCell(row, 3, ExcelUtil.CellType.TEXT, v));
+            Optional.ofNullable(excelCaseVO.getCustomNum()).ifPresent(v -> ExcelUtil.createCell(row, 1, ExcelUtil.CellType.TEXT, v));
+            Optional.ofNullable(excelCaseVO.getSummary()).ifPresent(v -> ExcelUtil.createCell(row, 2, ExcelUtil.CellType.TEXT, v));
+            Optional.ofNullable(excelCaseVO.getPriorityName()).ifPresent(v -> ExcelUtil.createCell(row, 3, ExcelUtil.CellType.TEXT, v));
+            Optional.ofNullable(excelCaseVO.getCaseNum()).ifPresent(v -> ExcelUtil.createCell(row, 4, ExcelUtil.CellType.TEXT, v));
             //接口修改后，改成描述
-            Optional.ofNullable(ExcelUtil.getColumnWithoutRichText(excelCaseVO.getDescription())).ifPresent(v -> ExcelUtil.createCell(row, 4, ExcelUtil.CellType.TEXT, v));
-            Optional.ofNullable(excelCaseVO.getExecutor()).ifPresent(v -> ExcelUtil.createCell(row, 5, ExcelUtil.CellType.TEXT, v));
+            Optional.ofNullable(ExcelUtil.getColumnWithoutRichText(excelCaseVO.getDescription())).ifPresent(v -> ExcelUtil.createCell(row, 5, ExcelUtil.CellType.TEXT, v));
+            Optional.ofNullable(excelCaseVO.getExecutor()).ifPresent(v -> ExcelUtil.createCell(row, 6, ExcelUtil.CellType.TEXT, v));
         }
 //        ExcelUtil.createCell(row, 9, ExcelUtil.CellType.TEXT, "").setCellFormula(
 //                getLookupString("A" + (row.getRowNum() + 1), statusEnd + 2, folderEnd, 2));
@@ -267,9 +268,9 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
     }
 
     private void doPopulateCaseStep(Row row, TestCaseStepVO caseStep) {
-        Optional.ofNullable(caseStep.getTestStep()).ifPresent(v -> ExcelUtil.createCell(row, 6, ExcelUtil.CellType.TEXT, v));
-        Optional.ofNullable(caseStep.getTestData()).ifPresent(v -> ExcelUtil.createCell(row, 7, ExcelUtil.CellType.TEXT, v));
-        Optional.ofNullable(caseStep.getExpectedResult()).ifPresent(v -> ExcelUtil.createCell(row, 8, ExcelUtil.CellType.TEXT, v));
+        Optional.ofNullable(caseStep.getTestStep()).ifPresent(v -> ExcelUtil.createCell(row, 7, ExcelUtil.CellType.TEXT, v));
+        Optional.ofNullable(caseStep.getTestData()).ifPresent(v -> ExcelUtil.createCell(row, 8, ExcelUtil.CellType.TEXT, v));
+        Optional.ofNullable(caseStep.getExpectedResult()).ifPresent(v -> ExcelUtil.createCell(row, 9, ExcelUtil.CellType.TEXT, v));
     }
 
     private void prepareLookupData(TestIssueFolderVO folder) {

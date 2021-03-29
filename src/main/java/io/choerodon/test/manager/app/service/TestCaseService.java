@@ -235,4 +235,6 @@ public interface TestCaseService {
      * @return 测试用例未关联的问题
      */
     Page<IssueListFieldKVVO> listUnLinkIssue(Long caseId, Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId);
+
+    List<TestCaseDTO> queryByCustomNum(Long projectId, String customNum);
 }

@@ -74,6 +74,9 @@ public class TestCaseInfoVO {
     @ApiModelProperty(value = "优先级")
     private PriorityVO priorityVO;
 
+    @ApiModelProperty(value = "自定义编号")
+    private String customNum;
+
     public PriorityVO getPriorityVO() {
         return priorityVO;
     }
@@ -225,5 +228,13 @@ public class TestCaseInfoVO {
 
     public void setTestCaseStepS(List<TestCaseStepDTO> testCaseStepS) {
         this.testCaseStepS = testCaseStepS;
+    }
+
+    public String getCustomNum() {
+        return customNum;
+    }
+
+    public void setCustomNum(String customNum) {
+        this.customNum = customNum;
     }
 }
