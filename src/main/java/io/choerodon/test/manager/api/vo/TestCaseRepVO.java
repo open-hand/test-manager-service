@@ -75,6 +75,9 @@ public class TestCaseRepVO {
     @ApiModelProperty(value = "优先级")
     private PriorityVO priorityVO;
 
+    @ApiModelProperty(value = "自定义编号")
+    private String customNum;
+
     public Long getPriorityId() {
         return priorityId;
     }
@@ -241,5 +244,13 @@ public class TestCaseRepVO {
 
     public void setExecuteId(Long executeId) {
         this.executeId = executeId;
+    }
+
+    public String getCustomNum() {
+        return customNum;
+    }
+
+    public void setCustomNum(String customNum) {
+        this.customNum = customNum;
     }
 }

@@ -12,6 +12,7 @@
         <id column="last_updated_by" property="lastUpdatedBy"/>
         <id column="created_by" property="createdBy"/>
         <id column="priority_name" property="priorityName"/>
+        <id column="custom_num" property="customNum"/>
         <collection property="caseSteps"
                     ofType="io.choerodon.test.manager.api.vo.TestCaseStepVO">
             <id column="step_id" property="stepId"/>
@@ -342,7 +343,8 @@
                 tc.last_updated_by,
                 tc.creation_date,
                 tc.last_update_date,
-                tc.object_version_number
+                tc.object_version_number,
+                tc.custom_num
             FROM
                 test_case tc
             JOIN test_project_info tpi on tpi.project_id = tc.project_id

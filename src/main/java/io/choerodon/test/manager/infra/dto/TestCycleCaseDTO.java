@@ -82,6 +82,8 @@ public class TestCycleCaseDTO extends AuditDomain {
     @Transient
     private BigDecimal sequence;
 
+    private String customNum;
+
     public String getPriorityColour() {
         return priorityColour;
     }
@@ -363,5 +365,13 @@ public class TestCycleCaseDTO extends AuditDomain {
 
     public void setPlanId(Long planId) {
         this.planId = planId;
+    }
+
+    public String getCustomNum() {
+        return customNum;
+    }
+
+    public void setCustomNum(String customNum) {
+        this.customNum = customNum;
     }
 }

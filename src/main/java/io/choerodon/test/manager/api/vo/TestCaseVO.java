@@ -46,6 +46,9 @@ public class TestCaseVO {
     @ApiModelProperty(value = "优先级")
     private PriorityVO priorityVO;
 
+    @ApiModelProperty(value = "自定义编号")
+    private String customNum;
+
     public Long getPriorityId() {
         return priorityId;
     }
@@ -164,5 +167,13 @@ public class TestCaseVO {
 
     public void setFolderName(String folderName) {
         this.folderName = folderName;
+    }
+
+    public String getCustomNum() {
+        return customNum;
+    }
+
+    public void setCustomNum(String customNum) {
+        this.customNum = customNum;
     }
 }

@@ -38,6 +38,8 @@ public class IssueCreateDTO {
 
     private String relateIssueNums;
 
+    private String customNum;
+
     private List<VersionIssueRelVO> versionIssueRelVOList;
 
     private List<LabelIssueRelVO> labelIssueRelVOList;
@@ -225,5 +227,13 @@ public class IssueCreateDTO {
 
     public void setRelateIssueNums(String relateIssueNums) {
         this.relateIssueNums = relateIssueNums;
+    }
+
+    public String getCustomNum() {
+        return customNum;
+    }
+
+    public void setCustomNum(String customNum) {
+        this.customNum = customNum;
     }
 }

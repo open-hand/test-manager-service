@@ -88,6 +88,33 @@ public class TestCaseAssembler {
         return testCaseRepVO;
     }
 
+    public List<TestCaseRepVO> listDtoTOVO(List<TestCaseDTO> list, Map<Long, TestIssueFolderDTO> folderMap, List<Long> caseIds) {
+        Map<Long, UserMessageDTO> map = getUserMap(null, list);
+        List<TestCaseRepVO> repVOS = new ArrayList<>();
+        if (CollectionUtils.isEmpty(repVOS)) {
+            for (TestCaseDTO testCaseDTO : list) {
+                TestCaseRepVO testCaseRepVO = new TestCaseRepVO();
+                modelMapper.map(testCaseDTO, testCaseRepVO);
+                TestProjectInfoDTO testProjectInfoDTO = new TestProjectInfoDTO();
+                testProjectInfoDTO.setProjectId(testCaseDTO.getProjectId());
+                testCaseRepVO.setCaseNum(getIssueNum(testCaseDTO.getProjectId(), testCaseDTO.getCaseNum()));
+                testCaseRepVO.setCreateUser(map.get(testCaseDTO.getCreatedBy()));
+                testCaseRepVO.setLastUpdateUser(map.get(testCaseDTO.getLastUpdatedBy()));
+                testCaseRepVO.setFolderName(folderMap.get(testCaseDTO.getFolderId()).getName());
+                testCaseRepVO.setPriorityVO(new PriorityVO(testCaseDTO.getPriorityId(), testCaseDTO.getPriorityName(), testCaseDTO.getPriorityColour(), testCaseDTO.getSequence()));
+                if (!CollectionUtils.isEmpty(caseIds)) {
+                    if (caseIds.contains(testCaseDTO.getCaseId())) {
+                        testCaseRepVO.setHasDisable(true);
+                    } else {
+                        testCaseRepVO.setHasDisable(false);
+                    }
+                }
+                repVOS.add(testCaseRepVO);
+            }
+        }
+        return repVOS;
+    }
+
     public TestFolderCycleCaseVO setAssianUser(TestCycleCaseDTO testCycleCaseDTO,Map<Long, UserMessageDTO> userMap) {
         TestFolderCycleCaseVO testFolderCycleCaseVO = modelMapper.map(testCycleCaseDTO, TestFolderCycleCaseVO.class);
         Long assignedTo = testCycleCaseDTO.getAssignedTo();
@@ -118,19 +145,7 @@ public class TestCaseAssembler {
         if (!ObjectUtils.isEmpty(planId)) {
             caseIds = testCycleCaseMapper.listByPlanId(planId);
         }
-        List<Long> finalCaseIds = caseIds;
-        List<TestCaseRepVO> collect = list.stream()
-                .map(v -> {
-                    TestCaseRepVO testCaseRepVO = dtoToRepVo(v, folderMap);
-                    if (!CollectionUtils.isEmpty(finalCaseIds)) {
-                        if (finalCaseIds.contains(v.getCaseId())) {
-                            testCaseRepVO.setHasDisable(true);
-                        } else {
-                            testCaseRepVO.setHasDisable(false);
-                        }
-                    }
-                    return testCaseRepVO;
-                }).collect(Collectors.toList());
+        List<TestCaseRepVO> collect = listDtoTOVO(list, folderMap, caseIds);
         return collect;
     }
 

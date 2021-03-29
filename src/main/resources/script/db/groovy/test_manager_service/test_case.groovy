@@ -46,4 +46,10 @@ databaseChangeLog(logicalFilePath: "script/db/test_case.groovy") {
     changeSet(id: '2020-12-22-test-case-add-priority-id-default-value', author: 'kaiwen.li@hand-china.com') {
         addDefaultValue(tableName: 'test_case', columnName:'priority_id', defaultValue: '0')
     }
+
+    changeSet(id: '2021-03-26-test-case-add-column-custom-num', author: 'ztxemail@163.com') {
+        addColumn(tableName: 'test_case') {
+            column(name: 'custom_num', type: 'VARCHAR(255)', remarks: '自定义编号')
+        }
+    }
 }

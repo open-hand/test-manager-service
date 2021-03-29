@@ -26,6 +26,7 @@ public class ExcelCaseVO {
     private String executor;
     private List<TestCaseStepVO> caseSteps;
     private String priorityName;
+    private String customNum;
 
     public String getPriorityName() {
         return priorityName;
@@ -145,5 +146,13 @@ public class ExcelCaseVO {
 
     public void setCaseSteps(List<TestCaseStepVO> caseSteps) {
         this.caseSteps = caseSteps;
+    }
+
+    public String getCustomNum() {
+        return customNum;
+    }
+
+    public void setCustomNum(String customNum) {
+        this.customNum = customNum;
     }
 }

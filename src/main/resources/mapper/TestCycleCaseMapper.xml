@@ -537,6 +537,7 @@
         tcc.last_updated_by,
         tcc.last_update_date,
         tcc.priority_id,
+        tcc.custom_num,
         tpy.name AS priority_name,
         tpy.colour AS priority_colour,
         tpy.sequence,
@@ -642,12 +643,13 @@
     <insert id="batchInsert" useGeneratedKeys="true" keyProperty="executeId">
       insert into test_cycle_case(cycle_id,case_id,rank,description
       ,project_id,version_num,execution_status
-      ,created_by,last_updated_by,summary,source,priority_id)
+      ,created_by,last_updated_by,summary,source,priority_id,custom_num)
       values
       <foreach collection="list" item="item" separator=",">
           (#{item.cycleId},#{item.caseId},#{item.rank},#{item.description},#{item.projectId}
           ,#{item.versionNum},#{item.executionStatus}
-          ,#{item.createdBy},#{item.lastUpdatedBy},#{item.summary},#{item.source},#{item.priorityId})
+          ,#{item.createdBy},#{item.lastUpdatedBy},#{item.summary},#{item.source},#{item.priorityId},
+          ,#{item.customNum})
       </foreach>
     </insert>
     <update id="batchAssign">
