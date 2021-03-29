@@ -277,7 +277,7 @@ public class TestCaseServiceImpl implements TestCaseService {
             testCaseDTO.setProjectId(projectId);
             testCaseDTO.setCustomNum(customNum);
             List<TestCaseDTO> testCaseDTOS = testCaseMapper.select(testCaseDTO);
-            if (CollectionUtils.isEmpty(testCaseDTOS)) {
+            if (!CollectionUtils.isEmpty(testCaseDTOS)) {
                 throw new CommonException("error.case.custom.num.exist");
             }
         }

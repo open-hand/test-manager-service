@@ -99,14 +99,15 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
         //初始化SheetStyle
         // 设置列宽度
         sheet.setColumnWidth(0, ExcelImportServiceImpl.EXCEL_WIDTH_PX * 16);
-        sheet.setColumnWidth(1, ExcelImportServiceImpl.EXCEL_WIDTH_PX * 48);
-        sheet.setColumnWidth(2, ExcelImportServiceImpl.EXCEL_WIDTH_PX * 16);
+        sheet.setColumnWidth(1, ExcelImportServiceImpl.EXCEL_WIDTH_PX * 16);
+        sheet.setColumnWidth(2, ExcelImportServiceImpl.EXCEL_WIDTH_PX * 48);
         sheet.setColumnWidth(3, ExcelImportServiceImpl.EXCEL_WIDTH_PX * 16);
-        sheet.setColumnWidth(4, ExcelImportServiceImpl.EXCEL_WIDTH_PX * 48);
-        sheet.setColumnWidth(5, ExcelImportServiceImpl.EXCEL_WIDTH_PX * 16);
-        sheet.setColumnWidth(6, ExcelImportServiceImpl.EXCEL_WIDTH_PX * 48);
-        sheet.setColumnWidth(7, ExcelImportServiceImpl.EXCEL_WIDTH_PX * 16);
-        sheet.setColumnWidth(8, ExcelImportServiceImpl.EXCEL_WIDTH_PX * 48);
+        sheet.setColumnWidth(4, ExcelImportServiceImpl.EXCEL_WIDTH_PX * 16);
+        sheet.setColumnWidth(5, ExcelImportServiceImpl.EXCEL_WIDTH_PX * 48);
+        sheet.setColumnWidth(6, ExcelImportServiceImpl.EXCEL_WIDTH_PX * 16);
+        sheet.setColumnWidth(7, ExcelImportServiceImpl.EXCEL_WIDTH_PX * 48);
+        sheet.setColumnWidth(8, ExcelImportServiceImpl.EXCEL_WIDTH_PX * 16);
+        sheet.setColumnWidth(9, ExcelImportServiceImpl.EXCEL_WIDTH_PX * 48);
         sheet.setDefaultRowHeight((short) 500);
     }
 
