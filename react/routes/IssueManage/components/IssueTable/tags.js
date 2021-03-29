@@ -86,14 +86,24 @@ export function renderSummary(summary, record, onClick) {
       <Tooltip mouseEnterDelay={0.5} placement="topLeft" title={<FormattedMessage id="issue_issueSummary" values={{ summary }} />}>
         <p
           role="none"
-          style={{
-            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, maxWidth: 'unset',
-          }}
           className="c7n-table-issueTreeTtile-table-p"
+          style={{
+            marginBottom: 0,
+          }}
         >
           <span
+            role="none"
             onClick={() => onClick(record)}
             className="c7n-agile-table-cell-click"
+            style={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              marginBottom: 0,
+              display: 'inline-block',
+              width: '100%',
+              maxWidth: '100%',
+            }}
           >
             {summary}
           </span>
