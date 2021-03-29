@@ -611,6 +611,9 @@
                 <if test="searchDTO.searchArgs.assignUser != null">
                     AND tcc.assigned_to = #{searchDTO.searchArgs.assignUser}
                 </if>
+                <if test="searchDTO.searchArgs.customNum != null">
+                    AND tcc.custom_num LIKE CONCAT(CONCAT('%', #{searchDTO.searchArgs.customNum, jdbcType=VARCHAR}),'%')
+                </if>
             </if>
         </if>
     </sql>

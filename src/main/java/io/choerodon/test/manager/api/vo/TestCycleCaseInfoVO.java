@@ -93,6 +93,9 @@ public class TestCycleCaseInfoVO {
     @Encrypt
     private List<TestCycleCaseAttachmentRelVO> attachment;
 
+    @ApiModelProperty(value = "自定义编号")
+    private String customNum;
+
     public Long getPriorityId() {
         return priorityId;
     }
@@ -275,5 +278,13 @@ public class TestCycleCaseInfoVO {
 
     public void setCaseHasExist(Boolean caseHasExist) {
         this.caseHasExist = caseHasExist;
+    }
+
+    public String getCustomNum() {
+        return customNum;
+    }
+
+    public void setCustomNum(String customNum) {
+        this.customNum = customNum;
     }
 }

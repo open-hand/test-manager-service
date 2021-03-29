@@ -48,6 +48,8 @@ public class CaseSearchVO {
         @Encrypt
         private Long priorityId;
 
+        private String customNum;
+
         public Long getPriorityId() {
             return priorityId;
         }
@@ -94,6 +96,14 @@ public class CaseSearchVO {
 
         public void setAssignUser(Long assignUser) {
             this.assignUser = assignUser;
+        }
+
+        public String getCustomNum() {
+            return customNum;
+        }
+
+        public void setCustomNum(String customNum) {
+            this.customNum = customNum;
         }
     }
 }

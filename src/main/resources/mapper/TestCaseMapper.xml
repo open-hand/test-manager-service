@@ -32,7 +32,8 @@
         tci.last_updated_by,
         tci.creation_date,
         tci.last_update_date,
-        tci.object_version_number
+        tci.object_version_number,
+        tci.custom_num
         FROM
         (
         SELECT
@@ -45,7 +46,8 @@
         tc.last_updated_by,
         tc.creation_date,
         tc.last_update_date,
-        tc.object_version_number
+        tc.object_version_number,
+        tc.custom_num
         FROM
         test_case tc
         left join test_project_info tpi on tpi.project_id = tc.project_id
@@ -69,7 +71,8 @@
         description,
         rank,
         folder_id,
-        project_id
+        project_id,
+        custom_num
         FROM
         test_case
         WHERE
@@ -97,6 +100,9 @@
                 </if>
                 <if test="searchDTO.searchArgs.caseNum != null">
                     AND (tci.case_num LIKE CONCAT(CONCAT('%', #{searchDTO.searchArgs.caseNum, jdbcType=VARCHAR}),'%'))
+                </if>
+                <if test="searchDTO.searchArgs.customNum != null">
+                    AND (tci.custom_num LIKE CONCAT(CONCAT('%', #{searchDTO.searchArgs.customNum, jdbcType=VARCHAR}),'%'))
                 </if>
             </if>
         </if>
@@ -144,7 +150,8 @@
         tc.last_updated_by,
         tc.creation_date,
         tc.last_update_date,
-        tc.object_version_number
+        tc.object_version_number,
+        tc.custom_num
         FROM
         test_case tc
         right join test_project_info tpi on tpi.project_id = tc.project_id
