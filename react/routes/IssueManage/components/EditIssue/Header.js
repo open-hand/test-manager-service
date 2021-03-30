@@ -19,11 +19,6 @@ function Header({
   const { issueInfo } = store;
   const { caseNum, summary, customNum } = issueInfo;
 
-  const handleValidateCustomNum = useCallback((value, name, form) => {
-    console.log(value, name);
-    return '自定义编号应该由大小写字母、数字、"-"组成，且不能以"-"开头或结尾';
-  }, []);
-
   return (
     <div className={`${prefixCls}-content-header`}>
       <div
@@ -78,7 +73,7 @@ function Header({
           <TextEditTogglePro
             disabled={disabled}
             formKey="customNum"
-            onSubmit={(value, done) => { onUpdate({ customNum: value }, done); }}
+            onSubmit={(value, done) => { onUpdate({ customNum: value }, () => {}); }}
             initValue={customNum ? String(customNum) : undefined}
             editor={({ submit }) => (
               <TextField

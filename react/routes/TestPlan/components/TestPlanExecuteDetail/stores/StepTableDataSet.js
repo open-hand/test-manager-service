@@ -142,7 +142,7 @@ function StepTableDataSet(projectId, orgId, intl, caseId, testStatusDataSet, exe
         transformResponse: (res) => {
           if (typeof res === 'string') {
             const newRes = JSON.parse(res);
-            newRes.content.map((item) => ({
+            (newRes.content || []).map((item) => ({
               ...item,
               stepStatus: item.stepStatus === null ? 4 : item.stepStatus,
             }));
