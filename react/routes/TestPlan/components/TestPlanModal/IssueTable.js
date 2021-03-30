@@ -1,9 +1,12 @@
 import React, { useMemo, useContext } from 'react';
 import { DataSet, Table } from 'choerodon-ui/pro';
+import { toJS } from 'mobx';
+import { observer } from 'mobx-react-lite';
 import { getProjectId } from '@/common/utils';
 import PriorityTag from '@/components/PriorityTag';
 import Context from './context';
 import { autoSelect } from './utils';
+import './IssueTable.less';
 
 const { Column } = Table;
 
@@ -82,8 +85,11 @@ function IssueTable({
   }), [SelectIssueStore, folderId, treeMap]);
   // 让父组件访问dataSet
   saveDataSet(dataSet);
+  const hasFilter = Object.keys(dataSet.queryDataSet.current?.toData() ?? {}).filter((key) => key !== '__dirty').length > 0;
+  const currentFolder = toJS(treeMap.get(folderId));
+  const isSelectAll = currentFolder.checked && !currentFolder.isIndeterminate;
   return (
-    <Table dataSet={dataSet} style={{ height: 384 }}>
+    <Table dataSet={dataSet} style={{ height: 384 }} className={hasFilter && !isSelectAll ? 'c7ntest-plan-table-hiddenSelectAll' : undefined}>
       <Column name="summary" />
       <Column name="caseNum" />
       <Column name="customNum" />
@@ -93,4 +99,4 @@ function IssueTable({
   );
 }
 
-export default IssueTable;
+export default observer(IssueTable);
