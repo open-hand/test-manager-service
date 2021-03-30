@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
+import io.choerodon.core.client.MessageClientC7n;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.api.vo.TestFileLoadHistoryWebsocketVO;
 import io.choerodon.test.manager.api.vo.agile.*;
@@ -17,7 +18,6 @@ import io.choerodon.test.manager.infra.enums.ExcelTitleName;
 import io.choerodon.test.manager.infra.enums.TestAttachmentCode;
 import io.choerodon.test.manager.infra.enums.TestFileLoadHistoryEnums;
 import io.choerodon.test.manager.infra.feign.BaseFeignClient;
-import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import io.choerodon.test.manager.infra.feign.operator.AgileClientOperator;
 import io.choerodon.test.manager.infra.mapper.TestFileLoadHistoryMapper;
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
@@ -31,7 +31,6 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.hzero.boot.file.FileClient;
-import org.hzero.boot.message.MessageClient;
 import org.hzero.starter.keyencrypt.core.EncryptContext;
 import org.hzero.starter.keyencrypt.core.EncryptType;
 import org.modelmapper.ModelMapper;
@@ -144,7 +143,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     private FileClient fileClient;
 
     @Autowired
-    private MessageClient messageClient;
+    private MessageClientC7n messageClientC7n;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -712,7 +711,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         if(TestFileLoadHistoryEnums.Status.FAILURE.getTypeValue().equals(websocketVO.getStatus())){
             websocketVO.setCode(IMPORT_ERROR);
         }
-        messageClient.sendByUserId(userId,IMPORT_NOTIFY_CODE,toJson(websocketVO));
+        messageClientC7n.sendByUserId(userId,IMPORT_NOTIFY_CODE,toJson(websocketVO));
         logger.info("导入进度：{}", rate);
         if (rate == 100.) {
             logger.info("完成");
