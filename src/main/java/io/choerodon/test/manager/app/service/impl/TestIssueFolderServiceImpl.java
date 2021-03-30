@@ -11,6 +11,7 @@ import io.choerodon.asgard.saga.annotation.Saga;
 import io.choerodon.asgard.saga.annotation.SagaTask;
 import io.choerodon.asgard.saga.producer.StartSagaBuilder;
 import io.choerodon.asgard.saga.producer.TransactionalProducer;
+import io.choerodon.core.client.MessageClientC7n;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.test.manager.api.vo.TestCaseRepVO;
@@ -67,7 +68,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
     private TestIssueFolderMapper testIssueFolderMapper;
     private ModelMapper modelMapper;
     private TestCaseMapper testCaseMapper;
-    private MessageClient messageClient;
+    private MessageClientC7n messageClientC7n;
     private TransactionalProducer producer;
     private ObjectMapper objectMapper;
     private TestProjectInfoMapper testProjectInfoMapper;
@@ -75,13 +76,13 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
     public TestIssueFolderServiceImpl(TestCaseService testCaseService,
                                       TestIssueFolderMapper testIssueFolderMapper,
                                       ModelMapper modelMapper, TestCaseMapper testCaseMapper,
-                                      MessageClient messageClient, TransactionalProducer producer,
+                                      MessageClientC7n messageClientC7n, TransactionalProducer producer,
                                       ObjectMapper objectMapper, TestProjectInfoMapper testProjectInfoMapper) {
         this.testCaseService = testCaseService;
         this.testIssueFolderMapper = testIssueFolderMapper;
         this.modelMapper = modelMapper;
         this.testCaseMapper = testCaseMapper;
-        this.messageClient = messageClient;
+        this.messageClientC7n = messageClientC7n;
         this.producer = producer;
         this.objectMapper = objectMapper;
         this.testProjectInfoMapper = testProjectInfoMapper;
@@ -347,9 +348,9 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
         newFolder.setObjectVersionNumber(testIssueFolderMapper.selectByPrimaryKey(newFolder.getFolderId()).getObjectVersionNumber());
         testIssueFolderMapper.updateOptional(newFolder, TestIssueFolderDTO.FIELD_INIT_STATUS);
         if (StringUtils.equals(newFolder.getInitStatus(), TestPlanInitStatus.FAIL)){
-            messageClient.sendByUserId(userId, TestIssueFolderDTO.MESSAGE_COPY_TEST_FOLDER, BaseConstants.FIELD_FAILED);
+            messageClientC7n.sendByUserId(userId, TestIssueFolderDTO.MESSAGE_COPY_TEST_FOLDER, BaseConstants.FIELD_FAILED);
         }else {
-            messageClient.sendByUserId(userId, TestIssueFolderDTO.MESSAGE_COPY_TEST_FOLDER, BaseConstants.FIELD_SUCCESS);
+            messageClientC7n.sendByUserId(userId, TestIssueFolderDTO.MESSAGE_COPY_TEST_FOLDER, BaseConstants.FIELD_SUCCESS);
         }
     }
 
