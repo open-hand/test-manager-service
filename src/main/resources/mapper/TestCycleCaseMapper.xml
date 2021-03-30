@@ -651,8 +651,7 @@
       <foreach collection="list" item="item" separator=",">
           (#{item.cycleId},#{item.caseId},#{item.rank},#{item.description},#{item.projectId}
           ,#{item.versionNum},#{item.executionStatus}
-          ,#{item.createdBy},#{item.lastUpdatedBy},#{item.summary},#{item.source},#{item.priorityId},
-          ,#{item.customNum})
+          ,#{item.createdBy},#{item.lastUpdatedBy},#{item.summary},#{item.source},#{item.priorityId},#{item.customNum})
       </foreach>
     </insert>
     <update id="batchAssign">
@@ -680,6 +679,7 @@
             <result  column="summary" property="summary"/>
             <result  column="description" property="description"/>
             <result  column="priority_id" property="priorityId"/>
+            <result  column="custom_num" property="customNum"/>
         </association>
         <collection  property="caseStep" ofType="io.choerodon.test.manager.infra.dto.TestCaseStepDTO">
             <id column="step_id" property="stepId"/>
@@ -701,6 +701,7 @@
         tcc.description as description,
         tcc.priority_id as priority_id,
         tcc.case_id as case_id,
+        tcc.custom_num as custom_num,
         tccs.step_id as step_id,
         tccs.test_step as test_step,
         tccs.test_data as test_data,

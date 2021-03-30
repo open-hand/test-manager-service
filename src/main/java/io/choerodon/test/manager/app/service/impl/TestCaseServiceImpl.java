@@ -1,6 +1,5 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +19,6 @@ import static io.choerodon.test.manager.infra.constant.DataLogConstants.BATCH_UP
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.utils.PageableHelper;
-import io.choerodon.mybatis.domain.AuditDomain;
 import io.choerodon.mybatis.pagehelper.PageHelper;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.mybatis.pagehelper.domain.Sort;
@@ -352,16 +350,6 @@ public class TestCaseServiceImpl implements TestCaseService {
         if (Objects.isNull(sort)){
             pageRequest.setSort(new Sort(new Sort.Order(Sort.Direction.DESC, TestCaseDTO.FIELD_CASE_ID)));
             return;
-        }
-        Iterator<Sort.Order> iterator = sort.iterator();
-        Sort.Order t;
-        while (iterator.hasNext()){
-            t = iterator.next();
-            if (!StringUtils.equalsAny(t.getProperty(),
-                    TestCaseDTO.FIELD_CASE_ID, TestPriorityDTO.FIELD_SEQUENCE,
-                    AuditDomain.FIELD_CREATION_DATE, AuditDomain.FIELD_LAST_UPDATE_DATE)){
-                pageRequest.setSort(new Sort(new Sort.Order(t.getDirection(), TestCaseDTO.FIELD_CASE_ID)));
-            }
         }
     }
 
