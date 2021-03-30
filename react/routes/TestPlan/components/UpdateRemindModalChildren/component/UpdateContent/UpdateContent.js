@@ -13,7 +13,7 @@ const prefix = 'c7ntest-testPlan-updateRemind-updateContent';
 
 function UpdateContent(props) {
   const {
-    tag, updateData, dataSet, cycleName, 
+    tag, updateData, dataSet, cycleName,
   } = props;
   const fileList = tag === 'old' ? ((updateData && updateData.caseAttachment) || []) : ((updateData && updateData.attachment) || []);
   return (
@@ -27,6 +27,10 @@ function UpdateContent(props) {
         <div className={`${prefix}-item`}>
           <div className={`${prefix}-item-field`}>用例名称</div>
           <div className={`${prefix}-item-value`}>{updateData && updateData.summary}</div>
+        </div>
+        <div className={`${prefix}-item`}>
+          <div className={`${prefix}-item-field`}>自定义编号</div>
+          <div className={`${prefix}-item-value`}>{updateData && updateData.customNum}</div>
         </div>
         <div className={`${prefix}-item`}>
           <div className={`${prefix}-item-field`}>描述</div>
@@ -53,7 +57,7 @@ function UpdateContent(props) {
                         fileName={tag === 'new' ? item.fileName : item.attachmentName}
                       />
                     </div>
-                  </Tooltip> 
+                  </Tooltip>
                 ))
               )
             }
