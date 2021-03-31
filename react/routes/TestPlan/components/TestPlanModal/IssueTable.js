@@ -90,16 +90,19 @@ function IssueTable({
   // 让父组件访问dataSet
   saveDataSet(dataSet);
   return (
-    <Table
-      dataSet={dataSet}
-      style={{ height: 384, width: 700 }}
-    >
-      <Column name="summary" />
-      <Column name="caseNum" width={100} />
-      <Column name="customNum" width={100} />
-      <Column name="priorityVO" renderer={({ record }) => <PriorityTag priority={record.get('priorityVO')} />} />
-      <Column name="folderName" />
-    </Table>
+    <div style={{ height: 450, width: 700 }}>
+      <Table
+        dataSet={dataSet}
+        style={{ height: 384 }}
+      >
+        <Column name="summary" className="c7n-agile-table-cell" tooltip="overflow" />
+        <Column name="caseNum" className="c7n-agile-table-cell" width={100} />
+        <Column name="customNum" className="c7n-agile-table-cell" width={100} />
+        <Column name="priorityVO" width={70} renderer={({ record }) => <PriorityTag priority={record.get('priorityVO')} />} />
+        <Column name="folderName" className="c7n-agile-table-cell" />
+      </Table>
+    </div>
+
   );
 }
 
