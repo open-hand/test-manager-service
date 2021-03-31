@@ -1057,14 +1057,15 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         }
         Long userId = DetailsHelper.getUserDetails().getUserId();
         WebSocketMeaasgeVO messageVO = new WebSocketMeaasgeVO(userId, "deleting", 0.0);
-        messageClientC7n.sendByUserId(userId, WEBSOCKET_BATCH_DELETE_CYClE_CASE, JSON.toJSONString(messageVO));
+        String messageCode = WEBSOCKET_BATCH_DELETE_CYClE_CASE+"-"+projectId;
+        messageClientC7n.sendByUserId(userId, messageCode, JSON.toJSONString(messageVO));
         double incremental = Math.ceil(cycleCaseIds.size() <= 10 ? 1 : (cycleCaseIds.size()*1.0) / 10);
         try {
             for (int i=1; i<=cycleCaseIds.size(); i++) {
                 delete(cycleCaseIds.get(i-1), projectId);
                 if (i % incremental == 0) {
                     messageVO.setRate((i * 1.0) / cycleCaseIds.size());
-                    messageClientC7n.sendByUserId(userId, WEBSOCKET_BATCH_DELETE_CYClE_CASE, JSON.toJSONString(messageVO));
+                    messageClientC7n.sendByUserId(userId, messageCode, JSON.toJSONString(messageVO));
                 }
             }
             messageVO.setStatus("success");
@@ -1074,7 +1075,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             messageVO.setError(e.getMessage());
             throw new CommonException("batch delete cycle case failed, exception: {}", e);
         } finally {
-            messageClientC7n.sendByUserId(userId, WEBSOCKET_BATCH_DELETE_CYClE_CASE, JSON.toJSONString(messageVO));
+            messageClientC7n.sendByUserId(userId, messageCode, JSON.toJSONString(messageVO));
         }
     }
 }
