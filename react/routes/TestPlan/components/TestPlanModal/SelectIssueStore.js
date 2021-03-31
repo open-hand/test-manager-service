@@ -65,7 +65,7 @@ class IssueTreeStore {
     const { rootIds, treeFolder } = treeData;
     // 选中之前选中的
     const selectedId = this.currentCycle.id || rootIds[0];
-    // 保存根目录 用于后续递归选择时判断根节点  
+    // 保存根目录 用于后续递归选择时判断根节点
     rootIds.forEach((r) => {
       this.treeRootMap.set(r, true);
     });
@@ -92,6 +92,10 @@ class IssueTreeStore {
           caseCount,
           checked: false,
           isIndeterminate: false,
+          selected: [],
+          unSelected: [],
+          mainSelect: false,
+          mainUnSelect: false,
         });
         newTreeFolder.push(result);
       }
@@ -140,13 +144,13 @@ class IssueTreeStore {
     const item = this.treeMap.get(folderId);
     const { data: { parentId, children } } = item;
     // 如果
-    if (item.checked === checked && !item.isIndeterminate) {
+    if (item.checked === checked) {
       return;
     }
     this.setItemCheck(item, checked);
     // 处理子集
     this.autoHandleChildren(item, checked);
-    // 处理父级       
+    // 处理父级
     if (!this.treeRootMap.get(folderId)) {
       this.autoHandleParent(parentId, checked);
     }
@@ -173,10 +177,10 @@ class IssueTreeStore {
       this.setItemCheck(item, true);
     } else {
       // 如果有一个子选中，就选中
-      this.setItemCheck(item, children.some(childId => this.treeMap.get(childId).checked));
+      this.setItemCheck(item, children.some((childId) => this.treeMap.get(childId).checked));
     }
     // 如果有一个子没选中，就是中间态
-    const isIndeterminate = item.checked ? children.some(childId => !this.treeMap.get(childId).checked) : false;
+    const isIndeterminate = item.checked ? children.some((childId) => !this.treeMap.get(childId).checked) : false;
     item.isIndeterminate = isIndeterminate;
     if (!this.treeRootMap.get(id)) {
       this.autoHandleParent(parentId, checked);
@@ -185,8 +189,10 @@ class IssueTreeStore {
 
   @action setItemCheck(item, checked) {
     item.checked = checked;
-    item.selected = undefined;
-    item.unSelected = undefined;
+    item.selected = [];
+    item.unSelected = [];
+    item.mainSelect = false;
+    item.mainUnSelect = false;
   }
 
   // 选中单个case的处理
@@ -194,15 +200,18 @@ class IssueTreeStore {
   addFolderSelectedCase(folderId, caseId) {
     const item = this.treeMap.get(folderId);
     // 已未选中为主
-    if (item.unSelected) {
+    if (item.mainUnSelect) {
       // 从取消选中去掉，代表选中
       pull(item.unSelected, caseId);
     } else {
       // 以选中为主
-      if (!item.selected) {
+      if (!item.mainSelect) {
         set(item, { selected: [] });
+        item.mainSelect = true;
       }
-      item.selected.push(caseId);
+      if (!item.selected.includes(caseId)) {
+        item.selected.push(caseId);
+      }
     }
   }
 
@@ -211,7 +220,7 @@ class IssueTreeStore {
   removeFolderSelectedCase(folderId, caseId) {
     const item = this.treeMap.get(folderId);
     // 已选中为主
-    if (item.selected) {
+    if (item.mainSelect) {
       // 从选中去掉，代表未选中
       pull(item.selected, caseId);
       // 如果全移除了，就取消树的选中
@@ -222,8 +231,12 @@ class IssueTreeStore {
       // 以未选中为主
       if (!item.unSelected) {
         set(item, { unSelected: [] });
+        item.mainUnSelect = true;
       }
       item.unSelected.push(caseId);
+      if (item.caseCount === item.unSelected.length) {
+        this.handleCheckChange(false, folderId);
+      }
     }
   }
 
@@ -232,14 +245,16 @@ class IssueTreeStore {
     for (const [id, item] of this.treeMap) {
       // 只取树最后一层的目录
       if (item.checked && item.children.length === 0) {
-        const { unSelected, selected } = item;
+        const {
+          unSelected, selected, mainSelect, mainUnSelect,
+        } = item;
         // 有一个就是custom
-        const custom = unSelected || selected;
+        const custom = mainSelect || mainUnSelect;
         if (!custom) {
           result[id] = {
             custom: false,
           };
-        } else if (unSelected) {
+        } else if (mainUnSelect) {
           result[id] = {
             custom: true,
             unSelected,
@@ -258,10 +273,11 @@ class IssueTreeStore {
   // 获取当前选中的issue数量
   @computed get getSelectedIssueNum() {
     const selectedFolders = this.getSelectedFolders();
+    console.log(selectedFolders);
     return Object.keys(selectedFolders).reduce((total, key) => {
       const folderId = key;
       const item = this.treeMap.get(folderId);
-      if (item.selected) {
+      if (item.mainSelect) {
         total += item.selected.length;
       } else {
         total += item.caseCount || 0;
