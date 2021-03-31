@@ -143,10 +143,6 @@ class IssueTreeStore {
   @action handleCheckChange(checked, folderId) {
     const item = this.treeMap.get(folderId);
     const { data: { parentId, children } } = item;
-    // 如果
-    if (item.checked === checked) {
-      return;
-    }
     this.setItemCheck(item, checked);
     // 处理子集
     this.autoHandleChildren(item, checked);
