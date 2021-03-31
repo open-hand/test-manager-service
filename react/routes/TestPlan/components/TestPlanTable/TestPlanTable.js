@@ -22,6 +22,7 @@ import './TestPlanTable.less';
 import Store from '../../stores';
 import { getRankByDate } from '../../../../api/TestPlanApi';
 import PriorityTag from '../../../../components/PriorityTag';
+import { OpenBatchModal, closeBatchModal } from '../BatchAction';
 
 const { AppState } = stores;
 
@@ -42,7 +43,6 @@ const TestPlanTable = observer(({
   onQuickPass,
   onQuickFail,
   onOpenUpdateRemind,
-  onAssignToChange,
   onSearchAssign,
   hasCheckBox,
   isMine,
@@ -88,8 +88,10 @@ const TestPlanTable = observer(({
   }, [checkIdMap.size]);
 
   const handleCheckBoxChange = () => {
-    if (checkIdMap.size && tipVisible) {
-      setTipVisible(false);
+    if (checkIdMap.size) {
+      OpenBatchModal({ testPlanStore });
+    } else {
+      closeBatchModal({ testPlanStore });
     }
   };
 
@@ -406,29 +408,6 @@ const TestPlanTable = observer(({
               onChange={onSearchAssign}
               value={testPlanStore.filter.assignUser}
             />
-            <Popover
-              content="请先选择测试用例"
-              title=""
-              trigger="click"
-              visible={tipVisible}
-              getPopupContainer={(trigger) => trigger.parentNode}
-            >
-              <div
-                ref={divRef}
-                role="none"
-                style={{ width: 180, zIndex: 100, display: `${testPlanStatus === 'done' ? 'none' : 'unset'}` }}
-              >
-                <SelectFocusLoad
-                  key={testPlanStore.assignToUserId}
-                  allowClear
-                  style={{ display: 'flex' }}
-                  placeholder="批量指派"
-                  getPopupContainer={(trigger) => trigger.parentNode}
-                  type="user"
-                  onChange={onAssignToChange}
-                />
-              </div>
-            </Popover>
           </div>
         )
       }

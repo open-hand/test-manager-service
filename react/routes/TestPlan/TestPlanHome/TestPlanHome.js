@@ -269,16 +269,6 @@ function TestPlanHome({ history }) {
     });
   };
 
-  const handleAssignToChange = (value) => {
-    testPlanStore.setAssignToUserId(value);
-    if (value && checkIdMap.size) {
-      testPlanStore.executesAssignTo(value).then(() => {
-        checkIdMap.clear();
-        testPlanStore.setAssignToUserId(undefined);
-      });
-    }
-  };
-
   const handleSearchAssign = (value) => {
     const { filter } = testPlanStore;
     filter.assignUser = value || undefined;
@@ -420,7 +410,6 @@ function TestPlanHome({ history }) {
                               onQuickFail={handleQuickPassOrFail}
                               onOpenUpdateRemind={handleOpenUpdateRemind}
                               onTableSummaryClick={handleTableSummaryClick}
-                              onAssignToChange={handleAssignToChange}
                               onSearchAssign={handleSearchAssign}
                               hasCheckBox={mainActiveTab === 'testPlanTable'}
                               isMine={mainActiveTab === 'mineTestPlanTable'}

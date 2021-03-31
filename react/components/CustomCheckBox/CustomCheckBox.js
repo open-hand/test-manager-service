@@ -11,7 +11,7 @@ const propTypes = {
 };
 const CustomCheckBox = observer((props) => {
   const {
-    field, checkedMap, value, dataSource, onChangeCallBack, ...restProps 
+    field, checkedMap, value, dataSource, onChangeCallBack, ...restProps
   } = props;
   const handleChange = (newValue, oldValue) => {
     if (newValue) {
@@ -39,24 +39,25 @@ const CustomCheckBox = observer((props) => {
       } else {
         checkedMap.delete(oldValue);
       }
+      onChangeCallBack();
     }
-  }; 
-  
+  };
+
   const isAllChecked = () => {
     const allCheckedStatus = {
-      allChecked: dataSource && dataSource.length > 0 ? dataSource.every(record => checkedMap.has(record[field])) : false,
-      hasChecked: dataSource && dataSource.length > 0 ? dataSource.some(record => checkedMap.has(record[field])) && !dataSource.every(record => checkedMap.has(record[field])) : false,
+      allChecked: dataSource && dataSource.length > 0 ? dataSource.every((record) => checkedMap.has(record[field])) : false,
+      hasChecked: dataSource && dataSource.length > 0 ? dataSource.some((record) => checkedMap.has(record[field])) && !dataSource.every((record) => checkedMap.has(record[field])) : false,
     };
     return allCheckedStatus;
   };
-  
+
   return (
-    <CheckBox 
-      value={value} 
-      onChange={handleChange} 
-      checked={value !== 'all' ? checkedMap.has(value) : isAllChecked().allChecked} 
-      indeterminate={value === 'all' ? isAllChecked().hasChecked : false} 
-      {...restProps} 
+    <CheckBox
+      value={value}
+      onChange={handleChange}
+      checked={value !== 'all' ? checkedMap.has(value) : isAllChecked().allChecked}
+      indeterminate={value === 'all' ? isAllChecked().hasChecked : false}
+      {...restProps}
     />
   );
 });
