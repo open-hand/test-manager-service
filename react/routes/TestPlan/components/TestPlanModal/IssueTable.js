@@ -1,18 +1,35 @@
 import React, { useMemo, useContext } from 'react';
 import { DataSet, Table } from 'choerodon-ui/pro';
-import { toJS } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import { getProjectId } from '@/common/utils';
 import PriorityTag from '@/components/PriorityTag';
+import { usePersistFn } from 'ahooks';
 import Context from './context';
 import { autoSelect } from './utils';
-import './IssueTable.less';
 
 const { Column } = Table;
 
 function IssueTable({
   folderId, saveDataSet,
 }) {
+  const handleSelect = usePersistFn(({ record }) => {
+    const source = record.get('source');
+    // 如果是自动选中的，不做处理
+    if (source === 'auto') {
+      record.set('source', undefined);
+      return;
+    }
+    const caseId = record.get('caseId');
+    const caseFolderId = record.get('folderId');
+    // 选中树
+    SelectIssueStore.handleCheckChange(true, caseFolderId);
+    SelectIssueStore.addFolderSelectedCase(caseFolderId, caseId);
+  });
+  const handleUnSelect = usePersistFn(({ record }) => {
+    const caseId = record.get('caseId');
+    const caseFolderId = record.get('folderId');
+    SelectIssueStore.removeFolderSelectedCase(caseFolderId, caseId);
+  });
   const { SelectIssueStore } = useContext(Context);
   const { treeMap } = SelectIssueStore;
   const dataSet = useMemo(() => new DataSet({
@@ -43,31 +60,18 @@ function IssueTable({
       load: ({ dataSet: ds }) => {
         autoSelect(ds, treeMap);
       },
-      select: ({ record }) => {
-        const source = record.get('source');
-        // 如果是自动选中的，不做处理
-        if (source === 'auto') {
-          record.set('source', undefined);
-          return;
-        }
-        const caseId = record.get('caseId');
-        const caseFolderId = record.get('folderId');
-        // 选中树
-        SelectIssueStore.handleCheckChange(true, caseFolderId);
-        SelectIssueStore.addFolderSelectedCase(caseFolderId, caseId);
-      },
-      unSelect: ({ record }) => {
-        const caseId = record.get('caseId');
-        const caseFolderId = record.get('folderId');
-        SelectIssueStore.removeFolderSelectedCase(caseFolderId, caseId);
-      },
+      select: handleSelect,
+      unSelect: handleUnSelect,
       selectAll: () => {
         if (dataSet.length > 0) {
-          SelectIssueStore.handleCheckChange(true, folderId);
+          console.log('all');
+          // SelectIssueStore.handleCheckChange(true, folderId);
+          dataSet.forEach((record) => handleSelect({ record }));
         }
       },
       unSelectAll: () => {
-        SelectIssueStore.handleCheckChange(false, folderId);
+        // SelectIssueStore.handleCheckChange(false, folderId);
+        dataSet.forEach((record) => handleUnSelect({ record }));
       },
     },
     fields: [
@@ -85,14 +89,14 @@ function IssueTable({
   }), [SelectIssueStore, folderId, treeMap]);
   // 让父组件访问dataSet
   saveDataSet(dataSet);
-  const hasFilter = Object.keys(dataSet.queryDataSet.current?.toData() ?? {}).filter((key) => key !== '__dirty').length > 0;
-  const currentFolder = toJS(treeMap.get(folderId));
-  const isSelectAll = currentFolder.checked && !currentFolder.isIndeterminate;
   return (
-    <Table dataSet={dataSet} style={{ height: 384 }} className={hasFilter && !isSelectAll ? 'c7ntest-plan-table-hiddenSelectAll' : undefined}>
+    <Table
+      dataSet={dataSet}
+      style={{ height: 384, width: 700 }}
+    >
       <Column name="summary" />
-      <Column name="caseNum" />
-      <Column name="customNum" />
+      <Column name="caseNum" width={100} />
+      <Column name="customNum" width={100} />
       <Column name="priorityVO" renderer={({ record }) => <PriorityTag priority={record.get('priorityVO')} />} />
       <Column name="folderName" />
     </Table>

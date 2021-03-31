@@ -28,13 +28,15 @@ function SelectIssue() {
     // 如果选中，跑一遍自动选中
     if (checked && dataSet) {
       if (folderId === item.id) {
-        dataSet.selectAll();
+        // dataSet.selectAll();
+        autoSelect(dataSet, treeMap);
       } else {
         autoSelect(dataSet, treeMap);
       }
     } else if (!checked && dataSet) {
       if (folderId === item.id) {
-        dataSet.unSelectAll();
+        // dataSet.unSelectAll();
+        autoSelect(dataSet, treeMap);
       } else {
         autoSelect(dataSet, treeMap);
       }
