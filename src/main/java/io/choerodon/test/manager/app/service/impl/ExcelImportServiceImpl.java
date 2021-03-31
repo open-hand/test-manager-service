@@ -69,8 +69,8 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     public static final int EXCEL_WIDTH_PX = 256;
     protected static final String[] EXCEL_HEADERS = new String[]
             {
-                    ExcelTitleName.CASE_SUMMARY,
                     ExcelTitleName.CUSTOM_NUM,
+                    ExcelTitleName.CASE_SUMMARY,
                     ExcelTitleName.PRIORITY,
                     ExcelTitleName.CASE_DESCRIPTION,
                     ExcelTitleName.LINK_ISSUE,
@@ -548,7 +548,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         Row headerRow = rowIterator.next();
         int x = 0;
         while (!ExcelUtil.getStringValue(headerRow.getCell(0)).equals(ExcelTitleName.FOLDER)
-                && !ExcelUtil.getStringValue(headerRow.getCell(0)).equals(ExcelTitleName.CASE_SUMMARY)) {
+                && !ExcelUtil.getStringValue(headerRow.getCell(1)).equals(ExcelTitleName.CASE_SUMMARY)) {
             if (rowIterator.hasNext()) {
                 headerRow = rowIterator.next();
             }
@@ -565,7 +565,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         Row headerRow = rowIterator.next();
         int x = 0;
         while (!ExcelUtil.getStringValue(headerRow.getCell(0)).equals(ExcelTitleName.FOLDER)
-                && !ExcelUtil.getStringValue(headerRow.getCell(0)).equals(ExcelTitleName.CASE_SUMMARY)) {
+                && !ExcelUtil.getStringValue(headerRow.getCell(1)).equals(ExcelTitleName.CASE_SUMMARY)) {
             if (rowIterator.hasNext()) {
                 headerRow = rowIterator.next();
             }
@@ -639,10 +639,11 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         issueCreateDTO.setPriorityId(priorityMap.get(priority));
         issueCreateDTO.setCustomNum(customNum);
         // 校验custom重复
-        if(ObjectUtils.isEmpty(customNum)){
+        if (!ObjectUtils.isEmpty(customNum)) {
             List<TestCaseDTO> testCaseDTOS = testCaseService.queryByCustomNum(projectId, customNum);
-            if(!CollectionUtils.isEmpty(testCaseDTOS)){
+            if (!CollectionUtils.isEmpty(testCaseDTOS)) {
                 markAsError(row, "自定义编号有误,不能重复");
+                return null;
             }
         }
         if (!ExcelUtil.isBlank(excelTitleUtil.getCell(ExcelTitleName.LINK_ISSUE, row))) {

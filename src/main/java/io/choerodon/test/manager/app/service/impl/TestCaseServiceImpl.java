@@ -369,9 +369,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         checkCustomNum(projectId, testCaseRepVO.getCustomNum());
         TestCaseDTO testCaseDTO = baseQuery(testCaseRepVO.getCaseId());
         TestCaseDTO map = modelMapper.map(testCaseRepVO, TestCaseDTO.class);
-        map.setVersionNum(testCaseDTO.getVersionNum() + 1);
-        baseUpdate(map);
-
+        updateByOptional(map, fieldList);
         List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(testCaseDTO.getProjectId(), testCaseDTO.getCaseId());
         if (!CollectionUtils.isEmpty(testCycleCaseDTOS)) {
             List<TestCycleCaseDTO> collect = new ArrayList<>();
@@ -388,6 +386,12 @@ public class TestCaseServiceImpl implements TestCaseService {
         Map<Long, TestIssueFolderDTO> folderMap = testIssueFolderDTOS.stream().collect(Collectors.toMap(TestIssueFolderDTO::getFolderId, Function.identity()));
         TestCaseRepVO testCaseRepVO1 = testCaseAssembler.dtoToRepVo(testCaseDTO1, folderMap);
         return testCaseRepVO1;
+    }
+
+    private void updateByOptional(TestCaseDTO map, String[] fieldList) {
+        if (testCaseMapper.updateOptional(map, fieldList) != 1) {
+           throw new CommonException("error.test.case.update");
+        }
     }
 
 
