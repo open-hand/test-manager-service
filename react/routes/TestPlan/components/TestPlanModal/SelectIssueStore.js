@@ -273,7 +273,6 @@ class IssueTreeStore {
   // 获取当前选中的issue数量
   @computed get getSelectedIssueNum() {
     const selectedFolders = this.getSelectedFolders();
-    console.log(selectedFolders);
     return Object.keys(selectedFolders).reduce((total, key) => {
       const folderId = key;
       const item = this.treeMap.get(folderId);
