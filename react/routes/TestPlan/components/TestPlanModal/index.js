@@ -34,8 +34,20 @@ function TestPlanModal({
   modal, initValue, submit, onSubmit, mode = 'create',
 }) {
   const { caseSelected: initCaseSelected } = initValue;
+  const init = useMemo(() => {
+    const {
+      startDate, endDate,
+    } = initValue;
+    return {
+      ...initValue,
+      range: startDate && endDate ? [startDate, endDate] : undefined,
+    };
+  }, [initValue]);
   const selectIssueStore = useMemo(() => new SelectIssueStore(), []);
   const dataSet = useMemo(() => new DataSet(DataSetFactory({ initValue }, mode)), [initValue, mode]);
+  useEffect(() => {
+    dataSet.create(init);
+  }, [dataSet, init]);
   useEffect(() => {
     if (mode === 'create') {
       selectIssueStore.loadIssueTree(initCaseSelected);
@@ -102,7 +114,7 @@ function TestPlanModal({
               <span>导入用例方式</span>
               <Tip title="导入用例方式" />
             </div>
-            <Radio name="custom" value={false} defaultChecked>全部用例</Radio>
+            <Radio name="custom" value={false}>全部用例</Radio>
             <Radio name="custom" value>自选用例</Radio>
           </div>
         )}
@@ -141,7 +153,14 @@ export function openCreatePlan({
     style: {
       width: 1090,
     },
-    children: <ObserverTestPlanModal mode="create" submit={createPlan} onSubmit={onCreate} />,
+    children: <ObserverTestPlanModal
+      mode="create"
+      submit={createPlan}
+      onSubmit={onCreate}
+      initValue={{
+        custom: false,
+      }}
+    />,
   });
 }
 export async function openEditPlan({ planId, onEdit }) {

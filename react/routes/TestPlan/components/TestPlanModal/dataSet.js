@@ -3,16 +3,8 @@ import { toJS } from 'mobx';
 import { checkPlanName } from '@/api/TestPlanApi';
 
 export default function DataSetFactory({ initValue = {} }, mode) {
-  const {
-    startDate, endDate,
-  } = initValue;
-  if (startDate && endDate) {
-    // eslint-disable-next-line no-param-reassign
-    initValue.range = [startDate, endDate];
-  }
   return {
-    autoCreate: true,
-    data: [initValue],
+    autoCreate: false,
     fields: [
       {
         name: 'name',
