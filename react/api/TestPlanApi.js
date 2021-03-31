@@ -170,3 +170,9 @@ export function getRankByDate(planId) {
 export function checkPlanName(name) {
   return request.get(`/test/v1/projects/${getProjectId()}/plan/check_name`, { params: { name } });
 }
+
+export function batchRemove(executeIds) {
+  return request.delete(`/test/v1/projects/${getProjectId()}/cycle/case/async_batch_delete`, {
+    data: executeIds,
+  });
+}

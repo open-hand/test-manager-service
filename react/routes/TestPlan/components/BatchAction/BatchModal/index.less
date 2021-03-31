@@ -1,0 +1,34 @@
+.form {
+  padding-top: 7px;
+
+  :global(.c7n-pro-field-wrapper) {
+    margin-top: 0;
+    margin-bottom: 16px;
+  }
+}
+
+.dot {
+  display: inline-block;
+  height: 1em;
+  line-height: 1;
+  vertical-align: -.25em;
+  overflow: hidden;
+  text-align: left;
+}
+
+.dot::before {
+  display: block;
+  content: '...\A..\A.';
+  white-space: pre-wrap;
+  animation: dot 3s infinite step-start both;
+}
+
+@keyframes dot {
+  33% {
+    transform: translateY(-2em);
+  }
+
+  66% {
+    transform: translateY(-1em);
+  }
+}

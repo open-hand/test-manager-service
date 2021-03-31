@@ -84,13 +84,12 @@ export function loadDatalogs(caseId) {
 export function loadIssuesInLink(page = 0, size = 10, issueId, content) {
   if (issueId && content) {
     return request.get(`/test/v1/projects/${getProjectId()}/case/agile/summary?issueId=${issueId}&self=false&content=${content}&page=${page}&size=${size}`);
-  } else if (issueId && !content) {
+  } if (issueId && !content) {
     return request.get(`/test/v1/projects/${getProjectId()}/case/agile/summary?issueId=${issueId}&self=false&page=${page}&size=${size}`);
-  } else if (!issueId && content) {
+  } if (!issueId && content) {
     return request.get(`/test/v1/projects/${getProjectId()}/case/agile/summary?self=false&content=${content}&page=${page}&size=${size}`);
-  } else {
-    return request.get(`/test/v1/projects/${getProjectId()}/case/agile/summary?self=false&page=${page}&size=${size}`);
   }
+  return request.get(`/test/v1/projects/${getProjectId()}/case/agile/summary?self=false&page=${page}&size=${size}`);
 }
 /**
  *创建用例间的关联
@@ -238,7 +237,7 @@ export function copyIssues(issueLinks, folderId) {
  * @returns
  */
 export function copyFolders(data, versionId) {
-  const folderIds = data.map(item => item.folderId);
+  const folderIds = data.map((item) => item.folderId);
   return request.put(`/test/v1/projects/${getProjectId()}/issueFolder/copy?versionId=${versionId}`, folderIds);
 }
 
@@ -291,14 +290,14 @@ export function cancelImport(historyId) {
 }
 /**
  * 复制一个用例文件夹前置查询
- * @param {*} folderId 
+ * @param {*} folderId
  */
 export function preCopyFolder(folderId) {
   return request.get(`/test/v1/projects/${getProjectId()}/issueFolder/folder/${folderId}/clone/check_name`);
 }
 /**
  * 复制一个用例文件夹（包括里面用例）
- * @param {*} folderId 
+ * @param {*} folderId
  */
 export function copyFolder(folderId) {
   return request.post(`/test/v1/projects/${getProjectId()}/issueFolder/folder/${folderId}/clone`);
@@ -335,8 +334,8 @@ export function deleteStep(data) {
 }
 /**
  * 测试用例上传附件
- * @param {*} caseId 
- * @param {*} data 
+ * @param {*} caseId
+ * @param {*} data
  */
 export function uploadFile(caseId, data) {
   const axiosConfig = {

@@ -6,7 +6,7 @@ import moment from 'moment';
 import { getStatusList } from '@/api/TestStatusApi';
 import priorityApi from '@/api/priority';
 import {
-  getExecutesByFolder, getStatusByFolder, getPlanDetail, executesAssignTo,
+  getExecutesByFolder, getStatusByFolder, getPlanDetail, executesAssignTo, batchRemove,
 } from '@/api/TestPlanApi';
 import { localPageCacheStore } from '@choerodon/agile/lib/stores/common/LocalPageCacheStore';
 import TestPlanTreeStore from './TestPlanTreeStore';
@@ -416,10 +416,24 @@ class TestPlanStore extends TestPlanTreeStore {
     });
   }
 
-  executesAssignTo(assignToUserId) {
-    return executesAssignTo(Object.keys(toJS(this.checkIdMap)), assignToUserId).then((res) => {
-      this.loadExecutes();
-    });
+  executesAssignTo() {
+    if (this.checkIdMap.size && this.assignToUserId) {
+      return executesAssignTo(Object.keys(toJS(this.checkIdMap)), this.assignToUserId).then((res) => {
+        this.loadExecutes();
+      });
+    }
+    return new Promise();
+  }
+
+  @observable batchAction;
+
+  @action setBatchAction = (data) => {
+    this.batchAction = data;
+  }
+
+  batchRemove() {
+    return batchRemove(Object.keys(toJS(this.checkIdMap)));
   }
 }
 export default new TestPlanStore();
+export { TestPlanStore };
