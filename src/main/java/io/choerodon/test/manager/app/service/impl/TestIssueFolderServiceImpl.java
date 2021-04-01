@@ -347,10 +347,11 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
     public void changeFloderStatus(TestIssueFolderDTO newFolder, Long userId) {
         newFolder.setObjectVersionNumber(testIssueFolderMapper.selectByPrimaryKey(newFolder.getFolderId()).getObjectVersionNumber());
         testIssueFolderMapper.updateOptional(newFolder, TestIssueFolderDTO.FIELD_INIT_STATUS);
+        String websocketKey = TestIssueFolderDTO.MESSAGE_COPY_TEST_FOLDER + "-" + newFolder.getProjectId();
         if (StringUtils.equals(newFolder.getInitStatus(), TestPlanInitStatus.FAIL)){
-            messageClientC7n.sendByUserId(userId, TestIssueFolderDTO.MESSAGE_COPY_TEST_FOLDER, BaseConstants.FIELD_FAILED);
+            messageClientC7n.sendByUserId(userId, websocketKey, BaseConstants.FIELD_FAILED);
         }else {
-            messageClientC7n.sendByUserId(userId, TestIssueFolderDTO.MESSAGE_COPY_TEST_FOLDER, BaseConstants.FIELD_SUCCESS);
+            messageClientC7n.sendByUserId(userId, websocketKey, BaseConstants.FIELD_SUCCESS);
         }
     }
 

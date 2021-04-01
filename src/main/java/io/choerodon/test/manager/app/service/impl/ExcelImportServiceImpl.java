@@ -712,7 +712,8 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         if(TestFileLoadHistoryEnums.Status.FAILURE.getTypeValue().equals(websocketVO.getStatus())){
             websocketVO.setCode(IMPORT_ERROR);
         }
-        messageClientC7n.sendByUserId(userId,IMPORT_NOTIFY_CODE,toJson(websocketVO));
+        String websocketKey = IMPORT_NOTIFY_CODE + "-" + testFileLoadHistoryDTO.getProjectId();
+        messageClientC7n.sendByUserId(userId,websocketKey,toJson(websocketVO));
         logger.info("导入进度：{}", rate);
         if (rate == 100.) {
             logger.info("完成");
