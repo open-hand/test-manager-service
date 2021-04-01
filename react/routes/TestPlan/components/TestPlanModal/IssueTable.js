@@ -64,7 +64,6 @@ function IssueTable({
       unSelect: handleUnSelect,
       selectAll: () => {
         if (dataSet.length > 0) {
-          console.log('all');
           // SelectIssueStore.handleCheckChange(true, folderId);
           dataSet.forEach((record) => handleSelect({ record }));
         }
