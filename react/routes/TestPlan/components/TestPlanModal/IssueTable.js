@@ -89,10 +89,10 @@ function IssueTable({
   // 让父组件访问dataSet
   saveDataSet(dataSet);
   return (
-    <div style={{ height: 450, width: 700 }}>
+    <div style={{ height: 450, width: 701 }}>
       <Table
         dataSet={dataSet}
-        style={{ height: 384 }}
+        autoHeight
       >
         <Column name="summary" className="c7n-agile-table-cell" tooltip="overflow" />
         <Column name="caseNum" className="c7n-agile-table-cell" width={100} />

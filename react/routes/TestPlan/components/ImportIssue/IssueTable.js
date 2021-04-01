@@ -100,11 +100,14 @@ function IssueTable({
   // 让父组件访问dataSet
   saveDataSet(dataSet);
   return (
-    <Table dataSet={dataSet} style={{ height: 384 }}>
-      <Column name="summary" />
-      <Column name="caseNum" />
-      <Column name="folderName" />
-    </Table>
+    <div style={{ height: 450, width: 701 }}>
+      <Table dataSet={dataSet} autoHeight>
+        <Column name="summary" />
+        <Column name="caseNum" />
+        <Column name="folderName" />
+      </Table>
+    </div>
+
   );
 }
 
