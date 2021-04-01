@@ -122,6 +122,7 @@ const openBatchDeleteModal = (props: Props) => {
     className: styles.batchDeleteModal,
     children: <ObserverBatchDeleteModal {...props} />,
     footer: () => null,
+    border: false,
   });
 };
 export default openBatchDeleteModal;
