@@ -209,7 +209,7 @@ const TestPlanTable = observer(({
     return testPlanStore.mineFilter && testPlanStore.mineFilter.priorityId ? [testPlanStore.mineFilter.priorityId] : [];
   };
   const columns = [{
-    title: <span>用例名</span>,
+    title: '用例名',
     dataIndex: 'summary',
     key: 'summary',
     filters: [],
@@ -227,7 +227,7 @@ const TestPlanTable = observer(({
     filters: [],
     render: (customNum) => renderIssueNum(customNum),
   }, {
-    title: <span>被指派人</span>,
+    title: '被指派人',
     dataIndex: 'assignedUser',
     key: 'assignedUser',
     flex: 1.2,
@@ -245,7 +245,7 @@ const TestPlanTable = observer(({
     },
   },
   {
-    title: <span>执行人</span>,
+    title: '执行人',
     dataIndex: 'lastUpdateUser',
     key: 'lastUpdateUser',
     flex: 1.2,

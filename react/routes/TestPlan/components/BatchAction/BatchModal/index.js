@@ -6,6 +6,7 @@ import {
 } from 'choerodon-ui/pro';
 import { observer } from 'mobx-react-lite';
 import SelectFocusLoad from '@/components/SelectFocusLoad';
+import styles from './index.less';
 
 function BatchModal({
   onCancel, onAssign, testPlanStore,
@@ -28,18 +29,26 @@ function BatchModal({
     <>
       {
         testPlanStore.batchAction === 'assign' && (
-        <div style={{ padding: 15 }}>
+        <div style={{
+          padding: '15px 15px 20px',
+          height: 160,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+        }}
+        >
           <SelectFocusLoad
-            key={testPlanStore.assignToUserId}
             allowClear
-            style={{ display: 'flex', width: 300, margin: '15px 0 0' }}
+            loadWhenMount
+            style={{ display: 'flex', margin: '15px 0' }}
             placeholder="批量指派"
-            label="批量指派"
             getPopupContainer={(trigger) => trigger.parentNode}
             type="user"
             value={testPlanStore.assignToUserId}
             onChange={handleAssignToChange}
+            dropdownClassName={styles.assignSelectDropdown}
           />
+
           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
             <Button
               onClick={onCancel}
