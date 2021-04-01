@@ -10,6 +10,7 @@ import {
   Choerodon,
 } from '@choerodon/boot';
 import JsonBig from 'json-bigint';
+import DetailContainer, { useDetail } from '@choerodon/agile/lib/components/detail-container';
 
 import { observer } from 'mobx-react-lite';
 import { withRouter } from 'react-router-dom';
@@ -51,7 +52,7 @@ function TestPlanExecuteDetail(props) {
     ExecuteDetailStore, stepTableDataSet, executeHistoryDataSet, testStatusDataSet,
   } = context;
   const [syncLoading, setSyncLoading] = useState(false);
-
+  const [detailProps] = useDetail();
   useEffect(() => {
     const { executeId } = context;
     ExecuteDetailStore.setDetailParams(queryString.parse(context.location.search.replace(/%253D/g, '%3D'))); // 全局替换 id加密后 防止有% 被转义
@@ -305,7 +306,22 @@ function TestPlanExecuteDetail(props) {
     const textArr = [...text];
     return textArr.length > 15 ? <Tooltip title={text}>{`${textArr.slice(0, 15).join('') + ellipsis}`}</Tooltip> : text;
   };
-
+  function handleOpenIssue(issueId) {
+    const { open } = detailProps;
+    open({
+      path: 'issue',
+      props: {
+        issueId,
+        // store: detailStore,
+      },
+      events: {
+        update: () => {
+          stepTableDataSet.query(stepTableDataSet.currentPage);
+          // refresh();
+        },
+      },
+    });
+  }
   function render() {
     // disabled 用于禁止action列
     const { executeId } = context;
@@ -411,6 +427,7 @@ function TestPlanExecuteDetail(props) {
                     operateStatus={planStatus === 'doing'} // 数据是否可以进行状态更改/缺陷更改
                     ExecuteDetailStore={ExecuteDetailStore}
                     executeId={executeId}
+                    openIssue={handleOpenIssue}
                   />
                 </CardWrapper>
 
@@ -444,6 +461,7 @@ function TestPlanExecuteDetail(props) {
               }
             </div>
           </Spin>
+          <DetailContainer {...detailProps} />
         </Content>
 
       </Page>

@@ -1,3 +1,5 @@
+@import '~choerodon-ui/lib/style/themes/default';
+
 .c7n-test-execute-detail-step-table {
   td {
     white-space: initial !important;
@@ -22,10 +24,16 @@
       position: relative;
       float: left;
       max-width: 82%;
-      margin: 0 .08rem .03rem 0;
+      margin: 0 0 .03rem 0;
       overflow: hidden;
       border-radius: .1rem;
-      cursor: default;
+      white-space: nowrap;
+      cursor: pointer;
+
+      &:hover >div:first-child {
+        color: @primary-color;
+        text-decoration: underline;
+      }
 
       &-text {
         float: left;
@@ -58,13 +66,16 @@
 
     //   background-color: aquamarine;
     // display: flex;
-    > span:first-child {
+    >span:first-child {
       height: max-content;
     }
   }
 
   .c7n-pro-select-required {
     background-color: white;
+  }
+  .c7nagile-TextEditToggle-text-edit-button {
+    margin-left: 0;
   }
 
   &-status {

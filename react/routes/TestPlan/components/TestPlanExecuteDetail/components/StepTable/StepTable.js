@@ -22,15 +22,17 @@ const { Text, Edit } = TextEditToggle;
 const { Column } = Table;
 
 const DefectSelectText = memo(({
-  defects, record, visibleDel, onDelete, children: text, isShowContent = true, // 是否展示空白文本内容
+  defects, record, visibleDel, onDelete, onEdit, children: text, isShowContent = true, // 是否展示空白文本内容
 }) => {
   const DefectItem = ({ children, data, delBtnVisible = true }) => (
     <Tooltip title={children}>
       <li
         // key={defect.id}
+        role="none"
         className="c7n-test-execute-detail-step-table-defects-option"
+        onMouseDown={(e) => e.stopPropagation()}
       >
-        <div className={`c7n-test-execute-detail-step-table-defects-option-text${visibleDel ? '-has-btn' : ' '}`}>{children}</div>
+        <div role="none" className={`c7n-test-execute-detail-step-table-defects-option-text${visibleDel ? '-has-btn' : ' '}`} onClick={onEdit.bind(this, data.issueId)}>{children}</div>
         {delBtnVisible && (
           <span
             role="none"
@@ -67,7 +69,7 @@ const DefectSelectText = memo(({
 
 function StepTable(props) {
   const {
-    dataSet, ExecuteDetailStore, readOnly = false, operateStatus = false, testStatusDataSet, updateHistory, executeId,
+    dataSet, ExecuteDetailStore, readOnly = false, operateStatus = false, testStatusDataSet, updateHistory, executeId, openIssue,
   } = props;
   const [lock, setLock] = useState('right');
   const [editing, setEditing] = useState();
@@ -199,6 +201,9 @@ function StepTable(props) {
       <TextEditToggle
         disabled={disabled}
         noButton
+        editButtonMode={defects && defects.length > 0}
+        // noButton={false}
+        // simpleMode={false}
         onSubmit={() => {
           handleAddDefects(record);
         }}
@@ -209,12 +214,14 @@ function StepTable(props) {
             defects={defects}
             record={record}
             visibleDel={!disabled}
+            onEdit={openIssue}
             onDelete={handleDeleteDefect}
             isShowContent={!disabled}
           >
             添加缺陷
           </DefectSelectText>
         </Text>
+
         <Edit>
           <div
             onScroll={(e) => {
