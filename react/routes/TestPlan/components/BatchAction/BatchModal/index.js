@@ -42,7 +42,6 @@ function BatchModal({
             loadWhenMount
             style={{ display: 'flex', margin: '15px 0' }}
             placeholder="批量指派"
-            getPopupContainer={(trigger) => trigger.parentNode}
             type="user"
             value={testPlanStore.assignToUserId}
             onChange={handleAssignToChange}
