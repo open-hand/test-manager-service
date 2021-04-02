@@ -83,9 +83,9 @@ function Header({
                 maxLength={16}
                 autoFocus
                 clearButton
-                pattern={/^(?!-)(?!.*?-$)[a-zA-Z0-9|-]{1,}$/}
+                pattern={/^(([A-Za-z]+)|([0-9]+)|([A-Za-z]+-[0-9]+))$/}
                 validationRenderer={() => (
-                  <span>自定义编号应该由大小写字母、数字、-组成，且不能以-开头或结尾</span>
+                  <span>编码只能由大小写字母、数字、&quot;-&quot;组成，如有字母，须以字母开头，不能以&quot;-&quot;结尾</span>
                 )}
               />
             )}

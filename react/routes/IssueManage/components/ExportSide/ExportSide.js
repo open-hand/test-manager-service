@@ -13,7 +13,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import { exportRetry } from '@/api/IssueManageApi';
 import './ExportSide.less';
-import { humanizeDuration, renameDownload } from '@/common/utils';
+import { getProjectId, humanizeDuration, renameDownload } from '@/common/utils';
 import SelectTree from '../SelectTree';
 import ExportSideDataSet from './store';
 
@@ -161,7 +161,7 @@ function ExportSide(props) {
         </div>
         <h3 className="test-export-issue-table-title">导出记录</h3>
         <WSHandler
-          messageKey="test-issue-export"
+          messageKey={`test-issue-export-${getProjectId()}`}
           onMessage={handleMessage}
         >
           <Table dataSet={exportSideDataSet} className="test-export-issue-table">

@@ -2,7 +2,7 @@ import React, { Component, createRef } from 'react';
 import { WSHandler, Choerodon } from '@choerodon/boot';
 import { observer } from 'mobx-react';
 import { Menu } from 'choerodon-ui';
-import { handleRequestFailed } from '@/common/utils';
+import { getProjectId, handleRequestFailed } from '@/common/utils';
 import {
   preCopyFolder, copyFolder,
   addFolder, editFolder, deleteFolder, moveFolder,
@@ -194,7 +194,7 @@ class IssueTree extends Component {
       <div className="c7ntest-IssueTree">
         <Loading loading={loading} />
         <WSHandler
-          messageKey="COPY_TEST_FOLDER"
+          messageKey={`COPY_TEST_FOLDER-${getProjectId()}`}
           onMessage={this.handleMessage}
         >
           <Tree
