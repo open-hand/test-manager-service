@@ -3,7 +3,7 @@ import isEqual from 'react-fast-compare';
 import { Tooltip } from 'choerodon-ui';
 
 const User = ({
-  user,
+  user, ...otherProps
 }) => (user ? (
   <Tooltip title={`${user.loginName}(${user.realName})`}>
     <div
@@ -16,6 +16,7 @@ const User = ({
         lineHeight: '18px',
         verticalAlign: 'text-bottom',
       }}
+      {...otherProps}
     >
       {
         user.imageUrl ? (
@@ -56,6 +57,8 @@ const User = ({
           fontSize: '13px',
           verticalAlign: 'middle',
           color: 'rgba(0, 0, 0, 0.65)',
+          display: 'inline-block',
+          maxWidth: 'calc(100% - 23px)',
         }}
       >
         {user.realName}
@@ -63,6 +66,5 @@ const User = ({
     </div>
   </Tooltip>
 ) : null);
-
 
 export default memo(User, isEqual);

@@ -223,14 +223,14 @@ const TestPlanTable = observer(({
     title: '自定义编号',
     dataIndex: 'customNum',
     key: 'customNum',
-    flex: 1.2,
+    flex: 1.5,
     filters: [],
     render: (customNum) => renderIssueNum(customNum),
   }, {
     title: '被指派人',
     dataIndex: 'assignedUser',
     key: 'assignedUser',
-    flex: 1.2,
+    flex: 1.5,
     style: {
       overflow: 'hidden',
     },
@@ -239,7 +239,7 @@ const TestPlanTable = observer(({
         <div
           className="c7ntest-text-dot"
         >
-          <User user={assignedUser} />
+          <User user={assignedUser} className="c7ntest-mineTestPlanTable-assignedUser" />
         </div>
       );
     },
