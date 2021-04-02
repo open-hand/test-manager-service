@@ -237,4 +237,6 @@ public interface TestCaseService {
     Page<IssueListFieldKVVO> listUnLinkIssue(Long caseId, Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId);
 
     List<TestCaseDTO> queryByCustomNum(Long projectId, String customNum);
+
+    Boolean checkCustomNumExist(Long projectId, String customNum);
 }

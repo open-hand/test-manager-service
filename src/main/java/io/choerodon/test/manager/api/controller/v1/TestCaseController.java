@@ -306,4 +306,15 @@ public class TestCaseController {
                 .orElseThrow(() -> new CommonException("error.Issue.listUnLinkIssue"));
     }
 
+
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @ApiOperation("校验自定义编号是否重复")
+    @GetMapping("/check_custom_num")
+    public ResponseEntity<Boolean> checkCustomNum(@PathVariable("project_id") Long projectId,
+                                                  @RequestParam("customNum") String customNum) {
+        return Optional.ofNullable(testCaseService.checkCustomNumExist(projectId, customNum))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.custom.num.check"));
+    }
+
 }
