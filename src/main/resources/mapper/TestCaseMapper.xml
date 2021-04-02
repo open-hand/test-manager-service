@@ -335,7 +335,24 @@
 
     <select id="listCase" resultType="io.choerodon.test.manager.infra.dto.TestCaseDTO">
         SELECT
-            *
+            tci.case_id,
+            tci.summary,
+            tci.folder_id,
+            tci.project_id,
+            tci.case_num,
+            tci.priority_id,
+            tci.priority_name,
+            tci.priority_colour,
+            tci.sequence,
+            tci.created_by,
+            tci.last_updated_by,
+            tci.creation_date,
+            tci.last_update_date,
+            tci.object_version_number,
+            tci.custom_num,
+            CAST(SUBSTRING_INDEX(tci.custom_num, '-', 1 ) as UNSIGNED) as number_sort,
+            SUBSTRING_INDEX(tci.custom_num, '-', 1 ) as initials_sort,
+            CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(tci.custom_num, '-',-1 ), '-', 1 ) as UNSIGNED) as last_number_sort
         FROM
         (
             SELECT

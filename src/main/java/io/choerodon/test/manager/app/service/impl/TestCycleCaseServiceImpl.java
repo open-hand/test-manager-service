@@ -12,6 +12,7 @@ import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.oauth.CustomUserDetails;
 import io.choerodon.core.oauth.DetailsHelper;
+import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.api.vo.agile.ProjectCategoryDTO;
 import io.choerodon.test.manager.api.vo.agile.ProjectDTO;
@@ -423,6 +424,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         if (!ObjectUtils.isEmpty(cycleId)) {
             cycleIds.addAll(queryCycleIds(cycleId, planId));
         }
+        handlerSort(pageRequest);
         // 查询文件夹下的的用例
         Page<TestCycleCaseDTO> caseDTOPageInfo = PageHelper.doPageAndSort(pageRequest,() ->
                 testCycleCaseMapper.queryFolderCycleCase(planId, cycleIds, caseSearchVO));
@@ -477,6 +479,30 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
         Page<TestFolderCycleCaseVO> testFolderCycleCaseVOPageInfo = PageUtil.buildPageInfoWithPageInfoList(caseDTOPageInfo,testFolderCycleCaseVOS);
         return testFolderCycleCaseVOPageInfo;
+    }
+
+    private void handlerSort(PageRequest pageRequest) {
+        Sort sort = pageRequest.getSort();
+        if (ObjectUtils.isEmpty(sort)) {
+            pageRequest.setSort(new Sort(new Sort.Order(Sort.Direction.ASC, "rank")));
+            return;
+        }
+        List<Sort.Order> orders = new ArrayList<>();
+        Iterator<Sort.Order> iterator = sort.iterator();
+        while (iterator.hasNext()){
+            Sort.Order t = iterator.next();
+            if (Objects.equals(t.getProperty(), "customNum")) {
+                Sort.Order order1 = new Sort.Order(t.getDirection(), "numberSort");
+                orders.add(order1);
+                Sort.Order order2 = new Sort.Order(t.getDirection(), "initialsSort");
+                orders.add(order2);
+                Sort.Order order3 = new Sort.Order(t.getDirection(), "lastNumberSort");
+                orders.add(order3);
+            } else {
+                orders.add(t);
+            }
+        }
+        pageRequest.setSort(new Sort(orders));
     }
 
     @Override
