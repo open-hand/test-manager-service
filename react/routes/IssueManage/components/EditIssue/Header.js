@@ -3,6 +3,7 @@ import { Input, Icon } from 'choerodon-ui';
 import { TextField } from 'choerodon-ui/pro';
 import { observer } from 'mobx-react-lite';
 import { TextEditToggle, TextEditTogglePro } from '@/components';
+import { checkCustomNum } from '@/api/IssueManageApi';
 import EditIssueContext from './stores';
 import './Header.less';
 import TypeTag from '../../../../components/TypeTag';
@@ -73,7 +74,7 @@ function Header({
           <TextEditTogglePro
             disabled={disabled}
             formKey="customNum"
-            onSubmit={(value, done) => { onUpdate({ customNum: value }, () => {}); }}
+            onSubmit={(value, done) => { onUpdate({ customNum: value }, () => { }); }}
             initValue={customNum ? String(customNum) : undefined}
             editor={({ submit }) => (
               <TextField
@@ -83,10 +84,20 @@ function Header({
                 maxLength={16}
                 autoFocus
                 clearButton
+                validator={async (newVal) => {
+                  if (newVal === customNum) {
+                    return true;
+                  }
+                  const result = await checkCustomNum(newVal);
+                  return result ? '自定义编码重复' : true;
+                }}
                 pattern={/^(([A-Za-z]+)|([0-9]+)|([A-Za-z]+-[0-9]+))$/}
-                validationRenderer={() => (
-                  <span>编码只能由大小写字母、数字、&quot;-&quot;组成，如有字母，须以字母开头，不能以&quot;-&quot;结尾</span>
-                )}
+                validationRenderer={(result) => {
+                  if (result.ruleName === 'patternMismatch') {
+                    return <span>编码只能由大小写字母、数字、&quot;-&quot;组成，如有字母，须以字母开头，不能以&quot;-&quot;结尾</span>;
+                  }
+                  return result.validationMessage;
+                }}
               />
             )}
           >
