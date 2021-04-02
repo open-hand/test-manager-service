@@ -15,7 +15,7 @@ import _, { find } from 'lodash';
 import FileSaver from 'file-saver';
 import { FormattedMessage } from 'react-intl';
 import { importIssue } from '@/api/FileApi';
-import { humanizeDuration } from '@/common/utils';
+import { getProjectId, humanizeDuration } from '@/common/utils';
 import { getImportHistory, cancelImport, downloadTemplate } from '@/api/IssueManageApi';
 import IssueTreeStore from '../../stores/IssueTreeStore';
 
@@ -288,7 +288,7 @@ function ImportIssue(props) {
     if (status === 1) {
       return (
         <WSHandler
-          messageKey="test-issue-import"
+          messageKey={`test-issue-import-${getProjectId()}`}
           onMessage={handleMessage}
           ref={wsRef}
         >
