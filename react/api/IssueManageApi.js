@@ -351,10 +351,3 @@ export function uploadFile(caseId, data) {
 export function deleteFile(id) {
   return request.delete(`/test/v1/projects/${getProjectId()}/attachment/${id}`);
 }
-/**
- * 检查测试用例的自定义编号是否重复
- * @param {string} customNum 自定义编号名
- */
-export function checkCustomNum(customNum) {
-  return request.get(`/test/v1/projects/${getProjectId()}/case/check_custom_num?customNum=${customNum}`);
-}
