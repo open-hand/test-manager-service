@@ -280,13 +280,6 @@ public class TestCaseServiceImpl implements TestCaseService {
             if (!matches) {
                 throw new CommonException("error.custom.num.illegal");
             }
-//            TestCaseDTO testCaseDTO = new TestCaseDTO();
-//            testCaseDTO.setProjectId(projectId);
-//            testCaseDTO.setCustomNum(customNum);
-//            List<TestCaseDTO> testCaseDTOS = testCaseMapper.select(testCaseDTO);
-//            if (!CollectionUtils.isEmpty(testCaseDTOS)) {
-//                throw new CommonException("error.case.custom.num.exist");
-//            }
         }
     }
 
