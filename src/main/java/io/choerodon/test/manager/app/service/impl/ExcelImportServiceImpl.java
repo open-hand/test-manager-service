@@ -650,11 +650,11 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                 markAsError(row, "自定义编号不符合规定");
                 return null;
             }
-            List<TestCaseDTO> testCaseDTOS = testCaseService.queryByCustomNum(projectId, customNum);
-            if (!CollectionUtils.isEmpty(testCaseDTOS)) {
-                markAsError(row, "自定义编号有误,不能重复");
-                return null;
-            }
+//            List<TestCaseDTO> testCaseDTOS = testCaseService.queryByCustomNum(projectId, customNum);
+//            if (!CollectionUtils.isEmpty(testCaseDTOS)) {
+//                markAsError(row, "自定义编号有误,不能重复");
+//                return null;
+//            }
         }
         if (!ExcelUtil.isBlank(excelTitleUtil.getCell(ExcelTitleName.LINK_ISSUE, row))) {
             //处理关联问题

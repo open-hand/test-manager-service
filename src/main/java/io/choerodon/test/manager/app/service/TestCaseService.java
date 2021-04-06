@@ -238,5 +238,5 @@ public interface TestCaseService {
 
     List<TestCaseDTO> queryByCustomNum(Long projectId, String customNum);
 
-    Boolean checkCustomNumExist(Long projectId, String customNum);
+//    Boolean checkCustomNumExist(Long projectId, String customNum);
 }
