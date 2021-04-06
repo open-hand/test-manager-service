@@ -280,13 +280,6 @@ public class TestCaseServiceImpl implements TestCaseService {
             if (!matches) {
                 throw new CommonException("error.custom.num.illegal");
             }
-            TestCaseDTO testCaseDTO = new TestCaseDTO();
-            testCaseDTO.setProjectId(projectId);
-            testCaseDTO.setCustomNum(customNum);
-            List<TestCaseDTO> testCaseDTOS = testCaseMapper.select(testCaseDTO);
-            if (!CollectionUtils.isEmpty(testCaseDTOS)) {
-                throw new CommonException("error.case.custom.num.exist");
-            }
         }
     }
 
@@ -523,12 +516,6 @@ public class TestCaseServiceImpl implements TestCaseService {
         testCaseDTO.setProjectId(projectId);
         testCaseDTO.setCustomNum(customNum);
         return testCaseMapper.select(testCaseDTO);
-    }
-
-    @Override
-    public Boolean checkCustomNumExist(Long projectId, String customNum) {
-        List<TestCaseDTO> testCaseDTOS = queryByCustomNum(projectId, customNum);
-        return !CollectionUtils.isEmpty(testCaseDTOS);
     }
 
     @Override

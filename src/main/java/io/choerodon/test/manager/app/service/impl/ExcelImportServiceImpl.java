@@ -40,7 +40,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -648,11 +647,6 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             Boolean matches = Pattern.matches(reg,customNum);
             if (!matches) {
                 markAsError(row, "自定义编号不符合规定");
-                return null;
-            }
-            List<TestCaseDTO> testCaseDTOS = testCaseService.queryByCustomNum(projectId, customNum);
-            if (!CollectionUtils.isEmpty(testCaseDTOS)) {
-                markAsError(row, "自定义编号有误,不能重复");
                 return null;
             }
         }
