@@ -525,12 +525,6 @@ public class TestCaseServiceImpl implements TestCaseService {
         return testCaseMapper.select(testCaseDTO);
     }
 
-//    @Override
-//    public Boolean checkCustomNumExist(Long projectId, String customNum) {
-//        List<TestCaseDTO> testCaseDTOS = queryByCustomNum(projectId, customNum);
-//        return !CollectionUtils.isEmpty(testCaseDTOS);
-//    }
-
     @Override
     public List<IssueLinkDTO> getLinkIssueFromIssueToTest(Long projectId, List<Long> issueId) {
         return listIssueLinkByIssueId(projectId, issueId).stream()
