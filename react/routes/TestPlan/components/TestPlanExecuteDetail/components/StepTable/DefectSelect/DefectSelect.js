@@ -172,7 +172,7 @@ function DefectSelect(props) {
                   }
                 });
                 defaultDescription.splice(3, 0, ...newDescription, String(newDescription[newDescription.length - 1].insert).lastIndexOf('\n') === 0 ? { insert: '' } : { insert: '\n' });
-                ExecuteDetailStore.setDefaultDefectDescription(defaultDescription);
+                ExecuteDetailStore.setDefaultDefectDescription(JSON.stringify(defaultDescription));
               });
 
               ExecuteDetailStore.setCreateBugShow(true);
