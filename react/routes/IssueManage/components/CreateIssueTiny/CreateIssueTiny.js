@@ -107,17 +107,17 @@ export default observer(() => {
       </div>
     </div>
   ) : (
-      <Button
-        type="primary"
-        funcType="flat"
-        color="blue"
-        onClick={() => {
-          setCreating(true);
-        }}
-      >
-        <Icon type="playlist_add icon" style={{ marginRight: 2 }} />
-        <span><FormattedMessage id="issue_issueCreate" /></span>
-      </Button>
-    );
+    <Button
+      type="primary"
+      funcType="flat"
+      color="blue"
+      onClick={() => {
+        setCreating(true);
+      }}
+    >
+      <Icon type="playlist_add icon" style={{ marginRight: 2, marginTop: -1 }} />
+      <span><FormattedMessage id="issue_issueCreate" /></span>
+    </Button>
+  );
 }
 )

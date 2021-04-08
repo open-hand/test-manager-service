@@ -374,7 +374,16 @@ function ImportIssue(props) {
               <FormattedMessage id="issue_import" />
             </Button>
           )}
-        <Button funcType="raised" onClick={handleCloseModal}>关闭</Button>
+        <Button
+          funcType="raised"
+          style={{
+            color: '#3f51b5',
+          }}
+          onClick={handleCloseModal}
+        >
+          关闭
+
+        </Button>
       </div>
     </div>
   );
