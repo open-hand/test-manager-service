@@ -665,7 +665,9 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             baseUpdate(testCycleCase);
         } else {
             if (caseCompareRepVO.getChangeCase()) {
-                TestCaseRepVO testCaseRepVO = new TestCaseRepVO();
+                TestCaseRepVO testCaseRepVO = modelMapper.map(testCaseDTO, TestCaseRepVO.class);
+                testCaseRepVO.setLastUpdateDate(null);
+                testCaseRepVO.setCreationDate(null);
                 testCaseRepVO.setCaseId(testCycleCaseDTO.getCaseId());
                 testCaseRepVO.setSummary(testCycleCaseDTO.getSummary());
                 testCaseRepVO.setDescription(testCycleCaseDTO.getDescription());
