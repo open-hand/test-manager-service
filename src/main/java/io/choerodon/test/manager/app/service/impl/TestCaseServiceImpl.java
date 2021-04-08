@@ -387,7 +387,10 @@ public class TestCaseServiceImpl implements TestCaseService {
         checkCustomNum(projectId, testCaseRepVO.getCustomNum());
         TestCaseDTO testCaseDTO = baseQuery(testCaseRepVO.getCaseId());
         TestCaseDTO map = modelMapper.map(testCaseRepVO, TestCaseDTO.class);
-        updateByOptional(map, fieldList);
+        map.setVersionNum(testCaseDTO.getVersionNum() + 1);
+        List<String> list = new ArrayList<>(Arrays.asList(fieldList));
+        list.add("versionNum");
+        updateByOptional(map, list.toArray(new String[list.size()]));
         List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(testCaseDTO.getProjectId(), testCaseDTO.getCaseId());
         if (!CollectionUtils.isEmpty(testCycleCaseDTOS)) {
             List<TestCycleCaseDTO> collect = new ArrayList<>();
