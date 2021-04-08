@@ -19,6 +19,11 @@ public class TestCaseDTO extends AuditDomain {
     public static final String FIELD_FOLDER_ID = "folderId";
     public static final String FIELD_CASE_ID = "caseId";
 
+    public static final String FIELD_SUMMARY = "summary";
+    public static final String FIELD_DESCRIPTION = "description";
+    public static final String FIELD_PRIORITY_ID = "priorityId";
+    public static final String FIELD_CUSTOM_NUM = "customNum";
+
     @Id
     @GeneratedValue
     private Long caseId;
