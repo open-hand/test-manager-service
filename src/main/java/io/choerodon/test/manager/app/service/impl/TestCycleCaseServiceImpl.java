@@ -39,6 +39,8 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
+import static io.choerodon.test.manager.infra.dto.TestCaseDTO.FIELD_SUMMARY;
+
 /**
  * Created by 842767365@qq.com on 6/11/18.
  */
@@ -665,9 +667,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             baseUpdate(testCycleCase);
         } else {
             if (caseCompareRepVO.getChangeCase()) {
-                TestCaseRepVO testCaseRepVO = modelMapper.map(testCaseDTO, TestCaseRepVO.class);
-                testCaseRepVO.setLastUpdateDate(null);
-                testCaseRepVO.setCreationDate(null);
+                TestCaseRepVO testCaseRepVO = new TestCaseRepVO();
                 testCaseRepVO.setCaseId(testCycleCaseDTO.getCaseId());
                 testCaseRepVO.setSummary(testCycleCaseDTO.getSummary());
                 testCaseRepVO.setDescription(testCycleCaseDTO.getDescription());
@@ -675,8 +675,12 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                 testCaseRepVO.setExecuteId(testCycleCaseDTO.getExecuteId());
                 testCaseRepVO.setPriorityId(testCycleCaseDTO.getPriorityId());
                 testCaseRepVO.setCustomNum(testCycleCaseDTO.getCustomNum());
-                List<String> fieldList = verifyUpdateUtil.verifyUpdateData((JSONObject) JSON.toJSON(testCaseRepVO), testCaseRepVO);
-                testCaseService.updateCase(testCaseDTO.getProjectId(), testCaseRepVO, fieldList.toArray(new String[fieldList.size()]));
+                testCaseService.updateCase(testCaseDTO.getProjectId(), testCaseRepVO,
+                        Stream.of(
+                                TestCaseDTO.FIELD_SUMMARY,
+                                TestCaseDTO.FIELD_DESCRIPTION,
+                                TestCaseDTO.FIELD_PRIORITY_ID,
+                                TestCaseDTO.FIELD_CUSTOM_NUM).toArray(String[]::new));
                 testCycleCaseDTO.setVersionNum(testCaseDTO.getVersionNum() + 1);
                 baseUpdate(testCycleCaseDTO);
             }
