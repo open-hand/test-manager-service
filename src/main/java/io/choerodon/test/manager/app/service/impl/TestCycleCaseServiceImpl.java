@@ -5,7 +5,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import io.choerodon.core.client.MessageClientC7n;
 import io.choerodon.mybatis.pagehelper.PageHelper;
 import io.choerodon.core.domain.Page;
@@ -673,8 +672,12 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                 testCaseRepVO.setExecuteId(testCycleCaseDTO.getExecuteId());
                 testCaseRepVO.setPriorityId(testCycleCaseDTO.getPriorityId());
                 testCaseRepVO.setCustomNum(testCycleCaseDTO.getCustomNum());
-                List<String> fieldList = verifyUpdateUtil.verifyUpdateData((JSONObject) JSON.toJSON(testCaseRepVO), testCaseRepVO);
-                testCaseService.updateCase(testCaseDTO.getProjectId(), testCaseRepVO, fieldList.toArray(new String[fieldList.size()]));
+                testCaseService.updateCase(testCaseDTO.getProjectId(), testCaseRepVO,
+                        Stream.of(
+                                TestCaseDTO.FIELD_SUMMARY,
+                                TestCaseDTO.FIELD_DESCRIPTION,
+                                TestCaseDTO.FIELD_PRIORITY_ID,
+                                TestCaseDTO.FIELD_CUSTOM_NUM).toArray(String[]::new));
                 testCycleCaseDTO.setVersionNum(testCaseDTO.getVersionNum() + 1);
                 baseUpdate(testCycleCaseDTO);
             }
