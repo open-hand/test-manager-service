@@ -2,6 +2,30 @@
 
 All notable changes to choerodon-front-agile will be documented in this file.
 
+## [0.25.0] - 2021-04-09
+
+### Added
+
+- Test cases add custom number and support for import and sorting.
+- Support for batch removal of test cases from test plans.
+- Workbench - Add a use case that I execute.
+- Test plan name adds item uniqueness check.
+- Test case import adds problem correlation fields.
+
+### Changed
+
+- Test plan execution - add defect support to search by number.
+- After creating the test plan, adjust the plan structure, support bulk drag folders.
+- Test case execution brings out all the test steps when adding a new defect.
+- Partial views style optimization.
+- Partial report optimization.
+
+### Fixed
+
+- Test plan - create defect select parent task not active.
+- Use-case library updates use case names and adds preconditions, no "not updated label" appears in test plan.
+
+
 ## [0.24.0] - 2020-12-24
 
 ### Added
@@ -20,7 +44,7 @@ All notable changes to choerodon-front-agile will be documented in this file.
 - Fix test execution new defects cannot be associated with the issues.
 - Fix test plan execution - the associated defects in the step need to click the delete button several times before they can be deleted.
 - Fix test plan execution - the drop-down box associated with the defect in the step has only the first page, and canceling the selected defect is invalid.
-
+- When executing the test plan, quickly click the "Test Pass" and "Test Fail" buttons under a slow network speed, and the page will be stuck.
 
 
 ## [0.21.0] - 2020-03-06
