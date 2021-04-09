@@ -21,6 +21,7 @@ function IssueTable({
       record.set('source', undefined);
       return;
     }
+    record.setState('current_isSelected', true);
     const caseId = record.get('caseId');
     const caseFolderId = record.get('folderId');
     // 选中树
@@ -30,6 +31,7 @@ function IssueTable({
   const handleUnSelect = usePersistFn(({ record }) => {
     const caseId = record.get('caseId');
     const caseFolderId = record.get('folderId');
+    record.setState('current_isSelected', false);
     SelectIssueStore.removeFolderSelectedCase(caseFolderId, caseId);
   });
   const { SelectIssueStore, planId } = useContext(Context);
@@ -80,7 +82,7 @@ function IssueTable({
         // } else if (dataSet.length > 0) {
         //   SelectIssueStore.handleCheckChange(true, folderId);
         // }
-        dataSet.forEach((record) => handleSelect({ record }));
+        dataSet.forEach((record) => { !record.getState('current_isSelected') && handleSelect({ record }); });
       },
       unSelectAll: () => {
         // SelectIssueStore.handleCheckChange(false, folderId);

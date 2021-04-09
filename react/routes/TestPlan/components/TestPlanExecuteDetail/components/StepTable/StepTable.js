@@ -278,7 +278,7 @@ function StepTable(props) {
       <Column name="stepStatus" align="left" width={85} className="c7n-test-execute-detail-step-table-status" renderer={renderStatus} editor={!editing && operateStatus && <Select optionRenderer={renderStatus} />} />
       <Column name="stepAttachment" renderer={renderAttachment} align="left" width={200} />
       <Column name="description" editor={!editing && !readOnly} align="left" tooltip="overflow" renderer={renderText} />
-      {hasAgile && <Column name="defects" renderer={renderDefects} width={230} />}
+      {hasAgile && <Column name="defects" renderer={renderDefects} width={260} />}
       <Column name="action" width={100} lock={lock} renderer={renderAction} hidden={getActionHidden()} />
     </Table>
   );
