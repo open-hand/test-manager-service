@@ -7,11 +7,10 @@ import io.choerodon.test.manager.app.service.DevopsService;
 import io.choerodon.test.manager.infra.dto.TestAppInstanceDTO;
 import io.choerodon.test.manager.infra.feign.ApplicationFeignClient;
 import io.choerodon.test.manager.infra.mapper.TestAppInstanceMapper;
-import io.choerodon.test.manager.infra.util.LogUtils;
 import io.choerodon.test.manager.infra.util.TypeUtil;
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
@@ -32,8 +31,7 @@ import java.util.stream.Collectors;
 @Service
 public class DevopsServiceImpl implements DevopsService {
 
-
-    private Log log = LogFactory.getLog(this.getClass());
+    private static final Logger logger = LoggerFactory.getLogger(DevopsServiceImpl.class);
 
     @Value("${autotesting.lock.leaseTimeSeconds:10}")
     int leaseTime;
@@ -88,10 +86,8 @@ public class DevopsServiceImpl implements DevopsService {
         boolean res = false;
         try {
             res = lock.tryLock(leaseTime, TimeUnit.SECONDS);
-            LogUtils.debugLog(log, Thread.currentThread().getName() + " get redis lock." + res);
-
         } catch (InterruptedException e) {
-            LogUtils.errorLog(log, e);
+            logger.error("try lock error: {}", e);
             Thread.currentThread().interrupt();
         }
         if (res) {
@@ -105,13 +101,12 @@ public class DevopsServiceImpl implements DevopsService {
                     Map releaseList = list.stream().collect(Collectors.groupingBy(TestAppInstanceDTO::getEnvId,
                             Collectors.mapping(v -> "att-" + v.getAppId() + "-" + v.getAppVersionId() + "-" + v.getId(), Collectors.toList())));
                     getTestStatus(releaseList);
-                    LogUtils.debugLog(log, " send to devops server for get instance status:" + JSONObject.toJSONString(releaseList));
+                    logger.debug("send to devops server for get instance status: {}", JSONObject.toJSONString(releaseList));
                 }
             } catch (Exception e) {
-                LogUtils.warnLog(log, "Thread.currentThread().getName() warn :", e);
+                logger.error("get instance status error: {}", e);
             }
             lock.unlock();
-            LogUtils.debugLog(log, Thread.currentThread().getName() + " release redis lock." + res);
         }
     }
 
