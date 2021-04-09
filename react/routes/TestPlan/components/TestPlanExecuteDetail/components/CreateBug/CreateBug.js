@@ -16,7 +16,7 @@ const CreateBug = ({
   useEffect(() => {
     const defaultValueStr = sessionStorage.getItem('test.plan.execute.detail.create.bug.default.value');
     const defaultValueObj = JsonBig.parse(defaultValueStr) || {};
-    if (getProjectId().toString() !== String(defaultValueObj.projectId)) {
+    if (getProjectId().toString() !== String(defaultValueObj.projectId) || !defaultValueObj.assigneeId) {
       sessionStorage.removeItem('test.plan.execute.detail.create.bug.default.value');
       setChosenAssignee(true);
     } else {
