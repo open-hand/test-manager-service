@@ -11,6 +11,7 @@ All notable changes to choerodon-front-agile will be documented in this file.
 - Workbench - Add a use case that I execute.
 - Test plan name adds item uniqueness check.
 - Test case import adds problem correlation fields.
+- Test reports can be exported to PDF.
 
 ### Changed
 
