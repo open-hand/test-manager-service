@@ -5,7 +5,6 @@ import { observer } from 'mobx-react-lite';
 import { Draggable } from 'react-beautiful-dnd';
 import IssueStore from '../../stores/IssueStore';
 
-
 function getStyle(style, snapshot) {
   if (!snapshot.isDropAnimating) {
     return style;
@@ -54,13 +53,12 @@ export default observer((props) => {
               >
                 {draggingTableItems.length}
               </div>
-            )
-          }
+            )}
           {snapshotinner.isDragging
             && (
               <div className="IssueTable-drag-prompt">
                 <div>
-                  复制或移动测试用例
+                  复制或移动测试用例至文件夹
                 </div>
                 <div> 按下ctrl/command复制</div>
                 <div
@@ -72,12 +70,10 @@ export default observer((props) => {
                   </div>
                 </div>
               </div>
-            )
-          }
+            )}
           {props.children}
         </tr>
-      )
-        }
+      )}
     </Draggable>
   );
 });

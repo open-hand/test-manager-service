@@ -77,7 +77,7 @@ const BatchDeleteModal: React.FC<Props> = (props) => {
         onMessage={handleMessage}
       >
         { loading && (
-          <div style={{ color: 'rgba(254,71,87,1)', textAlign: 'center' }}>
+          <div style={{ color: 'rgba(254,71,87,1)', textAlign: 'center', marginTop: 16 }}>
             {loading === 'success' ? '移除成功' : ['正在移除，请稍等片刻', <span className={styles.dot}>…</span>]}
             <Progress status={'success' as ProgressStatus} value={Math.round(progress * 100)} />
           </div>
