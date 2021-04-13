@@ -1,18 +1,14 @@
 import React, { useContext, useState } from 'react';
 import { observer } from 'mobx-react-lite';
-import { Choerodon } from '@choerodon/boot';
-import WYSIWYGViewer from '@choerodon/agile/lib/components/WYSIWYGViewer';
 import { Tooltip, Button } from 'choerodon-ui/pro';
 import {
   cloneStep, updateStep, deleteStep, createIssueStep,
 } from '@/api/IssueManageApi';
 import { handleRequestFailed } from '@/common/utils';
 import TestStepTable from '@/components/TestStepTable';
-import { uploadFile } from '@/api/IssueManageApi';
-import { delta2Html, text2Delta } from '@/common/utils';
-import { openFullEditor, WYSIWYGEditor } from '@/components';
+import CKEditor from '@/components/CKEditor';
+import CKEditorViewer from '@/components/CKEditorViewer';
 import EditIssueContext from '../stores';
-import IssueDescription from './IssueDescription';
 import './EditTestStepTable.less';
 
 function TestStepWrap({ title, children }) {
@@ -30,14 +26,20 @@ function EditTestStepTable({ onUpdateDetail }) {
   const {
     store, disabled, caseId, prefixCls,
   } = useContext(EditIssueContext);
-  const [editDescriptionShow, setEditDescriptionShow] = useState(false);
   const { issueSteps, issueInfo: { description } } = store;
+  const [editDescriptionShow, setEditDescriptionShow] = useState(false);
+  // const [editDes, setEditDes] = useState('');
+  // useEffect(() => {
+  //   setEditDes(description);
+  //   setEditDescriptionShow(false);
+  // }, [description]);
+
   const onUpdateStep = (newData) => store.loadWithLoading(
     updateStep(newData), store.loadIssueData,
   );
   const onCreateIssueStep = (newData) => {
     // eslint-disable-next-line no-param-reassign
-    delete newData.stepId;// 清除本地排序所用stepId 
+    delete newData.stepId;// 清除本地排序所用stepId
     return store.loadWithLoading(
       createIssueStep({
         issueId: caseId,
@@ -62,24 +64,28 @@ function EditTestStepTable({ onUpdateDetail }) {
     store.loadIssueData();
   };
   function renderDescription() {
-    let delta;
     if (editDescriptionShow === undefined) {
       return null;
     }
     if (!description || editDescriptionShow) {
-      delta = text2Delta(description);
       return (
         editDescriptionShow && (
           <div className="line-start mt-10">
-            <WYSIWYGEditor
+            <CKEditor
               autoFocus
-              bottomBar
-              defaultValue={delta}
-              style={{ height: 200, width: '100%' }}
-              handleDelete={() => {
-                setEditDescriptionShow(false);
+              footer
+              value={description}
+              style={{
+                height: 'auto', width: '100%', minHeight: 280,
               }}
-              handleSave={(value) => {
+              // onChange={(value) => {
+              //   setEditDes(value);
+              // }}
+              onCancel={() => {
+                setEditDescriptionShow(false);
+                // setEditDes(description);
+              }}
+              onOk={(value) => {
                 onUpdateDetail({ description: value });
                 setEditDescriptionShow(false);
               }}
@@ -87,30 +93,20 @@ function EditTestStepTable({ onUpdateDetail }) {
           </div>
         )
       );
-    } else {
-      delta = delta2Html(description);
-      return (
-        <div>
-          <IssueDescription style={{ paddingRight: 20 }} data={delta} />
-        </div>
-      );
     }
+    return (
+      <div>
+        <CKEditorViewer value={description} />
+      </div>
+    );
   }
-  function handleOpenFullEditor() {
-    openFullEditor({
-      initValue: description,
-      onOk: async (value) => { await onUpdateDetail({ description: value }); },
-    });
-  }
+
   return (
     <section id="testStep">
       <TestStepWrap title={(
         <>
           <span className="c7ntest-edit-test-step-item-title-text">前置条件</span>
           <div className="c7ntest-edit-test-step-item-title-btn">
-            <Tooltip title="全屏编辑" getPopupContainer={(triggerNode) => triggerNode.parentNode}>
-              <Button color="primary" icon="zoom_out_map" onClick={handleOpenFullEditor} />
-            </Tooltip>
             <Tooltip title="编辑" getPopupContainer={(triggerNode) => triggerNode.parentNode.parentNode}>
               <Button
                 color="primary"

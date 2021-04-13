@@ -10,9 +10,9 @@ import {
 } from 'choerodon-ui';
 import { stores } from '@choerodon/boot';
 
-import { delta2Html, issueLink } from '../../../../../../common/utils';
+import { issueLink } from '../../../../../../common/utils';
 import {
-  StatusTags, DateTimeAgo, User, RichTextShow,
+  StatusTags, DateTimeAgo, User, CKEditorViewer,
   ResizeAble,
 } from '../../../../../../components';
 import './ExecuteDetailSide.less';
@@ -287,7 +287,7 @@ function ExecuteDetailSide(props) {
                   title="前置条件"
                   style={{ padding: '0 15px 0 0' }}
                 >
-                  <RichTextShow data={delta2Html(description)} />
+                  <CKEditorViewer value={description} />
 
                 </Section>
                 {/* 附件 */}

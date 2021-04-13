@@ -2,8 +2,8 @@ import React, {
   useCallback, useReducer,
 } from 'react';
 import { Icon } from 'choerodon-ui';
-import { text2Delta, delta2Html } from '../../../../../../common/utils';
-import { RichTextShow } from '../../../../../../components';
+import { delta2Html } from '@/common/utils';
+import { CKEditorViewer } from '../../../../../../components';
 
 function AutoHeightPrecondition({ data }) {
   const [preconditionState, setPreconditionState] = useReducer((state, action) => {
@@ -61,21 +61,15 @@ function AutoHeightPrecondition({ data }) {
     return isHasHeadLine;
   }
   function renderRichText(text, isEllipsis = false) {
-    const textArr = [{ insert: '前置条件：' }];
-    if (text && text !== '') {
-      const tempText = text2Delta(text);
-      if (Array.isArray(tempText)) {
-        if (checkImgInHeadLine(tempText)) {
-          textArr[0].insert = '前置条件：\n';
-        }
-        textArr.push(...tempText);
-      } else {
-        textArr.push({ insert: tempText });
-      }
+    let html = delta2Html(text);
+    if (html && html.startsWith('<p>')) {
+      html = `<p>前置条件：${html.slice(3)}`;
+    } else {
+      html = `<p>前置条件：</p>${html}`;
     }
     return (
       <div className={`c7n-test-execute-detail-card-title-description-head-content${isEllipsis ? '-ellipsis' : ''}`}>
-        <RichTextShow data={delta2Html(JSON.stringify(textArr))} />
+        <CKEditorViewer value={html} />
       </div>
     );
   }

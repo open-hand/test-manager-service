@@ -1,4 +1,4 @@
-import { getProjectId, beforeTextUpload, getOrganizationId } from '@/common/utils';
+import { getOrganizationId } from '@/common/utils';
 
 function PriorityOptionDataSet() {
   return ({

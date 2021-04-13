@@ -7,9 +7,9 @@ import {
 } from 'choerodon-ui/pro';
 import { PromptInput } from '@/components';
 import { observer } from 'mobx-react-lite';
-import { returnBeforeTextUpload } from '@/common/utils';
 import { uploadFile, createLink } from '@/api/IssueManageApi';
 import LinkList from '@/components/LinkList';
+import CKEditor from '@/components/CKEditor';
 import { remove } from 'lodash';
 import UploadButton from './UploadButton';
 import CreateIssueDataSet from './store/CreateIssueDataSet';
@@ -17,12 +17,8 @@ import CreateTestStepTable from './CreateTestStepTable';
 import SelectTree from '../../routes/IssueManage/components/SelectTree';
 import './CreateIssue.less';
 import PriorityOptionDataSet from './store/PriorityOptionDataSet';
-// eslint-disable-next-line no-undef
-const isHasAgile = C7NTryImport('@/components/WYSIWYGEditor', false);
 
-// eslint-disable-next-line no-undef
-const WYSIWYGEditor = C7NTryImport('@/components/WYSIWYGEditor', <div />);
-const openLinkIssueModal = isHasAgile ? require('./LinkIssue').default : () => { };
+const openLinkIssueModal = require('./LinkIssue').default;
 
 function CreateIssue(props) {
   const [visibleDetail, setVisibleDetail] = useState(true);
@@ -58,7 +54,6 @@ function CreateIssue(props) {
       }
       // 描述富文本转换为字符串
       const oldDes = createDataset.current.get('description');
-      await returnBeforeTextUpload(oldDes, {}, (des) => createDataset.current.set('description', des.description));
       if (request && typeof (request) === 'function') {
         const data = createDataset.current.toData();
         const newData = {
@@ -125,7 +120,7 @@ function CreateIssue(props) {
           </span>
 
         </div>
-        <WYSIWYGEditor
+        <CKEditor
           style={{ height: 200, width: '100%' }}
           onChange={handleChangeDes}
         />
