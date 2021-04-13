@@ -1,6 +1,6 @@
 import { stores } from '@choerodon/boot';
 import { message, DataSet } from 'choerodon-ui/pro';
-import { getProjectId, beforeTextUpload, getOrganizationId } from '@/common/utils';
+import { getProjectId, getOrganizationId } from '@/common/utils';
 
 const { AppState } = stores;
 function priorityOptionDataSet() {

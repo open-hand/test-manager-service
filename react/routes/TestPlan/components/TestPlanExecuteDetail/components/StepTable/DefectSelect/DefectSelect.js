@@ -9,7 +9,7 @@ import { removeDefect } from '@/api/ExecuteDetailApi';
 import { getIssuesForDefects } from '@/api/agileApi';
 import './DefectSelect.less';
 import { axios } from '@choerodon/boot';
-import { text2Delta, getProjectId, getOrganizationId } from '../../../../../../../common/utils';
+import { delta2Html, getProjectId, getOrganizationId } from '../../../../../../../common/utils';
 
 const { Option } = Select;
 function DefectSelect(props) {
@@ -123,6 +123,7 @@ function DefectSelect(props) {
   };
 
   const DebounceLoadFilterData = _.debounce(loadFilterData, 400);
+  const line = (str) => `<p>${str}</p>`;
   function render() {
     const {
       executeStepId, handleSubmit, ExecuteDetailStore, record, dataSet, ...otherProps
@@ -159,20 +160,19 @@ function DefectSelect(props) {
               const {
                 caseNum, summary, description,
               } = ExecuteDetailStore.getDetailData;
-              let newDescription = text2Delta(description);
-              newDescription = Array.isArray(newDescription) ? newDescription : [{ insert: `${newDescription || ''}` }];
-              let defaultDescription = [{ insert: '测试用例：\n' }, { insert: `${caseNum}-${summary}\n` }, { insert: '前置条件：\n' }];
+              let defaultDescription = '';
+              defaultDescription += line('测试用例：') + line(`${caseNum}-${summary}`);
+              defaultDescription += line('前置条件：') + delta2Html(description);
               axios.get(`/test/v1/projects/${getProjectId()}/cycle/case/step/query/${executeId}?organizationId=${getOrganizationId()}&page=0&size=0`).then((res) => {
                 const sliceIndex = (dataSet.currentPage - 1) * dataSet.pageSize + currentPageIndex + 1;
                 (res.list || []).slice(0, sliceIndex).forEach((step, i, arr) => {
                   const { testStep, testData, expectedResult } = step;
-                  defaultDescription = [...defaultDescription, ...[{ insert: `测试步骤：${testStep}\n` }, { insert: `测试数据：${testData || '无'}\n` }, { insert: `预期结果：${expectedResult}\n` }]];
-                  if (i < arr.length - 1) {
-                    defaultDescription = [...defaultDescription, { insert: '\n' }];
-                  }
+                  defaultDescription += line(`测试步骤：${testStep}`);
+                  defaultDescription += line(`测试数据：${testData || '无'}`);
+                  defaultDescription += line(`预期结果：${expectedResult}`);
                 });
-                defaultDescription.splice(3, 0, ...newDescription, String(newDescription[newDescription.length - 1].insert).lastIndexOf('\n') === 0 ? { insert: '' } : { insert: '\n' });
-                ExecuteDetailStore.setDefaultDefectDescription(JSON.stringify(defaultDescription));
+                // defaultDescription.splice(3, 0, ...newDescription, String(newDescription[newDescription.length - 1].insert));
+                ExecuteDetailStore.setDefaultDefectDescription(defaultDescription);
               });
 
               ExecuteDetailStore.setCreateBugShow(true);

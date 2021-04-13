@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Popover } from 'choerodon-ui';
 import { Table } from 'choerodon-ui/pro';
-import { RichTextShow, User } from '../../../../../../components';
-import { delta2Html, delta2Text } from '@/common/utils';
+import { delta2Text } from '@/common/utils';
+import { CKEditorViewer, User } from '../../../../../../components';
 import './ExecuteHistoryTable.less';
 
 const { Column } = Table;
@@ -18,7 +18,7 @@ const ExecuteHistoryTable = ({
   }
   const renderValue = ({ text, record }) => (record.get('field') === '注释'
     ? (
-      <Popover content={<RichTextShow data={delta2Html(text)} />} title={null}>
+      <Popover content={<CKEditorViewer value={text} />} title={null}>
         <div
           title={delta2Text(text)}
           style={{
@@ -44,7 +44,7 @@ const ExecuteHistoryTable = ({
         renderer={renderValue}
       />
       <Column
-        name="newValue" 
+        name="newValue"
         renderer={renderValue}
       />
     </Table>
