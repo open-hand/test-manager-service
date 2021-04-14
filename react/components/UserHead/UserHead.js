@@ -31,9 +31,8 @@ const UserHead = memo(({
   const renderTooltip = () => {
     if (name) {
       return name;
-    } else {
-      return ldap ? `${realName}(${loginName})` : `${realName}(${email})`;
     }
+    return ldap ? `${realName}(${loginName})` : `${realName}(${email})`;
   };
 
   const renderContent = () => (
@@ -58,7 +57,7 @@ const UserHead = memo(({
               justifyContent: 'center',
               alignItems: 'center',
               textAlign: 'center',
-              borderRadius: '50%',
+              borderRadius: '4px',
               flexShrink: 0,
             }}
           >
