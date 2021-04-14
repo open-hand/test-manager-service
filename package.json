@@ -4,6 +4,7 @@
   "version": "0.26.0",
   "description": "",
   "main": "./lib/index.js",
+  "install": "./lib/install.js",
   "files": [
     "lib"
   ],
