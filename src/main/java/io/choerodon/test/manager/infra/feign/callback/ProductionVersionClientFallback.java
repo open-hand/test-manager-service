@@ -26,4 +26,9 @@ public class ProductionVersionClientFallback implements ProductionVersionClient 
 
     }
 
+    @Override
+    public ResponseEntity<String> queryNameByOptions(Long projectId) {
+        throw new CommonException(QUERY_ERROR);
+    }
+
 }

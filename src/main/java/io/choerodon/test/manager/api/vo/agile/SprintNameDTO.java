@@ -1,11 +1,14 @@
 package io.choerodon.test.manager.api.vo.agile;
 
+import org.hzero.starter.keyencrypt.core.Encrypt;
+
 import java.util.Date;
 
 /**
  * Created by jian_zhang02@163.com on 2018/5/17.
  */
 public class SprintNameDTO {
+    @Encrypt
     private Long sprintId;
     private String sprintName;
     private Date startDate;
