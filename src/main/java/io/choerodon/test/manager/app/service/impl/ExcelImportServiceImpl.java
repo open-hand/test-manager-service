@@ -79,7 +79,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             };
 
     static {
-        README_OPTIONS[0] = new ExcelReadMeOptionVO("自定义编号", true);
+        README_OPTIONS[0] = new ExcelReadMeOptionVO("自定义编号", false);
         README_OPTIONS[1] = new ExcelReadMeOptionVO("用例概要*", true);
         README_OPTIONS[2] = new ExcelReadMeOptionVO("优先级*", true);
         README_OPTIONS[3] = new ExcelReadMeOptionVO("前置条件", false);
