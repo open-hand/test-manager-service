@@ -108,13 +108,14 @@ function TestPlanModal({
         // renderer={({ record }) => <UserHead user={record.toData()} />}
         />
         {hasAgile && mount('agile:SelectSprint', {
-          name: 'sprint',
+          name: 'sprintId',
           style: {
             display: 'block',
           },
         })}
         {hasAgile && mount('agile:SelectVersion', {
-          name: 'version',
+          name: 'productVersionId',
+          valueField: 'versionId',
           multiple: false,
           style: {
             display: 'block',
