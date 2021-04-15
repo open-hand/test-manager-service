@@ -33,13 +33,13 @@ export default observer(() => {
           <div className="c7ntest-testPlan-detailCard-content-item">
             <span className="c7ntest-testPlan-detailCard-content-item-field">所属冲刺：</span>
             <span className="c7ntest-testPlan-detailCard-content-item-value">
-              {planInfo.sprint ?? '-'}
+              {planInfo.sprintNameDTO?.sprintName ?? '-'}
             </span>
           </div>
           <div className="c7ntest-testPlan-detailCard-content-item">
             <span className="c7ntest-testPlan-detailCard-content-item-field">所属版本：</span>
             <span className="c7ntest-testPlan-detailCard-content-item-value">
-              {planInfo.version ?? '-'}
+              {planInfo.productVersionDTO?.name ?? '-'}
             </span>
           </div>
         </>
