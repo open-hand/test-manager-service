@@ -13,7 +13,7 @@ function dataConverter(data) {
       list: data,
       hasNextPage: false,
     };
-  } else if (data.number + 1 < data.totalPages) {
+  } if (data.number + 1 < data.totalPages) {
     return {
       list: data.content,
       hasNextPage: true,
@@ -37,7 +37,7 @@ const SelectFocusLoad = (props) => {
   } = Type;
   const totalProps = { ...props, ...TypeProps };
   const {
-    loadWhenMount, afterLoad, value, saveList, children, defaultOpen, defaultOption,
+    loadWhenMount, afterLoad, value, saveList, children, defaultOpen, defaultOption, middleWare,
   } = totalProps;
   const [loading, setLoading] = useState(false);
   const [List, setList] = useState(defaultOption ? [defaultOption] : []);
@@ -104,26 +104,26 @@ const SelectFocusLoad = (props) => {
     setLoading(true);
     loadData({ filter, page: page + 1, isLoadMore: true });
   };
-  const totalList = [...List, ...extraList];
+  const totalList = middleWare ? middleWare([...List, ...extraList]) : [...List, ...extraList];
   if (saveList) {
     saveList(totalList);
   }
   // 渲染去掉重复项
-  const Options = uniqBy(totalList.map(item => render(item, props)).concat(React.Children.toArray(children)), option => option.props.value);
+  const Options = uniqBy(totalList.map((item) => render(item, props)).concat(React.Children.toArray(children)), (option) => option.props.value);
   return (
     <Select
       filter
       filterOption={false}
       loading={loading}
       ref={SelectRef}
-      // style={{ width: 200 }}      
+      // style={{ width: 200 }}
       onFilterChange={handleFilterChange}
       {...TypeProps}
       {...props}
     >
       {Options}
       <Option style={{ display: canLoadMore || Options.length === 0 ? 'block' : 'none', cursor: 'pointer' }} key="SelectFocusLoad-loadMore" className="SelectFocusLoad-loadMore" disabled>
-        {Options.length > 0 
+        {Options.length > 0
           ? <Button type="primary" style={{ textAlign: 'left', width: '100%', background: 'transparent' }} onClick={loadMore}>更多</Button>
           : '无匹配结果'}
       </Option>

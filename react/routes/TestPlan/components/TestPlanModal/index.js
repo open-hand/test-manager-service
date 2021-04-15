@@ -3,8 +3,9 @@ import React, {
 } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Modal, Form, DataSet, TextArea, DatePicker, Select, Radio, TextField,
+  Modal, Form, DataSet, TextArea, DatePicker, Select, Radio, CheckBox,
 } from 'choerodon-ui/pro';
+import { mount } from '@choerodon/inject';
 import { Choerodon } from '@choerodon/boot';
 import { observer } from 'mobx-react-lite';
 import moment from 'moment';
@@ -16,6 +17,7 @@ import {
   createPlan, getPlan, editPlan, clonePlan,
   checkPlanName,
 } from '@/api/TestPlanApi';
+import useHasAgile from '@/hooks/useHasAgile';
 import DataSetFactory from './dataSet';
 import SelectIssue from './SelectIssue';
 import SelectIssueStore from './SelectIssueStore';
@@ -33,6 +35,7 @@ const defaultProps = {
 function TestPlanModal({
   modal, initValue, submit, onSubmit, mode = 'create',
 }) {
+  const hasAgile = useHasAgile();
   const { caseSelected: initCaseSelected } = initValue;
   const init = useMemo(() => {
     const {
@@ -104,6 +107,19 @@ function TestPlanModal({
           optionRenderer={({ record }) => <UserHead user={record.toData()} />}
         // renderer={({ record }) => <UserHead user={record.toData()} />}
         />
+        {hasAgile && mount('agile:SelectSprint', {
+          name: 'sprint',
+          style: {
+            display: 'block',
+          },
+        })}
+        {hasAgile && mount('agile:SelectVersion', {
+          name: 'version',
+          multiple: false,
+          style: {
+            display: 'block',
+          },
+        })}
         <DatePicker range name="range" min={Date.now()} />
         {mode === 'create' && (
           <div>
@@ -114,8 +130,15 @@ function TestPlanModal({
               <span>导入用例方式</span>
               <Tip title="导入用例方式" />
             </div>
-            <Radio name="custom" value={false}>全部用例</Radio>
-            <Radio name="custom" value>自选用例</Radio>
+            <div>
+              <div style={{ marginTop: 10 }}>
+                <Radio name="custom" value={false}>全部用例</Radio>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', marginTop: 15 }}>
+                <Radio name="custom" value>自选用例</Radio>
+                {hasAgile && <CheckBox style={{ marginLeft: 20, marginTop: -8 }} name="allLinkIssue">选择当前测试计划所属迭代中问题项关联的所有用例</CheckBox>}
+              </div>
+            </div>
           </div>
         )}
       </Form>

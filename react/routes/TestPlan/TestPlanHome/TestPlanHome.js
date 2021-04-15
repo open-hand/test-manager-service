@@ -8,11 +8,11 @@ import { FormattedMessage } from 'react-intl';
 import {
   Page, Header, Content, Breadcrumb, Choerodon, stores,
 } from '@choerodon/boot';
-import { Icon, Tabs, Card } from 'choerodon-ui';
+import { Tabs } from 'choerodon-ui';
 import { Modal, Button } from 'choerodon-ui/pro';
 import { localPageCacheStore } from '@choerodon/agile/lib/stores/common/LocalPageCacheStore';
 import {
-  deleteExecute, updateExecute, comfirmUpdate, ignoreUpdate, getRankByDate,
+  deleteExecute, updateExecute, comfirmUpdate, ignoreUpdate,
 } from '../../../api/TestPlanApi';
 import CreateAutoTest from '../components/CreateAutoTest';
 import TestPlanDetailCard from '../components/TestPlanDetailCard';
@@ -24,7 +24,6 @@ import TestPlanHeader from '../components/TestPlanHeader';
 import { openCreatePlan } from '../components/TestPlanModal';
 import EventCalendar from '../components/EventCalendar';
 import Empty from '../../../components/Empty';
-import { SelectFocusLoad } from '../../../components';
 import testCaseEmpty from './testCaseEmpty.svg';
 
 import Store from '../stores';
@@ -275,6 +274,17 @@ function TestPlanHome({ history }) {
     testPlanStore.setFilter(filter);
     testPlanStore.loadExecutes();
   };
+  const handleOnlyMeCheckedChange = (e) => {
+    const { checked } = e.target;
+    const { filter } = testPlanStore;
+    if (checked) {
+      filter.assignUser = AppState.userInfo.id;
+    } else {
+      filter.assignUser = undefined;
+    }
+    testPlanStore.setFilter(filter);
+    testPlanStore.loadExecutes();
+  };
 
   useEffect(() => {
     // 加载缓存
@@ -359,65 +369,44 @@ function TestPlanHome({ history }) {
             ) : (
               <div className={`${prefixCls}-contentWrap-right`}>
                 <div className={`${prefixCls}-contentWrap-right-currentPlanName`}>
-                  <Icon type="insert_invitation" style={{ marginTop: 3 }} />
-                  <span>{planInfo.name}</span>
-                </div>
-                <div className={`${prefixCls}-contentWrap-right-warning`}>
-                  {/* <Icon type="error" />
-                <span>该计划正在进行自动化测试，手工测试结果可能会将自动化测试结果覆盖！</span> */}
+                  <span>{`计划名称: ${planInfo.name ?? ''}`}</span>
+                  <TestPlanStatusCard />
                 </div>
                 <div className={`${prefixCls}-contentWrap-right-card`}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'nowrap' }}>
-                    <div style={{
-                      flex: 1, marginRight: '0.16rem', paddingTop: '0.05rem', paddingBottom: '0.05rem',
-                    }}
-                    >
-                      <TestPlanDetailCard />
-                    </div>
-                    <div style={{
-                      flex: 1, overflowX: 'hidden', paddingTop: '0.05rem', paddingBottom: '0.05rem',
-                    }}
-                    >
-                      <TestPlanStatusCard />
-                    </div>
-                  </div>
+                  <TestPlanDetailCard />
                   <div className={`${prefixCls}-contentWrap-main`}>
-                    <Card
-                      className={`${prefixCls}-contentWrap-main-card`}
+                    <Tabs
+                      defaultActiveKey="testPlanTable"
+                      onChange={handleMainTabsChange}
+                      activeKey={mainActiveTab}
                     >
-                      <Tabs
-                        defaultActiveKey="testPlanTable"
-                        onChange={handleMainTabsChange}
-                        activeKey={mainActiveTab}
-                      >
-                        <TabPane tab="测试用例" key="testPlanTable" />
-                        <TabPane tab="我的执行" key="mineTestPlanTable" />
-                        {
-                            testPlanStore.isPlan(currentCycle.id) ? (
-                              <TabPane tab="计划日历" key="testPlanSchedule">
-                                <EventCalendar key={currentCycle.id} showMode="multi" times={times} calendarLoading={calendarLoading} />
-                              </TabPane>
-                            ) : ''
-                          }
-                      </Tabs>
+                      <TabPane tab="测试用例" key="testPlanTable" />
                       {
-                          mainActiveTab !== 'testPlanSchedule' && (
-                            <TestPlanTable
-                              onDragEnd={onDragEnd}
-                              onTableChange={mainActiveTab === 'testPlanTable' ? handleExecuteTableChange : handleMineExecuteTableChange}
-                              onDeleteExecute={handleDeleteExecute}
-                              onQuickPass={handleQuickPassOrFail}
-                              onQuickFail={handleQuickPassOrFail}
-                              onOpenUpdateRemind={handleOpenUpdateRemind}
-                              onTableSummaryClick={handleTableSummaryClick}
-                              onSearchAssign={handleSearchAssign}
-                              hasCheckBox={mainActiveTab === 'testPlanTable'}
-                              isMine={mainActiveTab === 'mineTestPlanTable'}
-                              key={mainActiveTab}
-                            />
-                          )
-                        }
-                    </Card>
+                        testPlanStore.isPlan(currentCycle.id) ? (
+                          <TabPane tab="计划日历" key="testPlanSchedule">
+                            <EventCalendar key={currentCycle.id} showMode="multi" times={times} calendarLoading={calendarLoading} />
+                          </TabPane>
+                        ) : ''
+                      }
+                    </Tabs>
+                    {
+                      mainActiveTab !== 'testPlanSchedule' && (
+                        <TestPlanTable
+                          onDragEnd={onDragEnd}
+                          onTableChange={mainActiveTab === 'testPlanTable' ? handleExecuteTableChange : handleMineExecuteTableChange}
+                          onDeleteExecute={handleDeleteExecute}
+                          onQuickPass={handleQuickPassOrFail}
+                          onQuickFail={handleQuickPassOrFail}
+                          onOpenUpdateRemind={handleOpenUpdateRemind}
+                          onTableSummaryClick={handleTableSummaryClick}
+                          onSearchAssign={handleSearchAssign}
+                          onOnlyMeCheckedChange={handleOnlyMeCheckedChange}
+                          hasCheckBox={mainActiveTab === 'testPlanTable'}
+                          isMine={mainActiveTab === 'mineTestPlanTable'}
+                          key={mainActiveTab}
+                        />
+                      )
+                    }
                   </div>
                 </div>
               </div>
