@@ -1,10 +1,14 @@
 package io.choerodon.test.manager.api.vo;
 
-import java.util.Date;
-import java.util.Map;
-import io.choerodon.test.manager.api.vo.agile.UserDO;
 import io.swagger.annotations.ApiModelProperty;
 import org.hzero.starter.keyencrypt.core.Encrypt;
+
+import java.util.Date;
+import java.util.Map;
+
+import io.choerodon.test.manager.api.vo.agile.ProductVersionDTO;
+import io.choerodon.test.manager.api.vo.agile.SprintNameDTO;
+import io.choerodon.test.manager.api.vo.agile.UserDO;
 
 /**
  * @author zhaotianxin
@@ -43,6 +47,20 @@ public class TestPlanVO {
 
     @ApiModelProperty(value = "选中的用例是否有改变")
     private Boolean caseHasChange;
+
+    @ApiModelProperty(value = "冲刺id")
+    @Encrypt
+    private Long sprintId;
+
+    @ApiModelProperty(value = "版本id")
+    @Encrypt
+    private Long productVersionId;
+
+    @ApiModelProperty(value = "冲刺")
+    private SprintNameDTO sprintNameDTO;
+
+    @ApiModelProperty(value = "版本")
+    private ProductVersionDTO productVersionDTO;
 
     @Encrypt
     private Map<Long, CaseSelectVO> caseSelected;
@@ -164,5 +182,37 @@ public class TestPlanVO {
 
     public void setInitStatus(String initStatus) {
         this.initStatus = initStatus;
+    }
+
+    public Long getSprintId() {
+        return sprintId;
+    }
+
+    public void setSprintId(Long sprintId) {
+        this.sprintId = sprintId;
+    }
+
+    public Long getProductVersionId() {
+        return productVersionId;
+    }
+
+    public void setProductVersionId(Long productVersionId) {
+        this.productVersionId = productVersionId;
+    }
+
+    public SprintNameDTO getSprintNameDTO() {
+        return sprintNameDTO;
+    }
+
+    public void setSprintNameDTO(SprintNameDTO sprintNameDTO) {
+        this.sprintNameDTO = sprintNameDTO;
+    }
+
+    public ProductVersionDTO getProductVersionDTO() {
+        return productVersionDTO;
+    }
+
+    public void setProductVersionDTO(ProductVersionDTO productVersionDTO) {
+        this.productVersionDTO = productVersionDTO;
     }
 }

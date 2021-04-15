@@ -9,6 +9,8 @@ import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.ServiceUnavailableException;
 import io.choerodon.core.utils.PageUtils;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.test.manager.api.vo.agile.ProductVersionDTO;
+import io.choerodon.test.manager.api.vo.agile.SprintNameDTO;
 import io.choerodon.test.manager.api.vo.agile.StatusVO;
 import io.choerodon.test.manager.app.assembler.TestCycleAssembler;
 import io.choerodon.test.manager.infra.feign.operator.AgileClientOperator;
@@ -328,6 +330,10 @@ public class TestPlanServiceImpl implements TestPlanService {
         TestPlanVO testPlanVO = modelMapper.map(testPlan, TestPlanVO.class);
         Long managerId = testPlan.getManagerId();
         testPlanVO.setManagerUser(getUserById(managerId));
+        testPlanVO.setProductVersionDTO(
+                agileClientOperator.queryProductVersionById(projectId, testPlan.getProductVersionId()));
+        testPlanVO.setSprintNameDTO(
+                agileClientOperator.querySprintNameById(projectId, testPlan.getSprintId()));
         return testPlanVO;
     }
 
@@ -623,6 +629,12 @@ public class TestPlanServiceImpl implements TestPlanService {
         List<TestPlanDTO> testPlanDTOS = testPlanMapper.select(testPlanDTO);
         List<TestPlanVO> testPlanVOS = modelMapper.map(testPlanDTOS, new TypeToken<List<TestPlanVO>>() {
         }.getType());
+        Map<Long, SprintNameDTO> sprintMap = agileClientOperator.querySprintMapByProject(projectId);
+        Map<Long, ProductVersionDTO> productVersionMap = agileClientOperator.queryProductVersionMapByProject(projectId);
+        testPlanVOS.forEach(testPlanVO -> {
+            testPlanVO.setSprintNameDTO(sprintMap.get(testPlanVO.getSprintId()));
+            testPlanVO.setProductVersionDTO(productVersionMap.get(testPlanVO.getProductVersionId()));
+        });
         return testPlanVOS;
     }
 
@@ -651,6 +663,10 @@ public class TestPlanServiceImpl implements TestPlanService {
             return new TestPlanVO();
         }
         TestPlanVO testPlanVO = modelMapper.map(testPlanDTO, TestPlanVO.class);
+        testPlanVO.setProductVersionDTO(
+                agileClientOperator.queryProductVersionById(projectId, testPlanVO.getProductVersionId()));
+        testPlanVO.setSprintNameDTO(
+                agileClientOperator.querySprintNameById(projectId, testPlanVO.getSprintId()));
         return testPlanVO;
     }
     @Override

@@ -32,5 +32,12 @@ databaseChangeLog(logicalFilePath: "script/db/test_data_log.groovy") {
             column(name: "project_id")
         }
     }
+
+    changeSet(id: '2021-04-15-test-plan-add-column', author: 'chihao.ran@hand-china.com') {
+        addColumn(tableName: 'test_plan') {
+            column(name: 'sprint_id', type: 'BIGINT UNSIGNED', remarks: 'sprint id')
+            column(name: 'product_version_id', type: 'BIGINT UNSIGNED', remarks: 'product version id')
+        }
+    }
 }
 

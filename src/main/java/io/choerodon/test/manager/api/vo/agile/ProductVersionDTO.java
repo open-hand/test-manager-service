@@ -1,5 +1,7 @@
 package io.choerodon.test.manager.api.vo.agile;
 
+import org.hzero.starter.keyencrypt.core.Encrypt;
+
 import java.util.Date;
 
 /**
@@ -8,6 +10,7 @@ import java.util.Date;
  */
 public class ProductVersionDTO {
 
+	@Encrypt
 	private Long versionId;
 
 	private Long projectId;
