@@ -394,7 +394,7 @@ const TestPlanTable = observer(({
       {
         (!isMine && (data.length > 0 || testPlanStore.filter.assignUser)) && (
           <div style={{
-            marginTop: '-55px',
+            marginTop: '-56px',
             marginBottom: 3,
             alignItems: 'center',
             flexDirection: 'row-reverse',
@@ -417,7 +417,15 @@ const TestPlanTable = observer(({
               <SelectFocusLoad
                 allowClear
                 middleWare={(users) => users.filter((u) => AppState.userInfo.id.toString() !== String(u.id))}
-                style={{ width: 180, marginLeft: 30 }}
+                style={{ width: 120, marginLeft: 30 }}
+                dropdownMatchSelectWidth={false}
+                dropdownStyle={{
+                  width: 200,
+                }}
+                dropdownAlign={{
+                  points: ['tl', 'bl'],
+                  overflow: { adjustX: true },
+                }}
                 placeholder="计划执行人"
                 loadWhenMount
                 getPopupContainer={(trigger) => trigger.parentNode}
