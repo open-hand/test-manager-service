@@ -47,6 +47,10 @@ public class TestCycleCaseLinkVO {
     @ApiModelProperty(value = "计划名称")
     private String planName;
 
+    @ApiModelProperty(value = "计划id")
+    @Encrypt
+    private Long planId;
+
     public Long getExecuteId() {
         return executeId;
     }
@@ -133,5 +137,13 @@ public class TestCycleCaseLinkVO {
 
     public void setPlanName(String planName) {
         this.planName = planName;
+    }
+
+    public Long getPlanId() {
+        return planId;
+    }
+
+    public void setPlanId(Long planId) {
+        this.planId = planId;
     }
 }

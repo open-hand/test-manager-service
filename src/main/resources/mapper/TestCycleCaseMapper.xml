@@ -895,6 +895,7 @@
 
     <select id="selectTestCycleByCaseAndSprint" resultType="io.choerodon.test.manager.api.vo.TestCycleCaseLinkVO">
         SELECT
+            tp.plan_id,
             tp.name plan_name,
             tcc.execute_id,
             tcc.cycle_id,
