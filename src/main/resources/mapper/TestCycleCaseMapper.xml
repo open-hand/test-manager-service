@@ -892,6 +892,31 @@
             #{index}
         </foreach>
     </update>
+
+    <select id="selectTestCycleByCaseAndSprint" resultType="io.choerodon.test.manager.api.vo.TestCycleCaseLinkVO">
+        SELECT
+            tp.name plan_name,
+            tcc.execute_id,
+            tcc.cycle_id,
+            tcc.case_id,
+            tcc.rank,
+            ts.status_name execution_status_name,
+            ts.status_color,
+            tcc.execution_status,
+            tcc.summary,
+            tcc.last_updated_by
+        FROM test_cycle_case tcc
+        LEFT JOIN test_cycle tc ON tcc.cycle_id = tc.cycle_id
+        LEFT JOIN test_plan tp on tc.plan_id = tp.plan_id
+        LEFT JOIN test_status ts ON tcc.execution_status = ts.status_id
+        WHERE
+            tcc.case_id IN
+        <foreach collection="caseIdList" item="caseId" open="(" close=")" separator=",">
+            #{caseId}
+        </foreach>
+        AND tp.sprint_id = #{sprintId}
+        ORDER BY tcc.rank
+    </select>
 </mapper>
 
 
