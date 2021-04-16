@@ -13,7 +13,7 @@ const CaseListItem = ({
   function handleDelete() {
     testLinkStore.delete(link.linkId);
   }
-
+  const { testCycleCaseLinkList } = link;
   return (
     <>
       <div className={styles.case}>
@@ -21,6 +21,7 @@ const CaseListItem = ({
           type="baseline-arrow_right"
           className={classNames(styles.icon, {
             [styles.icon_expand]: expand,
+            [styles.icon_visible]: testCycleCaseLinkList && testCycleCaseLinkList.length > 0,
           })}
           onClick={() => {
             setExpand(!expand);
@@ -60,30 +61,30 @@ const CaseListItem = ({
           </Tooltip>
         </div>
         {
-        !disabled && (
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              fontSize: '16px',
-            }}
-          >
-            <Popconfirm
-              title="确认要删除该问题关联的测试用例吗?"
-              placement="left"
-              onConfirm={() => handleDelete()}
-              //   onCancel={this.cancel}
-              okText="删除"
-              cancelText="取消"
-              okType="danger"
+          !disabled && (
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                fontSize: '16px',
+              }}
             >
-              <Icon type="delete_forever pointer" />
-            </Popconfirm>
-          </div>
-        )
-      }
+              <Popconfirm
+                title="确认要删除该问题关联的测试用例吗?"
+                placement="left"
+                onConfirm={() => handleDelete()}
+                //   onCancel={this.cancel}
+                okText="删除"
+                cancelText="取消"
+                okType="danger"
+              >
+                <Icon type="delete_forever pointer" />
+              </Popconfirm>
+            </div>
+          )
+        }
       </div>
-      {expand && <TestPlanItem />}
+      {expand && testCycleCaseLinkList?.map((plan) => <TestPlanItem data={plan} />)}
     </>
   );
 };

@@ -137,7 +137,7 @@ function TestPlanModal({
               </div>
               <div style={{ display: 'flex', alignItems: 'center', marginTop: 15 }}>
                 <Radio name="custom" value>自选用例</Radio>
-                {hasAgile && <CheckBox style={{ marginLeft: 20, marginTop: -8 }} name="allLinkIssue">选择当前测试计划所属迭代中问题项关联的所有用例</CheckBox>}
+                {hasAgile && <CheckBox style={{ marginLeft: 20, marginTop: -8 }} name="sprintLink">选择当前测试计划所属迭代中问题项关联的所有用例</CheckBox>}
               </div>
             </div>
           </div>
