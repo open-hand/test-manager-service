@@ -7,15 +7,20 @@
 
   &-item {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     margin-right: 30px;
 
     &-field {
       display: inline-block;
       margin-right: 10px;
       font-weight: 500;
+      white-space: nowrap;
+      color: rgba(0, 0, 0, 0.87);
     }
 
-    &-value {}
+    &-value {
+      font-weight: 400;
+      color: rgba(0, 0, 0, 0.87);
+    }
   }
 }

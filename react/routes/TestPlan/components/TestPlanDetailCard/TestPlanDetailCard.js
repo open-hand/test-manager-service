@@ -46,7 +46,9 @@ export default observer(() => {
       )}
       <div className="c7ntest-testPlan-detailCard-content-item">
         <span className="c7ntest-testPlan-detailCard-content-item-field">描述：</span>
-        <SmartToolTip title={planInfo.description || '无'}>{planInfo.description || '无'}</SmartToolTip>
+        <span className="c7ntest-testPlan-detailCard-content-item-value">
+          {planInfo.description ?? '无'}
+        </span>
       </div>
     </div>
   );

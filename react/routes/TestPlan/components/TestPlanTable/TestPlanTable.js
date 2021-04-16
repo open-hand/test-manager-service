@@ -208,7 +208,7 @@ const TestPlanTable = observer(({
     return testPlanStore.mineFilter && testPlanStore.mineFilter.priorityId ? [testPlanStore.mineFilter.priorityId] : [];
   };
   const columns = [{
-    title: '用例名',
+    title: '执行名称',
     dataIndex: 'summary',
     key: 'summary',
     filters: [],
@@ -226,7 +226,24 @@ const TestPlanTable = observer(({
     filters: [],
     render: (customNum) => renderIssueNum(customNum),
   }, {
-    title: '被指派人',
+    title: <FormattedMessage id="priority" />,
+    dataIndex: 'priorityId',
+    key: 'priorityId',
+    filters: priorityList && priorityList.filter((priorityVO) => priorityVO.enableFlag)
+      .map((priorityVO) => ({ text: priorityVO.name, value: priorityVO.id })),
+    filteredValue: getPriorityFilteredValue(),
+    flex: 1,
+    width: 100,
+    render(priorityId) {
+      const priorityVO = _.find(priorityList, { id: priorityId }) || {};
+      return (
+        <PriorityTag
+          priority={priorityVO}
+        />
+      );
+    },
+  }, {
+    title: '计划执行人',
     dataIndex: 'assignedUser',
     key: 'assignedUser',
     flex: 1.5,
@@ -244,7 +261,7 @@ const TestPlanTable = observer(({
     },
   },
   {
-    title: '执行人',
+    title: '实际执行人',
     dataIndex: 'lastUpdateUser',
     key: 'lastUpdateUser',
     flex: 1.2,
@@ -282,24 +299,7 @@ const TestPlanTable = observer(({
       );
     },
   },
-  {
-    title: <FormattedMessage id="priority" />,
-    dataIndex: 'priorityId',
-    key: 'priorityId',
-    filters: priorityList && priorityList.filter((priorityVO) => priorityVO.enableFlag)
-      .map((priorityVO) => ({ text: priorityVO.name, value: priorityVO.id })),
-    filteredValue: getPriorityFilteredValue(),
-    flex: 1,
-    width: 100,
-    render(priorityId) {
-      const priorityVO = _.find(priorityList, { id: priorityId }) || {};
-      return (
-        <PriorityTag
-          priority={priorityVO}
-        />
-      );
-    },
-  },
+
   {
     title: <FormattedMessage id="status" />,
     dataIndex: 'executionStatus',
@@ -418,7 +418,7 @@ const TestPlanTable = observer(({
                 allowClear
                 middleWare={(users) => users.filter((u) => AppState.userInfo.id.toString() !== String(u.id))}
                 style={{ width: 180, marginLeft: 30 }}
-                placeholder="被指派人"
+                placeholder="计划执行人"
                 loadWhenMount
                 getPopupContainer={(trigger) => trigger.parentNode}
                 type="user"
