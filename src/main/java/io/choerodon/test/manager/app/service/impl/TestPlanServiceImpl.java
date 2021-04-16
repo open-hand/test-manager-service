@@ -3,15 +3,14 @@ package io.choerodon.test.manager.app.service.impl;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.netflix.hystrix.exception.HystrixRuntimeException;
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.ServiceUnavailableException;
 import io.choerodon.core.utils.PageUtils;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
-import io.choerodon.test.manager.api.vo.agile.ProductVersionDTO;
-import io.choerodon.test.manager.api.vo.agile.SprintNameDTO;
-import io.choerodon.test.manager.api.vo.agile.StatusVO;
+import io.choerodon.test.manager.api.vo.agile.*;
 import io.choerodon.test.manager.app.assembler.TestCycleAssembler;
 import io.choerodon.test.manager.infra.feign.operator.AgileClientOperator;
 import io.choerodon.test.manager.infra.mapper.*;
@@ -29,7 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
-import io.choerodon.test.manager.api.vo.agile.UserDO;
 import io.choerodon.asgard.saga.annotation.Saga;
 import io.choerodon.asgard.saga.producer.StartSagaBuilder;
 import io.choerodon.asgard.saga.producer.TransactionalProducer;
@@ -303,6 +301,9 @@ public class TestPlanServiceImpl implements TestPlanService {
                     .collect(Collectors.toList()));
         } else {
             createPlanCustomCase(testPlanVO, testIssueFolderDTOS, caseIds);
+            if (Boolean.TRUE.equals(testPlanVO.getSprintLink())) {
+                createPlanSprintCase(testPlanVO, testIssueFolderDTOS, caseIds);
+            }
         }
         TestPlanDTO testPlanDTO = testPlanMapper.selectByPrimaryKey(testPlanVO.getPlanId());
         // 创建测试循环
@@ -320,6 +321,41 @@ public class TestPlanServiceImpl implements TestPlanService {
         testPlan.setInitStatus(TestPlanInitStatus.SUCCESS);
         testPlan.setObjectVersionNumber(testPlanVO.getObjectVersionNumber());
         baseUpdate(testPlan);
+    }
+
+    private void createPlanSprintCase(TestPlanVO testPlanVO, List<TestIssueFolderDTO> testIssueFolderDTOS, List<Long> caseIds) {
+        if (testPlanVO.getSprintId() == null) {
+            return;
+        }
+        Long projectId = testPlanVO.getProjectId();
+        Set<Long> selectedCaseIdsSet = new HashSet<>(caseIds);
+        Set<Long> selectedFolderIdsSet = testIssueFolderDTOS.stream().map(TestIssueFolderDTO::getFolderId).collect(Collectors.toSet());
+        Set<Long> folderIdsSet = new HashSet<>();
+        Map<String, Object> otherArgs = new HashMap<>(1);
+        otherArgs.put("sprint", Stream.of(testPlanVO.getSprintId()).collect(Collectors.toList()));
+        SearchDTO searchDTO = new SearchDTO();
+        searchDTO.setOtherArgs(otherArgs);
+        List<Long> issueIds = agileClientOperator.queryIssueIdsByOptions(projectId, searchDTO);
+
+        if (CollectionUtils.isEmpty(issueIds)) {
+            return;
+        }
+
+        List<TestCaseDTO> caseList = testCaseLinkMapper.listByIssueIds(issueIds);
+        if (CollectionUtils.isEmpty(caseList)) {
+            return;
+        }
+        caseList.forEach(testCase -> {
+            if (!selectedCaseIdsSet.contains(testCase.getCaseId())) {
+                caseIds.add(testCase.getCaseId());
+            }
+            if (!selectedFolderIdsSet.contains(testCase.getFolderId())) {
+                folderIdsSet.add(testCase.getFolderId());
+            }
+        });
+        if (CollectionUtils.isNotEmpty(folderIdsSet)) {
+            testIssueFolderDTOS.addAll(testIssueFolderService.listFolderByFolderIds(projectId, new ArrayList<>(folderIdsSet)));
+        }
     }
 
     @Override

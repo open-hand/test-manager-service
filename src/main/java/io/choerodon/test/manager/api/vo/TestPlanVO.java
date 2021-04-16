@@ -62,6 +62,9 @@ public class TestPlanVO {
     @ApiModelProperty(value = "版本")
     private ProductVersionDTO productVersionDTO;
 
+    @ApiModelProperty(value = "是否当前迭代所有用例")
+    private Boolean sprintLink;
+
     @Encrypt
     private Map<Long, CaseSelectVO> caseSelected;
 
@@ -214,5 +217,13 @@ public class TestPlanVO {
 
     public void setProductVersionDTO(ProductVersionDTO productVersionDTO) {
         this.productVersionDTO = productVersionDTO;
+    }
+
+    public Boolean getSprintLink() {
+        return sprintLink;
+    }
+
+    public void setSprintLink(Boolean sprintLink) {
+        this.sprintLink = sprintLink;
     }
 }
