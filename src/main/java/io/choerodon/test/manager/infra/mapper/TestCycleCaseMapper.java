@@ -5,14 +5,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import io.choerodon.test.manager.api.vo.CaseCompareVO;
-import io.choerodon.test.manager.api.vo.CaseSearchVO;
-import io.choerodon.test.manager.api.vo.TestFolderCycleCaseVO;
+import io.choerodon.test.manager.api.vo.*;
+
 import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Param;
 
 import io.choerodon.mybatis.common.BaseMapper;
-import io.choerodon.test.manager.api.vo.FormStatusVO;
+import io.choerodon.test.manager.infra.dto.TestCaseLinkDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.infra.dto.TestStatusDTO;
 
@@ -21,6 +20,7 @@ import io.choerodon.test.manager.infra.dto.TestStatusDTO;
  */
 public interface TestCycleCaseMapper extends BaseMapper<TestCycleCaseDTO> {
     List<TestCycleCaseDTO> queryWithAttachAndDefect(@Param("dto") TestCycleCaseDTO testCycleCaseDTO, @Param("page") int page, @Param("pageSize") int pageSize);
+
     /**
      * 查询为父cycle的所有子阶段的信息
      *
@@ -77,6 +77,7 @@ public interface TestCycleCaseMapper extends BaseMapper<TestCycleCaseDTO> {
 
     /**
      * 查询执行详情
+     *
      * @param executeId
      * @return
      */
@@ -85,7 +86,7 @@ public interface TestCycleCaseMapper extends BaseMapper<TestCycleCaseDTO> {
     /**
      * 查询状态总览
      */
-    List<TestStatusDTO> queryExecutionStatus(@Param("planId")Long planId,  @Param("cycleIds") Set<Long> cycleIds);
+    List<TestStatusDTO> queryExecutionStatus(@Param("planId") Long planId, @Param("cycleIds") Set<Long> cycleIds);
 
     /**
      * 查询文件下的执行
@@ -117,11 +118,11 @@ public interface TestCycleCaseMapper extends BaseMapper<TestCycleCaseDTO> {
 
     List<TestCycleCaseDTO> selectByPlanId();
 
-    TestCycleCaseDTO selectByExecuteId(@Param("executeId")Long executeId);
+    TestCycleCaseDTO selectByExecuteId(@Param("executeId") Long executeId);
 
     TestCycleCaseDTO selectCycleCaseAndStep(@Param("executeId") Long executeId);
 
-    List<TestCycleCaseDTO> listAsyncCycleCase(@Param("projectId")Long projectId,@Param("caseId")Long caseId);
+    List<TestCycleCaseDTO> listAsyncCycleCase(@Param("projectId") Long projectId, @Param("caseId") Long caseId);
 
     List<FormStatusVO> selectPlanStatus(@Param("planId") Long planId);
 
@@ -142,4 +143,13 @@ public interface TestCycleCaseMapper extends BaseMapper<TestCycleCaseDTO> {
     List<TestFolderCycleCaseVO> pagedQueryMyExecutionalCase(@Param("userId") Long userId,
                                                             @Param("projectIds") List<Long> projectIds,
                                                             @Param("organizationId") Long organizationId);
+
+    /**
+     * 查询测试用例关联的指定冲刺下的执行
+     *
+     * @param caseIdList 用例id
+     * @param sprintId 冲刺id
+     * @return 测试用例关联的指定冲刺下的执行
+     */
+    List<TestCycleCaseLinkVO> selectTestCycleByCaseAndSprint(@Param("caseIdList") List<Long> caseIdList, @Param("sprintId") Long sprintId);
 }
