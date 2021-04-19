@@ -45,7 +45,15 @@ export default observer(() => {
         </>
       )}
       <div className="c7ntest-testPlan-detailCard-content-item">
-        <span className="c7ntest-testPlan-detailCard-content-item-field">描述：</span>
+        <span
+          className="c7ntest-testPlan-detailCard-content-item-field"
+          style={{
+            alignSelf: 'flex-start',
+            marginTop: 1,
+          }}
+        >
+          描述：
+        </span>
         <span className="c7ntest-testPlan-detailCard-content-item-value">
           {planInfo.description ?? '无'}
         </span>
