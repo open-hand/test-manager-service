@@ -12,7 +12,7 @@ const User = ({
         // display: 'flex',
         // padding: 2,
         paddingRight: 6,
-        paddingBottom: 2,
+        // paddingBottom: 2,
         lineHeight: '18px',
         verticalAlign: 'text-bottom',
       }}
