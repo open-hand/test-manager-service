@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Content } from '@choerodon/boot';
+import { getCookieToken } from '@choerodon/master/lib/utils/accessToken'
 import { Button, Select, Modal } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
@@ -7,6 +8,7 @@ import CodeMirror from 'react-codemirror';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/base16-dark.css';
 import uuidv1 from 'uuid/v1';
+import { getProjectId } from '@/common/utils'
 import { getLog } from '../../../../../api/AutoTestApi';
 
 import './ContainerLog.less';
@@ -96,7 +98,7 @@ class ContainerLog extends Component {
           // eslint-disable-next-line no-underscore-dangle
           const secretKey = window._env_.DEVOPS_WEBSOCKET_SECRET_KEY;
           const key = `cluster:${envId}.log:${uuidv1()}`;
-          const url = `${wsUrl}/websocket?key=${key}&group=from_front:${key}&processor=front_log&secret_key=${secretKey}&env=${'choerodon-test'}&podName=${podName}&containerName=${containerName}&logId=${logId}&clusterId=${envId}`;
+          const url = `${wsUrl}/websocket?key=${key}&group=from_front:${key}&processor=front_log&secret_key=${secretKey}&env=${'choerodon-test'}&podName=${podName}&containerName=${containerName}&logId=${logId}&clusterId=${envId}&oauthToken=${getCookieToken()}&projectId=${getProjectId()}`;
           const ws = new WebSocket(url);
           // console.log(ws);
           this.setState({ ws, following: true });
