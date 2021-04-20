@@ -407,9 +407,9 @@ public class JsonImportServiceImpl implements JsonImportService {
         String[] strings = releaseName.split("-");
         Map<String, Long> fragments = new HashMap<>();
         //16进制转为10进制
-        fragments.put("appId", Long.valueOf(strings[1], 16));
-        fragments.put("appVersionId", Long.valueOf(strings[2], 16));
-        fragments.put("instanceId", Long.valueOf(strings[3], 16));
+        fragments.put("appId", Long.valueOf(strings[1], 32));
+        fragments.put("appVersionId", Long.valueOf(strings[2], 32));
+        fragments.put("instanceId", Long.valueOf(strings[3], 32));
 
         return fragments;
     }
