@@ -16,6 +16,8 @@ import io.choerodon.test.manager.infra.enums.TestAutomationHistoryEnums;
 import io.choerodon.test.manager.infra.mapper.TestAutomationHistoryMapper;
 import io.choerodon.test.manager.infra.mapper.TestCycleMapper;
 import io.choerodon.test.manager.infra.util.PageUtil;
+import org.hzero.starter.keyencrypt.core.EncryptContext;
+import org.hzero.starter.keyencrypt.core.EncryptionService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,9 +43,15 @@ public class TestAutomationHistoryServiceImpl implements TestAutomationHistorySe
     private TestAutomationHistoryMapper testAutomationHistoryMapper;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private EncryptionService encryptionService;
+
+    private static final String[] IGNORE_VALUES = {"0","none"};
+    public static final String BLANK_KEY = "";
 
     @Override
     public Page<TestAutomationHistoryVO> queryWithInstance(Map map, PageRequest pageRequest, Long projectId) {
+        decrypt(map);
         map.put("projectId", projectId);
         if (map.containsKey("filter")) {
             List<Long> versionId = devopsService.getAppVersionId(map.get("filter").toString(), projectId, Long.valueOf(map.get("appId").toString()));
@@ -67,6 +75,33 @@ public class TestAutomationHistoryServiceImpl implements TestAutomationHistorySe
         userService.populateTestAutomationHistory(list);
 //        populateCycles(list);
         return list;
+    }
+
+    private void decrypt(Map<String, Object> map) {
+        if (!EncryptContext.isEncrypt()){
+            return;
+        }
+        if (ObjectUtils.isEmpty(map)) {
+            return;
+        }
+        decryptByKey(map, "appVersionId");
+        decryptByKey(map, "envId");
+        String appId = (String)map.get("appId");
+        if (appId != null) {
+            map.put("appId", Long.parseLong(encryptionService.decrypt(appId, BLANK_KEY)));
+        }
+    }
+
+    private void decryptByKey(Map<String, Object> map, String key) {
+        List<String> encryptValues = (List<String>) map.get(key);
+        if (encryptValues != null) {
+            map.put(key,
+                    encryptValues
+                            .stream()
+                            .map(item ->
+                                    Arrays.asList(IGNORE_VALUES).contains(item) ? item : Long.parseLong(encryptionService.decrypt(item, BLANK_KEY)))
+                            .collect(Collectors.toList()));
+        }
     }
 
     public void populateAPPVersion(Long projectId, Page<TestAutomationHistoryVO> page) {

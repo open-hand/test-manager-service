@@ -406,9 +406,10 @@ public class JsonImportServiceImpl implements JsonImportService {
         }
         String[] strings = releaseName.split("-");
         Map<String, Long> fragments = new HashMap<>();
-        fragments.put("appId", Long.parseLong(strings[1]));
-        fragments.put("appVersionId", Long.parseLong(strings[2]));
-        fragments.put("instanceId", Long.parseLong(strings[3]));
+        //16进制转为10进制
+        fragments.put("appId", Long.valueOf(strings[1], 16));
+        fragments.put("appVersionId", Long.valueOf(strings[2], 16));
+        fragments.put("instanceId", Long.valueOf(strings[3], 16));
 
         return fragments;
     }

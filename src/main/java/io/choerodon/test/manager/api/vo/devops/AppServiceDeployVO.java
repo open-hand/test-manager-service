@@ -25,7 +25,7 @@ public class AppServiceDeployVO {
         this.appServiceId = appServiceId;
         this.type = type;
         this.instanceId = instanceId;
-        this.instanceName = "att-" + appServiceId + "-" + appServiceVersionId + "-" + instanceId;
+        this.instanceName = "att-" + Long.toHexString(appServiceId) + "-" + Long.toHexString(appServiceVersionId) + "-" + Long.toHexString(instanceId);
     }
 
     public AppServiceDeployVO(Long appServiceVersionId, Long environmentId, String values, Long appServiceId, String type, Long instanceId, String instanceName, Long recordId, Long valueId) {
