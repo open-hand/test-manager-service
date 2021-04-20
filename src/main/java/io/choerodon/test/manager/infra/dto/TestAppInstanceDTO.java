@@ -33,13 +33,13 @@ public class TestAppInstanceDTO extends AuditDomain {
     private Long logId;
 
     public static String getAppIdFromReleaseName(String releaseName){
-        return releaseName.split("-")[1];
+        return Long.toString(Long.valueOf(releaseName.split("-")[1], 32));
     }
     public static String getAppVersionIDFromReleaseName(String releaseName){
-        return releaseName.split("-")[2];
+        return Long.toString(Long.valueOf(releaseName.split("-")[2], 32));
     }
     public static String getInstanceIDFromReleaseName(String releaseName){
-        return releaseName.split("-")[3];
+        return Long.toString(Long.valueOf(releaseName.split("-")[3], 32));
     }
     public Long getId() {
         return id;
