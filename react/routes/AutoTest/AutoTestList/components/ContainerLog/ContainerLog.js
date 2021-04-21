@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
 import { Content } from '@choerodon/boot';
+import { getCookieToken } from '@choerodon/master/lib/utils/accessToken'
 import { Button, Select, Modal } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
 import CodeMirror from 'react-codemirror';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/base16-dark.css';
+import uuidv1 from 'uuid/v1';
+import { getProjectId } from '@/common/utils'
 import { getLog } from '../../../../../api/AutoTestApi';
 
 import './ContainerLog.less';
-
-const uuidv1 = require('uuid');
 
 const { Sidebar } = Modal;
 const { Option } = Select;
@@ -60,7 +61,7 @@ class ContainerLog extends Component {
   close = () => {
     this.setState({
       visible: false,
-    });  
+    });
     const editor = this.editorLog.getCodeMirror();
     const { ws } = this.state;
     clearInterval(this.timer);
@@ -71,10 +72,9 @@ class ContainerLog extends Component {
     editor.setValue('');
   };
 
-
   loadLog = (followingOK) => {
     const {
-      envId, podName, containerName, following, logType, 
+      envId, podName, containerName, following, logType,
     } = this.state;
     const logId = this.state.logId || (Math.random() * 1000);
     // const logId = Math.random();
@@ -92,13 +92,13 @@ class ContainerLog extends Component {
           editor.setValue(res);
         });
       } else {
-        try { 
+        try {
           // eslint-disable-next-line no-underscore-dangle
           const wsUrl = removeEndsChar(window._env_.DEVOPS_HOST, '/');
           // eslint-disable-next-line no-underscore-dangle
           const secretKey = window._env_.DEVOPS_WEBSOCKET_SECRET_KEY;
           const key = `cluster:${envId}.log:${uuidv1()}`;
-          const url = `${wsUrl}/websocket?key=${key}&group=from_front:${key}&processor=front_log&secret_key=${secretKey}&env=${'choerodon-test'}&podName=${podName}&containerName=${containerName}&logId=${logId}&clusterId=${envId}`;
+          const url = `${wsUrl}/websocket?key=${key}&group=from_front:${key}&processor=front_log&secret_key=${secretKey}&env=${'choerodon-test'}&podName=${podName}&containerName=${containerName}&logId=${logId}&clusterId=${envId}&oauthToken=${getCookieToken()}&projectId=${getProjectId()}`;
           const ws = new WebSocket(url);
           // console.log(ws);
           this.setState({ ws, following: true });
@@ -232,7 +232,7 @@ class ContainerLog extends Component {
     });
   };
 
-  saveRef = name => (ref) => {
+  saveRef = (name) => (ref) => {
     this[name] = ref;
   }
 
@@ -248,7 +248,7 @@ class ContainerLog extends Component {
         onOk={this.close}
         className="c7ntest-podLog-content c7ntest-region"
         okText={<FormattedMessage id="close" />}
-        okCancel={false}       
+        okCancel={false}
       >
         <Content className="sidebar-content" code="container.log" values={{ name: podName }}>
           <section className="c7ntest-podLog-section">
