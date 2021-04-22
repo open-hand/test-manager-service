@@ -27,7 +27,6 @@ function EditTestStepTable({ onUpdateDetail, IssueStore }) {
     store, disabled, caseId, prefixCls,
   } = useContext(EditIssueContext);
   const { issueSteps, issueInfo: { description } } = store;
-  const { clickIssue } = IssueStore;
   const [editDescriptionShow, setEditDescriptionShow] = useState(false);
   // const [editDes, setEditDes] = useState('');
   // useEffect(() => {
@@ -87,9 +86,10 @@ function EditTestStepTable({ onUpdateDetail, IssueStore }) {
               onOk={(value) => {
                 onUpdateDetail({ description: value });
                 setEditDescriptionShow(false);
+                IssueStore.setDescriptionChanged(false);
               }}
               onChange={(value) => {
-                IssueStore.setClickIssue({ ...clickIssue, hasChanged: true, newDes: value });
+                IssueStore.setDescriptionChanged(value !== description);
               }}
             />
           </div>
