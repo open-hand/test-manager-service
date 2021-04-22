@@ -105,7 +105,7 @@ class IssueManage extends Component {
         title: '提示',
         children: (
           <div>
-            描述信息尚未保存，是否放弃保存？
+            前置条件信息尚未保存，是否放弃保存？
           </div>
         ),
         onOk: () => {
