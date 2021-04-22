@@ -18,4 +18,16 @@
         where project_id = #{projectId}
     </update>
 
+    <update id="updateMaxCaseNum">
+        update test_project_info
+        set case_max_num = #{caseMaxNum}
+        where project_id = #{projectId}
+        and case_max_num &lt;= #{caseMaxNum}
+    </update>
+
+    <select id="queryByProjectId" resultType="io.choerodon.test.manager.infra.dto.TestProjectInfoDTO">
+       select * from test_project_info
+        where project_id = #{projectId}
+    </select>
+
 </mapper>
