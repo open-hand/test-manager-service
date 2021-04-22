@@ -1,6 +1,6 @@
 import React, { useCallback, useContext } from 'react';
 import { Input, Icon } from 'choerodon-ui';
-import { TextField } from 'choerodon-ui/pro';
+import { TextField, Modal } from 'choerodon-ui/pro';
 import { observer } from 'mobx-react-lite';
 import { TextEditToggle, TextEditTogglePro } from '@/components';
 import EditIssueContext from './stores';
@@ -11,13 +11,34 @@ const { TextArea } = Input;
 const { Text, Edit } = TextEditToggle;
 
 function Header({
-  onUpdate,
+  onUpdate, IssueStore,
 }) {
   const {
     store, disabled, prefixCls, onClose,
   } = useContext(EditIssueContext);
   const { issueInfo } = store;
   const { caseNum, summary, customNum } = issueInfo;
+
+  const handleClose = useCallback(() => {
+    const { clickIssue } = IssueStore;
+    const { description, newDes, hasChanged } = clickIssue;
+    if (!hasChanged || (hasChanged && description === newDes)) {
+      onClose(issueInfo);
+    } else {
+      Modal.confirm({
+        title: '提示',
+        children: (
+          <div>
+            描述信息尚未保存，是否放弃保存？
+          </div>
+        ),
+        onOk: () => {
+          onClose(issueInfo);
+          return true;
+        },
+      });
+    }
+  }, [IssueStore, issueInfo, onClose]);
 
   return (
     <div className={`${prefixCls}-content-header`}>
@@ -41,7 +62,7 @@ function Header({
             cursor: 'pointer', fontSize: '13px', display: 'flex', alignItems: 'center', marginLeft: 'auto',
           }}
           role="none"
-          onClick={onClose.bind(this, issueInfo)}
+          onClick={handleClose}
         >
           <Icon type="last_page" style={{ fontSize: '18px', fontWeight: '500' }} />
           隐藏详情
