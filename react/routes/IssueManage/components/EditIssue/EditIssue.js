@@ -150,7 +150,7 @@ function EditIssue() {
             <div className={`${prefixCls}-content-bottom`} id="scroll-area" style={{ position: 'relative' }}>
               <Tabs onChange={handleTabChange}>
                 <TabPane tab="步骤" key="test">
-                  <EditTestStepTable onUpdateDetail={handleUpdate} />
+                  <EditTestStepTable onUpdateDetail={handleUpdate} IssueStore={IssueStore} key={caseId} />
                 </TabPane>
                 <TabPane tab="详情" key="detail">
                   <Detail

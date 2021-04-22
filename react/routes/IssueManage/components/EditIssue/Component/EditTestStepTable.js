@@ -1,6 +1,6 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
-import { Tooltip, Button } from 'choerodon-ui/pro';
+import { Tooltip, Button, Modal } from 'choerodon-ui/pro';
 import {
   cloneStep, updateStep, deleteStep, createIssueStep,
 } from '@/api/IssueManageApi';
@@ -22,11 +22,12 @@ function TestStepWrap({ title, children }) {
   );
 }
 
-function EditTestStepTable({ onUpdateDetail }) {
+function EditTestStepTable({ onUpdateDetail, IssueStore }) {
   const {
     store, disabled, caseId, prefixCls,
   } = useContext(EditIssueContext);
   const { issueSteps, issueInfo: { description } } = store;
+  const { clickIssue } = IssueStore;
   const [editDescriptionShow, setEditDescriptionShow] = useState(false);
   // const [editDes, setEditDes] = useState('');
   // useEffect(() => {
@@ -72,15 +73,13 @@ function EditTestStepTable({ onUpdateDetail }) {
         editDescriptionShow && (
           <div className="line-start mt-10">
             <CKEditor
+              key={caseId}
               autoFocus
               footer
               value={description}
               style={{
                 height: 'auto', width: '100%', minHeight: 280,
               }}
-              // onChange={(value) => {
-              //   setEditDes(value);
-              // }}
               onCancel={() => {
                 setEditDescriptionShow(false);
                 // setEditDes(description);
@@ -88,6 +87,9 @@ function EditTestStepTable({ onUpdateDetail }) {
               onOk={(value) => {
                 onUpdateDetail({ description: value });
                 setEditDescriptionShow(false);
+              }}
+              onChange={(value) => {
+                IssueStore.setClickIssue({ ...clickIssue, hasChanged: true, newDes: value });
               }}
             />
           </div>
