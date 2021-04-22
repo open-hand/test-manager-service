@@ -96,7 +96,24 @@ class IssueManage extends Component {
   }
 
   handleTableRowClick = (record) => {
-    IssueStore.setClickIssue(record);
+    const { clickIssue } = IssueStore;
+    const { description, newDes, hasChanged } = clickIssue;
+    if (!clickIssue.caseId || !hasChanged || (hasChanged && description === newDes)) {
+      IssueStore.setClickIssue(record);
+    } else {
+      Modal.confirm({
+        title: '提示',
+        children: (
+          <div>
+            描述信息尚未保存，是否放弃保存？
+          </div>
+        ),
+        onOk: () => {
+          IssueStore.setClickIssue(record);
+          return true;
+        },
+      });
+    }
   }
 
   saveRef = (name) => (ref) => {
