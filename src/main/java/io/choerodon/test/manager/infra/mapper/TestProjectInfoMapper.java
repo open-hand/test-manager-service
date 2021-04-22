@@ -16,4 +16,8 @@ public interface TestProjectInfoMapper extends BaseMapper<TestProjectInfoDTO> {
     void batchInsert(@Param("testProjectInfoDTOList") List<TestProjectInfoDTO> testProjectInfoDTOList);
 
     int updateProjectCode(@Param("projectId") Long projectId, @Param("projectCode") String projectCode);
+
+    int updateMaxCaseNum(@Param("projectId") Long projectId, @Param("caseMaxNum") Long caseMaxNum);
+
+    TestProjectInfoDTO queryByProjectId(@Param("projectId") Long projectId);
 }

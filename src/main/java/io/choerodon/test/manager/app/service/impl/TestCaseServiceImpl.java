@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import io.choerodon.test.manager.infra.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,10 +41,6 @@ import io.choerodon.test.manager.infra.feign.ApplicationFeignClient;
 import io.choerodon.test.manager.infra.feign.BaseFeignClient;
 import io.choerodon.test.manager.infra.feign.operator.AgileClientOperator;
 import io.choerodon.test.manager.infra.mapper.*;
-import io.choerodon.test.manager.infra.util.ConvertUtils;
-import io.choerodon.test.manager.infra.util.DBValidateUtil;
-import io.choerodon.test.manager.infra.util.PageUtil;
-import io.choerodon.test.manager.infra.util.TypeUtil;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -248,9 +245,11 @@ public class TestCaseServiceImpl implements TestCaseService {
                 throw new CommonException("error.query.project.info.null");
             }
             testCaseVO.setProjectId(projectId);
-            caseNum = testProjectInfo.getCaseMaxNum() + 1;
-            testProjectInfo.setCaseMaxNum(caseNum);
-            testProjectInfoMapper.updateByPrimaryKeySelective(testProjectInfo);
+            caseNum = CaseNumUtil.getNewCaseNum(projectId);
+            //修改projectInfo maxCaseNum
+            if (testProjectInfoMapper.updateMaxCaseNum(projectId, caseNum) != 1) {
+                throw new CommonException("error.case.max.num.update");
+            }
         }else {
             caseNum = outsideCount.incrementAndGet();
         }
@@ -655,15 +654,16 @@ public class TestCaseServiceImpl implements TestCaseService {
         }
 
         TestCaseDTO testCaseDTO = ConvertUtils.convertObject(issueCreateDTO, TestCaseDTO.class);
-        Long caseNum = testProjectInfo.getCaseMaxNum() + 1;
+        Long caseNum = CaseNumUtil.getNewCaseNum(projectId);
         testCaseDTO.setCaseNum(caseNum.toString());
         testCaseDTO.setVersionNum(1L);
         // 插入测试用例
         testCaseMapper.insert(testCaseDTO);
 
         //修改projectInfo maxCaseNum
-        testProjectInfo.setCaseMaxNum(caseNum);
-        testProjectInfoMapper.updateByPrimaryKeySelective(testProjectInfo);
+        if (testProjectInfoMapper.updateMaxCaseNum(projectId, caseNum) != 1) {
+           throw new CommonException("error.case.max.num.update");
+        }
         // 更新记录关联表
         List<TestCaseLinkDTO> testCaseLinkDTOList = issueCreateDTO.getTestCaseLinkDTOList();
         if (testCaseLinkDTOList != null && !testCaseLinkDTOList.isEmpty()) {
