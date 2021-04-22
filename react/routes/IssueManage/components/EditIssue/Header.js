@@ -20,9 +20,8 @@ function Header({
   const { caseNum, summary, customNum } = issueInfo;
 
   const handleClose = useCallback(() => {
-    const { clickIssue } = IssueStore;
-    const { description, newDes, hasChanged } = clickIssue;
-    if (!hasChanged || (hasChanged && description === newDes)) {
+    const { descriptionChanged } = IssueStore;
+    if (!descriptionChanged) {
       onClose(issueInfo);
     } else {
       Modal.confirm({
@@ -34,6 +33,7 @@ function Header({
         ),
         onOk: () => {
           onClose(issueInfo);
+          IssueStore.setDescriptionChanged(false);
           return true;
         },
       });

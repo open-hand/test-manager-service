@@ -96,9 +96,8 @@ class IssueManage extends Component {
   }
 
   handleTableRowClick = (record) => {
-    const { clickIssue } = IssueStore;
-    const { description, newDes, hasChanged } = clickIssue;
-    if (!clickIssue.caseId || !hasChanged || (hasChanged && description === newDes)) {
+    const { clickIssue, descriptionChanged } = IssueStore;
+    if (!clickIssue.caseId || !descriptionChanged) {
       IssueStore.setClickIssue(record);
     } else {
       Modal.confirm({
@@ -110,6 +109,7 @@ class IssueManage extends Component {
         ),
         onOk: () => {
           IssueStore.setClickIssue(record);
+          IssueStore.setDescriptionChanged(false);
           return true;
         },
       });
