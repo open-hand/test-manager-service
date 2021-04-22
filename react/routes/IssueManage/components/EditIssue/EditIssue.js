@@ -146,7 +146,7 @@ function EditIssue() {
             loading && <Loading />
           }
           <div className={`${prefixCls}-content`}>
-            <Header onUpdate={handleUpdate} />
+            <Header onUpdate={handleUpdate} IssueStore={IssueStore} />
             <div className={`${prefixCls}-content-bottom`} id="scroll-area" style={{ position: 'relative' }}>
               <Tabs onChange={handleTabChange}>
                 <TabPane tab="步骤" key="test">
