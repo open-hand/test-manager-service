@@ -197,7 +197,7 @@ class IssueManage extends Component {
     const currentFolder = IssueTreeStore.getCurrentFolder;
     const { loading, rootIds } = IssueTreeStore;
     const noFolder = rootIds.length === 0;
-    const { tab, tabs } = this.props;
+    const { tab, hasExtraTab } = this.props;
     return (
       <Page
         className="c7ntest-Issue c7ntest-region"
@@ -242,7 +242,7 @@ class IssueManage extends Component {
               }}
             >
               <div className="c7ntest-Issue-content-left">
-                {tabs.length > 1 && tab}
+                {hasExtraTab && tab}
                 <IssueTree />
               </div>
             </Section>
