@@ -11,8 +11,9 @@ import {
 import { Action, stores } from '@choerodon/boot';
 import _ from 'lodash';
 import { renderIssueNum } from '@/routes/IssueManage/components/IssueTable/tags';
+import SelectUser from '@/components/select/select-user';
 import {
-  SelectFocusLoad, StatusTags, DragTable,
+  StatusTags, DragTable,
 } from '../../../../components';
 import CustomCheckBox from '../../../../components/CustomCheckBox';
 import User from '../../../../components/User';
@@ -416,24 +417,17 @@ const TestPlanTable = observer(({
                 </span>
                 <Checkbox style={{ marginLeft: 4 }} checked={isSelf} onChange={onOnlyMeCheckedChange} />
               </div>
-              <SelectFocusLoad
-                allowClear
-                middleWare={(users) => users.filter((u) => AppState.userInfo.id.toString() !== String(u.id))}
-                style={{ width: 120, marginLeft: 30 }}
-                dropdownMatchSelectWidth={false}
-                dropdownStyle={{
-                  width: 200,
-                }}
+              <SelectUser
+                flat
+                self={false}
+                placeholder="计划执行人"
+                onChange={onSearchAssign}
+                value={isSelf ? undefined : testPlanStore.filter.assignUser}
+                style={{ marginLeft: 30 }}
                 dropdownAlign={{
                   points: ['tl', 'bl'],
                   overflow: { adjustX: true },
                 }}
-                placeholder="计划执行人"
-                loadWhenMount
-                getPopupContainer={(trigger) => trigger.parentNode}
-                type="user"
-                onChange={onSearchAssign}
-                value={isSelf ? undefined : testPlanStore.filter.assignUser}
               />
             </span>
           </div>

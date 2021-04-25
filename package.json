@@ -9,7 +9,6 @@
     "lib"
   ],
   "dependencies": {
-    "@choerodon/components": "^0.0.1",
     "@atlaskit/tree": "^7.0.2",
     "ahooks": "^2.9.2",
     "echarts": "^4.1.0",
@@ -33,7 +32,7 @@
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
-    "@choerodon/agile": "0.25.0",
+    "@choerodon/agile": "0.26.0",
     "@choerodon/boot": "0.23.1",
     "@choerodon/compiler": "^0.0.1",
     "@choerodon/master": "0.26.0",

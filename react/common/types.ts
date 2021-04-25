@@ -7,6 +7,17 @@ export interface IUser {
   loginName: string
   realName: string
 }
+export interface User {
+  email: string
+  enabled?: boolean
+  id: string
+  imageUrl: string | null
+  ldap: boolean
+  loginName: string
+  realName: string
+  name?: string
+}
+
 export interface IIssueType {
   colour: string,
   description: string,
