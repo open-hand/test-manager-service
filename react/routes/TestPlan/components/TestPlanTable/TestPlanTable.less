@@ -1,21 +1,39 @@
 @base: black;
 @baseblue: #3F51B5;
+
+
+.c7ntest-testPlanTable-content {
+  margin-top: -56px;
+}
+
+body[data-theme="theme4"] {
+  .c7ntest-testPlanTable-content {
+    margin-top: -47px;
+  }
+}
+
 .c7n-card-body {
   padding: 0.2rem;
   padding-top: 0;
+
   .c7ntest-testPlanTable {
+
+
     .c7ntest-dragtable {
       margin-top: -0.07rem;
+
       .c7n-table-filter-bar {
         border-top: 0;
       }
     }
   }
+
   .c7ntest-mineTestPlanTable {
     .c7ntest-dragtable {
       margin-top: -0.18rem;
     }
   }
+
   .c7n-table {
     &-TestPlanTable-table {
       &-p {
@@ -28,6 +46,7 @@
         cursor: pointer;
       }
     }
+
     &-TestPlanTable-table {
       &-span {
         color: fade(@base, 65%);
@@ -36,22 +55,27 @@
     }
   }
 }
+
 .c7ntest-dragtable table tbody tr td {
-    overflow: unset;
-    .c7ntest-testPlan-table-summary{
-      overflow: hidden;
-      text-overflow: ellipsis;
-      display: inline-block;
-      white-space: nowrap;
-      &:hover {
-        color: @primary-color;
-        text-decoration: underline;
-      }
+  overflow: unset;
+
+  .c7ntest-testPlan-table-summary {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    white-space: nowrap;
+
+    &:hover {
+      color: @primary-color;
+      text-decoration: underline;
     }
-    .c7ntest-mineTestPlanTable-assignedUser {
-      width: 100%;
-    }
+  }
+
+  .c7ntest-mineTestPlanTable-assignedUser {
+    width: 100%;
+  }
 }
+
 .c7ntest-testPlan-assignToDropDown {
   .c7n-select-dropdown-menu-item {
     display: flex;

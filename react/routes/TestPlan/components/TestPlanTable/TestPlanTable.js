@@ -393,13 +393,15 @@ const TestPlanTable = observer(({
     <div className={`c7ntest-testPlanTable ${isMine ? 'c7ntest-mineTestPlanTable' : ''}`}>
       {
         (!isMine && (data.length > 0 || testPlanStore.filter.assignUser)) && (
-          <div style={{
-            marginTop: '-56px',
-            marginBottom: 3,
-            alignItems: 'center',
-            flexDirection: 'row-reverse',
-            display: testPlanStore.mainActiveTab === 'testPlanTable' ? 'flex' : 'none',
-          }}
+          <div
+            className="c7ntest-testPlanTable-content"
+            style={{
+
+              marginBottom: 3,
+              alignItems: 'center',
+              flexDirection: 'row-reverse',
+              display: testPlanStore.mainActiveTab === 'testPlanTable' ? 'flex' : 'none',
+            }}
           >
             <span style={{
               position: 'relative',
