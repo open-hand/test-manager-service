@@ -83,6 +83,16 @@
         order by t3.issue_id desc
     </select>
 
-
-
+    <select id="listByIssueIds" resultType="io.choerodon.test.manager.infra.dto.TestCaseDTO">
+        SELECT
+            tc.case_id,
+            tc.folder_id
+        FROM test_case tc
+        LEFT JOIN test_case_link tcl ON tc.case_id = tcl.link_case_id
+        WHERE
+        tcl.issue_id IN
+        <foreach collection="issueIds" item="issueId" open="(" separator="," close=")">
+            #{issueId}
+        </foreach>
+    </select>
 </mapper>

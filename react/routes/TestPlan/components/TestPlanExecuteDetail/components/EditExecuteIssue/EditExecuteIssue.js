@@ -6,8 +6,7 @@ import {
   Form, TextField, Icon, Spin, message, Select,
 } from 'choerodon-ui/pro';
 import { observer } from 'mobx-react-lite';
-import { WYSIWYGEditor } from '@/components';
-import { text2Delta } from '@/common/utils';
+import CKEditor from '@/components/CKEditor';
 import { PromptInput } from '@/components';
 import UploadButton from './UploadButton';
 import EditTestStepTable from './EditTestStepTable';
@@ -25,9 +24,8 @@ function EditExecuteIssue(props) {
         if (editDataset.current.status !== 'sync') {
           if (await UpdateExecuteData(editDataset.current.toData())) {
             return true;
-          } else {
-            message.info('修改失败');
           }
+          message.info('修改失败');
         }
         message.info('未做任何修改');
       }
@@ -45,7 +43,7 @@ function EditExecuteIssue(props) {
   const onUploadFile = ({ file }) => {
     // console.log('onUploadFile', file, fileList);
     const { status = 'add', size } = file;
-    // remove操作的file是新文件 则进行文件列表直接赋值操作，否则 则进行标记 
+    // remove操作的file是新文件 则进行文件列表直接赋值操作，否则 则进行标记
     const oldFileList = editDataset.current.get('fileList') || [];
     if (status === 'removed' && !size) {
       editDataset.current.set('fileList', [...oldFileList, file]);
@@ -55,7 +53,7 @@ function EditExecuteIssue(props) {
         newFileList.push(file);
         editDataset.current.set('fileList', newFileList);
       } else if (status === 'removed') {
-        editDataset.current.set('fileList', newFileList.filter(item => item.uid !== file.uid));
+        editDataset.current.set('fileList', newFileList.filter((item) => item.uid !== file.uid));
       }
     }
   };
@@ -82,10 +80,10 @@ function EditExecuteIssue(props) {
 
         </div>
         {(editDataset.current && (
-          <WYSIWYGEditor
+          <CKEditor
             style={{ height: 200, width: '100%' }}
             onChange={handleChangeDes}
-            defaultValue={text2Delta(editDataset.current.get('description'))}
+            defaultValue={editDataset.current.get('description')}
           />
         )
         )}

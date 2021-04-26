@@ -3,10 +3,11 @@ package io.choerodon.test.manager.infra.feign.operator;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.ServiceUnavailableException;
@@ -17,6 +18,8 @@ import io.choerodon.test.manager.api.vo.IssueLinkVO;
 import io.choerodon.test.manager.api.vo.IssueQueryVO;
 import io.choerodon.test.manager.api.vo.agile.*;
 import io.choerodon.test.manager.infra.feign.IssueFeignClient;
+import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
+import io.choerodon.test.manager.infra.feign.SprintClient;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 
 /**
@@ -29,6 +32,10 @@ public class AgileClientOperator {
     private IssueFeignClient issueFeignClient;
     @Autowired
     private TestCaseFeignClient testCaseFeignClient;
+    @Autowired
+    private SprintClient sprintClient;
+    @Autowired
+    private ProductionVersionClient productionVersionClient;
 
     public List<IssueLinkVO> queryIssues(Long projectId, List<Long> issueIds) {
         return FeignClientUtils.doRequest(() -> issueFeignClient.queryIssues(projectId, issueIds), new TypeReference<List<IssueLinkVO>>() {
@@ -182,5 +189,49 @@ public class AgileClientOperator {
         } catch (ServiceUnavailableException e) {
             return null;
         }
+    }
+
+    public Map<Long, SprintNameDTO> querySprintMapByProject(Long projectId) {
+        List<SprintNameDTO> sprintList;
+        try {
+            sprintList = FeignClientUtils.doRequest(() ->
+                            sprintClient.queryNameByOptions(projectId),
+                    new TypeReference<List<SprintNameDTO>>() {
+                    });
+        } catch (ServiceUnavailableException e) {
+            sprintList = new ArrayList<>();
+        }
+        return sprintList
+                .stream()
+                .collect(Collectors.toMap(SprintNameDTO::getSprintId, Function.identity()));
+    }
+
+    public SprintNameDTO querySprintNameById(Long projectId, Long sprintId) {
+        Map<Long, SprintNameDTO> sprintMap = querySprintMapByProject(projectId);
+        return sprintMap.get(sprintId);
+    }
+
+    public Map<Long, ProductVersionDTO> queryProductVersionMapByProject(Long projectId) {
+        List<ProductVersionDTO> productVersionList;
+        try {
+            productVersionList = FeignClientUtils.doRequest(() ->
+                            productionVersionClient.queryNameByOptions(projectId),
+                    new TypeReference<List<ProductVersionDTO>>() {
+                    });
+        } catch (ServiceUnavailableException e) {
+            productVersionList = new ArrayList<>();
+        }
+        if (CollectionUtils.isEmpty(productVersionList)) {
+            return new HashMap<>(0);
+        }
+        return productVersionList
+                .stream()
+                .collect(Collectors.toMap(ProductVersionDTO::getVersionId, Function.identity()));
+
+    }
+
+    public ProductVersionDTO queryProductVersionById(Long projectId, Long productVersionId) {
+        Map<Long, ProductVersionDTO> productVersionMap = queryProductVersionMapByProject(projectId);
+        return productVersionMap.get(productVersionId);
     }
 }

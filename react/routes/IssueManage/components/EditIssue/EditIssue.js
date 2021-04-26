@@ -5,14 +5,11 @@ import React, {
 } from 'react';
 import { Choerodon } from '@choerodon/boot';
 import { throttle } from 'lodash';
-import { Spin } from 'choerodon-ui';
+import { Spin, Tabs } from 'choerodon-ui';
 import { observer } from 'mobx-react-lite';
-import { Tabs } from 'choerodon-ui';
+
 import './EditIssue.less';
 import { ResizeAble } from '@/components';
-import {
-  returnBeforeTextUpload, testCaseTableLink, testCaseDetailLink,
-} from '@/common/utils';
 import { updateIssue, getLabels } from '@/api/IssueManageApi';
 import Loading from '@/components/Loading';
 import EditIssueContext from './stores';
@@ -48,7 +45,6 @@ function EditIssue() {
     onUpdate();
   };
 
-
   /**
    * DataLog
    */
@@ -82,16 +78,13 @@ function EditIssue() {
     );
   };
 
-
   const handleResizeEnd = ({ width }) => {
     localStorage.setItem('agile.EditIssue.width', `${width}px`);
   };
 
-
   const handleResize = throttle(({ width }) => {
     setQuery(width);
   }, 150);
-
 
   const handleUpdate = async (newValue, done) => {
     const key = Object.keys(newValue)[0];
@@ -103,25 +96,17 @@ function EditIssue() {
       objectVersionNumber,
     };
     switch (key) {
-      case 'description': {
-        if (value) {
-          await returnBeforeTextUpload(value, issue, updateIssue, 'description');
-          store.loadIssueData();
-        }
-        break;
-      }
-
       default: {
         if (key === 'summary' && value === '') {
           Choerodon.prompt('用例名不可为空！');
-          done();
+          done && done();
           break;
         }
         issue = { ...issue, ...newValue };
         await updateIssue(issue);
         await store.loadIssueData();
         onUpdate();
-        done(); // done() 为了更新完之后用服务器数据替换之前选中的数据，因此应该等待前边数据加载完再更新       
+        done && done(); // done() 为了更新完之后用服务器数据替换之前选中的数据，因此应该等待前边数据加载完再更新
         break;
       }
     }
@@ -161,11 +146,11 @@ function EditIssue() {
             loading && <Loading />
           }
           <div className={`${prefixCls}-content`}>
-            <Header onUpdate={handleUpdate} />
+            <Header onUpdate={handleUpdate} IssueStore={IssueStore} />
             <div className={`${prefixCls}-content-bottom`} id="scroll-area" style={{ position: 'relative' }}>
               <Tabs onChange={handleTabChange}>
                 <TabPane tab="步骤" key="test">
-                  <EditTestStepTable onUpdateDetail={handleUpdate} />
+                  <EditTestStepTable onUpdateDetail={handleUpdate} IssueStore={IssueStore} key={caseId} />
                 </TabPane>
                 <TabPane tab="详情" key="detail">
                   <Detail

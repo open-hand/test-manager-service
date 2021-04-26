@@ -96,7 +96,24 @@ class IssueManage extends Component {
   }
 
   handleTableRowClick = (record) => {
-    IssueStore.setClickIssue(record);
+    const { clickIssue, descriptionChanged } = IssueStore;
+    if (!clickIssue.caseId || !descriptionChanged) {
+      IssueStore.setClickIssue(record);
+    } else {
+      Modal.confirm({
+        title: '提示',
+        children: (
+          <div>
+            前置条件信息尚未保存，是否放弃保存？
+          </div>
+        ),
+        onOk: () => {
+          IssueStore.setClickIssue(record);
+          IssueStore.setDescriptionChanged(false);
+          return true;
+        },
+      });
+    }
   }
 
   saveRef = (name) => (ref) => {
@@ -197,7 +214,7 @@ class IssueManage extends Component {
     const currentFolder = IssueTreeStore.getCurrentFolder;
     const { loading, rootIds } = IssueTreeStore;
     const noFolder = rootIds.length === 0;
-    const { tab, tabs } = this.props;
+    const { tab, hasExtraTab } = this.props;
     return (
       <Page
         className="c7ntest-Issue c7ntest-region"
@@ -242,7 +259,7 @@ class IssueManage extends Component {
               }}
             >
               <div className="c7ntest-Issue-content-left">
-                {tabs.length > 1 && tab}
+                {hasExtraTab && tab}
                 <IssueTree />
               </div>
             </Section>

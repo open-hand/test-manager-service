@@ -207,5 +207,11 @@ class IssueStore {
   @computed get getClickIssue() {
     return this.clickIssue;
   }
+
+  @observable descriptionChanged = false;
+
+  @action setDescriptionChanged = (data) => {
+    this.descriptionChanged = data;
+  }
 }
 export default new IssueStore();

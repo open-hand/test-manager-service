@@ -1,9 +1,10 @@
 {
   "name": "@choerodon/testmanager",
   "routeName": "testManager",
-  "version": "0.25.1",
+  "version": "0.26.0",
   "description": "",
   "main": "./lib/index.js",
+  "install": "./lib/install.js",
   "files": [
     "lib"
   ],
@@ -23,7 +24,6 @@
     "react-fast-compare": "^2.0.4",
     "react-image-lightbox": "^4.6.0",
     "react-onclickoutside": "^6.9.0",
-    "react-quill": "^1.3.0",
     "shallowequal": "^1.1.0",
     "styled-components": "^4.4.1",
     "timeago-react": "2.0.0",
@@ -32,13 +32,12 @@
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
-    "@choerodon/agile": "0.25.0",
-    "@choerodon/boot": "0.22.4",
+    "@choerodon/agile": "0.26.0",
+    "@choerodon/boot": "0.23.1",
     "@choerodon/compiler": "^0.0.1",
-    "@choerodon/master": "0.25.0",
+    "@choerodon/master": "0.26.0",
     "@types/echarts": "^4.6.5",
     "@types/lodash": "^4.14.165",
-    "@types/quill": "^2.0.3",
     "@types/react": "^16.9.35",
     "@types/react-dom": "^16.9.8",
     "@types/react-intl": "^2.3.18",

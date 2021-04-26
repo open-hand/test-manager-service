@@ -4,7 +4,7 @@ import { Icon, Button, Tooltip } from 'choerodon-ui';
 import { map } from 'lodash';
 import { injectIntl } from 'react-intl';
 
-import CaseListItem from './CaseListItem';
+import CaseListItem from './components/case';
 import { openTestCaseModal } from './TestCaseModal';
 import useTestLinkStore from './TestLinkStore';
 

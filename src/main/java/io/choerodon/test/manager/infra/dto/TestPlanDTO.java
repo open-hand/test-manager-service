@@ -51,6 +51,12 @@ public class TestPlanDTO extends AuditDomain {
     @Transient
     private Long versionId;
 
+    @ApiModelProperty(value = "冲刺id")
+    private Long sprintId;
+
+    @ApiModelProperty(value = "版本id")
+    private Long productVersionId;
+
     public Long getVersionId() {
         return versionId;
     }
@@ -140,5 +146,21 @@ public class TestPlanDTO extends AuditDomain {
 
     public void setInitStatus(String initStatus) {
         this.initStatus = initStatus;
+    }
+
+    public Long getSprintId() {
+        return sprintId;
+    }
+
+    public void setSprintId(Long sprintId) {
+        this.sprintId = sprintId;
+    }
+
+    public Long getProductVersionId() {
+        return productVersionId;
+    }
+
+    public void setProductVersionId(Long productVersionId) {
+        this.productVersionId = productVersionId;
     }
 }
