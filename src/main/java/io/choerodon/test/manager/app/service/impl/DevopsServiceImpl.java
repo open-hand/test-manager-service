@@ -99,7 +99,8 @@ public class DevopsServiceImpl implements DevopsService {
                 List<TestAppInstanceDTO> list = queryDelayInstance(delayTime);
                 if (!ObjectUtils.isEmpty(list)) {
                     Map releaseList = list.stream().collect(Collectors.groupingBy(TestAppInstanceDTO::getEnvId,
-                            Collectors.mapping(v -> "att-" + v.getAppId() + "-" + v.getAppVersionId() + "-" + v.getId(), Collectors.toList())));
+                            Collectors.mapping(v ->
+                                    "att-" + Long.toString(v.getAppId(), 32) + "-" + Long.toString(v.getAppVersionId(), 32) + "-" + Long.toString(v.getId(), 32), Collectors.toList())));
                     getTestStatus(releaseList);
                     logger.debug("send to devops server for get instance status: {}", JSONObject.toJSONString(releaseList));
                 }

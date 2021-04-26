@@ -49,6 +49,7 @@ public class TestAutomationHistoryVO extends AuditDomain {
     private String cycleIds;
 
     @ApiModelProperty(value = "测试结果日志ID")
+    @Encrypt
     private Long resultId;
 
     @ApiModelProperty(value = "实例DTO")
