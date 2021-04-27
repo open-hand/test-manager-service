@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.api.vo.agile;
 
+import io.choerodon.test.manager.infra.dto.TestCaseStepProDTO;
 import io.choerodon.test.manager.infra.util.StringUtil;
 import io.choerodon.test.manager.infra.dto.TestCaseLinkDTO;
 import org.hzero.starter.keyencrypt.core.Encrypt;
@@ -11,6 +12,8 @@ import java.util.List;
  * @author dinghuang123@gmail.com
  */
 public class IssueCreateDTO {
+    @Encrypt
+    private Long caseId;
 
     private String typeCode;
 
@@ -53,6 +56,8 @@ public class IssueCreateDTO {
     private BigDecimal estimateTime;
 
     private String epicName;
+
+    private List<TestCaseStepProDTO> testCaseStepProList;
 
     private List<IssueLinkCreateVO> issueLinkCreateVOList;
 
@@ -235,5 +240,21 @@ public class IssueCreateDTO {
 
     public void setCustomNum(String customNum) {
         this.customNum = customNum;
+    }
+
+    public List<TestCaseStepProDTO> getTestCaseStepProList() {
+        return testCaseStepProList;
+    }
+
+    public void setTestCaseStepProList(List<TestCaseStepProDTO> testCaseStepProList) {
+        this.testCaseStepProList = testCaseStepProList;
+    }
+
+    public Long getCaseId() {
+        return caseId;
+    }
+
+    public void setCaseId(Long caseId) {
+        this.caseId = caseId;
     }
 }

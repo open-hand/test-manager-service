@@ -109,7 +109,7 @@
     </sql>
 
     <insert id="batchInsertTestCase" parameterType="io.choerodon.test.manager.api.vo.TestCaseMigrateDTO">
-        insert into test_case (case_id, case_num, summary, description, `rank`, folder_id, version_num, project_id,
+        insert into test_case (case_id, case_num, summary, description, rank, folder_id, version_num, project_id,
         object_version_number, created_by, creation_date, last_updated_by, last_update_date)
         values (#{caseId}, #{caseNum}, #{summary}, #{description}, #{rank}, #{folderId}, 1, #{projectId},
         #{objectVersionNumber}, #{createdBy}, #{creationDate}, #{lastUpdatedBy}, #{lastUpdateDate});
@@ -471,4 +471,14 @@
             last_update_date = current_timestamp
         WHERE case_id = #{caseId}
     </update>
+
+    <insert id="batchInsert">
+        INSERT INTO test_case (case_id, case_num, summary, description, rank, folder_id, version_num, project_id, priority_id,
+        object_version_number, created_by, last_updated_by)
+        VALUES
+        <foreach collection="testCaseList" item="case" separator=",">
+            (#{case.caseId}, #{case.caseNum}, #{case.summary}, #{case.description}, #{case.rank}, #{case.folderId}, #{case.versionNum}, #{case.projectId}, #{case.priorityId},
+            1,#{case.createdBy}, #{case.lastUpdatedBy})
+        </foreach>
+    </insert>
 </mapper>

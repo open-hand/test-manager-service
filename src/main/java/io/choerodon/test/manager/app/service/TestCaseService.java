@@ -17,6 +17,7 @@ import io.choerodon.test.manager.api.vo.devops.AppServiceVersionRespVO;
 import io.choerodon.test.manager.api.vo.devops.ApplicationRepDTO;
 import io.choerodon.test.manager.api.vo.devops.InstanceValueVO;
 import io.choerodon.test.manager.infra.dto.TestCaseDTO;
+import io.choerodon.test.manager.infra.dto.TestProjectInfoDTO;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -238,4 +239,10 @@ public interface TestCaseService {
 
     List<TestCaseDTO> queryByCustomNum(Long projectId, String customNum);
 
+    /**
+     * 批量创建导入的case
+     * @param issueCreateDTOList 要创建的列表
+     * @param testProjectInfo 测试项目信息
+     */
+    void batchImportTestCase(List<IssueCreateDTO> issueCreateDTOList, TestProjectInfoDTO testProjectInfo);
 }

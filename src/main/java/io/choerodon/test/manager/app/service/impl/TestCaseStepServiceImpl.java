@@ -133,6 +133,13 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
     }
 
     @Override
+    public void batchCreateOneStep(List<TestCaseStepProDTO> testCaseStepProList) {
+        List<TestCaseStepDTO> testCaseStepList = modelMapper.map(testCaseStepProList, new TypeToken<List<TestCaseStepDTO>>() {
+        }.getType());
+        testCaseStepMapper.batchInsertTestCaseSteps(testCaseStepList);
+    }
+
+    @Override
     public void removeStepByIssueId(Long projectId,Long caseId) {
         // 查询是否含有步骤，又步骤再删除
         TestCaseStepDTO testCaseStepDTO = new TestCaseStepDTO();
