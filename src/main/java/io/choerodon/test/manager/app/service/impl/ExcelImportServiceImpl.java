@@ -246,7 +246,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                 } else {
                     successfulCount++;
                     issueCreateDTOList.add(issueCreateDTO);
-                    lastRate = updateProgress(testFileLoadHistoryDTO, userId, progress / nonBlankRowCount, lastRate);
+                    lastRate = updateProgress(testFileLoadHistoryDTO, userId, progress / nonBlankRowCount * 100, lastRate);
                 }
             }
             //processRow(issueDTO, currentRow, errorRowIndexes, excelTitleUtil);
@@ -744,11 +744,11 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             websocketVO.setCode(IMPORT_ERROR);
         }
         String websocketKey = IMPORT_NOTIFY_CODE + "-" + testFileLoadHistoryDTO.getProjectId();
-        if (rate == 0.0 || rate == 100.0 || rate - lastRate > 0.03) {
+        if (rate == 0.0 || rate == 100.0 || rate - lastRate > 3) {
             messageClientC7n.sendByUserId(userId, websocketKey, toJson(websocketVO));
             lastRate = rate;
+            logger.info("导入进度：{}", rate);
         }
-        logger.info("导入进度：{}", rate);
         if (rate == 100.) {
             logger.info("完成");
         }
