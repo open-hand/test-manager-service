@@ -251,7 +251,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             //processRow(issueDTO, currentRow, errorRowIndexes, excelTitleUtil);
             // 插入循环步骤
             processRow(issueCreateDTO, currentRow, errorRowIndexes, excelTitleUtil);
-            if (issueCreateDTOList.size() >= 300) {
+            if (issueCreateDTOList.size() >= 100) {
                 List<Long> addIssueIds = insertCase(issueCreateDTOList, testProjectInfo);
                 issueIds.addAll(addIssueIds);
                 issueCreateDTOList.clear();
