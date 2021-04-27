@@ -262,9 +262,11 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
                 (httpStatus, response) -> {
                 }, exceptionResponse -> {
                     LOGGER.error("combine fragment failed: {}", exceptionResponse.getMessage());
-                    throw new CommonException("error.attachment.combine.failed");
+                    throw new CommonException(exceptionResponse.getMessage());
                 });
-
+        if (path == null) {
+            throw new CommonException("error.attachment.combine.failed");
+        }
         TestCaseAttachmentDTO attachment = dealIssue(projectId, caseId, fileName, dealUrl(path));
         attachment.setUrl(attachmentUrl + attachment.getUrl());
         testCaseService.updateVersionNumNotObjectVersion(caseId, DetailsHelper.getUserDetails().getUserId());
