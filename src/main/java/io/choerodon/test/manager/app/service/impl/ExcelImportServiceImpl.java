@@ -240,11 +240,11 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             if (isIssueHeaderRow(currentRow, excelTitleUtil)) {
                 //插入用例
                 issueCreateDTO = processIssueHeaderRow(currentRow, projectId, folderId, excelTitleUtil, priorityMap);
-                issueCreateDTOList.add(issueCreateDTO);
                 if (issueCreateDTO == null) {
                     failedCount++;
                 } else {
                     successfulCount++;
+                    issueCreateDTOList.add(issueCreateDTO);
                     updateProgress(testFileLoadHistoryDTO, userId, progress / nonBlankRowCount);
                 }
             }
