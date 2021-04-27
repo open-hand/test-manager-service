@@ -213,6 +213,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         ExcelTitleUtil excelTitleUtil = new ExcelTitleUtil(headerLocationMap);
         double nonBlankRowCount = getRealRowCount(testCasesSheet, EXCEL_HEADERS.length);
         double progress = 0.;
+        double lastRate = 0.;
         long successfulCount = 0L;
         long failedCount = 0L;
         List<Integer> errorRowIndexes = new ArrayList<>();
@@ -245,7 +246,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                 } else {
                     successfulCount++;
                     issueCreateDTOList.add(issueCreateDTO);
-                    updateProgress(testFileLoadHistoryDTO, userId, progress / nonBlankRowCount);
+                    lastRate = updateProgress(testFileLoadHistoryDTO, userId, progress / nonBlankRowCount, lastRate);
                 }
             }
             //processRow(issueDTO, currentRow, errorRowIndexes, excelTitleUtil);
@@ -583,7 +584,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             throw new CommonException("error.update.file.history");
         }
         redisUtil.delete(REDIS_STATUS_KEY + testFileLoadHistoryDTO.getId());
-        updateProgress(testFileLoadHistoryDTO, userId, 100.0);
+        updateProgress(testFileLoadHistoryDTO, userId, 100.0, 100.0);
     }
 
 
@@ -735,7 +736,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         removeRow(row);
     }
 
-    private void updateProgress(TestFileLoadHistoryDTO testFileLoadHistoryDTO, Long userId, double rate) {
+    private double updateProgress(TestFileLoadHistoryDTO testFileLoadHistoryDTO, Long userId, double rate, double lastRate) {
         TestFileLoadHistoryWebsocketVO websocketVO = modelMapper
                 .map(testFileLoadHistoryDTO, TestFileLoadHistoryWebsocketVO.class);
         websocketVO.setRate(rate);
@@ -743,11 +744,15 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             websocketVO.setCode(IMPORT_ERROR);
         }
         String websocketKey = IMPORT_NOTIFY_CODE + "-" + testFileLoadHistoryDTO.getProjectId();
-        messageClientC7n.sendByUserId(userId, websocketKey, toJson(websocketVO));
+        if (rate == 0.0 || rate == 100.0 || rate - lastRate > 0.03) {
+            messageClientC7n.sendByUserId(userId, websocketKey, toJson(websocketVO));
+            lastRate = rate;
+        }
         logger.info("导入进度：{}", rate);
         if (rate == 100.) {
             logger.info("完成");
         }
+        return lastRate;
     }
 
     private void shiftErrorRowsToTop(Sheet sheet, List<Integer> errorRowIndexes) {
