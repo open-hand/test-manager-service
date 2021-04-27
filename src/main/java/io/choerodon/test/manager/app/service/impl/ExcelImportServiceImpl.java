@@ -68,6 +68,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     private static final IssueCreateDTO[] EXAMPLE_ISSUES = new IssueCreateDTO[3];
     private static final String TYPE_CYCLE = "cycle";
     public static final int EXCEL_WIDTH_PX = 256;
+    private static final int SUMMARY_MAX_SIZE = 44;
     private static final String REDIS_STATUS_KEY = "test:fileStatus:";
     protected static final String[] EXCEL_HEADERS = new String[]
             {
@@ -648,10 +649,13 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         }
 
         String description = ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.CASE_DESCRIPTION, row));
-        String summary = ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.CASE_SUMMARY, row));
+        String summary = ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.CASE_SUMMARY, row)).trim();
         String priority = ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.PRIORITY, row));
         String customNum = ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.CUSTOM_NUM, row));
-
+        if(summary.length() > SUMMARY_MAX_SIZE){
+            markAsError(row, "概要长度不能超过44个字符");
+            return null;
+        }
         if (Objects.isNull(priorityMap.get(priority))) {
             markAsError(row, "优先级不存在");
             return null;
