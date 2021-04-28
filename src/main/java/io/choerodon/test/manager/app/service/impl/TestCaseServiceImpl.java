@@ -404,7 +404,7 @@ public class TestCaseServiceImpl implements TestCaseService {
             } else {
                 collect.addAll(testCycleCaseDTOS);
             }
-            testCaseAssembler.autoAsyncCase(collect, true, false, false);
+            autoAsyncCase(collect, true, false, false);
         }
         TestCaseDTO testCaseDTO1 = testCaseMapper.selectByPrimaryKey(map.getCaseId());
         List<TestIssueFolderDTO> testIssueFolderDTOS = testIssueFolderMapper.selectListByProjectId(projectId);
@@ -776,5 +776,20 @@ public class TestCaseServiceImpl implements TestCaseService {
                 () -> testCaseMapper.queryCaseByContent(projectId, content, issueId));
 
         return casePageInfo;
+    }
+
+    @Override
+    public void autoAsyncCase(List<TestCycleCaseDTO> testCycleCaseDTOS, Boolean changeCase, Boolean changeStep, Boolean changeAttach) {
+        testCycleCaseDTOS.forEach(v -> {
+            CaseCompareRepVO caseCompareVO = new CaseCompareRepVO();
+            caseCompareVO.setCaseId(v.getCaseId());
+            caseCompareVO.setExecuteId(v.getExecuteId());
+            caseCompareVO.setSyncToCase(false);
+            caseCompareVO.setChangeStep(changeStep);
+            caseCompareVO.setChangeCase(changeCase);
+            caseCompareVO.setChangeAttach(changeAttach);
+            testCycleCaseService.updateCompare(v.getProjectId(), caseCompareVO);
+        });
+
     }
 }

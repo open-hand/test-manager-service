@@ -26,7 +26,6 @@ import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.test.manager.api.vo.TestCaseAttachmentCombineVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseAttachmentRelVO;
 import io.choerodon.test.manager.api.vo.agile.ProjectDTO;
-import io.choerodon.test.manager.app.assembler.TestCaseAssembler;
 import io.choerodon.test.manager.app.service.IIssueAttachmentService;
 import io.choerodon.test.manager.app.service.TestCaseAttachmentService;
 import io.choerodon.test.manager.app.service.TestCaseService;
@@ -77,8 +76,6 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
     @Autowired
     private TestCycleCaseMapper testCycleCaseMapper;
 
-    @Autowired
-    private TestCaseAssembler testCaseAssembler;
     @Autowired
     private TestCycleCaseAttachmentRelMapper testCycleCaseAttachmentRelMapper;
 
@@ -149,7 +146,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
         testCaseService.updateVersionNum(issueId);
         List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(projectId,issueId);
         if(!CollectionUtils.isEmpty(testCycleCaseDTOS)){
-            testCaseAssembler.autoAsyncCase(testCycleCaseDTOS,false,false,true);
+            testCaseService.autoAsyncCase(testCycleCaseDTOS,false,false,true);
         }
         return issueAttachmentDTOList;
     }
@@ -179,7 +176,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
         testCaseService.updateVersionNum(issueAttachmentDTO.getCaseId());
         List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(projectId,issueAttachmentDTO.getCaseId());
         if(!CollectionUtils.isEmpty(testCycleCaseDTOS)){
-            testCaseAssembler.autoAsyncCase(testCycleCaseDTOS,false,false,true);
+            testCaseService.autoAsyncCase(testCycleCaseDTOS,false,false,true);
         }
         return result;
     }
@@ -238,7 +235,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
         List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(testCaseDTO.getProjectId(), testCaseDTO.getCaseId());
         if(!CollectionUtils.isEmpty(testCycleCaseDTOS)){
             List<TestCycleCaseDTO> list = testCycleCaseDTOS.stream().filter(v -> !executeId.equals(v.getExecuteId())).collect(Collectors.toList());
-            testCaseAssembler.autoAsyncCase(list,false,false,true);
+            testCaseService.autoAsyncCase(list,false,false,true);
         }
     }
 
@@ -273,7 +270,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
 
         List<TestCycleCaseDTO> testCycleCases = testCycleCaseMapper.listAsyncCycleCase(projectId, caseId);
         if (!CollectionUtils.isEmpty(testCycleCases)) {
-            testCaseAssembler.autoAsyncCase(testCycleCases, false, false, true);
+            testCaseService.autoAsyncCase(testCycleCases, false, false, true);
         }
         return attachment;
     }
