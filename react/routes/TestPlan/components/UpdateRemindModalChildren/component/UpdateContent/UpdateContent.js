@@ -42,12 +42,12 @@ function UpdateContent(props) {
         </div>
         <div className={`${prefix}-item`}>
           <div className={`${prefix}-item-field`}>附件</div>
-          <div className={`${prefix}-item-value`} style={{ display: 'flex', flexWrap: 'wrap' }}>
+          <div className={`${prefix}-item-value`}>
             {
               fileList && fileList.length > 0 && (
                 fileList.map((item) => (
                   <Tooltip title={tag === 'new' ? item.fileName : item.attachmentName}>
-                    <div style={{ width: 150 }}>
+                    <div>
                       <SingleFileUpload
                         key={tag === 'new' ? item.attachmentId : item.id}
                         url={item.url}

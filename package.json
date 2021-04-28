@@ -25,7 +25,6 @@
     "react-image-lightbox": "^4.6.0",
     "react-onclickoutside": "^6.9.0",
     "shallowequal": "^1.1.0",
-    "styled-components": "^4.4.1",
     "timeago-react": "2.0.0",
     "uuid": "^3.3.3",
     "webuploader": "^0.1.8",
