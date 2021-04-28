@@ -17,6 +17,7 @@ import io.choerodon.test.manager.api.vo.devops.AppServiceVersionRespVO;
 import io.choerodon.test.manager.api.vo.devops.ApplicationRepDTO;
 import io.choerodon.test.manager.api.vo.devops.InstanceValueVO;
 import io.choerodon.test.manager.infra.dto.TestCaseDTO;
+import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.infra.dto.TestProjectInfoDTO;
 
 /**
@@ -245,4 +246,6 @@ public interface TestCaseService {
      * @param testProjectInfo 测试项目信息
      */
     void batchImportTestCase(List<IssueCreateDTO> issueCreateDTOList, TestProjectInfoDTO testProjectInfo);
+
+    void autoAsyncCase(List<TestCycleCaseDTO> testCycleCaseDTOS, Boolean changeCase, Boolean changeStep, Boolean changeAttach);
 }

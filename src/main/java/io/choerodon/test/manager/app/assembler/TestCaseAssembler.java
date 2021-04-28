@@ -9,7 +9,6 @@ import io.choerodon.core.oauth.CustomUserDetails;
 import io.choerodon.mybatis.domain.AuditDomain;
 import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.app.service.TestCaseLinkService;
-import io.choerodon.test.manager.app.service.TestCycleCaseService;
 import io.choerodon.test.manager.app.service.UserService;
 import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.mapper.*;
@@ -56,9 +55,6 @@ public class TestCaseAssembler {
 
     @Autowired
     private TestCycleCaseMapper testCycleCaseMapper;
-
-    @Autowired
-    private TestCycleCaseService testCycleCaseService;
 
     @Autowired
     private TestPriorityMapper testPriorityMapper;
@@ -295,20 +291,5 @@ public class TestCaseAssembler {
         testCaseStepDTO.setRank(testCycleCaseStepDTO.getRank());
         testCaseStepDTO.setCycleCaseStepId(testCycleCaseStepDTO.getExecuteStepId());
         return testCaseStepDTO;
-    }
-
-    // 执行同步
-    public void autoAsyncCase(List<TestCycleCaseDTO> testCycleCaseDTOS, Boolean changeCase, Boolean changeStep, Boolean changeAttach) {
-        testCycleCaseDTOS.forEach(v -> {
-            CaseCompareRepVO caseCompareVO = new CaseCompareRepVO();
-            caseCompareVO.setCaseId(v.getCaseId());
-            caseCompareVO.setExecuteId(v.getExecuteId());
-            caseCompareVO.setSyncToCase(false);
-            caseCompareVO.setChangeStep(changeStep);
-            caseCompareVO.setChangeCase(changeCase);
-            caseCompareVO.setChangeAttach(changeAttach);
-            testCycleCaseService.updateCompare(v.getProjectId(), caseCompareVO);
-        });
-
     }
 }
