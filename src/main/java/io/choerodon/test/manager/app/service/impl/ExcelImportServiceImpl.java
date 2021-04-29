@@ -477,7 +477,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         Row row = ExcelUtil.getOrCreateRow(readMeSheet, 6);
         row.createCell(0, CELL_TYPE_STRING).setCellValue("注意");
         readMeSheet.addMergedRegion(new CellRangeAddress(6, 7, 0, 0));
-        row.createCell(1, CELL_TYPE_STRING).setCellValue("关联问题直接输入问题的数字编号即可；\n可用逗号（支持中英文）连接多个。");
+        row.createCell(1, CELL_TYPE_STRING).setCellValue("关联问题直接输入问题的数字编号即可；\n可用逗号（支持中英文）连接多个，例如:1,2，3。");
         readMeSheet.addMergedRegion(new CellRangeAddress(6, 7, 1, 7));
 
         readMeSheet.createRow(8).createCell(1, CELL_TYPE_STRING).setCellValue("示例");
