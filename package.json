@@ -2,7 +2,7 @@
   "name": "@choerodon/testmanager",
   "routeName": "testManager",
   "version": "0.25.2",
-  "description": "",
+  "description": " ",
   "main": "./lib/index.js",
   "files": [
     "lib"
