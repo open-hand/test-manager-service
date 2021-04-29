@@ -474,11 +474,11 @@
 
     <insert id="batchInsert">
         INSERT INTO test_case (case_id, case_num, summary, description, rank, folder_id, version_num, project_id, priority_id,
-        object_version_number, created_by, last_updated_by)
+        object_version_number, created_by, last_updated_by, custom_num)
         VALUES
         <foreach collection="testCaseList" item="case" separator=",">
             (#{case.caseId}, #{case.caseNum}, #{case.summary}, #{case.description}, #{case.rank}, #{case.folderId}, #{case.versionNum}, #{case.projectId}, #{case.priorityId},
-            1,#{case.createdBy}, #{case.lastUpdatedBy})
+            1,#{case.createdBy}, #{case.lastUpdatedBy}, #{case.customNum})
         </foreach>
     </insert>
 </mapper>
