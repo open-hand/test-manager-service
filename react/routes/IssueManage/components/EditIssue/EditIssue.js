@@ -5,9 +5,9 @@ import React, {
 } from 'react';
 import { Choerodon } from '@choerodon/boot';
 import { throttle } from 'lodash';
-import { Spin } from 'choerodon-ui';
+import { Spin, Tabs } from 'choerodon-ui';
 import { observer } from 'mobx-react-lite';
-import { Tabs } from 'choerodon-ui';
+
 import './EditIssue.less';
 import { ResizeAble } from '@/components';
 import {
@@ -22,6 +22,14 @@ import Detail from './Detail';
 import Header from './Header';
 
 const { TabPane } = Tabs;
+function getStoredWidth() {
+  const stored = localStorage.getItem('test.EditIssue.width');
+  if (stored === null) {
+    return undefined;
+  }
+  const width = Number(stored);
+  return Number.isNaN(width) ? undefined : width;
+}
 
 function EditIssue() {
   const container = useRef();
@@ -29,6 +37,10 @@ function EditIssue() {
     store, caseId, prefixCls, announcementHeight, onUpdate, IssueStore,
   } = useContext(EditIssueContext);
   const { issueInfo, dataLogs, loading } = store;
+  const maxWidth = window.innerWidth * 0.6;
+  const minWidth = 440;
+  const defaultWidth = Math.max(minWidth, Math.min(maxWidth, getStoredWidth() ?? 640));
+
   const setQuery = (width = container.current.clientWidth) => {
     if (width <= 600) {
       container.current.setAttribute('max-width', '600px');
@@ -47,7 +59,6 @@ function EditIssue() {
     store.loadIssueData();
     onUpdate();
   };
-
 
   /**
    * DataLog
@@ -82,16 +93,13 @@ function EditIssue() {
     );
   };
 
-
   const handleResizeEnd = ({ width }) => {
-    localStorage.setItem('agile.EditIssue.width', `${width}px`);
+    localStorage.setItem('test.EditIssue.width', width);
   };
-
 
   const handleResize = throttle(({ width }) => {
     setQuery(width);
   }, 150);
-
 
   const handleUpdate = async (newValue, done) => {
     const key = Object.keys(newValue)[0];
@@ -121,7 +129,7 @@ function EditIssue() {
         await updateIssue(issue);
         await store.loadIssueData();
         onUpdate();
-        done(); // done() 为了更新完之后用服务器数据替换之前选中的数据，因此应该等待前边数据加载完再更新       
+        done(); // done() 为了更新完之后用服务器数据替换之前选中的数据，因此应该等待前边数据加载完再更新
         break;
       }
     }
@@ -145,11 +153,11 @@ function EditIssue() {
       <ResizeAble
         modes={['left']}
         size={{
-          maxWidth: window.innerWidth * 0.6,
-          minWidth: 440,
+          maxWidth,
+          minWidth,
         }}
         defaultSize={{
-          width: localStorage.getItem('agile.EditIssue.width') || 600,
+          width: defaultWidth,
           height: '100%',
         }}
         onResizeEnd={handleResizeEnd}
