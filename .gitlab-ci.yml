@@ -7,11 +7,12 @@ stages:
 build front:
   stage: build
   script:
-    - npm install --registry ${NPM_REPO} --sass-binary-site=http://npm.taobao.org/mirrors/node-sass
+    - npm config set "//${NPM_REPO}:_authToken" "${NPM_TOKEN}"
+    - npm config set "//${NPM_REGISTRY}:_authToken" "${NPM_TOKEN}"
+    - npm install --registry "https://${NPM_REPO}" --sass-binary-site=http://npm.taobao.org/mirrors/node-sass
     - chmod -R 755 node_modules
     - npm run compile
-    - echo "//${NPM_REGISTRY}:_authToken=${NPM_TOKEN}">.npmrc
-    - npm publish --registry ${NPM_PUBLISH_REGISTRY}
+    - npm publish --registry "https://${NPM_REGISTRY}"
     - curl -sX POST -F token=${FRONT_REPOSITORY_TOKEN} -F ref=${REF_NAME} https://code.choerodon.com.cn/api/v4/projects/7909/trigger/pipeline
   except:
     changes:
@@ -35,11 +36,12 @@ build front:
 tag front:
   stage: build
   script:
-    - npm install --registry ${NPM_REPO} --sass-binary-site=http://npm.taobao.org/mirrors/node-sass
+    - npm config set "//${NPM_REPO}:_authToken" "${NPM_TOKEN}"
+    - npm config set "//${NPM_REGISTRY}:_authToken" "${NPM_TOKEN}"
+    - npm install --registry "https://${NPM_REPO}" --sass-binary-site=http://npm.taobao.org/mirrors/node-sass
     - chmod -R 755 node_modules
     - npm run compile
-    - echo "//${NPM_REGISTRY}:_authToken=${NPM_TOKEN}">.npmrc
-    - npm publish --registry ${NPM_PUBLISH_REGISTRY}
+    - npm publish --registry "https://${NPM_REGISTRY}"
   only:
     refs:
       - tags
