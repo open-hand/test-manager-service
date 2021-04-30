@@ -61,6 +61,9 @@ public class IssueCreateDTO {
 
     private List<IssueLinkCreateVO> issueLinkCreateVOList;
 
+    @Encrypt(ignoreValue = "0")
+    private Long relateIssueId;
+
     public List<IssueLinkCreateVO> getIssueLinkCreateVOList() {
         return issueLinkCreateVOList;
     }
@@ -256,5 +259,13 @@ public class IssueCreateDTO {
 
     public void setCaseId(Long caseId) {
         this.caseId = caseId;
+    }
+
+    public Long getRelateIssueId() {
+        return relateIssueId;
+    }
+
+    public void setRelateIssueId(Long relateIssueId) {
+        this.relateIssueId = relateIssueId;
     }
 }
