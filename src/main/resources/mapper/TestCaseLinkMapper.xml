@@ -80,7 +80,7 @@
                 and t2.execution_status = #{query.executionStatus}
             </if>
         </if>
-        order by t3.issue_id desc
+        order by t3.issue_id asc
     </select>
 
 

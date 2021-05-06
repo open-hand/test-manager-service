@@ -153,6 +153,7 @@
                 and t2.execution_status = #{query.executionStatus}
             </if>
         </if>
+        order by t4.issue_id asc
     </select>
 
     <insert id="batchInsert">
