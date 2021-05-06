@@ -41,8 +41,8 @@ const PreviewPage: React.FC<Props> = ({
           <DetailCard style={{ maxHeight: 355 }} />
           <PieChart style={{ height: 'auto' }} />
         </div>
-        <FailedTable />
-        <BugTable />
+        {/* <FailedTable />
+        <BugTable /> */}
       </div>
     </TestReportContext.Provider>
   );
