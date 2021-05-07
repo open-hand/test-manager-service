@@ -12,7 +12,7 @@ import { stores } from '@choerodon/boot';
 
 import { issueLink } from '../../../../../../common/utils';
 import {
-  StatusTags, DateTimeAgo, User, CKEditorViewer,
+  StatusTags, User, CKEditorViewer,
   ResizeAble,
 } from '../../../../../../components';
 import './ExecuteDetailSide.less';
@@ -276,7 +276,7 @@ function ExecuteDetailSide(props) {
                   <div className="c7ntest-item-one-line">
                     <div className="c7ntest-item-one-line-left">执行日期：</div>
                     <div className="c7ntest-item-one-line-right">
-                      <DateTimeAgo date={executorDate} />
+                      {executorDate}
                     </div>
                   </div>
                 </Section>

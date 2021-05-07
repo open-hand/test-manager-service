@@ -9,7 +9,6 @@ import {
 import {
   getProjectId,
 } from '@/common/utils';
-import Timeago from '@/components/DateTimeAgo/DateTimeAgo';
 import useHasAgile from '@/hooks/useHasAgile';
 import UserHead from '@/components/UserHead';
 import ChunkUploader from '@/components/chunk-uploader';
@@ -96,7 +95,7 @@ function Detail({
             </PropertyWrap>
             {/* 创建时间 */}
             <PropertyWrap valueStyle={{ marginLeft: 6 }} label={<FormattedMessage id="issue_edit_createDate" />}>
-              <Timeago date={creationDate} />
+              {creationDate}
             </PropertyWrap>
             {/* 优先级 */}
             <PropertyWrap valueStyle={{ marginLeft: 6 }} label={<FormattedMessage id="issue_edit_priority" />}>
@@ -113,7 +112,7 @@ function Detail({
                   <UserHead user={lastUpdateUser} color="#000000" />
                 </PropertyWrap>
                 <PropertyWrap valueStyle={{ marginLeft: 6 }} label={<FormattedMessage id="issue_edit_updateDate" />}>
-                  <Timeago date={lastUpdateDate} />
+                  {lastUpdateDate}
                 </PropertyWrap>
               </>
             ) : null}
