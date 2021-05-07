@@ -3,7 +3,6 @@ package io.choerodon.test.manager.app.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.choerodon.test.manager.app.assembler.TestCaseAssembler;
 import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.mapper.*;
@@ -43,8 +42,6 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
     @Autowired
     private TestCycleCaseMapper testCycleCaseMapper;
 
-    @Autowired
-    private TestCaseAssembler testCaseAssembler;
 
     @Override
     public void removeStep(Long projectId,TestCaseStepVO testCaseStepVO) {
@@ -53,7 +50,7 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
         testCaseService.updateVersionNum(testCaseStepVO.getIssueId());
         List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(projectId,testCaseStepVO.getIssueId());
         if(!CollectionUtils.isEmpty(testCycleCaseDTOS)){
-            testCaseAssembler.autoAsyncCase(testCycleCaseDTOS,false,true,false);
+            testCaseService.autoAsyncCase(testCycleCaseDTOS,false,true,false);
         }
     }
 
@@ -79,7 +76,7 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
            testCaseService.updateVersionNum(testCaseStepVO.getIssueId());
            List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(projectId,testCaseStepVO.getIssueId());
            if(!CollectionUtils.isEmpty(testCycleCaseDTOS)){
-                testCaseAssembler.autoAsyncCase(testCycleCaseDTOS,false,true,false);
+               testCaseService.autoAsyncCase(testCycleCaseDTOS,false,true,false);
            }
         }
         return modelMapper.map(testCaseStepDTO, TestCaseStepVO.class);
@@ -118,7 +115,7 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
         testCaseService.updateVersionNum(issueId);
         List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(projectId,testCaseStepVO.getIssueId());
         if(!CollectionUtils.isEmpty(testCycleCaseDTOS)){
-            testCaseAssembler.autoAsyncCase(testCycleCaseDTOS,false,true,false);
+            testCaseService.autoAsyncCase(testCycleCaseDTOS,false,true,false);
         }
         return testCaseStepVOS;
     }
@@ -130,6 +127,13 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
         }
         testCaseStepProDTO.setRank(RankUtil.Operation.INSERT.getRank(testCaseStepProDTO.getLastRank(), testCaseStepProDTO.getNextRank()));
         return baseInsert(testCaseStepProDTO);
+    }
+
+    @Override
+    public void batchCreateOneStep(List<TestCaseStepProDTO> testCaseStepProList) {
+        List<TestCaseStepDTO> testCaseStepList = modelMapper.map(testCaseStepProList, new TypeToken<List<TestCaseStepDTO>>() {
+        }.getType());
+        testCaseStepMapper.batchInsertTestCaseSteps(testCaseStepList);
     }
 
     @Override

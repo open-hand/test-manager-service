@@ -67,4 +67,10 @@ public interface TestCaseMapper extends BaseMapper<TestCaseDTO> {
      * @param caseId 用例id
      */
     void updateVersionNumNotObjectVersion(@Param("caseId") Long caseId, @Param("userId") Long userId);
+
+    /**
+     * 批量插入testCase关系
+     * @param testCaseList 批量创建的case
+     */
+    void batchInsert(@Param("testCaseList") List<TestCaseDTO> testCaseList);
 }

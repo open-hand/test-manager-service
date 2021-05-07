@@ -1,17 +1,18 @@
 import React, { useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
+import ReactDOMServer from 'react-dom/server';
 import {
   Page, Breadcrumb, Content, Header,
 } from '@choerodon/boot';
 import { useMount, useCreation } from 'ahooks';
-import { Button, Modal } from 'choerodon-ui/pro/lib';
+import { Button } from 'choerodon-ui/pro/lib';
 import html2canvas from 'html2canvas';
-import JsPDF from 'jspdf';
 // @ts-ignore
 import queryString from 'query-string';
 import { getProjectName } from '@/common/utils';
 import { useHistory } from 'react-router-dom';
 
+import fileSaver from 'file-saver';
 import TestReportContext, { BaseInfoRef } from './context';
 import TestReportStore from './store';
 import DetailCard from './components/detail-card';
@@ -19,6 +20,11 @@ import PieChart from './components/pie-chart';
 import FailedTable from './components/table-card/FailedTable';
 import BugTable from './components/table-card/BugTable';
 import PreviewPage from './components/preview-page';
+import getFailedTableData from './components/export/failed-table/getData';
+import getBugTableData from './components/export/bug-table/getData';
+import FailedTableExport from './components/export/failed-table/renderToString';
+import BugTableExport from './components/export/bug-table/renderToString';
+import renderHTML from './components/export/renderHTML';
 
 interface Props {
   preview?: boolean
@@ -80,6 +86,10 @@ const ReportPage: React.FC<Props> = ({ preview: forcePreview, planId }) => {
       f1();
     });
     const htmlElement = newEm.childNodes.item(0) as HTMLElement;
+    const [failedTableData, bugTableData] = await Promise.all([
+      getFailedTableData({ planId }),
+      getBugTableData({ planId }),
+    ]);
     await html2canvas(htmlElement, {
       useCORS: true,
       allowTaint: true,
@@ -115,10 +125,22 @@ const ReportPage: React.FC<Props> = ({ preview: forcePreview, planId }) => {
       // pdf.addImage(pageData, 'JPEG', 0, 0, contentWidth, contentHeight);
       // 将canvas转为base64图片
       const pageData = canvas.toDataURL('image/jpeg', 1.0);
-      const pdf = new JsPDF('p', 'pt', [contentWidth, contentHeight]);
-      // 将内容图片添加到pdf中，因为内容宽高和pdf宽高一样，就只需要一页，位置就是 0,0
-      pdf.addImage(pageData, 'jpeg', 0, 0, contentWidth, contentHeight);
-      pdf.save(`${getProjectName()}-测试计划报告.pdf`);
+      const img = <img src={pageData} alt="" style={{ maxWidth: '100%' }} />;
+      const failedTable = <FailedTableExport data={failedTableData} statusList={store.statusList} />;
+      const bugTable = <BugTableExport data={bugTableData} statusList={store.statusList} />;
+      const string = ReactDOMServer.renderToStaticMarkup(
+        <>
+          {img}
+          {failedTable}
+          {bugTable}
+        </>,
+      );
+      const html = renderHTML(string);
+      // const styles = getAllCss();
+      // const content = juice.inlineContent(html, styles);
+      const content = html;
+      const blob = new Blob([content], { type: 'text/html;charset=utf-8' });
+      fileSaver.saveAs(blob, `${getProjectName()}-测试计划报告.html`);
       document.body.removeChild(newEm);
     }).catch(() => {
       document.body.removeChild(newEm);

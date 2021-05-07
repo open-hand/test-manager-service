@@ -10,6 +10,9 @@ import { observer } from 'mobx-react-lite';
 
 import './EditIssue.less';
 import { ResizeAble } from '@/components';
+import {
+  returnBeforeTextUpload, testCaseTableLink, testCaseDetailLink,
+} from '@/common/utils';
 import { updateIssue, getLabels } from '@/api/IssueManageApi';
 import Loading from '@/components/Loading';
 import EditIssueContext from './stores';
@@ -19,6 +22,14 @@ import Detail from './Detail';
 import Header from './Header';
 
 const { TabPane } = Tabs;
+function getStoredWidth() {
+  const stored = localStorage.getItem('test.EditIssue.width');
+  if (stored === null) {
+    return undefined;
+  }
+  const width = Number(stored);
+  return Number.isNaN(width) ? undefined : width;
+}
 
 function EditIssue() {
   const container = useRef();
@@ -26,6 +37,10 @@ function EditIssue() {
     store, caseId, prefixCls, announcementHeight, onUpdate, IssueStore,
   } = useContext(EditIssueContext);
   const { issueInfo, dataLogs, loading } = store;
+  const maxWidth = window.innerWidth * 0.6;
+  const minWidth = 440;
+  const defaultWidth = Math.max(minWidth, Math.min(maxWidth, getStoredWidth() ?? 640));
+
   const setQuery = (width = container.current.clientWidth) => {
     if (width <= 600) {
       container.current.setAttribute('max-width', '600px');
@@ -79,7 +94,7 @@ function EditIssue() {
   };
 
   const handleResizeEnd = ({ width }) => {
-    localStorage.setItem('agile.EditIssue.width', `${width}px`);
+    localStorage.setItem('test.EditIssue.width', width);
   };
 
   const handleResize = throttle(({ width }) => {
@@ -96,17 +111,25 @@ function EditIssue() {
       objectVersionNumber,
     };
     switch (key) {
+      case 'description': {
+        if (value) {
+          await returnBeforeTextUpload(value, issue, updateIssue, 'description');
+          store.loadIssueData();
+        }
+        break;
+      }
+
       default: {
         if (key === 'summary' && value === '') {
           Choerodon.prompt('用例名不可为空！');
-          done && done();
+          done();
           break;
         }
         issue = { ...issue, ...newValue };
         await updateIssue(issue);
         await store.loadIssueData();
         onUpdate();
-        done && done(); // done() 为了更新完之后用服务器数据替换之前选中的数据，因此应该等待前边数据加载完再更新
+        done(); // done() 为了更新完之后用服务器数据替换之前选中的数据，因此应该等待前边数据加载完再更新
         break;
       }
     }
@@ -130,11 +153,11 @@ function EditIssue() {
       <ResizeAble
         modes={['left']}
         size={{
-          maxWidth: window.innerWidth * 0.6,
-          minWidth: 440,
+          maxWidth,
+          minWidth,
         }}
         defaultSize={{
-          width: localStorage.getItem('agile.EditIssue.width') || 600,
+          width: defaultWidth,
           height: '100%',
         }}
         onResizeEnd={handleResizeEnd}
@@ -146,11 +169,11 @@ function EditIssue() {
             loading && <Loading />
           }
           <div className={`${prefixCls}-content`}>
-            <Header onUpdate={handleUpdate} IssueStore={IssueStore} />
+            <Header onUpdate={handleUpdate} />
             <div className={`${prefixCls}-content-bottom`} id="scroll-area" style={{ position: 'relative' }}>
               <Tabs onChange={handleTabChange}>
                 <TabPane tab="步骤" key="test">
-                  <EditTestStepTable onUpdateDetail={handleUpdate} IssueStore={IssueStore} key={caseId} />
+                  <EditTestStepTable onUpdateDetail={handleUpdate} />
                 </TabPane>
                 <TabPane tab="详情" key="detail">
                   <Detail

@@ -30,7 +30,6 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,9 +47,6 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     private static final  double AVG_NUM = 500.00;
 
     private static final String WEBSOCKET_BATCH_DELETE_CYClE_CASE = "test-batch-delete-cycle-case";
-
-    @Autowired
-    private TestCycleCaseDefectRelService testCycleCaseDefectRelService;
 
     @Autowired
     private TestCycleCaseAttachmentRelService attachmentRelService;
@@ -83,12 +79,6 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     private TestCaseStepMapper testCaseStepMapper;
 
     @Autowired
-    private TestPlanMapper testPlanMapper;
-
-    @Autowired
-    private RedisTemplate redisTemplate;
-
-    @Autowired
     private ModelMapper modelMapper;
 
     @Autowired
@@ -115,12 +105,6 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
     @Autowired
     private TestCaseAttachmentService testCaseAttachmentService;
-
-    @Autowired
-    private IIssueAttachmentService iIssueAttachmentService;
-
-    @Autowired
-    private VerifyUpdateUtil verifyUpdateUtil;
 
     @Autowired
     private BaseFeignClient baseFeignClient;
@@ -702,7 +686,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                 List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(testCaseDTO.getProjectId(), testCaseDTO.getCaseId());
                 if(!CollectionUtils.isEmpty(testCycleCaseDTOS)){
                         List<TestCycleCaseDTO> list = testCycleCaseDTOS.stream().filter(v -> !testCycleCaseDTO.getExecuteId().equals(v.getExecuteId())).collect(Collectors.toList());
-                        testCaseAssembler.autoAsyncCase(list,false,true,false);
+                        testCaseService.autoAsyncCase(list,false,true,false);
                 }
             }
 

@@ -26,4 +26,10 @@ public interface TestCaseStepService {
     void removeStepByIssueId(Long projectId,Long caseId);
 
     List<TestCaseStepDTO> listByCaseIds(List<Long> caseIds);
+
+    /**
+     * 批量创建测试步骤
+     * @param testCaseStepProList 测试步骤列表
+     */
+    void batchCreateOneStep(List<TestCaseStepProDTO> testCaseStepProList);
 }

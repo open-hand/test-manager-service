@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import io.choerodon.mybatis.helper.snowflake.SnowflakeHelper;
 import io.choerodon.test.manager.infra.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
@@ -21,6 +22,7 @@ import static io.choerodon.test.manager.infra.constant.DataLogConstants.BATCH_UP
 
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
+import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.core.utils.PageableHelper;
 import io.choerodon.mybatis.pagehelper.PageHelper;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
@@ -106,6 +108,9 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     @Autowired
     private TestPriorityMapper testPriorityMapper;
+
+    @Autowired
+    private SnowflakeHelper snowflakeHelper;
 
     @Value("${services.attachment.url}")
     private String attachmentUrl;
@@ -399,7 +404,7 @@ public class TestCaseServiceImpl implements TestCaseService {
             } else {
                 collect.addAll(testCycleCaseDTOS);
             }
-            testCaseAssembler.autoAsyncCase(collect, true, false, false);
+            autoAsyncCase(collect, true, false, false);
         }
         TestCaseDTO testCaseDTO1 = testCaseMapper.selectByPrimaryKey(map.getCaseId());
         List<TestIssueFolderDTO> testIssueFolderDTOS = testIssueFolderMapper.selectListByProjectId(projectId);
@@ -677,6 +682,57 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
+    public void batchImportTestCase(List<IssueCreateDTO> issueCreateDTOList, TestProjectInfoDTO testProjectInfo) {
+        Long userId = DetailsHelper.getUserDetails().getUserId();
+        if (ObjectUtils.isEmpty(testProjectInfo)) {
+            throw new CommonException("error.query.project.info.null");
+        }
+        if (CollectionUtils.isEmpty(issueCreateDTOList)) {
+            return;
+        }
+        Map<String, IssueCreateDTO> issueCreateMap = new HashMap<>(issueCreateDTOList.size());
+        List<TestCaseDTO> testCaseList = new ArrayList<>();
+        List<TestCaseLinkDTO> testCaseLinkDTOList = new ArrayList<>();
+        for (IssueCreateDTO issueCreateDTO : issueCreateDTOList) {
+            Long caseNum = CaseNumUtil.getNewCaseNum(testProjectInfo.getProjectId());
+            testProjectInfo.setCaseMaxNum(caseNum);
+            String caseNumStr = String.valueOf(caseNum);
+            issueCreateMap.put(caseNumStr, issueCreateDTO);
+            TestCaseDTO testCaseDTO = ConvertUtils.convertObject(issueCreateDTO, TestCaseDTO.class);
+            testCaseDTO.setCaseId(snowflakeHelper.next());
+            testCaseDTO.setCaseNum(String.valueOf(caseNum));
+            testCaseDTO.setVersionNum(1L);
+            testCaseDTO.setCreatedBy(userId);
+            testCaseDTO.setLastUpdatedBy(userId);
+            testCaseList.add(testCaseDTO);
+        }
+        // 插入测试用例
+        testCaseMapper.batchInsert(testCaseList);
+        testCaseList.forEach(testCase -> {
+            IssueCreateDTO issueCreateDTO = issueCreateMap.get(testCase.getCaseNum());
+            if(issueCreateDTO == null){
+                return;
+            }
+            issueCreateDTO.setCaseId(testCase.getCaseId());
+            if(!CollectionUtils.isEmpty(issueCreateDTO.getTestCaseLinkDTOList())){
+                issueCreateDTO.getTestCaseLinkDTOList().forEach(testCaseLinkDTO -> {
+                    testCaseLinkDTO.setProjectId(testProjectInfo.getProjectId());
+                    testCaseLinkDTO.setLinkCaseId(testCase.getCaseId());
+                    testCaseLinkDTO.setCreatedBy(userId);
+                    testCaseLinkDTO.setLastUpdatedBy(userId);
+                    testCaseLinkDTO.setObjectVersionNumber(1L);
+                    testCaseLinkDTO.setCreationDate(new Date());
+                    testCaseLinkDTO.setLastUpdateDate(new Date());
+                    testCaseLinkDTOList.add(testCaseLinkDTO);
+                });
+            }
+        });
+        if (!CollectionUtils.isEmpty(testCaseLinkDTOList)) {
+            testCaseLinkMapper.batchInsert(testCaseLinkDTOList);
+        }
+    }
+
+    @Override
     public List<Long> listAllCaseByFolderId(Long projectId, Long folderId) {
         // 查询文件夹下所有的目录
         Set<Long> folderIds = new HashSet<>();
@@ -720,5 +776,20 @@ public class TestCaseServiceImpl implements TestCaseService {
                 () -> testCaseMapper.queryCaseByContent(projectId, content, issueId));
 
         return casePageInfo;
+    }
+
+    @Override
+    public void autoAsyncCase(List<TestCycleCaseDTO> testCycleCaseDTOS, Boolean changeCase, Boolean changeStep, Boolean changeAttach) {
+        testCycleCaseDTOS.forEach(v -> {
+            CaseCompareRepVO caseCompareVO = new CaseCompareRepVO();
+            caseCompareVO.setCaseId(v.getCaseId());
+            caseCompareVO.setExecuteId(v.getExecuteId());
+            caseCompareVO.setSyncToCase(false);
+            caseCompareVO.setChangeStep(changeStep);
+            caseCompareVO.setChangeCase(changeCase);
+            caseCompareVO.setChangeAttach(changeAttach);
+            testCycleCaseService.updateCompare(v.getProjectId(), caseCompareVO);
+        });
+
     }
 }
