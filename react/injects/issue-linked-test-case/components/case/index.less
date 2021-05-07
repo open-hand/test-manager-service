@@ -1,0 +1,25 @@
+.case {
+  display: flex;
+  align-items: center;
+  padding: 5px 0;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+
+  &:first-child {
+    border-top: 1px solid rgba(0, 0, 0, 0.12);
+  }
+}
+
+.icon {
+  cursor: pointer;
+  transition: transform .3s;
+  visibility: hidden;
+}
+
+.icon_expand {
+  transform: rotate(90deg);
+}
+
+.icon_visible {
+  visibility: visible;
+}

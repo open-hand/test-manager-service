@@ -33,6 +33,7 @@
           font-size: 14px;
           font-family: PingFangSC-Medium, PingFang SC;
           font-weight: 500;
+
           &-label {
             position: absolute;
             width: .7rem;
@@ -43,19 +44,31 @@
               content: '\ff1a';
             }
           }
+
           &-content {
             width: 100%;
+
             p {
               color: #000;
             }
+
+            .ck-content {
+              background: inherit;
+              p:first-child {
+                margin: 0;
+              }
+            }
+
             &-ellipsis {
               height: 20px;
               overflow: hidden;
+
               .c7ntest-read-delta {
-                & >div {
+                & > div {
                   width: ~"calc(100% - 3em)";
                   float: left;
                 }
+
                 &::after {
                   float: right;
                   content: "...";
@@ -68,10 +81,11 @@
                   color: #000;
                   padding-right: 5px;
                   background-color: #fffbdd;
-              }
+                }
               }
             }
           }
+
           &-more {
             position: absolute;
             top: .13rem;

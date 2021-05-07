@@ -4,7 +4,7 @@ import {
   observable, action, computed, toJS,
 } from 'mobx';
 import {
-  loadDatalogs, loadLinkIssues, loadIssue, getIssueSteps, 
+  loadDatalogs, loadLinkIssues, loadIssue, getIssueSteps,
 } from '@/api/IssueManageApi';
 
 class EditIssueStore {
@@ -53,7 +53,6 @@ class EditIssueStore {
     this.setData(data);
     this.setLoading(false);
   }
-  
 
   async loadWithLoading(promise, callback) {
     this.setLoading(true);

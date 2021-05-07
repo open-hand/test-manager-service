@@ -25,4 +25,6 @@ public interface ProductionVersionClient {
     @GetMapping(value = "/v1/projects/{project_id}/product_version/versions")
     ResponseEntity<List<ProductVersionDTO>> listByProjectId(@PathVariable(name = "project_id") Long projectId);
 
+    @PostMapping(value = "/v1/projects/{project_id}/product_version/names")
+    ResponseEntity<String> queryNameByOptions(@PathVariable(name = "project_id") Long projectId);
 }
