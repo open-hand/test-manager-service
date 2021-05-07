@@ -5,15 +5,12 @@ import React, {
 } from 'react';
 import { Choerodon } from '@choerodon/boot';
 import { throttle } from 'lodash';
-import { Spin, Tabs } from 'choerodon-ui';
+import { Tabs } from 'choerodon-ui';
 import { observer } from 'mobx-react-lite';
 
 import './EditIssue.less';
 import { ResizeAble } from '@/components';
-import {
-  returnBeforeTextUpload, testCaseTableLink, testCaseDetailLink,
-} from '@/common/utils';
-import { updateIssue, getLabels } from '@/api/IssueManageApi';
+import { updateIssue } from '@/api/IssueManageApi';
 import Loading from '@/components/Loading';
 import EditIssueContext from './stores';
 import DataLogs from './Component/DataLogs';
@@ -111,14 +108,6 @@ function EditIssue() {
       objectVersionNumber,
     };
     switch (key) {
-      case 'description': {
-        if (value) {
-          await returnBeforeTextUpload(value, issue, updateIssue, 'description');
-          store.loadIssueData();
-        }
-        break;
-      }
-
       default: {
         if (key === 'summary' && value === '') {
           Choerodon.prompt('用例名不可为空！');

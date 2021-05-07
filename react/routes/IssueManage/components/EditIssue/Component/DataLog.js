@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import { Icon, Popconfirm, Popover } from 'choerodon-ui';
 import _ from 'lodash';
 import UserHead from '@/components/UserHead';
-import DatetimeAgo from '../../../../../components/DateTimeAgo';
 import './DataLog.less';
 
 const PROP = {
@@ -428,9 +427,7 @@ class DataLog extends Component {
 
                   </div>
                   <div style={{ marginTop: 5, fontSize: '12px' }}>
-                    <DatetimeAgo
-                      date={datalog.lastUpdateDate}
-                    />
+                    {datalog.lastUpdateDate}
                   </div>
                 </div>
               </div>
