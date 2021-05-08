@@ -89,6 +89,7 @@ public class DevopsServiceImpl implements DevopsService {
         } catch (InterruptedException e) {
             logger.error("try lock error: {}", e);
             Thread.currentThread().interrupt();
+            lock.unlock();
         }
         if (res) {
             if (Thread.currentThread().isInterrupted()) {
@@ -106,8 +107,9 @@ public class DevopsServiceImpl implements DevopsService {
                 }
             } catch (Exception e) {
                 logger.error("get instance status error: {}", e);
+            } finally {
+                lock.unlock();
             }
-            lock.unlock();
         }
     }
 
