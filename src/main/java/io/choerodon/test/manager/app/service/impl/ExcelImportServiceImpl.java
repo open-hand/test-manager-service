@@ -200,8 +200,9 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             finishImport(testFileLoadHistoryDTO, userId, TestFileLoadHistoryEnums.Status.FAILURE);
             return;
         }
+        double nonBlankRowCount = getRealRowCount(testCasesSheet, EXCEL_HEADERS.length);
         //测试用例页为空，则更新文件导入历史之后直接返回
-        if (isEmptyTemp(testCasesSheet)) {
+        if (nonBlankRowCount == 0) {
             logger.info("空模板");
             // 更新创建历史记录
             testFileLoadHistoryDTO.setMessage("空模板");
@@ -211,7 +212,6 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         Map<String, Integer> headerLocationMap = new HashMap<>(EXCEL_HEADERS.length);
         Iterator<Row> rowIterator = rowIteratorSkipFirst(testCasesSheet, headerLocationMap);
         ExcelTitleUtil excelTitleUtil = new ExcelTitleUtil(headerLocationMap);
-        double nonBlankRowCount = getRealRowCount(testCasesSheet, EXCEL_HEADERS.length);
         double progress = 0.;
         double lastRate = 0.;
         long successfulCount = 0L;
@@ -307,6 +307,9 @@ public class ExcelImportServiceImpl implements ExcelImportService {
      * @return
      */
     private Integer getRealRowCount(Sheet sheet, int columnNum) {
+        if (isEmptyTemp(sheet)) {
+            return 0;
+        }
         Integer count = 0;
         for (int r = 1; r <= sheet.getPhysicalNumberOfRows(); r++) {
             Row row = sheet.getRow(r);
