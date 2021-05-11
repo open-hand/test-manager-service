@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.infra.feign.operator;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import io.choerodon.test.manager.api.vo.ExecutionUpdateIssueVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -233,5 +234,13 @@ public class AgileClientOperator {
     public ProductVersionDTO queryProductVersionById(Long projectId, Long productVersionId) {
         Map<Long, ProductVersionDTO> productVersionMap = queryProductVersionMapByProject(projectId);
         return productVersionMap.get(productVersionId);
+    }
+
+    public void executionUpdateStatus(Long projectId, Long issueId, ExecutionUpdateIssueVO executionUpdateIssueVO) {
+        try {
+             FeignClientUtils.doRequest(() -> issueFeignClient.executionUpdateStatus(projectId, issueId, executionUpdateIssueVO), String.class);
+        } catch (Exception e) {
+            return;
+        }
     }
 }

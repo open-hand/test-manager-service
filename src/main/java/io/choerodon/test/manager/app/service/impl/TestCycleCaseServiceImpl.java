@@ -112,6 +112,9 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     @Autowired
     private MessageClientC7n messageClientC7n;
 
+    @Autowired
+    private ExecutionCaseStatusChangeSettingService executionCaseStatusChangeSettingService;
+
     @Override
     public void delete(Long cycleCaseId, Long projectId) {
         TestCycleCaseVO dto = new TestCycleCaseVO();
@@ -325,6 +328,11 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                     throw new CommonException("error.update.step.status");
                 }
             }
+        }
+
+        if (!ObjectUtils.isEmpty(testCycleCaseVO.getExecutionStatus())) {
+            TestCycleCaseDTO cycleCaseDTO = testCycleCaseMapper.selectByPrimaryKey(testCycleCaseDTO.getExecuteId());
+            executionCaseStatusChangeSettingService.updateExecutionStatus(cycleCaseDTO.getProjectId(), cycleCaseDTO.getExecuteId(), cycleCaseDTO.getExecutionStatus());
         }
     }
 

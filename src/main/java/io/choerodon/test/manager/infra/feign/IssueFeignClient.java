@@ -2,8 +2,10 @@ package io.choerodon.test.manager.infra.feign;
 
 import java.util.List;
 
+import io.choerodon.test.manager.api.vo.ExecutionUpdateIssueVO;
 import io.choerodon.test.manager.api.vo.IssueQueryVO;
 import io.swagger.annotations.ApiParam;
+import org.hzero.starter.keyencrypt.core.Encrypt;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -40,4 +42,11 @@ public interface IssueFeignClient {
     @GetMapping("/v1/projects/{project_id}/project_info")
     ResponseEntity<String> queryProjectInfoByProjectId(@ApiParam(value = "项目id", required = true)
                                                                      @PathVariable(name = "project_id") Long projectId);
+
+    @PostMapping("/v1/projects/{project_id}/issues/execution_update_status")
+    ResponseEntity<String> executionUpdateStatus(@ApiParam(value = "项目id", required = true)
+                                         @PathVariable(name = "project_id") Long projectId,
+                                         @ApiParam(value = "issueId", required = true)
+                                         @RequestParam @Encrypt Long issueId,
+                                         @RequestBody ExecutionUpdateIssueVO executionUpdateIssueVO);
 }
