@@ -3,6 +3,7 @@ package io.choerodon.test.manager.infra.feign.callback;
 import java.util.List;
 
 import io.choerodon.core.domain.Page;
+import io.choerodon.test.manager.api.vo.ExecutionUpdateIssueVO;
 import io.choerodon.test.manager.api.vo.IssueQueryVO;
 import io.choerodon.test.manager.api.vo.agile.IssueNumDTO;
 import io.choerodon.test.manager.api.vo.agile.ProjectInfoVO;
@@ -32,5 +33,10 @@ public class IssueFeignClientFallback implements IssueFeignClient {
     @Override
     public ResponseEntity<String> queryProjectInfoByProjectId(Long projectId) {
         throw new CommonException("error.query.agile.projectInfo");
+    }
+
+    @Override
+    public ResponseEntity<String> executionUpdateStatus(Long projectId, Long issueId, ExecutionUpdateIssueVO executionUpdateIssueVO) {
+        throw new CommonException("error.execution.update.issue.status");
     }
 }
