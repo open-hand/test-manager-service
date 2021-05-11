@@ -90,7 +90,7 @@ public class ExecutionCaseStatusChangeSettingServiceImpl implements ExecutionCas
     public List<ExecutionCaseStatusChangeSettingVO> listByIssueStatusIds(Long projectId, Long organizationId, Long issueTypeId, List<Long> statusIds) {
         List<ExecutionCaseStatusChangeSettingDTO> executionCaseStatusChangeSettingDTOS = executionStatusChangeSettingMapper.selectByCondition(Condition.builder(ExecutionCaseStatusChangeSettingDTO.class)
                 .andWhere(Sqls.custom().andEqualTo("projectId", projectId).andEqualTo("organizationId", organizationId)
-                        .andEqualTo("issueTypeId", issueTypeId).andIn("issueStatusId", statusIds)).build());
+                        .andEqualTo("agileIssueTypeId", issueTypeId).andIn("agileStatusId", statusIds)).build());
         if (CollectionUtils.isEmpty(executionCaseStatusChangeSettingDTOS)) {
             return new ArrayList<>();
         }
