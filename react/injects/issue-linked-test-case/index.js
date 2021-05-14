@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
-import { Icon, Button, Tooltip } from 'choerodon-ui';
+import { Icon, Button, Tooltip } from 'choerodon-ui/pro';
 import { map } from 'lodash';
 import { injectIntl } from 'react-intl';
 
@@ -50,7 +50,7 @@ const TestLink = ({
           !disabled && (
             <div className="c7n-title-right" style={{ marginLeft: '14px' }}>
               <Tooltip placement="topRight" title="关联测试用例" getPopupContainer={(triggerNode) => triggerNode.parentNode}>
-                <Button style={{ padding: '0 6px' }} className="leftBtn" funcType="flat" onClick={() => openTestCaseModal(testLinkStore, intl)}>
+                <Button onClick={() => openTestCaseModal(testLinkStore, intl)}>
                   <Icon type="playlist_add icon" />
                 </Button>
               </Tooltip>
