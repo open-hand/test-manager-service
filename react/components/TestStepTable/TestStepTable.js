@@ -3,8 +3,9 @@ import React, { useState } from 'react';
 import { Choerodon } from '@choerodon/boot';
 import PropTypes from 'prop-types';
 import {
-  Input, Icon, Modal, Tooltip, Button,
+  Input, Icon, Modal, Tooltip,
 } from 'choerodon-ui';
+import { Button } from 'choerodon-ui/pro';
 import { FormattedMessage } from 'react-intl';
 import useClickOnce from '@/hooks/useClickOnce';
 import { DragTable, TextEditToggle } from '..';
@@ -456,10 +457,7 @@ function TestStepTable(props) {
         <div style={{ marginLeft: 3, marginTop: 10, position: 'relative' }}>
           <Button
             disabled={disabled || hasStepIsCreating}
-            style={{ color: disabled || hasStepIsCreating ? '#bfbfbf' : '#3F51B5' }}
             icon="playlist_add"
-            className="leftBtn"
-            funcType="flat"
             onClick={handleAddCreating}
           >
             <FormattedMessage id="issue_edit_addTestDetail" defaultMessage="添加步骤" />

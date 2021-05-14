@@ -9,8 +9,8 @@ import {
   Page, Header, Content, Breadcrumb, Choerodon, stores,
 } from '@choerodon/boot';
 import { HeaderButtons } from '@choerodon/master';
-import { Tabs } from 'choerodon-ui';
-import { Modal, Button } from 'choerodon-ui/pro';
+import { Tabs, Modal, Button } from 'choerodon-ui/pro';
+
 import { localPageCacheStore } from '@choerodon/agile/lib/stores/common/LocalPageCacheStore';
 import {
   deleteExecute, updateExecute, comfirmUpdate, ignoreUpdate,
@@ -357,7 +357,7 @@ function TestPlanHome({ history }) {
         <div className={`${prefixCls}-contentWrap`}>
           <div className={`${prefixCls}-contentWrap-left`}>
             <div className={`${prefixCls}-contentWrap-testPlanTree`}>
-              <Tabs onChange={handleTabsChange} activeKey={testPlanStatus}>
+              <Tabs onChange={handleTabsChange} activeKey={testPlanStatus} tabBarGutter={35}>
                 <TabPane tab="未开始" key="todo" />
                 <TabPane tab="进行中" key="doing" />
                 <TabPane tab="已完成" key="done" />

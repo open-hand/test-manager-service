@@ -1,5 +1,4 @@
 import React, { Fragment, useCallback } from 'react';
-import styled from 'styled-components';
 import classNames from 'classnames';
 import {
   Icon, Button, TextField,

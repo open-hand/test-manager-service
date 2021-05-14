@@ -3,11 +3,14 @@ import React, {
 } from 'react';
 import { stores, WSHandler, Action } from '@choerodon/boot';
 import {
-  Progress, Button, Tooltip,
+  Progress, Tooltip,
 } from 'choerodon-ui';
 import {
+  Button,
+
   Table, Form, DataSet, message,
 } from 'choerodon-ui/pro';
+
 import Record from 'choerodon-ui/pro/lib/data-set/Record';
 import _ from 'lodash';
 import moment from 'moment';
