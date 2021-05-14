@@ -8,7 +8,6 @@ import moment from 'moment';
 import {
   Icon, Button, Table, Select, Menu, Dropdown,
 } from 'choerodon-ui';
-import TimeAgo from 'timeago-react';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
 import 'codemirror/lib/codemirror.css';
@@ -132,13 +131,7 @@ const AutoTestList = ({
   {
     title: '执行时间',
     dataIndex: 'creationDate',
-    key: 'creationDate',
-    render: (creationDate) => (
-      <TimeAgo
-        datetime={creationDate}
-        locale={Choerodon.getMessage('zh_CN', 'en')}
-      />
-    ),
+    key: 'creationDate'
   },
   {
     title: '测试结果',
