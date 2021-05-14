@@ -346,7 +346,12 @@ public class ExcelUtil {
             }
         });
         if (childListText.length() > 0) {
-            result.append(liAllText.split(childListText.toString())[0]);
+            int childTextStart = liAllText.indexOf(childListText.toString());
+            if (childTextStart > -1) {
+                result.append(liAllText, 0, childTextStart);
+            } else {
+                result.append(liAllText);
+            }
             result.append("\n").append(childRelText.toString());
         } else {
             result.append(liAllText);
