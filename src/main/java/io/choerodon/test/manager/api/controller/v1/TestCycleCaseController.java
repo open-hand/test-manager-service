@@ -22,6 +22,7 @@ import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.app.service.ExcelServiceHandler;
+import io.choerodon.test.manager.app.service.TestCycleCaseAsyncService;
 import io.choerodon.test.manager.app.service.TestCycleCaseService;
 
 /**
@@ -32,7 +33,9 @@ import io.choerodon.test.manager.app.service.TestCycleCaseService;
 public class TestCycleCaseController {
 
     @Autowired
-    TestCycleCaseService testCycleCaseService;
+    private TestCycleCaseService testCycleCaseService;
+    @Autowired
+    private TestCycleCaseAsyncService testCycleCaseAsyncService;
 
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("删除测试循环用例")
@@ -202,7 +205,7 @@ public class TestCycleCaseController {
     @DeleteMapping("/async_batch_delete")
     public ResponseEntity asyncBatchDelete(@PathVariable(name = "project_id") Long projectId,
                                            @RequestBody @Encrypt List<Long> cycleCaseIds) {
-        testCycleCaseService.asyncBatchDelete(cycleCaseIds, projectId);
+        testCycleCaseAsyncService.asyncBatchDelete(cycleCaseIds, projectId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

@@ -30,7 +30,6 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -45,8 +44,6 @@ import org.springframework.util.ObjectUtils;
 public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
     private static final  double AVG_NUM = 500.00;
-
-    private static final String WEBSOCKET_BATCH_DELETE_CYClE_CASE = "test-batch-delete-cycle-case";
 
     @Autowired
     private TestCycleCaseAttachmentRelService attachmentRelService;
@@ -1068,35 +1065,5 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         }
         Set<String> codes = categories.stream().map(ProjectCategoryDTO::getCode).collect(Collectors.toSet());
         return codes.contains(category);
-    }
-
-    @Async
-    @Override
-    public void asyncBatchDelete(List<Long> cycleCaseIds, Long projectId) {
-        if (CollectionUtils.isEmpty(cycleCaseIds)) {
-            return;
-        }
-        Long userId = DetailsHelper.getUserDetails().getUserId();
-        WebSocketMeaasgeVO messageVO = new WebSocketMeaasgeVO(userId, "deleting", 0.0);
-        String messageCode = WEBSOCKET_BATCH_DELETE_CYClE_CASE+"-"+projectId;
-        messageClientC7n.sendByUserId(userId, messageCode, JSON.toJSONString(messageVO));
-        double incremental = Math.ceil(cycleCaseIds.size() <= 10 ? 1 : (cycleCaseIds.size()*1.0) / 10);
-        try {
-            for (int i=1; i<=cycleCaseIds.size(); i++) {
-                delete(cycleCaseIds.get(i-1), projectId);
-                if (i % incremental == 0) {
-                    messageVO.setRate((i * 1.0) / cycleCaseIds.size());
-                    messageClientC7n.sendByUserId(userId, messageCode, JSON.toJSONString(messageVO));
-                }
-            }
-            messageVO.setStatus("success");
-            messageVO.setRate(1.0);
-        } catch (Exception e) {
-            messageVO.setStatus("failed");
-            messageVO.setError(e.getMessage());
-            throw new CommonException("batch delete cycle case failed, exception: {}", e);
-        } finally {
-            messageClientC7n.sendByUserId(userId, messageCode, JSON.toJSONString(messageVO));
-        }
     }
 }
