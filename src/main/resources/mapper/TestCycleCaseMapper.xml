@@ -918,6 +918,25 @@
         AND tp.sprint_id = #{sprintId}
         ORDER BY tcc.rank
     </select>
+
+    <select id="listStatusBySprintIdAndIssueId" resultType="java.lang.Long">
+         SELECT
+          tcc.execution_status
+         FROM test_cycle_case tcc
+         JOIN (
+            select cycle_id from test_cycle tc1
+            where
+            tc1.project_id = #{projectId}
+            AND tc1.plan_id in (
+               select plan_id from test_plan tp
+               where tp.project_id = #{projectId}
+               and tp.sprint_id = #{sprintId}
+            )
+         ) tc ON tc.cycle_id = tcc.cycle_id
+         JOIN test_case_link tcl on tcl.project_id = #{projectId} and tcl.issue_id = #{issueId} and  tcl.link_case_id = tcc.case_id
+         WHERE
+          tcc.project_id = #{projectId}
+    </select>
 </mapper>
 
 

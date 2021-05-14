@@ -152,4 +152,6 @@ public interface TestCycleCaseMapper extends BaseMapper<TestCycleCaseDTO> {
      * @return 测试用例关联的指定冲刺下的执行
      */
     List<TestCycleCaseLinkVO> selectTestCycleByCaseAndSprint(@Param("caseIdList") List<Long> caseIdList, @Param("sprintId") Long sprintId);
+
+    List<Long> listStatusBySprintIdAndIssueId(@Param("projectId") Long projectId, @Param("issueId")  Long issueId, @Param("sprintId")  Long sprintId);
 }

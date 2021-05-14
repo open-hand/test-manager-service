@@ -23,10 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -156,7 +153,25 @@ public class ExecutionCaseStatusChangeSettingServiceImpl implements ExecutionCas
         ExecutionUpdateIssueVO executionUpdateIssueVO = new ExecutionUpdateIssueVO();
         executionUpdateIssueVO.setIssueTypeStatusMap(map);
         executionUpdateIssueVO.setSprintId(sprintId);
-        issueIds.forEach(v -> agileClientOperator.executionUpdateStatus(projectId, v, executionUpdateIssueVO));
+        issueIds.forEach(v -> {
+            if (executionStatusCheck(projectId, v, sprintId, testStatusId)) {
+                agileClientOperator.executionUpdateStatus(projectId, v, executionUpdateIssueVO);
+            }
+        });
+    }
+
+    private boolean executionStatusCheck(Long projectId, Long issueId, Long sprintId, Long testStatusId) {
+        // 查询所有设置sprintId的计划里面的执行的状态
+        List<Long> list = testCycleCaseMapper.listStatusBySprintIdAndIssueId(projectId, issueId, sprintId);
+        // 判断状态是否全部相同
+        boolean result = true;
+        for (Long statusId : list) {
+            if (!Objects.equals(testStatusId, statusId)) {
+                result = false;
+                break;
+            }
+        }
+        return result;
     }
 
     private Boolean checkAgileModule(Long projectId) {
