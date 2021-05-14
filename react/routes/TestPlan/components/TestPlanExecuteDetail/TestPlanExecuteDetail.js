@@ -11,7 +11,7 @@ import {
 } from '@choerodon/boot';
 import JsonBig from 'json-bigint';
 import DetailContainer, { useDetail } from '@choerodon/agile/lib/components/detail-container';
-
+import { HeaderButtons } from '@choerodon/master';
 import { observer } from 'mobx-react-lite';
 import { withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
@@ -340,13 +340,18 @@ function TestPlanExecuteDetail(props) {
           title={<FormattedMessage id="execute_detail" />}
         // backPath={disabled ? TestPlanLink() : TestExecuteLink()}
         >
-          <Button icon="find_in_page" funcType="flat" type="primary" onClick={handleToggleExecuteDetailSide}>
-            {/* <Icon type={visible ? 'format_indent_decrease' : 'format_indent_increase'} /> */}
-            {visible ? '隐藏详情' : '查看详情'}
-          </Button>
-
-          {planStatus !== 'done'
-            && <Button icon="mode_edit" funcType="flat" type="primary" onClick={handleOpenEdit}>修改用例</Button>}
+          <HeaderButtons items={[{
+            name: visible ? '隐藏详情' : '查看详情',
+            display: true,
+            icon: 'find_in_page',
+            handler: handleToggleExecuteDetailSide,
+          }, {
+            name: '修改用例',
+            display: planStatus !== 'done',
+            icon: 'mode_edit',
+            handler: handleOpenEdit,
+          }]}
+          />
           <Button
             disabled={!previousExecuteId}
             onClick={() => {

@@ -40,7 +40,7 @@ function initLoad(isForbidRoot, defaultValue, props, dataSet) {
   }
 }
 /**
- * 
+ *
  * @param {*} parentDataSet  控制Select下拉框 DataSet
  * @param {*} name  字段名
  * @param {*} setData  设置当前选中项数据
@@ -61,22 +61,22 @@ const treeDataSet = (parentDataSet, name, defaultValue, setData = false, isForbi
     { name: 'parentId', type: 'string' },
     { name: 'versionId', type: 'number' },
   ],
-  
+
   transport: {
     read: () => ({
       url: `/test/v1/projects/${getProjectId()}/issueFolder/query`,
       method: 'get',
       transformResponse: (res) => {
-        const resObj = JSON.parse(res);          
+        const resObj = JSON.parse(res);
         // eslint-disable-next-line no-param-reassign
-        rootIdsRef.current = resObj.rootIds;        
-        const newArr = resObj.treeFolder.map(item => ({
+        rootIdsRef.current = resObj.rootIds;
+        const newArr = resObj.treeFolder.map((item) => ({
           expanded: item.expanded,
           children: item.children,
           ...item.issueFolderVO,
           fileName: item.issueFolderVO.name,
         }));
-          // console.log('read', newArr); 
+          // console.log('read', newArr);
         return newArr;
       },
     }),
@@ -89,9 +89,9 @@ const treeDataSet = (parentDataSet, name, defaultValue, setData = false, isForbi
       dataSet.select(record);
       // 待选数据
       const selectData = { fileName: record.get('name'), folderId: record.get('folderId'), versionId: record.get('versionId') };
-      selectRef.current.collapse();
+      selectRef.current?.collapse();
       if (parentDataSet) {
-        selectRef.current.choose(new Record(selectData));
+        selectRef.current?.choose(new Record(selectData));
         // parentDataSet.current.set(name, selectData);
       }
       if (setData) {
@@ -104,7 +104,7 @@ const treeDataSet = (parentDataSet, name, defaultValue, setData = false, isForbi
     unSelect: ({ record, dataSet }) => {
       dataSet.unSelect(record);
       if (parentDataSet) {
-        selectRef.current.unChoose();
+        selectRef.current?.unChoose();
         // parentDataSet.current.set(name, undefined);
       }
       if (setData) {

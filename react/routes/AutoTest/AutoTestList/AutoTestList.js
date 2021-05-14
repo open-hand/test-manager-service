@@ -8,6 +8,7 @@ import moment from 'moment';
 import {
   Icon, Button, Table, Select, Menu, Dropdown,
 } from 'choerodon-ui';
+import { HeaderButtons } from '@choerodon/master';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
 import 'codemirror/lib/codemirror.css';
@@ -131,7 +132,7 @@ const AutoTestList = ({
   {
     title: '执行时间',
     dataIndex: 'creationDate',
-    key: 'creationDate'
+    key: 'creationDate',
   },
   {
     title: '测试结果',
@@ -145,10 +146,13 @@ const AutoTestList = ({
       className="c7ntest-AutoTestList"
     >
       <Header title={<FormattedMessage id="autotestlist_title" />}>
-        <Button onClick={toCreateAutoTest}>
-          <Icon type="playlist_add icon" />
-          <span>添加测试</span>
-        </Button>
+        <HeaderButtons items={[{
+          name: '添加测试',
+          icon: 'playlist_add',
+          handler: toCreateAutoTest,
+          display: true,
+        }]}
+        />
       </Header>
       <Breadcrumb />
       <Content>

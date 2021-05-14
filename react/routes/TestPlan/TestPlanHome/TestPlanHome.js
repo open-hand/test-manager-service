@@ -4,10 +4,11 @@ import React, {
 } from 'react';
 import { observer } from 'mobx-react-lite';
 import { withRouter } from 'react-router-dom';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import {
   Page, Header, Content, Breadcrumb, Choerodon, stores,
 } from '@choerodon/boot';
+import { HeaderButtons } from '@choerodon/master';
 import { Tabs } from 'choerodon-ui';
 import { Modal, Button } from 'choerodon-ui/pro';
 import { localPageCacheStore } from '@choerodon/agile/lib/stores/common/LocalPageCacheStore';
@@ -41,6 +42,7 @@ function TestPlanHome({ history }) {
   const {
     prefixCls, createAutoTestStore, testPlanStore,
   } = useContext(Store);
+  const intl = useIntl();
   const {
     loading, checkIdMap, testList, testPlanStatus, planInfo, statusList, currentCycle, mainActiveTab, times, calendarLoading,
   } = testPlanStore;
@@ -336,14 +338,19 @@ function TestPlanHome({ history }) {
       <Header
         title={<FormattedMessage id="testPlan_name" />}
       >
-        <Button icon="playlist_add" onClick={handleOpenCreatePlan}>
-          <FormattedMessage id="testPlan_createPlan" />
-        </Button>
-        <TestPlanHeader />
-        <Button icon="refresh" onClick={handleRefresh}>
-          <FormattedMessage id="refresh" />
-        </Button>
-
+        <HeaderButtons items={[{
+          name: intl.formatMessage({ id: 'testPlan_createPlan' }),
+          display: true,
+          icon: 'playlist_add',
+          handler: handleOpenCreatePlan,
+        }, {
+          name: intl.formatMessage({ id: 'refresh' }),
+          display: true,
+          icon: 'refresh',
+          handler: handleRefresh,
+          iconOnly: true,
+        }]}
+        />
       </Header>
       <Breadcrumb />
       <Content style={{ display: 'flex', padding: '0', borderTop: '0.01rem solid rgba(0,0,0,0.12)' }}>

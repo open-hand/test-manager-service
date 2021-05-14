@@ -7,6 +7,7 @@ import { injectIntl, FormattedMessage } from 'react-intl';
 import {
   Content, Header, TabPage as Page, stores, Breadcrumb,
 } from '@choerodon/boot';
+import { HeaderButtons } from '@choerodon/master';
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import update from 'immutability-helper';
@@ -318,7 +319,7 @@ class PriorityList extends Component {
   }
 
   render() {
-    const { PriorityStore } = this.props;
+    const { PriorityStore, intl } = this.props;
     const {
       getPriorityList,
       onLoadingList,
@@ -331,10 +332,13 @@ class PriorityList extends Component {
         className="c7ntest-priority"
       >
         <Header title={<FormattedMessage id="priority.title" />}>
-          <Button onClick={() => this.showSideBar('create')}>
-            <Icon type="playlist_add" />
-            <FormattedMessage id="priority.create" />
-          </Button>
+          <HeaderButtons items={[{
+            name: intl.formatMessage({ id: 'priority.create' }),
+            display: true,
+            handler: () => this.showSideBar('create'),
+            icon: 'playlist_add',
+          }]}
+          />
         </Header>
         <Breadcrumb />
         <Content>

@@ -5,6 +5,7 @@ import {
 } from '@choerodon/boot';
 import { Button, Icon } from 'choerodon-ui';
 import { Modal } from 'choerodon-ui/pro/lib';
+import { HeaderButtons } from '@choerodon/master';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import Empty from '@/components/Empty';
 import empty from '@/assets/empty.png';
@@ -214,7 +215,7 @@ class IssueManage extends Component {
     const currentFolder = IssueTreeStore.getCurrentFolder;
     const { loading, rootIds } = IssueTreeStore;
     const noFolder = rootIds.length === 0;
-    const { tab, hasExtraTab } = this.props;
+    const { tab, hasExtraTab, intl } = this.props;
     return (
       <Page
         className="c7ntest-Issue c7ntest-region"
@@ -222,27 +223,33 @@ class IssueManage extends Component {
         <Header
           title={<FormattedMessage id="issue_name" />}
         >
-          {!noFolder && (
-            <Button className="leftBtn" onClick={() => this.handleOpenCreateIssue()}>
-              <Icon type="playlist_add icon" />
-              <FormattedMessage id="issue_createTestIssue" />
-            </Button>
-          )}
-          <Button icon="playlist_add" onClick={this.handleAddFolderClick}>
-            创建一级目录
-          </Button>
-          {!noFolder && [
-            <Button icon="unarchive" onClick={this.handleOpenExportIssue}>
-              <FormattedMessage id="issue_export" />
-            </Button>,
-            <Button className="leftBtn" onClick={this.handleOpenImportIssue}>
-              {/* <Icon type="file_upload icon" /> */}
-              <Icon type="archive" />
-              <FormattedMessage id="issue_import" />
-            </Button>]}
-          <Button icon="refresh" onClick={this.handleRefresh}>
-            <FormattedMessage id="refresh" />
-          </Button>
+          <HeaderButtons items={[{
+            name: intl.formatMessage({ id: 'issue_createTestIssue' }),
+            display: !noFolder,
+            icon: 'playlist_add',
+            handler: () => this.handleOpenCreateIssue(),
+          }, {
+            name: '创建一级目录',
+            display: true,
+            icon: 'playlist_add',
+            handler: this.handleAddFolderClick,
+          }, {
+            name: intl.formatMessage({ id: 'issue_export' }),
+            display: !noFolder,
+            icon: 'unarchive',
+            handler: this.handleOpenExportIssue,
+          }, {
+            name: intl.formatMessage({ id: 'issue_import' }),
+            display: !noFolder,
+            icon: 'archive',
+            handler: this.handleOpenImportIssue,
+          }, {
+            iconOnly: true,
+            display: true,
+            handler: this.handleRefresh,
+            icon: 'refresh',
+          }]}
+          />
         </Header>
         <Breadcrumb />
         <Content style={{ display: 'flex', padding: '0', borderTop: '0.01rem solid rgba(0,0,0,0.12)' }}>
