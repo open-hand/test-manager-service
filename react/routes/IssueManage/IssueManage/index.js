@@ -11,12 +11,13 @@ const Test = (props) => {
   const tabComponent = (
     <Permission service={['choerodon.code.project.test.manager.ps.api.default']}>
       {(hasPermission) => (
-        <Tabs activeKey={activeKey} onChange={setActiveKey} className="c7ntest-IssueTree-tab">
-          <TabPane key="functional" tab="功能测试" />
-          {hasPermission && <TabPane key="api" tab="API测试" />}
-        </Tabs>
+        hasPermission && (
+          <Tabs activeKey={activeKey} onChange={setActiveKey} className="c7ntest-IssueTree-tab">
+            <TabPane key="functional" tab="功能测试" />
+            <TabPane key="api" tab="API测试" />
+          </Tabs>
+        )
       )}
-
     </Permission>
   );
   return (
