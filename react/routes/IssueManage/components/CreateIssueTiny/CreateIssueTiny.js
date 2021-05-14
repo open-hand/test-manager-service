@@ -91,7 +91,7 @@ export default observer(() => {
             funcType="raised"
             loading={createLoading}
             onClick={handleBlurCreateIssue}
-            color="blue"
+            color="primary"
           >
             <FormattedMessage id="ok" />
           </Button>
@@ -108,9 +108,8 @@ export default observer(() => {
     </div>
   ) : (
     <Button
-      type="primary"
       funcType="flat"
-      color="blue"
+      color="primary"
       onClick={() => {
         setCreating(true);
       }}

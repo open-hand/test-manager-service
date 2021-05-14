@@ -147,7 +147,7 @@ function CreateIssue(props) {
             <Button
               style={{ marginLeft: 'auto' }}
               icon="playlist_add"
-              color="blue"
+              color="primary"
               onClick={() => {
                 openLinkIssueModal({
                   selected: linkIssues,

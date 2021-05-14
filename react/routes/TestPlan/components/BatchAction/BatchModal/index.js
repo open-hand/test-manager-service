@@ -60,7 +60,7 @@ function BatchModal({
             </Button>
             <Button
               disabled={checkIdMap.size === 0 || !assignToUserId?.length}
-              color="blue"
+              color="primary"
               loading={loading}
               style={{
                 fontWeight: 500,

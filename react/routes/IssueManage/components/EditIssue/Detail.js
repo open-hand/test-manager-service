@@ -5,7 +5,7 @@ import { observer } from 'mobx-react-lite';
 import { FormattedMessage } from 'react-intl';
 import {
   Button, Tooltip, Icon,
-} from 'choerodon-ui';
+} from 'choerodon-ui/pro';
 import {
   getProjectId,
 } from '@/common/utils';
