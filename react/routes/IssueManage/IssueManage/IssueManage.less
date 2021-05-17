@@ -8,6 +8,7 @@
       font-size: 0.2rem;
     }
   }
+
   &-import-modal {
     .c7n-pro-modal-footer {
       display: none;
@@ -21,9 +22,14 @@
   .c7ntest-IssueTree-tab {
     text-align: center;
     padding-top: .16rem;
+    padding-bottom: 2px;
 
     .@{c7n-prefix}-tabs-bar {
       margin: 0;
+    }
+
+    .c7n-tabs-nav-container::after {
+      left: 0;
     }
 
     & + .c7ntest-IssueTree {
