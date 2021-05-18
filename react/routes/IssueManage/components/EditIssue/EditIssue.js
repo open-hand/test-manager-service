@@ -98,7 +98,7 @@ function EditIssue() {
     setQuery(width);
   }, 150);
 
-  const handleUpdate = async (newValue, done) => {
+  const handleUpdate = async (newValue, done = () => {}) => {
     const key = Object.keys(newValue)[0];
     const value = newValue[key];
     const { objectVersionNumber } = issueInfo;

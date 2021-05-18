@@ -160,16 +160,6 @@ function ExecuteDetailSide(props) {
     const {
       executor, description, executorDate, summary, caseId, caseFolderId, caseNum, caseHasExist, priorityVO, customNum,
     } = detailData;
-    // 默认18个字启动省略
-    const renderIssueSummary = (text) => {
-      const ellipsis = '...';
-      const textArr = [...text];
-      return (
-        <Tooltip title={text}>
-          {textArr.length > 20 ? textArr.splice(0, 20).join('') + ellipsis : text}
-        </Tooltip>
-      );
-    };
 
     return (
       <div style={{
@@ -288,7 +278,6 @@ function ExecuteDetailSide(props) {
                   style={{ padding: '0 15px 0 0' }}
                 >
                   <CKEditorViewer value={description} />
-
                 </Section>
                 {/* 附件 */}
                 <Section
@@ -302,7 +291,7 @@ function ExecuteDetailSide(props) {
                 </Section>
                 {/* 问题链接 */}
                 <Section
-                  id="attachment"
+                  id="issueLink"
                   icon="attach_file"
                   title="问题链接"
                   isLastOne
