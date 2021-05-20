@@ -30,7 +30,7 @@ public interface IssueFeignClient {
                                                                @RequestBody IssueQueryVO issueQueryVO);
 
 
-    @GetMapping("/v1/projects/{project_id}/issues/agile/summary")
+    @PostMapping("/v1/projects/{project_id}/issues/agile/summary")
     ResponseEntity<String> queryIssueByOptionForAgile(@RequestParam int page,
                                                                  @RequestParam int size,
                                                                  @PathVariable(name = "project_id") Long projectId,
