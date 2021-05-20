@@ -81,7 +81,7 @@ function EditExecuteIssue(props) {
         </div>
         {(editDataset.current && (
           <CKEditor
-            style={{ height: 200, width: '100%' }}
+            style={{ minHeight: 300, width: '100%' }}
             onChange={handleChangeDes}
             defaultValue={editDataset.current.get('description')}
           />
