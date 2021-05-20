@@ -52,15 +52,6 @@ public class AgileClientOperator {
         }
     }
 
-    public Page<IssueNumDTO> queryIssueByOptionForAgile(int page, int size, Long projectId, Long issueId, String issueNum, Boolean self, String content) {
-        try {
-            return FeignClientUtils.doRequest(() -> issueFeignClient.queryIssueByOptionForAgile(page, size, projectId, issueId, issueNum, self, content), new TypeReference<Page<IssueNumDTO>>() {
-            });
-        } catch (ServiceUnavailableException e) {
-            return new Page<>();
-        }
-    }
-
     public ProjectInfoVO queryProjectInfoByProjectId(Long projectId) {
         try {
             return FeignClientUtils.doRequest(() -> issueFeignClient.queryProjectInfoByProjectId(projectId), ProjectInfoVO.class);
