@@ -121,7 +121,7 @@ function CreateIssue(props) {
 
         </div>
         <CKEditor
-          style={{ height: 200, width: '100%' }}
+          style={{ minHeight: 300, width: '100%' }}
           onChange={handleChangeDes}
         />
         {/* //  这里逻辑待处理， DataSet提交  */}

@@ -77,7 +77,7 @@ function EditTestStepTable({ onUpdateDetail, IssueStore }) {
               footer
               value={description}
               style={{
-                height: 'auto', width: '100%', minHeight: 280,
+                height: 'auto', width: '100%', minHeight: 300,
               }}
               onCancel={() => {
                 setEditDescriptionShow(false);
