@@ -174,7 +174,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         excelService.downloadWorkBookByStream(buildImportTemp(organizationId, projectId), response);
     }
 
-    @Async("excelTaskExecutor")
+    @Async
     @Override
     public void importIssueByExcel(Long projectId, Long folderId, Long userId, InputStream inputStream,
                                    EncryptType encryptType, RequestAttributes requestAttributes) {

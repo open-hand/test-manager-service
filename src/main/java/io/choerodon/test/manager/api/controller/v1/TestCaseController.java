@@ -172,7 +172,7 @@ public class TestCaseController {
         InputStream inputStream;
         try {
             inputStream = excelFile.getInputStream();
-        }catch (IOException e) {
+        } catch (IOException e) {
             throw new CommonException("error.io.new.workbook", e);
         }
         excelImportService.importIssueByExcel(projectId, folderId,
