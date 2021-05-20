@@ -20,7 +20,6 @@
     "quill-delta-to-html": "^0.8.4",
     "react-beautiful-dnd": "^9.0.2",
     "react-codemirror": "^1.0.0",
-    "react-color": "^2.14.1",
     "react-fast-compare": "^2.0.4",
     "react-image-lightbox": "^4.6.0",
     "react-onclickoutside": "^6.9.0",
