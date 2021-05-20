@@ -26,11 +26,6 @@ public class IssueFeignClientFallback implements IssueFeignClient {
     }
 
     @Override
-    public ResponseEntity<String> queryIssueByOptionForAgile(int page, int size, Long projectId, Long issueId, String issueNum, Boolean self, String content) {
-        throw new CommonException("error.agile.queryIssueByOptionForAgile");
-    }
-
-    @Override
     public ResponseEntity<String> queryProjectInfoByProjectId(Long projectId) {
         throw new CommonException("error.query.agile.projectInfo");
     }

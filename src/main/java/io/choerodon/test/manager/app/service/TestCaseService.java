@@ -195,19 +195,6 @@ public interface TestCaseService {
     TestCaseDTO baseUpdate(TestCaseDTO testCase);
 
     /**
-     * 分页搜索查询issue列表
-     *
-     * @param projectId
-     * @param issueId
-     * @param issueNum
-     * @param self
-     * @param content
-     * @param pageRequest
-     * @return
-     */
-    Page<IssueNumDTO> queryIssueByOptionForAgile(Long projectId, Long issueId, String issueNum, Boolean self, String content, PageRequest pageRequest);
-
-    /**
      * 获取文件夹下的所有文件夹id（包括传入的id）
      * @param projectId 项目id
      * @param folderId 当前文件夹

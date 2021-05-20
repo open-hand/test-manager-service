@@ -249,29 +249,6 @@ public class TestCaseController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-
-    @Permission(level = ResourceLevel.ORGANIZATION)
-    @ApiOperation("分页搜索查询issue列表")
-    @CustomPageRequest
-    @GetMapping(value = "/agile/summary")
-    public ResponseEntity<Page<IssueNumDTO>> queryIssueByOptionForAgile(@ApiIgnore
-                                                                        @ApiParam(value = "分页信息", required = true)
-                                                                        @SortDefault(value = "issueId", direction = Sort.Direction.DESC)
-                                                                                PageRequest pageRequest,
-                                                                        @ApiParam(value = "项目id", required = true)
-                                                                        @PathVariable(name = "project_id") Long projectId,
-                                                                        @ApiParam(value = "issueId")
-                                                                        @RequestParam(required = false)
-                                                                        @Encrypt Long issueId,
-                                                                        @ApiParam(value = "issueNum")
-                                                                        @RequestParam(required = false) String issueNum,
-                                                                        @ApiParam(value = "是否包含自身", required = true)
-                                                                        @RequestParam() Boolean self,
-                                                                        @ApiParam(value = "搜索内容")
-                                                                        @RequestParam(required = false) String content) {
-        return ResponseEntity.ok(testCaseService.queryIssueByOptionForAgile(projectId, issueId, issueNum, self, content, pageRequest));
-    }
-
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("分页搜索查询未关联case列表")
     @CustomPageRequest
