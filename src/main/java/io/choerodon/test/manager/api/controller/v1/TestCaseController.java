@@ -2,6 +2,8 @@ package io.choerodon.test.manager.api.controller.v1;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,7 +37,6 @@ import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.mybatis.pagehelper.annotation.SortDefault;
 import io.choerodon.test.manager.app.service.*;
-import io.choerodon.test.manager.infra.util.ExcelUtil;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -168,9 +169,15 @@ public class TestCaseController {
                                        @RequestParam("file") MultipartFile excelFile,
                                        @RequestParam("folder_id")
                                        @Encrypt Long folderId) {
+        InputStream inputStream;
+        try {
+            inputStream = excelFile.getInputStream();
+        }catch (IOException e) {
+            throw new CommonException("error.io.new.workbook", e);
+        }
         excelImportService.importIssueByExcel(projectId, folderId,
                 DetailsHelper.getUserDetails().getUserId(),
-                ExcelUtil.getWorkbookFromMultipartFile(ExcelUtil.Mode.XSSF, excelFile),EncryptContext.encryptType(), RequestContextHolder.currentRequestAttributes());
+                inputStream, EncryptContext.encryptType(), RequestContextHolder.currentRequestAttributes());
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 

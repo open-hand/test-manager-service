@@ -31,6 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hzero.boot.file.FileClient;
 import org.hzero.starter.keyencrypt.core.EncryptContext;
 import org.hzero.starter.keyencrypt.core.EncryptType;
@@ -49,6 +50,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -172,10 +174,16 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         excelService.downloadWorkBookByStream(buildImportTemp(organizationId, projectId), response);
     }
 
-    @Async
+    @Async("excelTaskExecutor")
     @Override
-    public void importIssueByExcel(Long projectId, Long folderId, Long userId, Workbook issuesWorkbook,
+    public void importIssueByExcel(Long projectId, Long folderId, Long userId, InputStream inputStream,
                                    EncryptType encryptType, RequestAttributes requestAttributes) {
+        Workbook issuesWorkbook;
+        try {
+            issuesWorkbook = new XSSFWorkbook(inputStream);
+        } catch (IOException e) {
+            throw new CommonException("error.io.new.workbook", e);
+        }
         // 添加加密信息上下文
         EncryptContext.setEncryptType(encryptType.name());
         RequestContextHolder.setRequestAttributes(requestAttributes);
