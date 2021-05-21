@@ -730,6 +730,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         if (!CollectionUtils.isEmpty(testCaseLinkDTOList)) {
             testCaseLinkMapper.batchInsert(testCaseLinkDTOList);
         }
+        testProjectInfoMapper.updateMaxCaseNum(testProjectInfo.getProjectId(), testProjectInfo.getCaseMaxNum());
     }
 
     @Override
