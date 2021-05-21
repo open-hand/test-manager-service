@@ -1,13 +1,11 @@
 export { default as TextEditToggle } from './TextEditToggle';
-export { default as RichTextShow } from './RichTextShow';
+export { default as CKEditorViewer } from './CKEditorViewer';
 export { default as SelectFocusLoad } from './SelectFocusLoad';
 export { default as User } from './User/User';
 export { default as UploadInTable } from './UploadInTable';
 export { default as DefectSelect } from './DefectSelect';
 export { default as RadioButton } from './RadioButton';
 export { default as StatusTags } from './StatusTags';
-export { default as openFullEditor } from './FullEditor';
-export { default as WYSIWYGEditor } from './WYSIWYGEditor';
 export { default as DragTable } from './DragTable';
 export { default as YamlEditor } from './YamlEditor';
 export { default as Upload } from './Upload';

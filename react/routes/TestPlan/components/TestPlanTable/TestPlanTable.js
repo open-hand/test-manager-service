@@ -3,24 +3,23 @@ import React, {
   useContext, useRef, useEffect, useState,
 } from 'react';
 import PropTypes from 'prop-types';
-import { toJS } from 'mobx';
 import { FormattedMessage } from 'react-intl';
 import { observer } from 'mobx-react-lite';
 import {
-  Tooltip, Button, Icon, Popover,
+  Tooltip, Button, Icon, Checkbox,
 } from 'choerodon-ui';
-import { Action, stores, Choerodon } from '@choerodon/boot';
+import { Action, stores } from '@choerodon/boot';
 import _ from 'lodash';
 import { renderIssueNum } from '@/routes/IssueManage/components/IssueTable/tags';
+import SelectUser from '@/components/select/select-user';
 import {
-  SelectFocusLoad, StatusTags, DragTable,
+  StatusTags, DragTable,
 } from '../../../../components';
 import CustomCheckBox from '../../../../components/CustomCheckBox';
 import User from '../../../../components/User';
 import './TestPlanTable.less';
 
 import Store from '../../stores';
-import { getRankByDate } from '../../../../api/TestPlanApi';
 import PriorityTag from '../../../../components/PriorityTag';
 import { OpenBatchModal, closeBatchModal } from '../BatchAction';
 
@@ -44,6 +43,7 @@ const TestPlanTable = observer(({
   onQuickFail,
   onOpenUpdateRemind,
   onSearchAssign,
+  onOnlyMeCheckedChange,
   hasCheckBox,
   isMine,
 }) => {
@@ -209,7 +209,7 @@ const TestPlanTable = observer(({
     return testPlanStore.mineFilter && testPlanStore.mineFilter.priorityId ? [testPlanStore.mineFilter.priorityId] : [];
   };
   const columns = [{
-    title: '用例名',
+    title: '执行名称',
     dataIndex: 'summary',
     key: 'summary',
     filters: [],
@@ -227,7 +227,24 @@ const TestPlanTable = observer(({
     filters: [],
     render: (customNum) => renderIssueNum(customNum),
   }, {
-    title: '被指派人',
+    title: <FormattedMessage id="priority" />,
+    dataIndex: 'priorityId',
+    key: 'priorityId',
+    filters: priorityList && priorityList.filter((priorityVO) => priorityVO.enableFlag)
+      .map((priorityVO) => ({ text: priorityVO.name, value: priorityVO.id })),
+    filteredValue: getPriorityFilteredValue(),
+    flex: 1,
+    width: 100,
+    render(priorityId) {
+      const priorityVO = _.find(priorityList, { id: priorityId }) || {};
+      return (
+        <PriorityTag
+          priority={priorityVO}
+        />
+      );
+    },
+  }, {
+    title: '计划执行人',
     dataIndex: 'assignedUser',
     key: 'assignedUser',
     flex: 1.5,
@@ -245,7 +262,7 @@ const TestPlanTable = observer(({
     },
   },
   {
-    title: '执行人',
+    title: '实际执行人',
     dataIndex: 'lastUpdateUser',
     key: 'lastUpdateUser',
     flex: 1.2,
@@ -283,24 +300,7 @@ const TestPlanTable = observer(({
       );
     },
   },
-  {
-    title: <FormattedMessage id="priority" />,
-    dataIndex: 'priorityId',
-    key: 'priorityId',
-    filters: priorityList && priorityList.filter((priorityVO) => priorityVO.enableFlag)
-      .map((priorityVO) => ({ text: priorityVO.name, value: priorityVO.id })),
-    filteredValue: getPriorityFilteredValue(),
-    flex: 1,
-    width: 100,
-    render(priorityId) {
-      const priorityVO = _.find(priorityList, { id: priorityId }) || {};
-      return (
-        <PriorityTag
-          priority={priorityVO}
-        />
-      );
-    },
-  },
+
   {
     title: <FormattedMessage id="status" />,
     dataIndex: 'executionStatus',
@@ -389,25 +389,47 @@ const TestPlanTable = observer(({
   // }
 
   const data = isMine ? testList.filter((item) => (item.assignedTo && item.assignedTo.toString() === AppState.userInfo.id.toString())) : testList;
+  const isSelf = String(testPlanStore.filter.assignUser) === AppState.userInfo.id.toString();
   return (
     <div className={`c7ntest-testPlanTable ${isMine ? 'c7ntest-mineTestPlanTable' : ''}`}>
       {
         (!isMine && (data.length > 0 || testPlanStore.filter.assignUser)) && (
-          <div style={{
-            marginTop: '-55px', marginBottom: 10, flexDirection: 'row-reverse', alignItems: 'center', display: testPlanStore.mainActiveTab === 'testPlanTable' ? 'flex' : 'none',
-          }}
-          >
+          <div
+            className="c7ntest-testPlanTable-content"
+            style={{
 
-            <SelectFocusLoad
-              allowClear
-              style={{ width: 180, zIndex: 100, marginLeft: 10 }}
-              placeholder="被指派人"
-              loadWhenMount
-              getPopupContainer={(trigger) => trigger.parentNode}
-              type="user"
-              onChange={onSearchAssign}
-              value={testPlanStore.filter.assignUser}
-            />
+              marginBottom: 3,
+              alignItems: 'center',
+              flexDirection: 'row-reverse',
+              display: testPlanStore.mainActiveTab === 'testPlanTable' ? 'flex' : 'none',
+            }}
+          >
+            <span style={{
+              position: 'relative',
+              zIndex: 100,
+              display: 'inline-flex',
+              alignItems: 'center',
+            }}
+            >
+              <div>
+                <span style={{ color: 'rgba(0, 0, 0, 0.87)' }}>
+                  只看我的
+                </span>
+                <Checkbox style={{ marginLeft: 4 }} checked={isSelf} onChange={onOnlyMeCheckedChange} />
+              </div>
+              <SelectUser
+                flat
+                self={false}
+                placeholder="计划执行人"
+                onChange={onSearchAssign}
+                value={isSelf ? undefined : testPlanStore.filter.assignUser}
+                style={{ marginLeft: 30 }}
+                dropdownAlign={{
+                  points: ['tl', 'bl'],
+                  overflow: { adjustX: true },
+                }}
+              />
+            </span>
           </div>
         )
       }

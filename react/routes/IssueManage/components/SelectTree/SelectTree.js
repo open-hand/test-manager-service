@@ -1,9 +1,9 @@
-
 import React, {
   useState, useMemo, useRef, useEffect, useReducer,
 } from 'react';
 import {
   Tree as OldTree,
+  Divider,
 } from 'choerodon-ui';
 import { observer } from 'mobx-react-lite';
 import {
@@ -13,7 +13,7 @@ import PropTypes from 'prop-types';
 import { Choerodon } from '@choerodon/boot';
 import _ from 'lodash';
 import './SelectTree.less';
-import { Divider } from 'choerodon-ui';
+
 import treeDataSet from './treeDataSet';
 
 const { TreeNode } = OldTree;
@@ -36,10 +36,10 @@ function SelectTree(props) {
   } = props;
   const selectRef = useRef();
   const rootIdsRef = useRef([]);
-  // const [searchValue, setSearchValue] = useState('');// 搜索框内值  
+  // const [searchValue, setSearchValue] = useState('');// 搜索框内值
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const dataSet = useMemo(() => treeDataSet(parentDataSet, name, defaultValue, onChange, isForbidRoot, selectRef, rootIdsRef), []);
-  const map = useMemo(() => new Map(dataSet.map(record => [record.get('folderId'), record])), [dataSet.length]);
+  const map = useMemo(() => new Map(dataSet.map((record) => [record.get('folderId'), record])), [dataSet.length]);
   const [treeState, dispatch] = useReducer((state, action) => {
     const { expandedKeys = [], searchValue } = action;
     switch (action.type) {
@@ -79,7 +79,7 @@ function SelectTree(props) {
   });
   /**
   * 渲染树节点
-  * @param {*} record  
+  * @param {*} record
   */
   const renderNode = (record) => {
     const { searchValue } = treeState;
@@ -100,8 +100,7 @@ function SelectTree(props) {
             {afterFileName}
           </span>
         )
-          : <span>{fileName}</span>
-        }
+          : <span>{fileName}</span>}
       </div>
 
     );
@@ -109,12 +108,12 @@ function SelectTree(props) {
 
   /**
    * 搜索此节点父节点并展开
-   * @param {*} record 
+   * @param {*} record
    */
   function searchParent(record, keys = []) {
     // 防止文件id与父id相同 出现死循环
     if (record.get('parentId') !== 0 && record.get('parentId') !== record.get('folderId')) {
-      const temp = dataSet.find(item => record.get('parentId') === item.get('folderId'));
+      const temp = dataSet.find((item) => record.get('parentId') === item.get('folderId'));
       if (temp) {
         temp.set('expanded', true);
         keys.push(temp.id.toString());
@@ -126,7 +125,7 @@ function SelectTree(props) {
 
   /**
    * 根据文件名找寻树节点并展开
-   * @param {*} value 
+   * @param {*} value
    */
   function onFilterNode(value) {
     const expandedKeys = [];
@@ -151,7 +150,7 @@ function SelectTree(props) {
 
   /**
    * 输入回调
-   * @param {*} value 
+   * @param {*} value
    */
   const handleInput = _.debounce((value) => {
     onFilterNode(value);
@@ -162,9 +161,9 @@ function SelectTree(props) {
     if (selected) {
       dataSet.select(record);
       // 待选数据
-      selectRef.current.collapse();
+      selectRef.current?.collapse();
       if (parentDataSet) {
-        selectRef.current.choose(record);
+        selectRef.current?.choose(record);
         // parentDataSet.current.set(name, selectData);
       }
       if (onChange) {
@@ -173,7 +172,7 @@ function SelectTree(props) {
     } else {
       dataSet.unSelect(record);
       if (parentDataSet) {
-        selectRef.current.unChoose();
+        selectRef.current?.unChoose();
         // parentDataSet.current.set(name, undefined);
       }
       if (onChange) {
@@ -192,17 +191,17 @@ function SelectTree(props) {
           {renderTreeNode(record.get('children'))}
         </TreeNode>
       );
-    });    
+    });
   }
   /**
   * 渲染树
-  * @param {*} content 
+  * @param {*} content
   */
   const renderTree = (
     <div
       role="none"
       className="test-select-tree"
-      onMouseDown={e => e.stopPropagation()}
+      onMouseDown={(e) => e.stopPropagation()}
     >
       <div className="test-select-tree-search">
         <TextField
@@ -251,7 +250,7 @@ function SelectTree(props) {
 
   /**
    * 默认渲染select选中项
-   * @param {*} param0 
+   * @param {*} param0
    */
   function defaultRenderSelect({ record, text, value }) {
     return text;

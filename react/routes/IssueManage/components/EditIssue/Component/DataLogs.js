@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { Icon, Button } from 'choerodon-ui';
+import { Icon, Button } from 'choerodon-ui/pro';
 import { FormattedMessage } from 'react-intl';
 import DataLog from './DataLog';
-
 
 class DataLogs extends Component {
   constructor(props, context) {

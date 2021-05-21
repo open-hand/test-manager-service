@@ -279,7 +279,7 @@ function StepTable(props) {
       <Column name="stepAttachment" renderer={renderAttachment} align="left" width={200} />
       <Column name="description" editor={!editing && !readOnly} align="left" tooltip="overflow" renderer={renderText} />
       {hasAgile && <Column name="defects" renderer={renderDefects} width={260} />}
-      <Column name="action" width={100} lock={lock} renderer={renderAction} hidden={getActionHidden()} />
+      <Column name="action" width={110} lock={lock} renderer={renderAction} hidden={getActionHidden()} />
     </Table>
   );
 }

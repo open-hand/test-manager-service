@@ -7,16 +7,19 @@ const User = ({
 }) => (user ? (
   <Tooltip title={`${user.loginName}(${user.realName})`}>
     <div
+      {...otherProps}
       style={{
         display: 'inline-block',
         // display: 'flex',
         // padding: 2,
         paddingRight: 6,
-        paddingBottom: 2,
+        // paddingBottom: 2,
         lineHeight: '18px',
         verticalAlign: 'text-bottom',
+        color: 'rgba(0, 0, 0, 0.65)',
+        ...otherProps.style,
       }}
-      {...otherProps}
+
     >
       {
         user.imageUrl ? (
@@ -56,7 +59,6 @@ const User = ({
           whiteSpace: 'nowrap',
           fontSize: '13px',
           verticalAlign: 'middle',
-          color: 'rgba(0, 0, 0, 0.65)',
           display: 'inline-block',
           maxWidth: 'calc(100% - 23px)',
         }}

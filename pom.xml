@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>test-manager-service</artifactId>
-    <version>0.25.3.RELEASE</version>
+    <version>0.26.0-SNAPSHOT</version>
 
     <!--加parent-->
     <parent>
@@ -283,6 +283,11 @@
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml-schemas</artifactId>
             <version>3.16</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.13.1</version>
         </dependency>
     </dependencies>
 

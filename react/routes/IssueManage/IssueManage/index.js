@@ -1,36 +1,32 @@
 import React, { useState } from 'react';
 import { Tabs } from 'choerodon-ui';
-import { find } from 'lodash';
+import { Permission } from '@choerodon/master';
+import { mount, has } from '@choerodon/inject';
 import IssueManage from './IssueManage';
 
-let tabs = [{
-  name: '功能测试',
-  key: 'functional',
-  component: IssueManage,
-}];
-
-export function inject({ tabs: otherTab }) {
-  tabs = [...tabs, ...otherTab];
-}
-
 const { TabPane } = Tabs;
+const code = 'test-pro:api-test';
 const Test = (props) => {
-  const filteredTabs = tabs;
-  // const isNormalProject = AppState.currentMenuType?.category === 'AGILE';
-  // if (isNormalProject) {
-  //   filteredTabs = isNormalProject ? tabs.filter(tab => tab.key !== 'api') : tabs;
-  // }
-  const [activeKey, setActiveKey] = useState(filteredTabs[0].key);
-  const Component = find(filteredTabs, { key: activeKey }).component;
-
+  const [activeKey, setActiveKey] = useState('functional');
   const tabComponent = (
-    <Tabs activeKey={activeKey} onChange={setActiveKey} className="c7ntest-IssueTree-tab">
-      {filteredTabs.map((tab) => <TabPane key={tab.key} tab={tab.name} />)}
-    </Tabs>
+    <Permission service={['choerodon.code.project.test.manager.ps.api.default']}>
+      {(hasPermission) => (
+        hasPermission && (
+          <Tabs activeKey={activeKey} onChange={setActiveKey} className="c7ntest-IssueTree-tab">
+            <TabPane key="functional" tab="功能测试" />
+            <TabPane key="api" tab="API测试" />
+          </Tabs>
+        )
+      )}
+    </Permission>
   );
   return (
     <>
-      {Component && <Component {...props} tab={tabComponent} tabs={filteredTabs} />}
+      {activeKey === 'functional' && <IssueManage {...props} tab={tabComponent} hasExtraTab={has(code)} />}
+      {activeKey === 'api' && mount(code, {
+        ...props,
+        tab: tabComponent,
+      })}
     </>
   );
 };
