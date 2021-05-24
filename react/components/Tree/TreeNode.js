@@ -1,5 +1,4 @@
 import React, { Fragment, useCallback } from 'react';
-import styled from 'styled-components';
 import classNames from 'classnames';
 import {
   Icon, Button, TextField,
@@ -18,14 +17,6 @@ const defaultProps = {
   enableAddFolder: false,
   enableAction: true,
 };
-const PreTextIcon = styled.span`
-  display: inline-block;
-  visibility: hidden;
-  width: 22px;
-  justify-content: center;
-  cursor: pointer;
-`;
-
 const prefix = 'c7ntest-tree';
 
 const getAction = (item, menuItems, enableAddFolder, onMenuClick) => {
@@ -89,7 +80,16 @@ function TreeNode(props) {
     }
     return (
       <>
-        <PreTextIcon>&bull;</PreTextIcon>
+        <span style={{
+          display: 'inline-block',
+          visibility: 'hidden',
+          width: 22,
+          justifyContent: 'center',
+          cursor: 'pointer',
+        }}
+        >
+          &bull;
+        </span>
         {folderIcon}
       </>
     );

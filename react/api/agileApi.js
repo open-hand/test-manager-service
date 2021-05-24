@@ -172,3 +172,11 @@ export function createFieldValue(id, code, dto) {
 export function getFields(dto) {
   return request.post(`/agile/v1/projects/${getProjectId()}/field_value/list`, dto);
 }
+
+export function autoTransform(data) {
+  return request.post(`/test/v1/projects/${getProjectId()}/execution_status_change_setting`, data);
+}
+
+export function getTransform(issueTypeId, statusId) {
+  return request.get(`/test/v1/projects/${getProjectId()}/execution_status_change_setting/query_option?issueTypeId=${issueTypeId}&statusId=${statusId}`);
+}

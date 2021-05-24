@@ -5,15 +5,12 @@ import React, {
 } from 'react';
 import { Choerodon } from '@choerodon/boot';
 import { throttle } from 'lodash';
-import { Spin, Tabs } from 'choerodon-ui';
+import { Tabs } from 'choerodon-ui';
 import { observer } from 'mobx-react-lite';
 
 import './EditIssue.less';
 import { ResizeAble } from '@/components';
-import {
-  returnBeforeTextUpload, testCaseTableLink, testCaseDetailLink,
-} from '@/common/utils';
-import { updateIssue, getLabels } from '@/api/IssueManageApi';
+import { updateIssue } from '@/api/IssueManageApi';
 import Loading from '@/components/Loading';
 import EditIssueContext from './stores';
 import DataLogs from './Component/DataLogs';
@@ -101,7 +98,7 @@ function EditIssue() {
     setQuery(width);
   }, 150);
 
-  const handleUpdate = async (newValue, done) => {
+  const handleUpdate = async (newValue, done = () => {}) => {
     const key = Object.keys(newValue)[0];
     const value = newValue[key];
     const { objectVersionNumber } = issueInfo;
@@ -111,14 +108,6 @@ function EditIssue() {
       objectVersionNumber,
     };
     switch (key) {
-      case 'description': {
-        if (value) {
-          await returnBeforeTextUpload(value, issue, updateIssue, 'description');
-          store.loadIssueData();
-        }
-        break;
-      }
-
       default: {
         if (key === 'summary' && value === '') {
           Choerodon.prompt('用例名不可为空！');
@@ -169,11 +158,11 @@ function EditIssue() {
             loading && <Loading />
           }
           <div className={`${prefixCls}-content`}>
-            <Header onUpdate={handleUpdate} />
+            <Header onUpdate={handleUpdate} IssueStore={IssueStore} />
             <div className={`${prefixCls}-content-bottom`} id="scroll-area" style={{ position: 'relative' }}>
               <Tabs onChange={handleTabChange}>
                 <TabPane tab="步骤" key="test">
-                  <EditTestStepTable onUpdateDetail={handleUpdate} />
+                  <EditTestStepTable onUpdateDetail={handleUpdate} IssueStore={IssueStore} />
                 </TabPane>
                 <TabPane tab="详情" key="detail">
                   <Detail

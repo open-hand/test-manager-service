@@ -11,10 +11,11 @@ import PropTypes from 'prop-types';
 import {
   Tabs, Button, Spin,
 } from 'choerodon-ui';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import {
   Page, Header, Content, Breadcrumb,
 } from '@choerodon/boot';
+import { HeaderButtons } from '@choerodon/master';
 import { CreateStatus, EditStatus, StatusTable } from '../components';
 import './CustomStatusHome.less';
 
@@ -61,62 +62,68 @@ const CustomStatusHome = ({
   onEditStatusCancel,
   onCreateStatusSubmit,
   onEditStatusSubmit,
-}) => (
-  <div>
-    <CreateStatus
-      activeKey={statusType}
-      visible={createVisible}
-      loading={CreateStatusLoading}
-      onCancel={onCreateStatusCancel}
-      onCheckStatusRepeat={onCheckStatusRepeat}
-      onSubmit={onCreateStatusSubmit}
-    />
-    <EditStatus
-      visible={editVisible}
-      loading={EditStatusLoading}
-      initValue={CurrentEditStatus}
-      onCancel={onEditStatusCancel}
-      onCheckStatusRepeat={onCheckStatusRepeat}
-      onSubmit={onEditStatusSubmit}
-    />
-    <Page
-      className="c7ntest-custom-status"
-    >
-      <Header>
-        <Button icon="playlist_add" onClick={onShowCreateClick}>
-          <FormattedMessage id="status_create" />
-        </Button>
-        {/* <Button icon="autorenew" onClick={onRefreshClick}>
-          <FormattedMessage id="refresh" />
-        </Button> */}
-      </Header>
-      <Breadcrumb />
+}) => {
+  const intl = useIntl();
+  return (
+    <div>
+      <CreateStatus
+        activeKey={statusType}
+        visible={createVisible}
+        loading={CreateStatusLoading}
+        onCancel={onCreateStatusCancel}
+        onCheckStatusRepeat={onCheckStatusRepeat}
+        onSubmit={onCreateStatusSubmit}
+      />
+      <EditStatus
+        visible={editVisible}
+        loading={EditStatusLoading}
+        initValue={CurrentEditStatus}
+        onCancel={onEditStatusCancel}
+        onCheckStatusRepeat={onCheckStatusRepeat}
+        onSubmit={onEditStatusSubmit}
+      />
+      <Page
+        className="c7ntest-custom-status"
+      >
+        <Header>
+          <HeaderButtons items={[{
+            name: intl.formatMessage({
+              id: 'status_create',
+            }),
+            icon: 'playlist_add',
+            handler: onShowCreateClick,
+            display: true,
+          }]}
+          />
+        </Header>
+        <Breadcrumb />
 
-      <Content style={{ paddingTop: 0 }}>
-        <Tabs activeKey={statusType} onChange={onTabChange} className="test-manager-custom-status-home">
-          <TabPane tab={<FormattedMessage id="status_executeStatus" />} key="CYCLE_CASE">
-            <Spin spinning={loading}>
-              <StatusTable
-                dataSource={statusList}
-                onDeleteOk={onDeleteOk}
-                onEditStatusClick={onEditStatusClick}
-              />
-            </Spin>
-          </TabPane>
-          <TabPane tab={<FormattedMessage id="status_steptatus" />} key="CASE_STEP">
-            <Spin spinning={loading}>
-              <StatusTable
-                dataSource={statusList}
-                onDeleteOk={onDeleteOk}
-                onEditStatusClick={onEditStatusClick}
-              />
-            </Spin>
-          </TabPane>
-        </Tabs>
-      </Content>
-    </Page>
-  </div>
-);
+        <Content style={{ paddingTop: 0 }}>
+          <Tabs activeKey={statusType} onChange={onTabChange} className="test-manager-custom-status-home">
+            <TabPane tab={<FormattedMessage id="status_executeStatus" />} key="CYCLE_CASE">
+              <Spin spinning={loading}>
+                <StatusTable
+                  dataSource={statusList}
+                  onDeleteOk={onDeleteOk}
+                  onEditStatusClick={onEditStatusClick}
+                />
+              </Spin>
+            </TabPane>
+            <TabPane tab={<FormattedMessage id="status_steptatus" />} key="CASE_STEP">
+              <Spin spinning={loading}>
+                <StatusTable
+                  dataSource={statusList}
+                  onDeleteOk={onDeleteOk}
+                  onEditStatusClick={onEditStatusClick}
+                />
+              </Spin>
+            </TabPane>
+          </Tabs>
+        </Content>
+      </Page>
+    </div>
+  );
+};
 
 CustomStatusHome.propTypes = propTypes;
 CustomStatusHome.defaultProps = defaultProps;

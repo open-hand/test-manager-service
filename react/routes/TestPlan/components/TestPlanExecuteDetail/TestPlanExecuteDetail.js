@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-no-bind */
 import React, {
-  useEffect, useContext, useState, useRef, useReducer,
+  useEffect, useContext, useState,
 } from 'react';
 import {
   Icon, Card, Spin, Tooltip,
@@ -11,18 +11,17 @@ import {
 } from '@choerodon/boot';
 import JsonBig from 'json-bigint';
 import DetailContainer, { useDetail } from '@choerodon/agile/lib/components/detail-container';
-
+import { HeaderButtons } from '@choerodon/master';
 import { observer } from 'mobx-react-lite';
 import { withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
-import { toJS } from 'mobx';
-import _, { find, debounce } from 'lodash';
+import _ from 'lodash';
 import { Modal, Button, message } from 'choerodon-ui/pro';
 import queryString from 'query-string';
 import { uploadFile, deleteFile } from '@/api/FileApi';
-import { StatusTags, RichTextShow } from '../../../../components';
+import { StatusTags } from '../../../../components';
 import {
-  executeDetailLink, returnBeforeTextUpload, delta2Html, text2Delta,
+  executeDetailLink,
 } from '../../../../common/utils';
 import { updateDetail, updateSidebarDetail } from '../../../../api/ExecuteDetailApi';
 import './TestPlanExecuteDetail.less';
@@ -159,7 +158,7 @@ function TestPlanExecuteDetail(props) {
    * 更新执行用例数据
    * @param {*} data
    */
-  function UpdateExecuteData(data) {
+  async function UpdateExecuteData(data) {
     const { executeId } = data;
     const testCycleCaseStepUpdateVOS = data.testCycleCaseStepUpdateVOS.map(
       (i) => {
@@ -179,41 +178,37 @@ function TestPlanExecuteDetail(props) {
         };
       },
     );
-    return new Promise((resolve) => {
-      returnBeforeTextUpload(data.description, data, async (res) => {
-        const newData = {
-          ...res,
-          fileList: [],
-          caseStepVOS: [],
-          testCycleCaseStepUpdateVOS,
-        };
-        const { isAsync = false } = newData;
-        const { fileList } = res;
-        if (fileList) {
-          const formDataAdd = new FormData();
-          const formDataDel = [];
-          fileList.forEach((file) => {
-            if (!file.status) {
-              formDataAdd.append('file', file);
-            } else if (file.status && file.status === 'removed') {
-              formDataDel.push(file);
-            }
-          });
-
-          const config = {
-            attachmentLinkId: res.executeId, attachmentType: 'CYCLE_CASE',
-          };
-          if (formDataAdd.has('file')) {
-            await uploadFile(formDataAdd, config);
-          }
-          // 删除文件 只能单个文件删除， 进行遍历删除
-          await deleteFiles(formDataDel.map((i) => i.id));
+    const newData = {
+      ...data,
+      fileList: [],
+      caseStepVOS: [],
+      testCycleCaseStepUpdateVOS,
+    };
+    const { isAsync = false } = newData;
+    const { fileList } = data;
+    if (fileList) {
+      const formDataAdd = new FormData();
+      const formDataDel = [];
+      fileList.forEach((file) => {
+        if (!file.status) {
+          formDataAdd.append('file', file);
+        } else if (file.status && file.status === 'removed') {
+          formDataDel.push(file);
         }
-        await updateSidebarDetail(newData);
-        message.success(`${isAsync ? '同步修改成功' : '修改成功'}`);
-        resolve(true);
       });
-    });
+
+      const config = {
+        attachmentLinkId: data.executeId, attachmentType: 'CYCLE_CASE',
+      };
+      if (formDataAdd.has('file')) {
+        await uploadFile(formDataAdd, config);
+      }
+      // 删除文件 只能单个文件删除， 进行遍历删除
+      await deleteFiles(formDataDel.map((i) => i.id));
+    }
+    await updateSidebarDetail(newData);
+    message.success(`${isAsync ? '同步修改成功' : '修改成功'}`);
+    return true;
   }
 
   /**
@@ -345,13 +340,18 @@ function TestPlanExecuteDetail(props) {
           title={<FormattedMessage id="execute_detail" />}
         // backPath={disabled ? TestPlanLink() : TestExecuteLink()}
         >
-          <Button icon="find_in_page" funcType="flat" type="primary" onClick={handleToggleExecuteDetailSide}>
-            {/* <Icon type={visible ? 'format_indent_decrease' : 'format_indent_increase'} /> */}
-            {visible ? '隐藏详情' : '查看详情'}
-          </Button>
-
-          {planStatus !== 'done'
-            && <Button icon="mode_edit" funcType="flat" type="primary" onClick={handleOpenEdit}>修改用例</Button>}
+          <HeaderButtons items={[{
+            name: visible ? '隐藏详情' : '查看详情',
+            display: true,
+            icon: 'find_in_page',
+            handler: handleToggleExecuteDetailSide,
+          }, {
+            name: '修改用例',
+            display: planStatus !== 'done',
+            icon: 'mode_edit',
+            handler: handleOpenEdit,
+          }]}
+          />
           <Button
             disabled={!previousExecuteId}
             onClick={() => {

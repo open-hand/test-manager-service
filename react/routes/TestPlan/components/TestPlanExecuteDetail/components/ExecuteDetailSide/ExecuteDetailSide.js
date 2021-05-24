@@ -10,9 +10,9 @@ import {
 } from 'choerodon-ui';
 import { stores } from '@choerodon/boot';
 
-import { delta2Html, issueLink } from '../../../../../../common/utils';
+import { issueLink } from '../../../../../../common/utils';
 import {
-  StatusTags, DateTimeAgo, User, RichTextShow,
+  StatusTags, User, CKEditorViewer,
   ResizeAble,
 } from '../../../../../../components';
 import './ExecuteDetailSide.less';
@@ -160,16 +160,6 @@ function ExecuteDetailSide(props) {
     const {
       executor, description, executorDate, summary, caseId, caseFolderId, caseNum, caseHasExist, priorityVO, customNum,
     } = detailData;
-    // 默认18个字启动省略
-    const renderIssueSummary = (text) => {
-      const ellipsis = '...';
-      const textArr = [...text];
-      return (
-        <Tooltip title={text}>
-          {textArr.length > 20 ? textArr.splice(0, 20).join('') + ellipsis : text}
-        </Tooltip>
-      );
-    };
 
     return (
       <div style={{
@@ -276,7 +266,7 @@ function ExecuteDetailSide(props) {
                   <div className="c7ntest-item-one-line">
                     <div className="c7ntest-item-one-line-left">执行日期：</div>
                     <div className="c7ntest-item-one-line-right">
-                      <DateTimeAgo date={executorDate} />
+                      {executorDate}
                     </div>
                   </div>
                 </Section>
@@ -287,8 +277,7 @@ function ExecuteDetailSide(props) {
                   title="前置条件"
                   style={{ padding: '0 15px 0 0' }}
                 >
-                  <RichTextShow data={delta2Html(description)} />
-
+                  <CKEditorViewer value={description} />
                 </Section>
                 {/* 附件 */}
                 <Section
@@ -302,7 +291,7 @@ function ExecuteDetailSide(props) {
                 </Section>
                 {/* 问题链接 */}
                 <Section
-                  id="attachment"
+                  id="issueLink"
                   icon="attach_file"
                   title="问题链接"
                   isLastOne

@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * @author huaxin.deng@hand-china.com 2020-11-23 19:32:05
@@ -47,6 +48,9 @@ public class TestCaseLinkVO {
     @ApiModelProperty(value = "文件夹Id")
     @Encrypt
     private Long folderId;
+
+    @ApiModelProperty(value = "关联的测试执行")
+    private List<TestCycleCaseLinkVO> testCycleCaseLinkList;
 
     public Long getFolderId() {
         return folderId;
@@ -134,5 +138,13 @@ public class TestCaseLinkVO {
 
     public void setPriorityColour(String priorityColour) {
         this.priorityColour = priorityColour;
+    }
+
+    public List<TestCycleCaseLinkVO> getTestCycleCaseLinkList() {
+        return testCycleCaseLinkList;
+    }
+
+    public void setTestCycleCaseLinkList(List<TestCycleCaseLinkVO> testCycleCaseLinkList) {
+        this.testCycleCaseLinkList = testCycleCaseLinkList;
     }
 }

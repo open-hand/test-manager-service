@@ -36,6 +36,12 @@ export default function DataSetFactory({ initValue = {} }, mode) {
         name: 'description', type: 'string', label: '描述',
       },
       {
+        name: 'sprintId', label: '所属冲刺',
+      },
+      {
+        name: 'productVersionId', label: '所属版本',
+      },
+      {
         name: 'managerId',
         type: 'string',
         label: '负责人',

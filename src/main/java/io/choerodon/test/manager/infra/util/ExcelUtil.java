@@ -6,12 +6,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
@@ -21,6 +22,9 @@ import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.*;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.springframework.web.multipart.MultipartFile;
 
 import io.choerodon.core.exception.CommonException;
@@ -200,23 +204,43 @@ public class ExcelUtil {
     }
 
     public static String getColumnWithoutRichText(String rawText) {
-        if (StringUtils.isEmpty(rawText))
+        if (StringUtils.isEmpty(rawText)) {
             return null;
+        }
         StringBuilder result = new StringBuilder();
         try {
-            JSONArray root = JSONArray.parseArray(rawText);
-            Iterator list = root.iterator();
-            while (list.hasNext()) {
-                JSONObject object = (JSONObject) list.next();
-                if (!(object.get("insert") instanceof JSONObject))
-                    result.append(object.getString("insert"));
+            JSONArray root = JSON.parseArray(rawText);
+            for (Object o : root) {
+                JSONObject object = (JSONObject) o;
+                if (!(object.get("insert") instanceof JSONObject)) {
+                    result.append(StringEscapeUtils.unescapeJava(object.getString("insert")));
+                }
             }
         } catch (Exception e) {
-            return rawText;
+            Document doc = Jsoup.parse(rawText);
+            doc.body().children().forEach(element -> {
+                String tagName = element.tag().getName();
+                if(tagName == null){
+                    result.append(element.text()).append("\n");
+                    return;
+                }
+                switch (tagName){
+                    case "figure":
+                        break;
+                    case "ol":
+                    case "ul":
+                        setListElementStr(result, element);
+                        break;
+                    default:
+                        result.append(element.text()).append("\n");
+                        break;
+                }
+            });
         }
-        if (result.length() == 0)
+        if (result.length() == 0) {
             return null;
-        return result.toString();
+        }
+        return result.toString().trim();
     }
 
     private static final String FILESUFFIX = ".xlsx";
@@ -301,5 +325,37 @@ public class ExcelUtil {
         }
 
         return workbook;
+    }
+
+    private static String setListElementStr(StringBuilder result, Element element) {
+        element.children().forEach(childElement -> {
+            result.append(getLiText(childElement)).append("\n");
+        });
+        return element.text();
+    }
+
+    private static String getLiText(Element element) {
+        StringBuilder result = new StringBuilder();
+        String liAllText = element.text();
+        StringBuilder childListText = new StringBuilder();
+        StringBuilder childRelText = new StringBuilder();
+        element.children().forEach(childElement -> {
+            String tagName = childElement.tag().getName();
+            if("ol".equals(tagName) || "ul".equals(tagName)){
+                childListText.append(" ").append(setListElementStr(childRelText, childElement));
+            }
+        });
+        if (childListText.length() > 0) {
+            int childTextStart = liAllText.indexOf(childListText.toString());
+            if (childTextStart > -1) {
+                result.append(liAllText, 0, childTextStart);
+            } else {
+                result.append(liAllText);
+            }
+            result.append("\n").append(childRelText.toString());
+        } else {
+            result.append(liAllText);
+        }
+        return result.toString().trim();
     }
 }

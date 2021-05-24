@@ -2,6 +2,8 @@ package io.choerodon.test.manager.api.controller.v1;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,7 +37,6 @@ import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.mybatis.pagehelper.annotation.SortDefault;
 import io.choerodon.test.manager.app.service.*;
-import io.choerodon.test.manager.infra.util.ExcelUtil;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -168,9 +169,15 @@ public class TestCaseController {
                                        @RequestParam("file") MultipartFile excelFile,
                                        @RequestParam("folder_id")
                                        @Encrypt Long folderId) {
+        InputStream inputStream;
+        try {
+            inputStream = excelFile.getInputStream();
+        } catch (IOException e) {
+            throw new CommonException("error.io.new.workbook", e);
+        }
         excelImportService.importIssueByExcel(projectId, folderId,
                 DetailsHelper.getUserDetails().getUserId(),
-                ExcelUtil.getWorkbookFromMultipartFile(ExcelUtil.Mode.XSSF, excelFile),EncryptContext.encryptType(), RequestContextHolder.currentRequestAttributes());
+                inputStream, EncryptContext.encryptType(), RequestContextHolder.currentRequestAttributes());
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
@@ -247,29 +254,6 @@ public class TestCaseController {
 
         testCaseService.batchCopy(projectId, folderId, testCaseRepVOS);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-
-    @Permission(level = ResourceLevel.ORGANIZATION)
-    @ApiOperation("分页搜索查询issue列表")
-    @CustomPageRequest
-    @GetMapping(value = "/agile/summary")
-    public ResponseEntity<Page<IssueNumDTO>> queryIssueByOptionForAgile(@ApiIgnore
-                                                                        @ApiParam(value = "分页信息", required = true)
-                                                                        @SortDefault(value = "issueId", direction = Sort.Direction.DESC)
-                                                                                PageRequest pageRequest,
-                                                                        @ApiParam(value = "项目id", required = true)
-                                                                        @PathVariable(name = "project_id") Long projectId,
-                                                                        @ApiParam(value = "issueId")
-                                                                        @RequestParam(required = false)
-                                                                        @Encrypt Long issueId,
-                                                                        @ApiParam(value = "issueNum")
-                                                                        @RequestParam(required = false) String issueNum,
-                                                                        @ApiParam(value = "是否包含自身", required = true)
-                                                                        @RequestParam() Boolean self,
-                                                                        @ApiParam(value = "搜索内容")
-                                                                        @RequestParam(required = false) String content) {
-        return ResponseEntity.ok(testCaseService.queryIssueByOptionForAgile(projectId, issueId, issueNum, self, content, pageRequest));
     }
 
     @Permission(level = ResourceLevel.ORGANIZATION)

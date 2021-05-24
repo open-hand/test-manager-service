@@ -6,7 +6,11 @@ import java.util.stream.Collectors;
 
 import io.choerodon.test.manager.api.vo.TestCaseLinkVO;
 import io.choerodon.test.manager.api.vo.TestCaseVO;
+import io.choerodon.test.manager.api.vo.TestCycleCaseLinkVO;
+import io.choerodon.test.manager.api.vo.agile.IssueDTO;
 import io.choerodon.test.manager.app.service.TestCaseService;
+import io.choerodon.test.manager.app.service.UserService;
+import io.choerodon.test.manager.infra.dto.UserMessageDTO;
 import io.choerodon.test.manager.infra.feign.operator.AgileClientOperator;
 import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
 import org.modelmapper.ModelMapper;
@@ -21,9 +25,9 @@ import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.vo.IssueLinkVO;
 import io.choerodon.test.manager.app.service.TestCaseLinkService;
 import io.choerodon.test.manager.infra.dto.TestCaseLinkDTO;
-import io.choerodon.test.manager.infra.feign.IssueFeignClient;
-import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import io.choerodon.test.manager.infra.mapper.TestCaseLinkMapper;
+import io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper;
+import io.choerodon.test.manager.infra.util.ConvertUtils;
 
 /**
  * @author zhaotianxin
@@ -38,7 +42,6 @@ public class TestCaseLinkServiceImpl implements TestCaseLinkService {
 
     @Autowired
     private AgileClientOperator agileClientOperator;
-
     @Autowired
     private ModelMapper modelMapper;
 
@@ -48,6 +51,11 @@ public class TestCaseLinkServiceImpl implements TestCaseLinkService {
     @Autowired
     private TestCaseMapper testCaseMapper;
 
+    @Autowired
+    private TestCycleCaseMapper testCycleCaseMapper;
+
+    @Autowired
+    private UserService userService;
 
     @Override
     public void delete(Long project, Long linkId) {
@@ -179,6 +187,10 @@ public class TestCaseLinkServiceImpl implements TestCaseLinkService {
         if (ObjectUtils.isEmpty(projectId) || ObjectUtils.isEmpty(issueId)) {
             throw new CommonException("error.projectId.and.issueId.not.null");
         }
+        Long organizationId = ConvertUtils.getOrganizationId(projectId);
+        IssueDTO issueDTO = agileClientOperator.queryIssue(projectId, issueId, organizationId);
+        Long sprintId = issueDTO.getActiveSprint() != null ? issueDTO.getActiveSprint().getSprintId() : null;
+
         TestCaseLinkDTO testCaseLinkDTO = new TestCaseLinkDTO();
         testCaseLinkDTO.setIssueId(issueId);
         testCaseLinkDTO.setProjectId(projectId);
@@ -187,8 +199,20 @@ public class TestCaseLinkServiceImpl implements TestCaseLinkService {
             return new ArrayList<>();
         }
         List<Long> linkCaseIds = caseLinkList.stream().map(TestCaseLinkDTO::getLinkCaseId).collect(Collectors.toList());
-
         List<TestCaseLinkVO> testCases = testCaseMapper.listByLinkCaseIds(projectId, linkCaseIds);
+        Map<Long, List<TestCycleCaseLinkVO>> cycleCaseMap = new HashMap<>(linkCaseIds.size());
+
+        if (sprintId != null) {
+            List<TestCycleCaseLinkVO> testCycleCaseList = testCycleCaseMapper.selectTestCycleByCaseAndSprint(linkCaseIds, sprintId);
+            if(!CollectionUtils.isEmpty(testCycleCaseList)){
+                List<Long> userIds = testCycleCaseList.stream().map(TestCycleCaseLinkVO::getLastUpdatedBy).collect(Collectors.toList());
+                Map<Long, UserMessageDTO> userMap = userService.queryUsersMap(userIds);
+                cycleCaseMap.putAll(testCycleCaseList.stream().peek(testCycleCaseLinkVO -> {
+                    testCycleCaseLinkVO.setLastUpdateUser(userMap.get(testCycleCaseLinkVO.getLastUpdatedBy()));
+                }).collect(Collectors.groupingBy(TestCycleCaseLinkVO::getCaseId)));
+            }
+        }
+
         Map<Long, TestCaseLinkVO> collect = testCases.stream().collect(Collectors.toMap(TestCaseLinkVO::getCaseId, Function.identity()));
         List<TestCaseLinkVO> result = new ArrayList<>();
         caseLinkList.forEach(v -> {
@@ -197,6 +221,7 @@ public class TestCaseLinkServiceImpl implements TestCaseLinkService {
             }
             TestCaseLinkVO testCaseLinkVO = collect.get(v.getLinkCaseId());
             modelMapper.map(v,testCaseLinkVO);
+            testCaseLinkVO.setTestCycleCaseLinkList(cycleCaseMap.get(testCaseLinkVO.getCaseId()));
             result.add(testCaseLinkVO);
         });
         return result;

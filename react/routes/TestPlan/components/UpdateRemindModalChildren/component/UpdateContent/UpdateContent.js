@@ -1,10 +1,7 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { Tooltip } from 'choerodon-ui';
-import {
-  delta2Html,
-} from '@/common/utils';
-import RichTextShow from '@/components/RichTextShow';
+import CKEditorViewer from '@/components/CKEditorViewer';
 import SingleFileUpload from '../../../../../../components/SingleFileUpload';
 import TestStepTable from '../TestStepTable';
 import './UpdateContent.less';
@@ -40,17 +37,17 @@ function UpdateContent(props) {
               width: 'calc(100% - 1.36rem)',
             }}
           >
-            <RichTextShow data={(updateData && delta2Html(updateData.description)) || ''} />
+            <CKEditorViewer value={(updateData && updateData.description) || ''} />
           </div>
         </div>
         <div className={`${prefix}-item`}>
           <div className={`${prefix}-item-field`}>附件</div>
-          <div className={`${prefix}-item-value`} style={{ display: 'flex', flexWrap: 'wrap' }}>
+          <div className={`${prefix}-item-value`}>
             {
               fileList && fileList.length > 0 && (
                 fileList.map((item) => (
                   <Tooltip title={tag === 'new' ? item.fileName : item.attachmentName}>
-                    <div style={{ width: 150 }}>
+                    <div>
                       <SingleFileUpload
                         key={tag === 'new' ? item.attachmentId : item.id}
                         url={item.url}

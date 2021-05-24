@@ -615,14 +615,6 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
-    public Page<IssueNumDTO> queryIssueByOptionForAgile(Long projectId, Long issueId, String issueNum, Boolean self, String content, PageRequest pageRequest) {
-        return agileClientOperator
-                .queryIssueByOptionForAgile(
-                        pageRequest.getPage(),
-                        pageRequest.getSize(), projectId, issueId, issueNum, self, content);
-    }
-
-    @Override
     public Set<Long> selectFolderIds(Long projectId, Long folderId) {
         // 查询文件夹下所有的目录
         Set<Long> folderIds = new HashSet<>();
