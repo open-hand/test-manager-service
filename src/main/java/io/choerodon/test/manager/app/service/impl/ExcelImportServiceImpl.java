@@ -744,7 +744,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             websocketVO.setCode(IMPORT_ERROR);
         }
         String websocketKey = IMPORT_NOTIFY_CODE + "-" + testFileLoadHistoryDTO.getProjectId();
-        if (rate == 0.0 || rate == 100.0 || rate - lastRate > 3) {
+        if (rate == 100.0 || rate - lastRate > 40) {
             messageClientC7n.sendByUserId(userId, websocketKey, toJson(websocketVO));
             lastRate = rate;
             logger.info("导入进度：{}", rate);
