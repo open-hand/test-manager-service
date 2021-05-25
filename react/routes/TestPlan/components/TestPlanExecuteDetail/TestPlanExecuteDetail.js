@@ -14,7 +14,7 @@ import DetailContainer, { useDetail } from '@choerodon/agile/lib/components/deta
 import { HeaderButtons } from '@choerodon/master';
 import { observer } from 'mobx-react-lite';
 import { withRouter } from 'react-router-dom';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import _ from 'lodash';
 import { Modal, Button, message } from 'choerodon-ui/pro';
 import queryString from 'query-string';
@@ -47,6 +47,7 @@ const CardWrapper = ({
 );
 function TestPlanExecuteDetail(props) {
   const context = useContext(Store);
+  const intl = useIntl();
   const {
     ExecuteDetailStore, stepTableDataSet, executeHistoryDataSet, testStatusDataSet,
   } = context;
@@ -341,36 +342,33 @@ function TestPlanExecuteDetail(props) {
         // backPath={disabled ? TestPlanLink() : TestExecuteLink()}
         >
           <HeaderButtons items={[{
-            name: visible ? '隐藏详情' : '查看详情',
+            name: intl.formatMessage({ id: 'execute_next' }),
             display: true,
-            icon: 'find_in_page',
-            handler: handleToggleExecuteDetailSide,
+            icon: 'navigate_next',
+            handler: () => {
+              goExecute('next');
+            },
+            disabled: !nextExecuteId,
+          }, {
+            name: intl.formatMessage({ id: 'execute_pre' }),
+            display: true,
+            icon: 'navigate_before',
+            handler: () => {
+              goExecute('pre');
+            },
+            disabled: !previousExecuteId,
           }, {
             name: '修改用例',
             display: planStatus !== 'done',
             icon: 'mode_edit',
             handler: handleOpenEdit,
+          }, {
+            name: visible ? '隐藏详情' : '查看详情',
+            display: true,
+            icon: 'find_in_page',
+            handler: handleToggleExecuteDetailSide,
           }]}
           />
-          <Button
-            disabled={!previousExecuteId}
-            onClick={() => {
-              goExecute('pre');
-            }}
-          >
-            <Icon type="navigate_before" />
-            <span><FormattedMessage id="execute_pre" /></span>
-          </Button>
-          <Button
-            disabled={!nextExecuteId}
-            onClick={() => {
-              goExecute('next');
-            }}
-          >
-            <span><FormattedMessage id="execute_next" /></span>
-            <Icon type="navigate_next" />
-          </Button>
-
         </Header>
 
         <Breadcrumb title={detailData ? renderBreadcrumbTitle(summary) : null} />

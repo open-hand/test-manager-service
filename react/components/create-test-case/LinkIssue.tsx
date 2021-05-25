@@ -29,7 +29,6 @@ interface Props {
 const { Column } = Table;
 const LinkIssueModal: React.FC<Props> = (props) => {
   const { modal, onSubmit, selected } = props;
-  console.log(selected);
   const dataSetRef = useRef<DataSet>();
   const queryDataSet = useMemo(() => new DataSet({
     fields: [{
@@ -72,10 +71,10 @@ const LinkIssueModal: React.FC<Props> = (props) => {
       name: 'statusId',
       label: '状态',
     }, {
-      name: 'priorityDTO',
+      name: 'priorityId',
       label: '优先级',
     }, {
-      name: 'issueSprintVOS',
+      name: 'sprintId',
       label: '冲刺',
     }],
     transport: {
@@ -135,8 +134,8 @@ const LinkIssueModal: React.FC<Props> = (props) => {
         <Column name="summary" renderer={({ record }) => renderSummary({ record, clickable: false })} />
         <Column name="issueNum" sortable width={135} />
         <Column name="statusId" sortable width={135} renderer={renderStatus} />
-        <Column name="priorityDTO" sortable width={80} renderer={renderPriority} />
-        <Column name="issueSprintVOS" sortable width={135} renderer={renderSprint} />
+        <Column name="priorityId" sortable width={80} renderer={renderPriority} />
+        <Column name="sprintId" sortable width={135} renderer={renderSprint} />
       </Table>
     </div>
   );
