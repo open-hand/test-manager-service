@@ -42,7 +42,6 @@ function TestPlanHome({ history }) {
   const {
     prefixCls, createAutoTestStore, testPlanStore,
   } = useContext(Store);
-  const intl = useIntl();
   const {
     loading, checkIdMap, testList, testPlanStatus, planInfo, statusList, currentCycle, mainActiveTab, times, calendarLoading,
   } = testPlanStore;
@@ -94,17 +93,6 @@ function TestPlanHome({ history }) {
     }).catch(() => {
       Choerodon.prompt('忽略更新失败');
       return false;
-    });
-  };
-
-  const handleOpenCreatePlan = () => {
-    openCreatePlan({
-      onCreate: () => {
-        if (testPlanStatus !== 'todo') {
-          testPlanStore.setTestPlanStatus('todo');
-        }
-        testPlanStore.loadIssueTree();
-      },
     });
   };
 
@@ -319,9 +307,6 @@ function TestPlanHome({ history }) {
     }
     testPlanStore.loadAllData();
   }, [testPlanStore]);
-  const handleRefresh = useCallback(() => {
-    testPlanStore.loadAllData();
-  }, [testPlanStore]);
   const noSelected = !currentCycle.id;
   let description;
   if (testPlanStatus === 'todo') {
@@ -331,6 +316,7 @@ function TestPlanHome({ history }) {
   } else if (testPlanStatus === 'done') {
     description = '当前项目下无已完成的计划';
   }
+
   return (
     <Page
       className={prefixCls}
@@ -338,19 +324,7 @@ function TestPlanHome({ history }) {
       <Header
         title={<FormattedMessage id="testPlan_name" />}
       >
-        <HeaderButtons items={[{
-          name: intl.formatMessage({ id: 'testPlan_createPlan' }),
-          display: true,
-          icon: 'playlist_add',
-          handler: handleOpenCreatePlan,
-        }, {
-          name: intl.formatMessage({ id: 'refresh' }),
-          display: true,
-          icon: 'refresh',
-          handler: handleRefresh,
-          iconOnly: true,
-        }]}
-        />
+        <TestPlanHeader />
       </Header>
       <Breadcrumb />
       <Content style={{ display: 'flex', padding: '0', borderTop: '0.01rem solid rgba(0,0,0,0.12)' }}>
