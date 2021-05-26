@@ -38,7 +38,6 @@ class ConfirmInfo extends Component {
     data: null,
   }
 
-
   // 创建任务切换触发类型
   changeValue(e) {
     const { resetFields } = this.props.form;
@@ -64,7 +63,6 @@ class ConfirmInfo extends Component {
     return result;
   }
 
-
   disabledDateStartTime = (date) => {
     this.startTimes = date;
     if (date && this.endTimes && this.endTimes.day() === date.day()) {
@@ -74,20 +72,18 @@ class ConfirmInfo extends Component {
           disabledMinutes: () => this.range(this.endTimes.minute() + 1, 60),
           disabledSeconds: () => this.range(this.endTimes.second(), 60),
         };
-      } else if (this.endTimes.hour() === date.hour()) {
+      } if (this.endTimes.hour() === date.hour()) {
         return {
           disabledHours: () => this.range(this.endTimes.hour() + 1, 24),
           disabledMinutes: () => this.range(this.endTimes.minute() + 1, 60),
         };
-      } else {
-        return {
-          disabledHours: () => this.range(this.endTimes.hour() + 1, 24),
-        };
       }
+      return {
+        disabledHours: () => this.range(this.endTimes.hour() + 1, 24),
+      };
     }
     return '';
   }
-
 
   clearStartTimes = (status) => {
     if (!status) {
@@ -101,7 +97,6 @@ class ConfirmInfo extends Component {
     }
   }
 
-
   disabledDateEndTime = (date) => {
     this.endTimes = date;
     if (date && this.startTimes && this.startTimes.day() === date.day()) {
@@ -111,16 +106,15 @@ class ConfirmInfo extends Component {
           disabledMinutes: () => this.range(0, this.startTimes.minute()),
           disabledSeconds: () => this.range(0, this.startTimes.second() + 1),
         };
-      } else if (this.startTimes.hour() === date.hour()) {
+      } if (this.startTimes.hour() === date.hour()) {
         return {
           disabledHours: () => this.range(0, this.startTimes.hour()),
           disabledMinutes: () => this.range(0, this.startTimes.minute()),
         };
-      } else {
-        return {
-          disabledHours: () => this.range(0, this.startTimes.hour()),
-        };
       }
+      return {
+        disabledHours: () => this.range(0, this.startTimes.hour()),
+      };
     }
     return '';
   }
@@ -152,7 +146,7 @@ class ConfirmInfo extends Component {
     const newYaml = createAutoTestStore.getNewConfigValue.yaml;
     const oldvalue = YAML.parse(oldYaml);
     const newvalue = YAML.parse(newYaml);
-    // console.log(oldvalue);    
+    // console.log(oldvalue);
     if (JSON.stringify(oldvalue) !== JSON.stringify(newvalue)) {
       isNotChange = false;
     }
@@ -408,7 +402,7 @@ class ConfirmInfo extends Component {
               onClick={this.checkCron}
               style={{ display: triggerType === 'cron' ? 'inline-block' : 'none' }}
               className="c7ntest-task-detail-popover-icon"
-              type="find_in_page"
+              type="find_in_page-o"
             />
           </Popover>
         </div>

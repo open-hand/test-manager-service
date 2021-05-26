@@ -273,7 +273,7 @@ function ExecuteDetailSide(props) {
                 {/* 描述 */}
                 <Section
                   id="des"
-                  icon="subject"
+                  icon="edit-o"
                   title="前置条件"
                   style={{ padding: '0 15px 0 0' }}
                 >
@@ -282,7 +282,7 @@ function ExecuteDetailSide(props) {
                 {/* 附件 */}
                 <Section
                   id="attachment"
-                  icon="attach_file"
+                  icon="backup-o"
                   title="附件"
                 >
                   <UploadButtonExecuteDetail

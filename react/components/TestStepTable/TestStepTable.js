@@ -423,9 +423,9 @@ function TestStepTable(props) {
               <Icon type="open_with" {...provided.dragHandleProps} style={{ marginRight: 7 }} />
             </Tooltip>
             <Tooltip title={<FormattedMessage id="execute_copy" defaultMessage="复制" />}>
-              <Button disabled={disabled} shape="circle" funcType="flat" icon="library_books" style={{ color: 'black' }} onClick={() => onCloneStep(record.stepId, index)} />
+              <Button disabled={disabled} shape="circle" funcType="flat" icon="file_copy-o" style={{ color: 'black' }} onClick={() => onCloneStep(record.stepId, index)} />
             </Tooltip>
-            <Button disabled={disabled} shape="circle" funcType="flat" icon="delete_forever" style={{ color: 'black' }} onClick={() => handleDeleteStep(index, record.stepId)} />
+            <Button disabled={disabled} shape="circle" funcType="flat" icon="delete_sweep-o" style={{ color: 'black' }} onClick={() => handleDeleteStep(index, record.stepId)} />
           </div>
         ) : (
           <div>

@@ -111,7 +111,7 @@ function EditTestStepTable({ onUpdateDetail, IssueStore }) {
           <div className="c7ntest-edit-test-step-item-title-btn">
             <Tooltip title="编辑" getPopupContainer={(triggerNode) => triggerNode.parentNode.parentNode}>
               <Button
-                icon="mode_edit mlr-3"
+                icon="edit-o"
                 onClick={() => {
                   setEditDescriptionShow(true);
                 }}

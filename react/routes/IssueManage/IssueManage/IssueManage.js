@@ -236,12 +236,12 @@ class IssueManage extends Component {
           }, {
             name: intl.formatMessage({ id: 'issue_export' }),
             display: !noFolder,
-            icon: 'unarchive',
+            icon: 'unarchive-o',
             handler: this.handleOpenExportIssue,
           }, {
             name: intl.formatMessage({ id: 'issue_import' }),
             display: !noFolder,
-            icon: 'archive',
+            icon: 'archive-o',
             handler: this.handleOpenImportIssue,
           }, {
             iconOnly: true,
