@@ -40,7 +40,7 @@ const Header: React.FC<Props> = ({
         }}
         >
           <Button
-            icon="mode_edit"
+            icon="edit-o"
             style={{ color: 'white', marginRight: 6 }}
             onClick={handleClickAssign}
           >

@@ -140,7 +140,7 @@ function TestPlanHeader() {
     }, {
       name: intl.formatMessage({ id: 'testPlan_editPlan' }),
       display: testPlanStatus !== 'done' && getCurrentPlanId,
-      icon: 'mode_edit',
+      icon: 'edit-o',
       handler: handleOpenEditPlan,
     }, {
       name: intl.formatMessage({ id: 'testPlan_manualTest' }),
@@ -150,12 +150,12 @@ function TestPlanHeader() {
     }, {
       name: intl.formatMessage({ id: 'testPlan_completePlan' }),
       display: getCurrentPlanId && testPlanStatus === 'doing',
-      icon: 'check_circle',
+      icon: 'finished',
       handler: handleUpdatePlanStatus.bind(this, 'done'),
     }, {
       name: '计划报告',
       display: getCurrentPlanId && testPlanStatus !== 'todo',
-      icon: 'find_in_page',
+      icon: 'find_in_page-o',
       handler: handleReportClick,
     }, {
       name: intl.formatMessage({ id: 'refresh' }),

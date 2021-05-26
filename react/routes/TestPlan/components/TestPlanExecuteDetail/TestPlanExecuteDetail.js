@@ -360,12 +360,12 @@ function TestPlanExecuteDetail(props) {
           }, {
             name: '修改用例',
             display: planStatus !== 'done',
-            icon: 'mode_edit',
+            icon: 'edit-o',
             handler: handleOpenEdit,
           }, {
             name: visible ? '隐藏详情' : '查看详情',
             display: true,
-            icon: 'find_in_page',
+            icon: 'find_in_page-o',
             handler: handleToggleExecuteDetailSide,
           }]}
           />

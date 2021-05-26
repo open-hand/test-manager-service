@@ -106,7 +106,7 @@ function LinkList(props) {
               cancelText="取消"
               okType="danger"
             >
-              <Icon type="delete_forever mlr-3 pointer" />
+              <Icon type="delete_sweep-o" />
             </Popconfirm>
           }
 
