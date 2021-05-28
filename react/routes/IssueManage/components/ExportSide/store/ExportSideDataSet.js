@@ -1,11 +1,11 @@
-import { DataSet } from 'choerodon-ui/pro/lib';
+import { DataSet } from 'choerodon-ui/pro';
 import { Choerodon } from '@choerodon/boot';
 import moment from 'moment';
 import { getProjectId, humanizeDuration } from '../../../../../common/utils';
 
 /**
  * 计算耗时
- * @param {*} record 
+ * @param {*} record
  */
 const onHumanizeDuration = (record) => {
   const { creationDate, lastUpdateDate } = record;
@@ -100,7 +100,7 @@ const ExportSideDataSet = (folderId, queryStatus = new DataSet({
       },
       data: {
         advancedSearchArgs: {
-          // status:2,   
+          // status:2,
           ...data,
         },
       },

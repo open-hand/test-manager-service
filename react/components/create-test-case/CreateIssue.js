@@ -3,7 +3,7 @@ import React, {
 } from 'react';
 import { withRouter } from 'react-router-dom';
 import {
-  Form, DataSet, Icon, message, Select, Button,
+  Form, DataSet, Icon, message, Select, Button, TextField,
 } from 'choerodon-ui/pro';
 import { PromptInput } from '@/components';
 import { observer } from 'mobx-react-lite';
@@ -112,6 +112,16 @@ function CreateIssue(props) {
         <PromptInput name="summary" maxLength={44} />
         <SelectTree name="folder" parentDataSet={createDataset} defaultValue={defaultFolderValue ? defaultFolderValue.id : undefined} />
         <Select name="priorityId" />
+        <TextField
+          name="customNum"
+          clearButton
+          validationRenderer={(result) => {
+            if (result.ruleName === 'patternMismatch') {
+              return <span>编码只能由大小写字母、数字、&quot;-&quot;组成，如有字母，须以字母开头，不能以&quot;-&quot;结尾</span>;
+            }
+            return result.validationMessage;
+          }}
+        />
         <div role="none" style={{ cursor: 'pointer' }} onClick={() => setVisibleDetail(!visibleDetail)}>
           <div className="test-create-issue-line" />
           <span className="test-create-issue-head">

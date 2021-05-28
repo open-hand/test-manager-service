@@ -7,7 +7,7 @@ import Moment from 'moment';
 import { extendMoment } from 'moment-range';
 import { DatePicker, Spin } from 'choerodon-ui';
 import './EventCalendar.less';
-import { Button } from 'choerodon-ui/pro/lib';
+import { Button } from 'choerodon-ui/pro';
 import CalendarBackItem from './CalendarBackItem';
 import EventItem from './EventItem';
 import Store from '../../stores';
@@ -46,9 +46,8 @@ class EventCalendar extends Component {
         baseDate, // 显示的开始时间
         endDate, // 显示的结束时间
       };
-    } else {
-      return null;
     }
+    return null;
   }
 
   componentDidMount() {
@@ -58,7 +57,6 @@ class EventCalendar extends Component {
   componentDidUpdate(prevProps, prevState) {
     this.setSingleWidth();
   }
-
 
   setSingleWidth = () => {
     this.singleWidth = document.getElementsByClassName('CalendarBackItem')[0] ? document.getElementsByClassName('CalendarBackItem')[0].offsetWidth : 0;
@@ -71,8 +69,7 @@ class EventCalendar extends Component {
     return { start, end };
   }
 
-
-  saveRef = name => (ref) => {
+  saveRef = (name) => (ref) => {
     this[name] = ref;
   }
 
@@ -203,7 +200,7 @@ class EventCalendar extends Component {
             }}
             >
               <div className="c7ntest-EventCalendar-fixed-header">
-                {timeArray.map(m => (<CalendarBackItem date={m} />))}
+                {timeArray.map((m) => (<CalendarBackItem date={m} />))}
               </div>
               <div className="c7ntest-EventCalendar-eventContainer">
                 <div className="c7ntest-EventCalendar-BackItems" ref={this.saveRef('BackItems')}>
@@ -211,7 +208,7 @@ class EventCalendar extends Component {
                     timeArray.map(() => <div className="c7ntest-EventCalendar-BackItems-item" />)
                   }
                 </div>
-                {times.map(event => (
+                {times.map((event) => (
                   <EventItem
                     key={event.key}
                     itemRange={moment.range(event.start, event.end)}
@@ -228,9 +225,9 @@ class EventCalendar extends Component {
   }
 }
 
-export default props => (
+export default (props) => (
   <Store.Consumer>
-    {context => (
+    {(context) => (
       <EventCalendar {...props} context={context} />
     )}
   </Store.Consumer>

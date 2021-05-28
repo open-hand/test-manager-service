@@ -4,7 +4,7 @@ import {
   Page, Header, Content, Breadcrumb,
 } from '@choerodon/boot';
 import { Button, Icon } from 'choerodon-ui';
-import { Modal } from 'choerodon-ui/pro/lib';
+import { Modal } from 'choerodon-ui/pro';
 import { HeaderButtons } from '@choerodon/master';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import Empty from '@/components/Empty';

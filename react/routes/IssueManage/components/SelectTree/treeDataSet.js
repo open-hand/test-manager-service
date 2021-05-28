@@ -1,4 +1,4 @@
-import { DataSet } from 'choerodon-ui/pro/lib';
+import { DataSet } from 'choerodon-ui/pro';
 import Record from 'choerodon-ui/pro/lib/data-set/Record';
 import { getProjectId } from '../../../../common/utils';
 

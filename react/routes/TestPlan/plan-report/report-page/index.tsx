@@ -5,7 +5,7 @@ import {
   Page, Breadcrumb, Content, Header,
 } from '@choerodon/boot';
 import { useMount, useCreation } from 'ahooks';
-import { Button } from 'choerodon-ui/pro/lib';
+import { Button } from 'choerodon-ui/pro';
 import html2canvas from 'html2canvas';
 // @ts-ignore
 import queryString from 'query-string';
