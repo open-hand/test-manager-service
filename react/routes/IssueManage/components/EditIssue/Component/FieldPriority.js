@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Select } from 'choerodon-ui/pro/lib';
+import { Select } from 'choerodon-ui/pro';
 import { TextEditToggle } from '@/components';
 import priorityApi from '@/api/priority';
 
@@ -10,7 +10,7 @@ function FieldPriority({ priority, onUpdate }) {
   useEffect(() => {
     priorityApi.load().then((res) => {
       if (Array.isArray(res)) {
-        setOptions(res.filter(item => item.enableFlag || item.id === id));
+        setOptions(res.filter((item) => item.enableFlag || item.id === id));
       }
     });
   }, []);
@@ -48,7 +48,7 @@ function FieldPriority({ priority, onUpdate }) {
       </TextEditToggle.Text>
       <TextEditToggle.Edit>
         <Select>
-          {options.map(option => <Option value={option.id}>{option.name}</Option>)}
+          {options.map((option) => <Option value={option.id}>{option.name}</Option>)}
         </Select>
       </TextEditToggle.Edit>
 

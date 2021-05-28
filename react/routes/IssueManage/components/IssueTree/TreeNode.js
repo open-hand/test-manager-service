@@ -1,8 +1,9 @@
+/* eslint-disable react/jsx-props-no-multi-spaces */
 import React, { useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import {
   Button, Menu, Dropdown, Tooltip, Icon,
-} from 'choerodon-ui/pro/lib';
+} from 'choerodon-ui/pro';
 import { Progress } from 'choerodon-ui';
 import { SmartTooltip } from '@/components';
 import IssueStore from '../../stores/IssueStore';
@@ -14,7 +15,7 @@ export function getTask() {
 }
 const prefix = 'c7ntest-tree';
 function TreeNode({
-  children, nodeProps, onMenuClick, item, 
+  children, nodeProps, onMenuClick, item,
 }) {
   const { provided } = nodeProps;
 
@@ -42,7 +43,7 @@ function TreeNode({
         >
           <div
             role="none"
-          
+
             className={`${prefix}-tree-item`}
           >
             <span className={`${prefix}-tree-item-prefix`}>
@@ -67,7 +68,7 @@ function TreeNode({
         >
           <div
             role="none"
-       
+
             className={`${prefix}-tree-item`}
           >
             <span className={`${prefix}-tree-item-prefix`}>
@@ -86,7 +87,7 @@ function TreeNode({
                 </Menu>
               )}
               trigger={['click']}
-              getPopupContainer={trigger => trigger.parentNode}
+              getPopupContainer={(trigger) => trigger.parentNode}
             >
               <Button funcType="flat" icon="more_vert" size="small" />
             </Dropdown>
