@@ -9,8 +9,8 @@ const TestStepTable = (props) => {
   const { dataSet } = props;
 
   const renderIndex = ({
-    value, dataSet, 
-  }) => dataSet.findIndex(item => Number(item.get('stepId')) === Number(value)) + 1;
+    value, dataSet,
+  }) => dataSet.findIndex((item) => Number(item.get('stepId')) === Number(value)) + 1;
 
   const renderColumn = ({ value }) => (
     <Tooltip title={value} placement="topLeft">
@@ -19,7 +19,7 @@ const TestStepTable = (props) => {
   );
   return (
     <Table labelLayout="float" pristine dataSet={dataSet} queryBar="none">
-      <Column 
+      <Column
         name="stepId"
         width={50}
         renderer={renderIndex}

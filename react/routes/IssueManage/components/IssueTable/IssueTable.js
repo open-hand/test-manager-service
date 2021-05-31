@@ -349,7 +349,7 @@ export default observer((props) => {
       dataIndex: 'creationDate',
       key: 'creationDate',
       sorter: true,
-      render: (creationDate) => <Tooltip title={creationDate}><span style={{ color: 'rgba(0, 0, 0, 0.65)' }}>{creationDate}</span></Tooltip>,
+      render: (creationDate) => <Tooltip title={creationDate}><span>{creationDate}</span></Tooltip>,
     },
     {
       title: '更新人',
@@ -363,7 +363,7 @@ export default observer((props) => {
       dataIndex: 'lastUpdateDate',
       key: 'lastUpdateDate',
       sorter: true,
-      render: (lastUpdateDate) => <Tooltip title={lastUpdateDate}><span style={{ color: 'rgba(0, 0, 0, 0.65)' }}>{lastUpdateDate}</span></Tooltip>,
+      render: (lastUpdateDate) => <Tooltip title={lastUpdateDate}><span>{lastUpdateDate}</span></Tooltip>,
     },
   ]);
 
@@ -397,7 +397,7 @@ export default observer((props) => {
             style={{
               userSelect: 'none',
               background: 'white',
-              padding: '16px 0 12px 0',
+              paddingTop: 8,
               fontSize: 13,
               display: 'flex',
               alignItems: 'center',

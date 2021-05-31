@@ -5,23 +5,27 @@
 
   &-search {
     margin: .15rem;
-    color: #3F51B5;
-
     span:first-child {
       display: block;
+    }
+    .c7n-pro-field-label-wrapper {
+      top: 0.1rem;
     }
   }
 
   &-body {
     overflow-y: scroll;
     max-height: 3rem;
+    .c7n-tree-node-content-wrapper {
+      width: calc(100% - 22px);
+      &:hover {
+        background-color: rgba(15,19,88,0.03);
+      }
+    }
     .c7n-tree-node-selected{
-      background-color: #dadee8;
+      background-color: rgba(140, 158, 254, 0.16);
       width: calc(~"100% - 22px");
     }
-   
-    
-   
   }
 
   .c7n-divider-horizontal {
@@ -32,10 +36,10 @@
     margin-top: .02rem;
     font-family: PingFangSC-Regular;
     font-size: 13px;
-    color: rgba(0, 0, 0, 0.65);
+    color: var(--text-color3);
 
     &-primary {
-      color: #3F51B5;
+      color: var(--primary-color);
       margin-bottom: .03rem;
       margin-right: .051rem;
     }

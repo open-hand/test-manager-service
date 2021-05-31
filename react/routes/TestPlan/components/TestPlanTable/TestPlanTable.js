@@ -224,6 +224,7 @@ const TestPlanTable = observer(({
     dataIndex: 'customNum',
     key: 'customNum',
     flex: 1.5,
+    width: 100,
     filters: [],
     render: (customNum) => renderIssueNum(customNum),
   }, {
@@ -291,7 +292,7 @@ const TestPlanTable = observer(({
       return (
         <div
           className="c7ntest-text-dot"
-          style={{ color: 'rgba(0, 0, 0, 0.65)' }}
+          style={{ color: 'var(--text-color3)' }}
         >
           <Tooltip title={lastUpdateDate}>
             {lastUpdateDate}
@@ -378,16 +379,6 @@ const TestPlanTable = observer(({
     });
   }
 
-  // if (testPlanStatus !== 'todo') {
-  //   columns.splice(testPlanStatus === 'doing' ? 3 : 2, 0, {
-  //     title: <FormattedMessage id="cycle_testSource" />,
-  //     dataIndex: 'source',
-  //     key: 'source',
-  //     flex: 1,
-  //     render: (text, record) => renderSource(text),
-  //   });
-  // }
-
   const data = isMine ? testList.filter((item) => (item.assignedTo && item.assignedTo.toString() === AppState.userInfo.id.toString())) : testList;
   const isSelf = String(testPlanStore.filter.assignUser) === AppState.userInfo.id.toString();
   return (
@@ -397,7 +388,6 @@ const TestPlanTable = observer(({
           <div
             className="c7ntest-testPlanTable-content"
             style={{
-
               marginBottom: 3,
               alignItems: 'center',
               flexDirection: 'row-reverse',
@@ -409,10 +399,11 @@ const TestPlanTable = observer(({
               zIndex: 100,
               display: 'inline-flex',
               alignItems: 'center',
+              top: '-5px',
             }}
             >
               <div>
-                <span style={{ color: 'rgba(0, 0, 0, 0.87)' }}>
+                <span style={{ color: 'var(--text-color)' }}>
                   只看我的
                 </span>
                 <Checkbox style={{ marginLeft: 4 }} checked={isSelf} onChange={onOnlyMeCheckedChange} />

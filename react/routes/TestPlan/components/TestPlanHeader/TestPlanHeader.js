@@ -79,7 +79,7 @@ function TestPlanHeader() {
       style: { width: '5.6rem' },
       className: 'c7ntest-testPlan-completePlan-confirm-modal',
     });
-  }, []);
+  }, [getCurrentPlanId, history, onUpdatePlanStatus, queryStr, testPlanStore]);
 
   const handleUpdatePlanStatus = useCallback((newStatus) => {
     const { getItem } = testPlanStore.treeRef.current || {};

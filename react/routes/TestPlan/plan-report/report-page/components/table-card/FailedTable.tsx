@@ -127,7 +127,7 @@ const BugTable: React.FC = () => {
             {/* @ts-ignore */}
             <Column name="statusMapVO" width={150} renderer={renderStatus} />
             {/* @ts-ignore */}
-            <Column name="assignee" width={150} style={{ color: 'rgba(0, 0, 0, 0.65)' }} renderer={renderAssignee} />
+            <Column name="assignee" width={150} style={{ color: 'var(--text-color3)' }} renderer={renderAssignee} />
             <Column
               name="testFolderCycleCases"
               renderer={({ value }) => (

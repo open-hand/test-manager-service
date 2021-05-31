@@ -73,7 +73,7 @@ function EditExecuteIssue(props) {
         <Select name="priorityId" />
         <div role="none" style={{ cursor: 'pointer' }} onClick={() => setVisibleDetail(!visibleDetail)}>
           <div className="test-edit-execute-issue-line" />
-          <span className="test-edit-execute-issue-head">
+          <span className="test-edit-execute-issue-head" style={{ marginBottom: 0 }}>
             <Icon type={`${visibleDetail ? 'expand_less' : 'expand_more'}`} />
             用例前置条件
           </span>

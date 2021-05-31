@@ -28,9 +28,9 @@ function TreeNode({
             <span className={`${prefix}-tree-item-prefix`}>
               <Icon type="insert_invitation" style={{ marginRight: 5, marginLeft: 22 }} />
             </span>
-            <span className={`${prefix}-tree-item-title`} style={{ color: 'rgba(0,0,0,0.54)' }}><SmartTooltip title={item.data.name}>{item.data.name}</SmartTooltip></span>
+            <span className={`${prefix}-tree-item-title`} style={{ color: 'var(--text-color3)' }}><SmartTooltip title={item.data.name}>{item.data.name}</SmartTooltip></span>
             <Tooltip title="创建计划需要一定的时间，请手动刷新">
-              <Icon type="error" style={{ color: 'rgba(0, 0, 0, 0.54)' }} />
+              <Icon type="error" style={{ color: 'var(--text-color3)' }} />
             </Tooltip>
           </div>
         </div>
@@ -54,7 +54,7 @@ function TreeNode({
             <span className={`${prefix}-tree-item-prefix`}>
               <Icon type="insert_invitation" style={{ marginRight: 5, marginLeft: 22 }} />
             </span>
-            <span className={`${prefix}-tree-item-title`} style={{ color: 'rgba(0,0,0,0.54)' }}><SmartTooltip title={item.data.name}>{item.data.name}</SmartTooltip></span>
+            <span className={`${prefix}-tree-item-title`} style={{ color: 'var(--text-color3)' }}><SmartTooltip title={item.data.name}>{item.data.name}</SmartTooltip></span>
             <Tooltip title="创建计划失败">
               <Icon type="error" style={{ color: 'red' }} />
             </Tooltip>

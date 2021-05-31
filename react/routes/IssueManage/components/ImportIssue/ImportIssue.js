@@ -183,7 +183,7 @@ function ImportIssue(props) {
         <div className="c7ntest-ImportIssue-record-normal-text">
           <span className="c7ntest-ImportIssue-text">
             上次导入完成时间
-            {<span>{lastUpdateDate}</span>}
+            {<span style={{ color: 'var(--text-color)' }}>{lastUpdateDate}</span>}
             {' '}
             (耗时
             {onHumanizeDuration(lastRecord)}
@@ -335,14 +335,14 @@ function ImportIssue(props) {
       <ImportIssueForm
         title="下载模板"
         bottom={(
-          <Button icon="get_app icon" funcType="flat" color="primary" onClick={() => exportExcel()}>
-            <FormattedMessage id="issue_download_tpl" />
+          <Button icon="get_app icon" onClick={() => exportExcel()}>
+            <span><FormattedMessage id="issue_download_tpl" /></span>
           </Button>
         )}
       >
         您必须使用模板文件，录入用例信息
       </ImportIssueForm>
-      <Divider />
+      <div className="c7ntest-ImportIssue-form-divider" />
       <ImportIssueForm
         title="导入测试用例"
       >
@@ -364,7 +364,6 @@ function ImportIssue(props) {
         />
         {renderRecord()}
         {renderProgress()}
-
       </ImportIssueForm>
       <div className="c7ntest-ImportIssue-form-modal-footer">
         {visibleCancelBtn
@@ -377,12 +376,11 @@ function ImportIssue(props) {
         <Button
           funcType="raised"
           style={{
-            color: '#3f51b5',
+            color: 'var(--primary-color)',
           }}
           onClick={handleCloseModal}
         >
           关闭
-
         </Button>
       </div>
     </div>

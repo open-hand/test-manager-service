@@ -457,7 +457,7 @@ class ConfirmInfo extends Component {
         {testType === 'timing' && this.renderTimingExecute()}
         <div>
           <div style={{
-            borderTop: '1px solid #D8D8D8', fontSize: '16px', fontWeight: 500, paddingLeft: 36, marginTop: 10, paddingTop: 20,
+            borderTop: '1px solid var(--divider)', fontSize: '16px', fontWeight: 500, paddingLeft: 36, marginTop: 10, paddingTop: 20,
           }}
           >
             确认信息

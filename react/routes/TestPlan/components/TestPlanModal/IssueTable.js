@@ -93,6 +93,7 @@ function IssueTable({
       <Table
         dataSet={dataSet}
         autoHeight
+        // className={styles.selectIssue_table}
       >
         <Column name="summary" className="c7n-agile-table-cell" tooltip="overflow" />
         <Column name="caseNum" className="c7n-agile-table-cell" width={100} />

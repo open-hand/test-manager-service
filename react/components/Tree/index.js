@@ -163,36 +163,33 @@ function PureTree({
     setTree((oldTree) => mutateTree(oldTree, itemId, attrs));
   }, []);
   const getItem = useCallback((itemId) => getItemById(flattenedTree, itemId), [flattenedTree]);
+  const handleDeleteOk = useCallback(async (item) => {
+    try {
+      await onDelete(item);
+      setTree((oldTree) => removeItem(oldTree, item.path));
+      if (selected.id === item.id) {
+        let target;
+        // 这里用旧的tree获取目标id，用新tree获取数据
+        setTree((newTree) => {
+          target = getSiblingOrParent(tree, newTree, item);
+          return newTree;
+        });
+        if (target) {
+          setSelected(target);
+        }
+      }
+    } catch (error) {
+      Choerodon.prompt(error.message);
+    }
+  }, [onDelete, selected.id, setSelected, tree]);
   const handleDelete = useCallback((item) => {
-    Modal.confirm({
+    Modal.open({
       title: getDeleteTitle ? callFunction(getDeleteTitle, item).split('|')[0] : '确认删除目录',
       children: getDeleteTitle ? callFunction(getDeleteTitle, item).split('|')[1] : undefined,
       okText: '删除',
-      okProps: {
-        color: 'red',
-      },
-    }).then(async (button) => {
-      if (button === 'ok') {
-        try {
-          await onDelete(item);
-          setTree((oldTree) => removeItem(oldTree, item.path));
-          if (selected.id === item.id) {
-            let target;
-            // 这里用旧的tree获取目标id，用新tree获取数据
-            setTree((newTree) => {
-              target = getSiblingOrParent(tree, newTree, item);
-              return newTree;
-            });
-            if (target) {
-              setSelected(target);
-            }
-          }
-        } catch (error) {
-          Choerodon.prompt(error.message);
-        }
-      }
+      onOk: () => { handleDeleteOk(item); },
     });
-  }, [getDeleteTitle, onDelete, selected.id, setSelected, tree]);
+  }, [getDeleteTitle, handleDeleteOk]);
   useImperativeHandle(ref, () => ({
     addFirstLevelItem,
     updateTree,

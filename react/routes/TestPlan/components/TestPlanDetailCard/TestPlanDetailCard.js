@@ -25,7 +25,7 @@ export default observer(() => {
         <div className="c7ntest-testPlan-detailCard-content-item">
           <span className="c7ntest-testPlan-detailCard-content-item-field">负责人：</span>
           <span className="c7ntest-testPlan-detailCard-content-item-value">
-            <User user={planInfo.managerUser} style={{ color: 'rgba(0, 0, 0, 0.87)' }} />
+            <User user={planInfo.managerUser} style={{ color: 'var(--text-color)' }} />
           </span>
         </div>
         {hasAgile && (

@@ -15,7 +15,7 @@ const EmptyBlock = ({
     <div
       className="c7ntest-wrap"
       style={{
-        border: border ? '1px dashed rgba(0, 0, 0, 0.54)' : '',
+        border: border ? '1px dashed var(--text-color3)' : '',
       }}
     >
       <div className="c7ntest-imgWrap">

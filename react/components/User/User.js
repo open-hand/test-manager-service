@@ -16,7 +16,7 @@ const User = ({
         // paddingBottom: 2,
         lineHeight: '18px',
         verticalAlign: 'text-bottom',
-        color: 'rgba(0, 0, 0, 0.65)',
+        color: 'var(--text-color3)',
         ...otherProps.style,
       }}
 

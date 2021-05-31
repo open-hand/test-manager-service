@@ -7,7 +7,7 @@ import {
 } from 'choerodon-ui';
 import { observer } from 'mobx-react-lite';
 import {
-  Select, Icon, Tree, TextField,
+  Select, Icon, TextField,
 } from 'choerodon-ui/pro';
 import PropTypes from 'prop-types';
 import { Choerodon } from '@choerodon/boot';

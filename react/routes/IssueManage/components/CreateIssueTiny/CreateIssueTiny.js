@@ -71,8 +71,8 @@ export default observer(() => {
   return creating ? (
     <div className="c7ntest-add" style={{ display: 'block', width: '100%' }}>
       <div className="c7ntest-add-testCase">
-        <div style={{ flexGrow: 1 }}>
-          <PromptInput
+        <div style={{ flexGrow: 1 }} className="c7ntest-add-testCase-textFieldDiv">
+          <TextField
             autoFocus
             placeholder="请输入用例概要"
             onChange={(value) => { // 失焦才会触发onChange
@@ -80,7 +80,8 @@ export default observer(() => {
             }}
             maxLength={44}
             onEnterDown={handleBlurCreateIssue}
-            style={{ width: '97%' }}
+            valueChangeAction="input"
+            style={{ width: '97%', height: 32 }}
           />
         </div>
         <div style={{

@@ -24,10 +24,10 @@ const CURSORS = {
 };
 const styles = {
   0: {
-    borderTop: '4px solid #3F51B5', // 边框
+    borderTop: '4px solid var(--primary-color)', // 边框
     background: '#E8ECFC', // 背景
     tipBackground: 'rgba(63,81,181,0.6)',
-    color: '#3F51B5',
+    color: 'var(--primary-color)',
   },
   1: {
     borderTop: '4px solid #00BFA5',

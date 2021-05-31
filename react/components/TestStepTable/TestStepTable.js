@@ -3,16 +3,15 @@ import React, { useState } from 'react';
 import { Choerodon } from '@choerodon/boot';
 import PropTypes from 'prop-types';
 import {
-  Input, Icon, Modal, Tooltip,
+  Input, Icon, Tooltip,
 } from 'choerodon-ui';
-import { Button } from 'choerodon-ui/pro';
+import { Button, Modal } from 'choerodon-ui/pro';
 import { FormattedMessage } from 'react-intl';
 import useClickOnce from '@/hooks/useClickOnce';
 import { DragTable, TextEditToggle } from '..';
 
 import './TestStepTable.less';
 
-const { confirm } = Modal;
 const { Text, Edit } = TextEditToggle;
 const { TextArea } = Input;
 
@@ -162,9 +161,10 @@ function TestStepTable(props) {
   });
 
   const handleDeleteStep = (index, stepId) => {
-    confirm({
+    Modal.open({
       width: 560,
-      title: '确认删除吗？',
+      title: '删除测试步骤',
+      children: '确认删除该测试步骤吗？',
       async onOk() {
         try {
           await onDelete({ data: { issueId: caseId, stepId } });
@@ -175,7 +175,6 @@ function TestStepTable(props) {
         }
       },
       okText: '删除',
-      okType: 'danger',
     });
   };
   /**
@@ -278,7 +277,7 @@ function TestStepTable(props) {
                 stepIsCreating
                   ? (
                     <span className="c7ntest-text-wrap">
-                      {newValue || <span style={{ color: 'rgb(191, 191, 191)', whiteSpace: 'nowrap' }}>测试步骤</span>}
+                      {newValue || <span style={{ color: 'var(--text-color3)', whiteSpace: 'nowrap' }}>测试步骤</span>}
                     </span>
                   )
                   : <span className="c7ntest-text-wrap">{newValue || '-'}</span>
@@ -331,7 +330,7 @@ function TestStepTable(props) {
                 stepIsCreating
                   ? (
                     <span className="c7ntest-text-wrap">
-                      {newValue || <span style={{ color: 'rgb(191, 191, 191)', whiteSpace: 'nowrap' }}>测试数据</span>}
+                      {newValue || <span style={{ color: 'var(--text-color3)', whiteSpace: 'nowrap' }}>测试数据</span>}
                     </span>
                   )
                   : <span className="c7ntest-text-wrap">{newValue || '-'}</span>
@@ -387,7 +386,7 @@ function TestStepTable(props) {
                 stepIsCreating
                   ? (
                     <span className="c7ntest-text-wrap">
-                      {newValue || <span style={{ color: 'rgb(191, 191, 191)', whiteSpace: 'nowrap' }}>预期结果</span>}
+                      {newValue || <span style={{ color: 'var(--text-color3)', whiteSpace: 'nowrap' }}>预期结果</span>}
                     </span>
                   )
                   : <span className="c7ntest-text-wrap">{newValue || '-'}</span>
@@ -416,25 +415,35 @@ function TestStepTable(props) {
         const { stepIsCreating } = record;
         return !stepIsCreating ? (
           <div style={{
-            display: 'flex', alignItems: 'center', minWidth: 100,
+            display: 'flex', alignItems: 'center', minWidth: 120,
           }}
           >
             <Tooltip title={<FormattedMessage id="execute_move" defaultMessage="移动" />}>
-              <Icon type="open_with" {...provided.dragHandleProps} style={{ marginRight: 7 }} />
+              <Icon type="open_with" {...provided.dragHandleProps} />
             </Tooltip>
             <Tooltip title={<FormattedMessage id="execute_copy" defaultMessage="复制" />}>
-              <Button disabled={disabled} shape="circle" funcType="flat" icon="file_copy-o" style={{ color: 'black' }} onClick={() => onCloneStep(record.stepId, index)} />
+              <Button disabled={disabled} shape="circle" funcType="flat" icon="file_copy-o" style={{ marginLeft: 9, color: 'var(--text-color)' }} onClick={() => onCloneStep(record.stepId, index)} />
             </Tooltip>
-            <Button disabled={disabled} shape="circle" funcType="flat" icon="delete_sweep-o" style={{ color: 'black' }} onClick={() => handleDeleteStep(index, record.stepId)} />
+            <Tooltip title="删除">
+              <Button
+                disabled={disabled}
+                shape="circle"
+                funcType="flat"
+                icon="delete_sweep-o"
+                style={{ color: 'var(--text-color)' }}
+                onClick={() => handleDeleteStep(index, record.stepId)}
+                className="deleteBtn"
+              />
+            </Tooltip>
           </div>
         ) : (
           <div>
             <div {...provided.dragHandleProps} />
             <Tooltip title={<FormattedMessage id="excute_save" defaultMessage="保存" />}>
-              <Button disabled={disabled} shape="circle" funcType="flat" icon="done" style={{ margin: '0 -5px 5px', color: 'black' }} onClick={() => onCreateStep(record, index)} />
+              <Button disabled={disabled} shape="circle" funcType="flat" icon="done" style={{ color: 'var(--text-color)' }} onClick={() => onCreateStep(record, index)} />
             </Tooltip>
             <Tooltip title={<FormattedMessage id="excute_cancel" defaultMessage="取消" />}>
-              <Button disabled={disabled} shape="circle" funcType="flat" icon="close" style={{ margin: '0 5px', color: 'black' }} onClick={() => onCancelCreateStep(index)} />
+              <Button disabled={disabled} shape="circle" funcType="flat" icon="close" style={{ margin: '0 5px', color: 'var(--text-color)' }} onClick={() => onCancelCreateStep(index)} />
             </Tooltip>
           </div>
         );
@@ -460,7 +469,9 @@ function TestStepTable(props) {
             icon="playlist_add"
             onClick={handleAddCreating}
           >
-            <FormattedMessage id="issue_edit_addTestDetail" defaultMessage="添加步骤" />
+            <span>
+              <FormattedMessage id="issue_edit_addTestDetail" defaultMessage="添加步骤" />
+            </span>
           </Button>
         </div>
       </div>

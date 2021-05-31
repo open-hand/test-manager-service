@@ -22,7 +22,7 @@ const { AppState } = stores;
 @observer
 class PriorityCreate extends Component {
   state = {
-    priorityColor: '#3F51B5',
+    priorityColor: 'var(--primary-color)',
     displayColorPicker: false,
     loading: false,
   };

@@ -11,14 +11,14 @@
   &-empty {
     padding-top: .1rem;
     text-align: center;
-    color: rgba(0, 0, 0, 0.65);
+    color: var(--text-color3);
   }
 
   &-scroll {
     flex: 1;
     overflow-x: hidden;
     overflow-y: auto;
-    padding: 0 10px;
+    padding: 5px 10px 0;
   }
 
   &-icon {
@@ -36,7 +36,7 @@
 
     &-primary {
       font-size: 18px;
-      color: #3f51b5;
+      color: var(--primary-color);
     }
   }
 
@@ -51,7 +51,7 @@
     transition: all .3s;
 
     &-selected {
-      background: rgba(0, 0, 0, 0.04);
+      background: rgba(104,135,232,0.08);
     }
 
     &-prefix {
@@ -64,11 +64,13 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      color: var(--text-color);
     }
 
     &-action {
       .icon-create_new_folder {
         display: none;
+        color: var(--text-color);
       }
 
       margin-left: auto;
@@ -84,7 +86,17 @@
     }
 
     &:hover {
-      background: rgba(0, 0, 0, 0.04);
+      background: rgba(15,19,88,0.03);
+    }
+  }
+
+  &-tree-itemEditing {
+    & > div {
+      display: flex;
+      align-items: center;
+      .c7n-pro-input-length-info {
+        margin-left: 10px;
+      }
     }
   }
 }

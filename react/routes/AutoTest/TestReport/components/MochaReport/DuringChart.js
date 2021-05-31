@@ -86,7 +86,7 @@ class DuringChart extends Component {
         // axisLabel: {
         //   margin: 13,
         //   textStyle: {
-        //     color: 'rgba(0, 0, 0, 0.65)',
+        //     color: 'var(--text-color3)',
         //     fontSize: 12,
         //   },
         //   rotate: 40,
@@ -123,7 +123,7 @@ class DuringChart extends Component {
         axisLabel: {
           margin: 19.3,
           textStyle: {
-            color: 'rgba(0, 0, 0, 0.65)',
+            color: 'var(--text-color3)',
             fontSize: 12,
           },
         },
@@ -142,7 +142,7 @@ class DuringChart extends Component {
           type: 'bar',
           barWidth: '30%',
           itemStyle: {
-            color: '#3F51B5',
+            color: 'var(--primary-color)',
             // borderColor: '#4D90FE',
             emphasis: {
               shadowBlur: 10,

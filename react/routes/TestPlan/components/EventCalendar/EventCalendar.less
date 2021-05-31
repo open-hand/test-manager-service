@@ -9,6 +9,14 @@
 
     &-title {
       font-size: 16px;
+      .c7n-calendar-picker-input {
+        padding-top: 0;
+      }
+    }
+
+    &-skip {
+      position: relative;
+      top: -11px;
     }
 
     &-radio {
@@ -43,7 +51,7 @@
     top: 0;
     display: flex;
     min-width: 100%;
-    border-left: 1px solid #E0E0E0;
+    border-left: 1px solid var(--divider);
   }
 
   &-BackItems {
@@ -54,7 +62,7 @@
     height: calc(~"100% - 54px");
     display: flex;
     white-space: nowrap;
-    border-left: 1px solid #E0E0E0;
+    border-left: 1px solid var(--divider);
     border-right: none;
     border-top: none;
 
@@ -62,8 +70,8 @@
       min-width: 70px; // width: 64px;
       flex: 1;
       display: inline-block;
-      border-right: 1px solid #E0E0E0; // box-shadow: 1px 0 0 rgba(0, 0, 0, 0.12);
-      border-bottom: 1px solid #E0E0E0; // box-shadow: 1px 0 0 rgba(0, 0, 0, 0.12);
+      border-right: 1px solid var(--divider); // box-shadow: 1px 0 0 rgba(0, 0, 0, 0.12);
+      border-bottom: 1px solid var(--divider); // box-shadow: 1px 0 0 rgba(0, 0, 0, 0.12);
       height: 100%;
     }
   }

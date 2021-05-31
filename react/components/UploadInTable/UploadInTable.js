@@ -1,6 +1,7 @@
 import React from 'react';
 import { Choerodon } from '@choerodon/boot';
-import { Button, Upload } from 'choerodon-ui';
+import { Upload } from 'choerodon-ui';
+import { Button } from 'choerodon-ui/pro';
 import { FormattedMessage } from 'react-intl';
 import PropTypes from 'prop-types';
 import SingleFileUpload from '@/components/SingleFileUpload';
@@ -28,11 +29,10 @@ function UploadInTable(props) {
     fileList, config, onOk, handleDeleteFile, handleUpdateFileList, readOnly,
   } = props;
 
-
   return (
     <div className="c7ntest-upload-table">
       {
-        fileList && fileList.length > 0 && fileList.map(item => (
+        fileList && fileList.length > 0 && fileList.map((item) => (
           // <Tooltip trigger="focus" title="{item.name}{item.name}{item.name}{item.name}">
           <SingleFileUpload
             key={item.id}
@@ -74,12 +74,12 @@ function UploadInTable(props) {
               //   bucket_name: 'test',
               //   attachmentLinkId: record.executeStepId,
               //   attachmentType: 'CYCLE_STEP',
-              // }; 
-              // upload file   
+              // };
+              // upload file
               if (file.size > 1024 * 1024 * 30) {
                 Choerodon.prompt('文件不能超过30M');
                 return false;
-              } else if (file.name && encodeURI(file.name).length > 210) {
+              } if (file.name && encodeURI(file.name).length > 210) {
                 Choerodon.prompt('文件名过长');
                 return false;
               }
@@ -101,12 +101,11 @@ function UploadInTable(props) {
               return false;
             }}
           >
-            <Button icon="file_upload">
-              <FormattedMessage id="upload_attachment" />
+            <Button icon="backup-o">
+              <span><FormattedMessage id="upload_attachment" /></span>
             </Button>
           </Upload>
         )
-
 
       }
 

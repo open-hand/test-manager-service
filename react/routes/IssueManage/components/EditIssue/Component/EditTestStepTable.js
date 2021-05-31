@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Tooltip, Button, Modal } from 'choerodon-ui/pro';
+import classNames from 'classnames';
 import {
   cloneStep, updateStep, deleteStep, createIssueStep,
 } from '@/api/IssueManageApi';
@@ -11,9 +12,12 @@ import CKEditorViewer from '@/components/CKEditorViewer';
 import EditIssueContext from '../stores';
 import './EditTestStepTable.less';
 
-function TestStepWrap({ title, children }) {
+function TestStepWrap({ title, children, border }) {
   return (
-    <div className="c7ntest-edit-test-step-item">
+    <div className={classNames('c7ntest-edit-test-step-item', {
+      'c7ntest-edit-test-step-itemBordered': !!border,
+    })}
+    >
       <div className="c7ntest-edit-test-step-item-title">
         {title}
       </div>
@@ -105,21 +109,23 @@ function EditTestStepTable({ onUpdateDetail, IssueStore }) {
 
   return (
     <section id="testStep">
-      <TestStepWrap title={(
-        <>
-          <span className="c7ntest-edit-test-step-item-title-text">前置条件</span>
-          <div className="c7ntest-edit-test-step-item-title-btn">
-            <Tooltip title="编辑" getPopupContainer={(triggerNode) => triggerNode.parentNode.parentNode}>
-              <Button
-                icon="edit-o"
-                onClick={() => {
-                  setEditDescriptionShow(true);
-                }}
-              />
-            </Tooltip>
-          </div>
-        </>
+      <TestStepWrap
+        title={(
+          <>
+            <span className="c7ntest-edit-test-step-item-title-text">前置条件</span>
+            <div className="c7ntest-edit-test-step-item-title-btn">
+              <Tooltip title="编辑" getPopupContainer={(triggerNode) => triggerNode.parentNode.parentNode}>
+                <Button
+                  icon="edit-o"
+                  onClick={() => {
+                    setEditDescriptionShow(true);
+                  }}
+                />
+              </Tooltip>
+            </div>
+          </>
       )}
+        border
       >
         {renderDescription()}
       </TestStepWrap>
