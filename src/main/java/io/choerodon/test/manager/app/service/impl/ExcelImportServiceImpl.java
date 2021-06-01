@@ -683,14 +683,14 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         issueCreateDTO.setTestCaseStepProList(new ArrayList<>());
         // 校验custom重复
         if (!ObjectUtils.isEmpty(customNum)) {
-            if (customNum.length() > 16) {
-                markAsError(row, "自定义编号长度不能超过16个字符");
+            if (customNum.length() > 50) {
+                markAsError(row, "自定义编号长度不能超过50个字符");
                 return null;
             }
-            String reg = "^(([A-Za-z]+)|([0-9]+)|([A-Za-z]+-[0-9]+))$";
+            String reg = "^([A-Za-z0-9]+(-[A-Za-z0-9]+)*)$";
             Boolean matches = Pattern.matches(reg, customNum);
             if (!matches) {
-                markAsError(row, "自定义编号不符合规定");
+                markAsError(row, "由大小写字母、数字、\"-\"组成，不能以\"-\"开头或结尾，且不能连续出现两个\"-\"。");
                 return null;
             }
         }

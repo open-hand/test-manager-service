@@ -54,7 +54,7 @@ public class TestCaseServiceImpl implements TestCaseService {
     private static final String API_TYPE = "api";
     private static final String REPLAY = "replay";
     private static final String UI="ui";
-    public static  final String CUSTOM_NUM_PATTERN = "^(([A-Za-z]+)|([0-9]+)|([A-Za-z]+-[0-9]+))$";
+    public static  final String CUSTOM_NUM_PATTERN = "^([A-Za-z0-9]+(-[A-Za-z0-9]+)*)$";
     @Autowired
     private BaseFeignClient baseFeignClient;
 
@@ -277,7 +277,7 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     private void checkCustomNum(Long projectId, String customNum){
         if (!ObjectUtils.isEmpty(customNum)) {
-            if (customNum.length() > 16) {
+            if (customNum.length() > 50) {
                 throw new CommonException("error.custom.num.length.rang.out.range");
             }
             Boolean matches = Pattern.matches(CUSTOM_NUM_PATTERN, customNum);
@@ -357,22 +357,6 @@ public class TestCaseServiceImpl implements TestCaseService {
             pageRequest.setSort(new Sort(new Sort.Order(Sort.Direction.DESC, TestCaseDTO.FIELD_CASE_ID)));
             return;
         }
-        List<Sort.Order> orders = new ArrayList<>();
-        Iterator<Sort.Order> iterator = sort.iterator();
-        while (iterator.hasNext()){
-            Sort.Order t = iterator.next();
-            if (StringUtils.equalsAny(t.getProperty(), "customNum")){
-                Sort.Order order1 = new Sort.Order(t.getDirection(),"numberSort");
-                orders.add(order1);
-                Sort.Order order2 = new Sort.Order(t.getDirection(),"initialsSort");
-                orders.add(order2);
-                Sort.Order order3 = new Sort.Order(t.getDirection(),"lastNumberSort");
-                orders.add(order3);
-            } else {
-                orders.add(t);
-            }
-        }
-        pageRequest.setSort(new Sort(orders));
     }
 
     @Override

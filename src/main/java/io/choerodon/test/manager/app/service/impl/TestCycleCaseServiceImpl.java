@@ -475,22 +475,6 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             pageRequest.setSort(new Sort(new Sort.Order(Sort.Direction.ASC, "rank")));
             return;
         }
-        List<Sort.Order> orders = new ArrayList<>();
-        Iterator<Sort.Order> iterator = sort.iterator();
-        while (iterator.hasNext()){
-            Sort.Order t = iterator.next();
-            if (Objects.equals(t.getProperty(), "customNum")) {
-                Sort.Order order1 = new Sort.Order(t.getDirection(), "numberSort");
-                orders.add(order1);
-                Sort.Order order2 = new Sort.Order(t.getDirection(), "initialsSort");
-                orders.add(order2);
-                Sort.Order order3 = new Sort.Order(t.getDirection(), "lastNumberSort");
-                orders.add(order3);
-            } else {
-                orders.add(t);
-            }
-        }
-        pageRequest.setSort(new Sort(orders));
     }
 
     @Override
