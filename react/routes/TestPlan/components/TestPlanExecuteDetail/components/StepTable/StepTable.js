@@ -123,10 +123,26 @@ function StepTable(props) {
     return (
       <>
         <Tooltip title={<FormattedMessage id="execute_quickPass" />}>
-          <Button key="pass" disabled={editing || getActionHidden()} shape="circle" funcType="flat" icon="check_circle" onClick={onQuickPassOrFail.bind(this, '通过', record)} />
+          <Button
+            key="pass"
+            disabled={editing || getActionHidden()}
+            shape="circle"
+            funcType="flat"
+            icon="check_circle"
+            onClick={onQuickPassOrFail.bind(this, '通过', record)}
+            style={{ color: 'var(--text-color)' }}
+          />
         </Tooltip>
         <Tooltip title={<FormattedMessage id="execute_quickFail" />}>
-          <Button key="fail" disabled={editing || getActionHidden()} shape="circle" funcType="flat" icon="cancel" onClick={onQuickPassOrFail.bind(this, '失败', record)} />
+          <Button
+            key="fail"
+            disabled={editing || getActionHidden()}
+            shape="circle"
+            funcType="flat"
+            icon="cancel"
+            onClick={onQuickPassOrFail.bind(this, '失败', record)}
+            style={{ color: 'var(--text-color)' }}
+          />
         </Tooltip>
       </>
     );

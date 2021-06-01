@@ -1,21 +1,21 @@
 /*
- * @Author: LainCarl 
- * @Date: 2019-02-26 15:29:21 
- * @Last Modified by:   LainCarl 
- * @Last Modified time: 2019-02-26 15:29:21 
+ * @Author: LainCarl
+ * @Date: 2019-02-26 15:29:21
+ * @Last Modified by:   LainCarl
+ * @Last Modified time: 2019-02-26 15:29:21
  * @Feature: 状态table
  */
 
 import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Table, Icon, Modal, Menu,
+  Table, Menu,
 } from 'choerodon-ui';
+import { Modal } from 'choerodon-ui/pro';
 import { FormattedMessage } from 'react-intl';
 import TableDropMenu from '../TableDropMenu';
 import './StatusTable.less';
 
-const { confirm } = Modal;
 const propTypes = {
   dataSource: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   onEditStatusClick: PropTypes.func.isRequired,
@@ -28,8 +28,9 @@ const StatusTable = ({
   onEditStatusClick,
 }) => {
   const deleteStatus = (data) => {
-    confirm({
-      title: `确定要删除状态 ${data.statusName}?`,
+    Modal.open({
+      title: '删除状态',
+      children: `确定要删除状态“${data.statusName}”?`,
       onOk: () => { onDeleteOk(data); },
     });
   };
@@ -83,7 +84,7 @@ const StatusTable = ({
         <div style={{ width: 18, height: 18, background: statusColor }} />
       );
     },
-  }, 
+  },
   ];
   return (
     <Table

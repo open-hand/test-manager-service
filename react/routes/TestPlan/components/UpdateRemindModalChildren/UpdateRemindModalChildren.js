@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useState, useContext, useMemo, 
+  useEffect, useState, useContext, useMemo,
 } from 'react';
 import {
   toJS,
@@ -18,7 +18,7 @@ import UpdateStepTableDataSet from '../../stores/UpdateStepTableDataSet';
 import { getUpdateCompared } from '../../../../api/TestPlanApi';
 
 const prefix = 'c7ntest-testPlan-updateRemind';
-    
+
 const UpdateRemindModalChildren = (props) => {
   const { testPlanStore, executeId, cycleName } = props;
   const newStepTableDataSet = useMemo(() => new DataSet(UpdateStepTableDataSet({ stepData: (testPlanStore.comparedInfo.testCase && testPlanStore.comparedInfo.testCase.testCaseStepS) || [] })), [testPlanStore.comparedInfo.testCase]);
@@ -46,7 +46,7 @@ const UpdateRemindModalChildren = (props) => {
       <Spin spinning={loading}>
         <div className={`${prefix}-item`}>
           <span className={`${prefix}-item-field`}>更新人</span>
-          <span className={`${prefix}-item-value`}><User user={lastUpdateUser} /></span>
+          <span className={`${prefix}-item-value`}><User user={lastUpdateUser} style={{ color: 'var(--text-color)' }} /></span>
         </div>
         <div className={`${prefix}-item`}>
           <span className={`${prefix}-item-field`}>更新时间</span>
@@ -65,6 +65,6 @@ const UpdateRemindModalChildren = (props) => {
       </Spin>
     </div>
   );
-}; 
+};
 
 export default observer(UpdateRemindModalChildren);

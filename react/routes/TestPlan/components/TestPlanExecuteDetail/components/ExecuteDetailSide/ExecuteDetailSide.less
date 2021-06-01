@@ -55,8 +55,7 @@
         }
 
         &-line {
-          height: 1px;
-          background: var(--divider);
+          border-top: 1px solid var(--divider);
           flex: 1;
           margin: 30px 0px 20px;
         }
@@ -115,7 +114,9 @@
     align-items: center;
     margin-bottom: 10px;
     color: var(--text-color3);
-
+    &:last-child {
+      margin-bottom: 0;
+    }
     &-left {
       width: 100px;
       font-size: 14px;

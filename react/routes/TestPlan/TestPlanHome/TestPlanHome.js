@@ -112,7 +112,7 @@ function TestPlanHome({ history }) {
       footer: (okBtn, cancelBtn) => (
         <div>
           {okBtn}
-          <Button funcType="funcType" onClick={handleIgnoreUpdate.bind(this, record)}>忽略更新</Button>
+          <Button onClick={handleIgnoreUpdate.bind(this, record)}>忽略更新</Button>
           {cancelBtn}
         </div>
       ),
@@ -192,7 +192,7 @@ function TestPlanHome({ history }) {
 
   const handleDeleteExecute = (record) => {
     const { executeId, summary } = record;
-    confirm({
+    Modal.open({
       className: 'c7n-deleteExecute-confirm',
       style: {
         width: 560,
@@ -205,20 +205,10 @@ function TestPlanHome({ history }) {
             testPlanStore.loadExecutes();
           }).catch((err) => {
             /* console.log(err); */
-            Choerodon.prompt('删除失败');
+            Choerodon.prompt('移除失败');
           });
       },
-      okText: '删除',
-      okProps: {
-        style: {
-          color: '#d50000',
-        },
-      },
-      cancelProps: {
-        style: {
-          color: '#000',
-        },
-      },
+      okText: '移除',
     });
   };
 
