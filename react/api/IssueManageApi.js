@@ -71,26 +71,7 @@ export function deleteLink(issueLinkId) {
 export function loadDatalogs(caseId) {
   return request.get(`/test/v1/projects/${getProjectId()}/data_log?case_id=${caseId}`);
 }
-/**
- *加载用例以建立关联
- *
- * @export
- * @param {number} [page=0]
- * @param {number} [size=10]
- * @param {*} issueId
- * @param {*} content
- * @returns
- */
-export function loadIssuesInLink(page = 0, size = 10, issueId, content) {
-  if (issueId && content) {
-    return request.get(`/test/v1/projects/${getProjectId()}/case/agile/summary?issueId=${issueId}&self=false&content=${content}&page=${page}&size=${size}`);
-  } if (issueId && !content) {
-    return request.get(`/test/v1/projects/${getProjectId()}/case/agile/summary?issueId=${issueId}&self=false&page=${page}&size=${size}`);
-  } if (!issueId && content) {
-    return request.get(`/test/v1/projects/${getProjectId()}/case/agile/summary?self=false&content=${content}&page=${page}&size=${size}`);
-  }
-  return request.get(`/test/v1/projects/${getProjectId()}/case/agile/summary?self=false&page=${page}&size=${size}`);
-}
+
 /**
  *创建用例间的关联
  *

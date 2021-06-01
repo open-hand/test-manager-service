@@ -38,30 +38,23 @@ export function text2Delta(description) {
  * 将quill特有的文本结构转为html
  * @param {*} delta
  */
-export function delta2Html(description, config) {
-  // 修复普通文本显示
-  let temp = description;
+export function delta2Html(description) {
+  let isDelta = true;
   try {
     JSON.parse(description);
-    const obj = JSON.parse(description);
-    if (typeof obj !== 'object' || !obj) {
-      throw new Error('不是JSON格式');
-    }
   } catch (error) {
-    // console.log(description, error);
-    temp = JSON.stringify([{ insert: description }]);
+    isDelta = false;
   }
-
-  const delta = text2Delta(temp);
-  const converter = new QuillDeltaToHtmlConverter(delta, config);
+  if (!isDelta) {
+    return description;
+  }
+  const delta = text2Delta(description);
+  const converter = new QuillDeltaToHtmlConverter(delta, {});
   const text = converter.convert();
-  // if (text.substring(0, 3) === '<p>') {
-  //   return text.substring(3);
-  // }
-  // } else {
-  // console.log(description, text);
+  if (text.substring(0, 3) === '<p>') {
+    return text.substring(3);
+  }
   return text;
-  // }
 }
 
 // 获取文件名后缀
