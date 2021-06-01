@@ -6,13 +6,13 @@ import { getProjectId, getOrganizationId } from '@/common/utils';
 
 const { AppState } = stores;
 
-function TestLinkStore(issueId) {
+function TestLinkStore(projectId, issueId) {
   const history = useHistory();
   return useLocalStore(() => ({
     data: [],
     issueId,
     loadData() {
-      return axios.get(`test/v1/projects/${getProjectId()}/case_link/list_link_case_info?issue_id=${issueId}`).then((res) => {
+      return axios.get(`test/v1/projects/${projectId || getProjectId()}/case_link/list_link_case_info?issue_id=${issueId}`).then((res) => {
         this.data = res;
       });
     },

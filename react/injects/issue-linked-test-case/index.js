@@ -9,9 +9,9 @@ import { openTestCaseModal } from './TestCaseModal';
 import useTestLinkStore from './TestLinkStore';
 
 const TestLink = ({
-  reloadIssue, issueId, disabled, intl, testLinkStoreRef,
+  reloadIssue, issueId, disabled, intl, testLinkStoreRef, projectId,
 }) => {
-  const testLinkStore = useTestLinkStore(issueId);
+  const testLinkStore = useTestLinkStore(projectId, issueId);
   useEffect(() => {
     Object.assign(testLinkStoreRef, { current: testLinkStore });
   }, [testLinkStoreRef, testLinkStore]);
