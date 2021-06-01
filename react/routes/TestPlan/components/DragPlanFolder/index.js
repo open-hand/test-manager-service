@@ -129,7 +129,7 @@ function DragPlanFolder({
     return true;
   }, [move]);
   return (
-    <>
+    <div className="c7ntest-DragPlanFolder-content">
       <Loading loading={loading} />
       <Tree
         ref={treeRef}
@@ -143,7 +143,7 @@ function DragPlanFolder({
         beforeDrag={handleDrag}
         afterDrag={(s) => s}
       />
-    </>
+    </div>
   );
 }
 DragPlanFolder.propTypes = propTypes;

@@ -136,7 +136,7 @@ function TestPlanModal({
               </div>
               <div style={{ display: 'flex', alignItems: 'center', marginTop: 15 }}>
                 <Radio name="custom" value>自选用例</Radio>
-                {hasAgile && <CheckBox style={{ marginLeft: 20, marginTop: -8 }} name="sprintLink">选择当前测试计划所属迭代中问题项关联的所有用例</CheckBox>}
+                {hasAgile && <CheckBox style={{ marginTop: -8, marginLeft: -10 }} name="sprintLink">选择当前测试计划所属迭代中问题项关联的所有用例</CheckBox>}
               </div>
             </div>
           </div>
@@ -151,13 +151,14 @@ function TestPlanModal({
         <div>
           <div style={{
             display: 'flex',
+            marginBottom: 10,
           }}
           >
             <span>是否自动同步</span>
             <Tip title="即用例库的用例更新之后是否同步更新计划中的用例" />
           </div>
           <Radio name="autoSync" value defaultChecked>是</Radio>
-          <Radio name="autoSync" value={false}>否</Radio>
+          <Radio name="autoSync" value={false} style={{ marginLeft: -20 }}>否</Radio>
         </div>
       </Form>
     </Context.Provider>

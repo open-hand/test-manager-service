@@ -40,7 +40,7 @@
         max-width: 100%;
         overflow: hidden;
         white-space: nowrap;
-        color: #000;
+        color: var(--text-color);
         text-overflow: ellipsis;
       }
 
@@ -49,7 +49,7 @@
         max-width: 84%;
         overflow: hidden;
         white-space: nowrap;
-        color: #000;
+        color: var(--text-color);
         text-overflow: ellipsis;
       }
 
@@ -74,19 +74,20 @@
   .c7n-pro-select-required {
     background-color: white;
   }
-  .c7nagile-TextEditToggle-text-edit-button {
-    margin-left: 0;
-  }
-
   &-status {
     .c7n-pro-output-required {
       background-color: transparent !important;
     }
   }
-
+  .c7n-pro-table .c7n-pro-table-content .c7n-pro-table-row .c7n-pro-table-cell.c7n-pro-table-cell-editable .c7n-pro-table-cell-inner {
+    border: none;
+    background-color: unset;
+  }
   table {
     tr {
-      color: var(--text-color3);
+      td {
+        color: var(--text-color);
+      }
     }
   }
 }

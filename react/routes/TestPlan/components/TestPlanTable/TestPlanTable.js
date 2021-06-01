@@ -399,7 +399,7 @@ const TestPlanTable = observer(({
               zIndex: 100,
               display: 'inline-flex',
               alignItems: 'center',
-              top: '-5px',
+              top: '-9px',
             }}
             >
               <div>

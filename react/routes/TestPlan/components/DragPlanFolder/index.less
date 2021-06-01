@@ -2,14 +2,23 @@
   .c7n-pro-modal-body {
     height: calc(~"100vh - 1.2rem");
     overflow: hidden;
+    .c7ntest-DragPlanFolder-content {
+      .c7ntest-tree {
+        &-top {
+          padding-left: 0;
+          .c7n-pro-input-wrapper {
+            margin-top: 0;
+          }
+        }
+        &-scroll {
+          padding-left: 0;
+        }
+      }
+    }
   }
 
   &-item {
-
     user-select: none;
-    // .c7ntest-tree-tree-item-selected {
-    //   background-color: transparent;
-    // }
   }
 
   &-item-selected {

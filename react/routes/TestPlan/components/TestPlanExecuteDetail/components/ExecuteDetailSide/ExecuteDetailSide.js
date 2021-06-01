@@ -197,7 +197,7 @@ function ExecuteDetailSide(props) {
                       height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center',
                     }}
                     >
-                      <span>相关用例:</span>
+                      <span>相关用例：</span>
                       {caseHasExist ? <Link className="primary c7ntest-text-dot" style={{ marginLeft: 5 }} to={issueLink(caseId, 'issue_test', caseNum, caseFolderId)}>{caseNum}</Link>
                         : '用例已被删除'}
                     </div>
