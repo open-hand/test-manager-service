@@ -30,7 +30,7 @@ const styles = {
     background: 'white',
   },
   itemTextBold: { 
-    color: 'black',
+    color: 'var(--text-color)',
     width: '100%', 
     margin: '18px 0', 
     fontWeight: 500, 
@@ -49,7 +49,7 @@ const ReportHome = () => (
               <img src={Pic} alt="" />
             </div>
             <div style={styles.itemTextBold}><FormattedMessage id="report_demandToDefect" /></div>
-            <div style={{ color: 'rgba(0,0,0,0.65)' }}><FormattedMessage id="report_demandToDefect_description" /></div>
+            <div style={{ color: 'var(--text-color3)' }}><FormattedMessage id="report_demandToDefect_description" /></div>
           </div>
         </Link>
         <Link to={commonLink('/report/test')}>
@@ -58,7 +58,7 @@ const ReportHome = () => (
               <img src={Pic2} alt="" />
             </div>
             <div style={styles.itemTextBold}><FormattedMessage id="report_defectToDemand" /></div>
-            <div style={{ color: 'rgba(0,0,0,0.65)' }}><FormattedMessage id="report_defectToDemand_description" /></div>
+            <div style={{ color: 'var(--text-color3)' }}><FormattedMessage id="report_defectToDemand_description" /></div>
           </div>
         </Link>
         <Link to={commonLink('/report/progress')}>
@@ -67,7 +67,7 @@ const ReportHome = () => (
               <img src={Pic3} alt="" />
             </div>
             <div style={styles.itemTextBold}><FormattedMessage id="report_defectToProgress" /></div>
-            <div style={{ color: 'rgba(0,0,0,0.65)' }}><FormattedMessage id="report_defectToProgress_description" /></div>
+            <div style={{ color: 'var(--text-color3)' }}><FormattedMessage id="report_defectToProgress_description" /></div>
           </div>
         </Link>
       </div>

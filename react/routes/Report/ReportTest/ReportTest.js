@@ -318,7 +318,7 @@ class ReportTest extends Component {
                 style={{ lineHeight: '13px' }}
                 to={executeDetailLink(execute.executeId, filters)}
               >
-                <Icon type="explicit" style={{ marginLeft: 10, color: 'black' }} />
+                <Icon type="explicit" style={{ marginLeft: 10, color: 'var(--text-color)' }} />
               </Link>
               {
                 i >= testCycleCaseES.length

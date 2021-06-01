@@ -1,18 +1,17 @@
 import React from 'react';
 import { Choerodon } from '@choerodon/boot';
 import {
-  Tooltip, Menu, Modal, Dropdown, Button,
+  Tooltip, Menu, Dropdown, Button,
 } from 'choerodon-ui';
+import { Modal } from 'choerodon-ui/pro';
 import { FormattedMessage } from 'react-intl';
 import { copyIssues, deleteIssue } from '../../../../api/IssueManageApi';
 import './tags.less';
 
-const { confirm } = Modal;
-
 export function renderIssueNum(caseNum) {
   return (
     <Tooltip mouseEnterDelay={0.5} title={<FormattedMessage id="issue_issueNum" values={{ num: caseNum }} />}>
-      <span style={{ color: 'rgba(0, 0, 0, 0.65)' }} className="c7n-table-issueTreeTtile-table-span">
+      <span className="c7ntest-text-dot" style={{ wordBreak: 'break-all' }}>
         {caseNum}
       </span>
     </Tooltip>
@@ -27,17 +26,16 @@ export function renderIssueNum(caseNum) {
 export function renderAction(record, history, reLoadTable) {
   const { caseId, caseNum } = record;
   const handleDeleteIssue = () => {
-    confirm({
+    Modal.open({
       width: 560,
       title: '确认删除',
-      content: `确认删除测试用例${caseNum}？`,
+      children: `确认删除测试用例${caseNum}？`,
       onOk: () => deleteIssue(caseId)
         .then((res) => {
           reLoadTable();
           Choerodon.prompt('删除成功');
         }),
       okText: '确认',
-      okType: 'danger',
     });
   };
 

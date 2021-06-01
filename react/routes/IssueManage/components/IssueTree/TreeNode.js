@@ -49,7 +49,7 @@ function TreeNode({
             <span className={`${prefix}-tree-item-prefix`}>
               <Icon type="folder_open" className="c7ntest-tree-icon-primary" style={{ marginRight: 5, marginLeft: 22 }} />
             </span>
-            <span className={`${prefix}-tree-item-title`} style={{ color: 'rgba(0,0,0,0.54)' }}><SmartTooltip title={item.data.name}>{item.data.name}</SmartTooltip></span>
+            <span className={`${prefix}-tree-item-title`} style={{ color: 'var(--text-color3)' }}><SmartTooltip title={item.data.name}>{item.data.name}</SmartTooltip></span>
             <Progress type="loading" size="small" />
           </div>
         </div>
@@ -74,7 +74,7 @@ function TreeNode({
             <span className={`${prefix}-tree-item-prefix`}>
               <Icon type="folder_open" className="c7ntest-tree-icon-primary" style={{ marginRight: 5, marginLeft: 22 }} />
             </span>
-            <span className={`${prefix}-tree-item-title`} style={{ color: 'rgba(0,0,0,0.54)' }}><SmartTooltip title={item.data.name}>{item.data.name}</SmartTooltip></span>
+            <span className={`${prefix}-tree-item-title`} style={{ color: 'var(--text-color3)' }}><SmartTooltip title={item.data.name}>{item.data.name}</SmartTooltip></span>
             <Tooltip title="复制失败">
               <Icon type="error" style={{ color: 'red' }} />
             </Tooltip>

@@ -5,6 +5,17 @@
     align-items: center;
     &-field {
       white-space: nowrap;
+      &-value {
+        & > div > div > div {
+          display: flex;
+          align-items: center;
+          position: relative;
+          .c7n-pro-input-length-info {
+            position: absolute;
+            right: -50px;
+          }
+        }
+      }
     }
   }
 }

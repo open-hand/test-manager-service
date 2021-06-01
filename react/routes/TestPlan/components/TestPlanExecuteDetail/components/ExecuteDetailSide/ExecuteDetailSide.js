@@ -52,11 +52,10 @@ const Section = ({
       {children}
     </div>
     {
-        !isLastOne && (
-          <div className="c7ntest-side-item-header-line" />
-        )
-      }
-
+      !isLastOne && (
+        <div className="c7ntest-side-item-header-line" />
+      )
+    }
   </section>
 );
 const defaultProps = {
@@ -204,7 +203,7 @@ function ExecuteDetailSide(props) {
                     </div>
                   </div>
                   <Button funcType="flat" icon="last_page" onClick={onClose}>
-                    <span>隐藏详情</span>
+                    <span style={{ fontSize: 13 }}>隐藏详情</span>
                   </Button>
                 </div>
                 <div style={{ fontSize: '20px', marginRight: '5px', marginBottom: '15px' }}>

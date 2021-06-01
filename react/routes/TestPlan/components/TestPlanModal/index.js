@@ -3,7 +3,7 @@ import React, {
 } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Modal, Form, DataSet, TextArea, DatePicker, Select, Radio, CheckBox,
+  Modal, Form, DataSet, TextArea, DatePicker, Select, Radio, CheckBox, TextField,
 } from 'choerodon-ui/pro';
 import { mount } from '@choerodon/inject';
 import { Choerodon } from '@choerodon/boot';
@@ -11,7 +11,6 @@ import { observer } from 'mobx-react-lite';
 import moment from 'moment';
 import UserHead from '@/components/UserHead';
 import Tip from '@/components/Tip';
-import { PromptInput } from '@/components';
 import { getProjectId } from '@/common/utils';
 import {
   createPlan, getPlan, editPlan, clonePlan,
@@ -96,7 +95,7 @@ function TestPlanModal({
   return (
     <Context.Provider value={{ SelectIssueStore: selectIssueStore }}>
       <Form dataSet={dataSet} style={{ width: 512 }}>
-        <PromptInput name="name" required maxLength={44} />
+        <TextField name="name" required maxLength={44} valueChangeAction="input" />
         <TextArea
           name="description"
         />
@@ -245,7 +244,7 @@ const ClonePlan = ({ modal, data: defaultValue, onCLone }) => {
 
   return (
     <Form dataSet={dataSet}>
-      <PromptInput name="name" required maxLength={44} />
+      <TextField name="name" required maxLength={44} valueChangeAction="input" />
     </Form>
   );
 };

@@ -86,13 +86,13 @@ class CreateAutoTest extends Component {
       <Sidebar title={this.getTitle()} className="c7ntest-region c7ntest-deployApp" visible={visible} footer={this.renderFooter()}>
         <Steps current={currentStep - 1}>
           <Step
-            title={<span style={{ color: currentStep === 1 ? '#3F51B5' : '', fontSize: 14 }}>{formatMessage({ id: 'autoteststep_one_title' })}</span>}
+            title={<span style={{ color: currentStep === 1 ? 'var(--primary-color)' : '', fontSize: 14 }}>{formatMessage({ id: 'autoteststep_one_title' })}</span>}
           />
           <Step
-            title={<span style={{ color: currentStep === 2 ? '#3F51B5' : '', fontSize: 14 }}>{formatMessage({ id: 'autoteststep_two_title' })}</span>}
+            title={<span style={{ color: currentStep === 2 ? 'var(--primary-color)' : '', fontSize: 14 }}>{formatMessage({ id: 'autoteststep_two_title' })}</span>}
           />
           <Step
-            title={<span style={{ color: currentStep === 3 ? '#3F51B5' : '', fontSize: 14 }}>{formatMessage({ id: 'autoteststep_three_title' })}</span>}
+            title={<span style={{ color: currentStep === 3 ? 'var(--primary-color)' : '', fontSize: 14 }}>{formatMessage({ id: 'autoteststep_three_title' })}</span>}
           />
         </Steps>
         <div>

@@ -84,6 +84,7 @@ class CreateStatus extends Component {
     return (
       <div>
         <Sidebar
+          className="c7ntest-createStatus-modal"
           title={`创建${getFieldValue('statusType') === 'CYCLE_CASE' ? '执行' : '步骤'}状态`}
           visible={visible}
           // onOk={this.handleOk}

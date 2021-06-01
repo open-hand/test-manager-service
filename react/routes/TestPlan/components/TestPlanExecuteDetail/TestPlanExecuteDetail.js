@@ -404,7 +404,6 @@ function TestPlanExecuteDetail(props) {
                       />
                     )}
                 </div>
-
                 <CardWrapper
                   title={(
                     <div className="c7n-test-execute-detail-card-title-description">

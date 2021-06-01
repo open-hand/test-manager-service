@@ -88,17 +88,17 @@ function Detail({
               className="assignee"
               label={<FormattedMessage id="issue_edit_creator" />}
               valueStyle={{
-                display: 'flex', alignItems: 'center', flexWrap: 'wrap', marginLeft: 5,
+                display: 'flex', alignItems: 'center', flexWrap: 'wrap', marginLeft: 6,
               }}
             >
-              <UserHead user={createUser} color="#000000" />
+              <UserHead user={createUser} color="var(--text-color)" />
             </PropertyWrap>
             {/* 创建时间 */}
             <PropertyWrap valueStyle={{ marginLeft: 6 }} label={<FormattedMessage id="issue_edit_createDate" />}>
               {creationDate}
             </PropertyWrap>
             {/* 优先级 */}
-            <PropertyWrap valueStyle={{ marginLeft: 6 }} label={<FormattedMessage id="issue_edit_priority" />}>
+            <PropertyWrap valueStyle={{ marginLeft: 1 }} label={<FormattedMessage id="issue_edit_priority" />}>
               <FieldPriority priority={priorityVO || {}} onUpdate={onUpdate} />
             </PropertyWrap>
             {showMore ? (
@@ -109,7 +109,7 @@ function Detail({
                     display: 'flex', alignItems: 'center', flexWrap: 'wrap', marginLeft: 6,
                   }}
                 >
-                  <UserHead user={lastUpdateUser} color="#000000" />
+                  <UserHead user={lastUpdateUser} color="var(--text-color)" />
                 </PropertyWrap>
                 <PropertyWrap valueStyle={{ marginLeft: 6 }} label={<FormattedMessage id="issue_edit_updateDate" />}>
                   {lastUpdateDate}
@@ -117,13 +117,12 @@ function Detail({
               </>
             ) : null}
           </ContentWrap>
-          <Button className="leftBtn" funcType="flat" onClick={() => setShowMore(!showMore)}>
-            <span>{showMore ? '收起更多' : '查看更多'}</span>
+          <Button onClick={() => setShowMore(!showMore)}>
+            <span>{showMore ? '收起' : '展开'}</span>
             <Icon type={showMore ? 'baseline-arrow_drop_up' : 'baseline-arrow_right'} style={{ marginRight: 2 }} />
           </Button>
         </section>
-        <Divider />
-
+        <div className="c7nTest-detail-divider" />
         {/** 附件 */}
         <section id="attachment">
           <TitleWrap title={<FormattedMessage id="attachment" />}>
@@ -155,7 +154,7 @@ function Detail({
 
           </ContentWrap>
         </section>
-        <Divider />
+        <div className="c7nTest-detail-divider" />
         {/** 问题链接 */}
         {hasAgile && (
           <section id="link_task" style={{ marginBottom: 20 }}>

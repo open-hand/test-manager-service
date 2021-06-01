@@ -35,8 +35,8 @@ function LinkList(props) {
           alignItems: 'center',
           padding: '8px 10px',
           cursor: 'pointer',
-          borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
-          borderTop: !i ? '1px solid rgba(0, 0, 0, 0.12)' : '',
+          borderBottom: '1px solid var(--divider)',
+          borderTop: !i ? '1px solid var(--divider)' : '',
         }}
       >
         <Tooltip mouseEnterDelay={0.5} title={`任务类型： ${typeName}`}>
@@ -104,7 +104,6 @@ function LinkList(props) {
               onCancel={null}
               okText="删除"
               cancelText="取消"
-              okType="danger"
             >
               <Icon type="delete_sweep-o" />
             </Popconfirm>

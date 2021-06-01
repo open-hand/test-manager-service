@@ -405,7 +405,7 @@ class ReportStory extends Component {
                       style={{ lineHeight: '13px' }}
                       to={executeDetailLink(execute.executeId, filters)}
                     >
-                      <Icon type="explicit2" style={{ marginLeft: 10, color: 'black' }} />
+                      <Icon type="explicit2" style={{ marginLeft: 10, color: 'var(--text-color)' }} />
                     </Link>
                   </div>
                 );

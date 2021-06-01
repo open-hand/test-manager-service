@@ -458,9 +458,9 @@ class ConfirmInfo extends Component {
         </RadioGroup>
         {/* 定时执行 */}
         {testType === 'timing' && this.renderTimingExecute()}
-        <div style={{ border: '1px solid #D8D8D8', borderRadius: '4px' }}>
+        <div style={{ border: '1px solid var(--divider)', borderRadius: '4px' }}>
           <div style={{
-            height: 48, borderBottom: '1px solid #D8D8D8', lineHeight: '48px', fontSize: '14px', fontWeight: 500, paddingLeft: 16,
+            height: 48, borderBottom: '1px solid var(--divider)', lineHeight: '48px', fontSize: '14px', fontWeight: 500, paddingLeft: 16,
           }}
           >
             确认信息

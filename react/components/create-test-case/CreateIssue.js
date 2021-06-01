@@ -109,7 +109,7 @@ function CreateIssue(props) {
   return (
     <>
       <Form dataSet={createDataset} className={`test-create-issue-form ${visibleDetail ? '' : 'test-create-issue-form-hidden'}`}>
-        <PromptInput name="summary" maxLength={44} />
+        <TextField name="summary" maxLength={44} valueChangeAction="input" />
         <SelectTree name="folder" parentDataSet={createDataset} defaultValue={defaultFolderValue ? defaultFolderValue.id : undefined} />
         <Select name="priorityId" />
         <TextField
@@ -128,7 +128,6 @@ function CreateIssue(props) {
             <Icon type={`${visibleDetail ? 'expand_less' : 'expand_more'}`} />
             用例前置条件
           </span>
-
         </div>
         <CKEditor
           style={{ minHeight: 300, width: '100%' }}

@@ -41,7 +41,7 @@ const TestLink = ({
 
   return (
     <div id="link_test">
-      <div style={{ margin: '30px 0 20px 0', borderBottom: '1px solid #D8D8D8' }} />
+      <div style={{ margin: '30px 0 20px 0', borderBottom: '1px solid var(--divider)' }} />
       <div className="c7n-title-wrapper">
         <div className="c7n-title-left">
           <span>测试用例</span>

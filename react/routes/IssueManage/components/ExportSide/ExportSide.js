@@ -169,7 +169,7 @@ function ExportSide(props) {
         >
           <Table dataSet={exportSideDataSet} className="test-export-issue-table">
             <Column name="name" align="left" />
-            <Column name="action" width={50} renderer={renderDropDownMenu} />
+            <Column name="action" width={60} renderer={renderDropDownMenu} />
             <Column name="successfulCount" width={120} align="left" />
             <Column name="lastUpdateDate" width={200} align="left" />
             <Column name="during" width={200} align="left" />

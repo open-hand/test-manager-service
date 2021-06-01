@@ -1,14 +1,14 @@
 @import '~choerodon-ui/lib/style/themes/default';
 @circle-trail-stroke: rgba(207, 212, 245, 0.90);
 @circle-path-stroke: rgba(48, 63, 159, 0.64);
-@progress-text-color: rgba(0, 0, 0, 0.65);
+@progress-text-color: var(--text-color3);
 @progress-area-background: #FFFFFF;
 @progress-area-box-shadow1: rgba(0, 0, 0, 0.20);
 @progress-area-box-shadow2: rgba(0, 0, 0, 0.14);
 @progress-area-box-shadow3: rgba(0, 0, 0, 0.12);
 @progress-area-text: #000000;
 @fileName-background: #F3F3F3;
-@fileName-color: rgba(0, 0, 0, 0.54);
+@fileName-color: var(--text-color3);
 
 .c7ntest-ImportIssue {
 
@@ -71,12 +71,11 @@
 
   &-text {
     margin-right: 0.1rem;
-    display: inline-block;
-    vertical-align: top;
+    display: block;
     margin-top: 0.07rem;
     font-family: PingFangSC-Regular;
     font-size: 13px;
-    color: rgba(0, 0, 0, 0.65);
+    color: var(--text-color3);
     line-height: 18px;
 
     span {
@@ -90,9 +89,9 @@
   }
 
   &-progress {
-    // width: 2rem;
-    // vertical-align: top;
-    // margin-top: 0.07rem;
+    &-area-text, &-area-prompt {
+      color: var(--text-color);
+    }
   }
 
   &-icon {
@@ -110,24 +109,28 @@
   }
 
   &-form {
-    .c7n-divider {
-      width: 3.74rem;
-      margin-left: -.24rem;
-      margin-bottom: .195rem;
+    .c7n-pro-form {
+      margin-left: -.05rem;
+    }
+    &-divider {
+      border-top: 1px solid var(--divider);
+      margin: .24rem 0 .2rem -.24rem;
+      width: calc(100% + 48px);
     }
 
     &-one {
       &-title {
         font-size: 16px;
-        color: rgba(0, 0, 0, 0.87);
+        color: var(--text-color);
         line-height: 24px;
+        font-weight: 500;
       }
 
       &-content {
         display: block;
         margin: .16rem 0;
         font-size: 13px;
-        color: rgba(0, 0, 0, 0.65);
+        color: var(--text-color3);
         line-height: 20px;
       }
 
@@ -141,12 +144,11 @@
       bottom: 0;
       left: 0;
       width: 100%;
-      text-align: left;
-      padding: 0.12rem 0.24rem;
+      text-align: right;
+      padding: 0.2rem;
       border-radius: 0 0 0.02rem 0.02rem;
       background: white;
-      border-top: 0.01rem solid #e0e0e0;
+      border-top: 0.01rem solid var(--divider);
     }
-
   }
 }

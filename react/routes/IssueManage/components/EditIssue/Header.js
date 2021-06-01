@@ -1,6 +1,6 @@
 import React, { useCallback, useContext } from 'react';
 import { Input, Icon } from 'choerodon-ui';
-import { TextField, Modal } from 'choerodon-ui/pro';
+import { TextField, Modal, Button } from 'choerodon-ui/pro';
 import { observer } from 'mobx-react-lite';
 import { TextEditToggle, TextEditTogglePro } from '@/components';
 import EditIssueContext from './stores';
@@ -51,22 +51,22 @@ function Header({
       >
         {/* caseNum 用例编号 */}
         <div style={{
-          fontSize: 16, fontWeight: 500, color: '#3F51B5', display: 'flex', alignItems: 'center',
+          fontSize: 16, fontWeight: 500, color: 'var(--primary-color)', display: 'flex', alignItems: 'center',
         }}
         >
           <TypeTag data={{ icon: 'test-case', colour: 'rgb(77, 144, 254)' }} style={{ marginRight: 5 }} />
           <span>{caseNum}</span>
         </div>
-        <div
+        <Button
           style={{
-            cursor: 'pointer', fontSize: '13px', display: 'flex', alignItems: 'center', marginLeft: 'auto',
+            marginLeft: 'auto', color: 'var(--primary-color)',
           }}
-          role="none"
           onClick={handleClose}
+          funcType="flat"
+          icon="last_page"
         >
-          <Icon type="last_page" style={{ fontSize: '18px', fontWeight: '500' }} />
-          隐藏详情
-        </div>
+          <span>隐藏详情</span>
+        </Button>
       </div>
       <div style={{ marginBottom: 10, alignItems: 'center', marginTop: 10 }}>
         <TextEditToggle
@@ -87,6 +87,7 @@ function Header({
       <div className={`${prefixCls}-content-header-customNum`}>
         <span className={`${prefixCls}-content-header-customNum-field`}>自定义编号：</span>
         <div
+          className={`${prefixCls}-content-header-customNum-field-value`}
           style={{
             width: '150px',
           }}
@@ -98,6 +99,7 @@ function Header({
             initValue={customNum ? String(customNum) : undefined}
             editor={({ submit }) => (
               <TextField
+                valueChangeAction="input"
                 style={{
                   height: 32,
                 }}

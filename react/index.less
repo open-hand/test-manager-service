@@ -3,6 +3,7 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    display: inline-block;
   }
 
   ul {
@@ -40,7 +41,7 @@
   }
 
   .page-content-header .description > span {
-    color: black;
+    color: var(--text-color);
   }
 
   .c7ntest-icon-in-table {
@@ -73,7 +74,7 @@
     }
 
     .c7n-select-selection__placeholder {
-      color: #3f51b5;
+      color: var(--primary-color);
     }
 
     .c7n-select-selection-selected-value {
@@ -131,7 +132,7 @@
   }
 
   .primary {
-    color: #3F51B5;
+    color: var(--primary-color);
   }
 }
 
@@ -183,16 +184,20 @@
 }
 
 .c7n-agile-table-cell {
-  color: rgba(0, 0, 0, 0.65);
+  color: var(--text-color3);
 }
 
 .c7n-agile-table-cell-click {
   cursor: pointer;
   vertical-align: top;
-  color: #3F51B5;
+  color: var(--primary-color);
 
   &:hover {
-    // color: #3F51B5;
+    // color: var(--primary-color);
     text-decoration: underline;
   }
+}
+
+.action-icon {
+  color: var(--text-color) !important;
 }

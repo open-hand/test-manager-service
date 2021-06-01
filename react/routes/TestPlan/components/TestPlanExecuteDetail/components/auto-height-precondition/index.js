@@ -63,9 +63,9 @@ function AutoHeightPrecondition({ data }) {
   function renderRichText(text, isEllipsis = false) {
     let html = delta2Html(text);
     if (html && html.startsWith('<p>')) {
-      html = `<p>前置条件：${html.slice(3)}`;
+      html = `<p style="color: var(--text-color)">前置条件：${html.slice(3)}`;
     } else {
-      html = `<p>前置条件：</p>${html}`;
+      html = `<p style="color: var(--text-color)">前置条件：</p>${html}`;
     }
     return (
       <div className={`c7n-test-execute-detail-card-title-description-head-content${isEllipsis ? '-ellipsis' : ''}`}>

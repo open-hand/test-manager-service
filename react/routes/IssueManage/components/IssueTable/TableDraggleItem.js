@@ -30,7 +30,7 @@ export default observer((props) => {
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           style={{
-            background: !snapshotinner.isDragging && issue.typeCode !== 'issue_auto_test' && _.find(draggingTableItems, { caseId: issue.caseId }) && 'rgb(235, 242, 249)',
+            background: !snapshotinner.isDragging && issue.typeCode !== 'issue_auto_test' && _.find(draggingTableItems, { caseId: issue.caseId }) && 'rgb(250, 250, 252)',
             position: 'relative',
             ...getStyle(provided.draggableProps.style, snapshotinner),
           }}

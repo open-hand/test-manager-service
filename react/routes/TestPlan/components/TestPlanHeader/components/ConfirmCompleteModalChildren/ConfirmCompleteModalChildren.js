@@ -23,7 +23,7 @@ function ConfirmCompleteModalChildren({ planName, testPlanStore }) {
       });
     });
     return transformedRes;
-  }; 
+  };
 
   const option = {
     tooltip: {
@@ -50,13 +50,13 @@ function ConfirmCompleteModalChildren({ planName, testPlanStore }) {
             shadowOffsetX: 0,
             shadowColor: 'rgba(0, 0, 0, 0.5)',
           },
-          color: data => data.data.color,
+          color: (data) => data.data.color,
         },
         label: {
-          show: false,  
+          show: false,
         },
         labelLine: {
-          show: false,  
+          show: false,
         },
         hoverOffset: 5,
       },
@@ -66,7 +66,7 @@ function ConfirmCompleteModalChildren({ planName, testPlanStore }) {
     <div className="c7ntest-completePlan-confirm-modal-children">
       <div>
         <p style={{ marginBottom: 6, fontSize: 14 }}>{`${planName}测试状态如图所示`}</p>
-        <p style={{ marginBottom: 0, fontSize: 14 }}>确定要结束此次计划</p>
+        <p style={{ marginBottom: 0, fontSize: 14 }}>确定要结束此次计划？</p>
       </div>
       <div>
         <ReactEcharts

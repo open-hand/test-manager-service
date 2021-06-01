@@ -62,7 +62,7 @@ const DefectSelectText = memo(({
       </ul>
     );
   } if (isShowContent) {
-    return <div style={{ width: 100, color: '#3f51b5' }}>{text}</div>;
+    return <div style={{ width: 100, color: 'var(--primary-color)' }}>{text}</div>;
   }
   return '';
 });

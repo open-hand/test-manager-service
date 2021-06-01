@@ -33,7 +33,6 @@ const ExecuteHistoryTable = ({
       </Popover>
     ) : text);
   return (
-
     // 状态
     <Table dataSet={dataSet} queryBar="none">
       <Column name="user" renderer={renderUser} />

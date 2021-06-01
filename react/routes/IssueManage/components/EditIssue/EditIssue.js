@@ -70,18 +70,15 @@ function EditIssue() {
 
     const createLog = {
       email,
-      field: 'IssueNum',
+      field: 'createInitType',
       imageUrl,
       name,
       realName,
       loginName,
       lastUpdateDate: creationDate,
-      // lastUpdatedBy: createdBy,
-      newString: 'caseNum',
-      newValue: 'caseNum',
+      newString: '测试用例',
+      newValue: '测试用例',
     };
-
-    // console.log([...dataLogs, createLog]);
 
     return (
       <DataLogs
