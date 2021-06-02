@@ -384,10 +384,6 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
         }
         Map<Long, List<TestCaseDTO>> folderMap =
                 testCaseList.stream().collect(Collectors.groupingBy(TestCaseDTO::getFolderId));
-        TestProjectInfoDTO testProjectInfo = new TestProjectInfoDTO();
-        testProjectInfo.setProjectId(projectId);
-        testProjectInfo = testProjectInfoMapper.selectOne(testProjectInfo);
-        AtomicLong outsideCount = new AtomicLong(testProjectInfo.getCaseMaxNum());
         for (Map.Entry<Long, List<TestCaseDTO>> entry : folderMap.entrySet()) {
             if (Objects.isNull(oldNewMap.get(entry.getKey()))) {
                 continue;
@@ -397,12 +393,8 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
                 TestCaseRepVO rep = new TestCaseRepVO();
                 rep.setCaseId(caseDTO.getCaseId());
                 return rep;
-            }).collect(Collectors.toList()), outsideCount);
+            }).collect(Collectors.toList()), null);
         }
-        // 修改最大用例数
-        testProjectInfo = testProjectInfoMapper.selectOne(testProjectInfo);
-        testProjectInfo.setCaseMaxNum(outsideCount.get());
-        testProjectInfoMapper.updateByPrimaryKeySelective(testProjectInfo);
     }
 
     private Map<Long, Long> cloneChildrenFolder(TestIssueFolderDTO newFolder, Set<Long> folderIdSet) {
