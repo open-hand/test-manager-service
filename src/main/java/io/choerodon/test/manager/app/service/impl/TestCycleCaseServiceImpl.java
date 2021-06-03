@@ -970,6 +970,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             testCycleCaseDTO.setLastUpdatedBy(testCycleDTO.getLastUpdatedBy());
             testCycleCaseDTO.setSummary(v.getSummary());
             testCycleCaseDTO.setRank(RankUtil.genPre(preRank));
+            testCycleCaseDTO.setCustomNum(v.getCustomNum());
             preRank = testCycleCaseDTO.getRank();
             testCycleCaseDTO.setSource("none");
             testCycleCaseDTO.setPriorityId(v.getPriorityId());
