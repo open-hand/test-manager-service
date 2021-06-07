@@ -11,7 +11,6 @@ import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Param;
 
 import io.choerodon.mybatis.common.BaseMapper;
-import io.choerodon.test.manager.infra.dto.TestCaseLinkDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.infra.dto.TestStatusDTO;
 
@@ -154,4 +153,11 @@ public interface TestCycleCaseMapper extends BaseMapper<TestCycleCaseDTO> {
     List<TestCycleCaseLinkVO> selectTestCycleByCaseAndSprint(@Param("caseIdList") List<Long> caseIdList, @Param("sprintId") Long sprintId);
 
     List<Long> listStatusBySprintIdAndIssueId(@Param("projectId") Long projectId, @Param("issueId")  Long issueId, @Param("sprintId")  Long sprintId);
+
+    /**
+     * 通过循环id批量更新指派人
+     * @param assignUserId 指派人
+     * @param cycleIds 循环id
+     */
+    void batchAssignByCycle(@Param("assignUserId") Long assignUserId, @Param("cycleIds") Set<Long> cycleIds);
 }

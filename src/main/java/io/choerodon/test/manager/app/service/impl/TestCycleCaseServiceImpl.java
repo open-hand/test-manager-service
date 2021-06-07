@@ -1028,13 +1028,10 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         if (!ObjectUtils.isEmpty(cycleId)) {
             cycleIds.addAll(queryCycleIds(cycleId, planId));
         }
-        // 查询文件夹下的的用例
-        List<TestCycleCaseDTO> caseList = testCycleCaseMapper.queryFolderCycleCase(planId, cycleIds, null);
-        if (CollectionUtils.isEmpty(caseList)) {
+        if (CollectionUtils.isEmpty(cycleIds)) {
             return;
         }
-        List<Long> cycleCaseIds = caseList.stream().map(TestCycleCaseDTO::getExecuteId).collect(Collectors.toList());
-        batchAssignCycleCase(projectId, assignUserId, cycleCaseIds);
+        testCycleCaseMapper.batchAssignByCycle(assignUserId, cycleIds);
     }
 
     private void queryUserProjects(Long organizationId, Long projectId, List<Long> projectIds, List<ProjectDTO> projects, Long userId) {
