@@ -208,4 +208,32 @@ public class TestCycleCaseController {
         testCycleCaseAsyncService.asyncBatchDelete(cycleCaseIds, projectId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @ApiOperation("指派文件夹测试用例")
+    @PutMapping("/assign")
+    public ResponseEntity<Void> assignCycleCase(
+            @PathVariable("project_id") Long projectId,
+            @RequestParam(name = "cycle_id")
+            @Encrypt Long cycleId,
+            @RequestParam(name = "assign_user_id")
+            @Encrypt Long assignUserId,
+            @RequestParam(name = "plan_id")
+            @Encrypt Long planId) {
+        testCycleCaseService.assignCaseByCycle(projectId, assignUserId, cycleId, planId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @ApiOperation("取消指派文件夹测试用例")
+    @DeleteMapping("/assign")
+    public ResponseEntity<Void> deleteFolderAssignCase(
+            @PathVariable("project_id") Long projectId,
+            @RequestParam(name = "cycle_id")
+            @Encrypt Long cycleId,
+            @RequestParam(name = "plan_id")
+            @Encrypt Long planId) {
+        testCycleCaseService.assignCaseByCycle(projectId, null, cycleId, planId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

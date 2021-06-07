@@ -935,6 +935,19 @@
          WHERE
           tcc.project_id = #{projectId}
     </select>
+
+    <update id="batchAssignByCycle">
+        UPDATE test_cycle_case
+        SET assigned_to = #{assignUserId}
+        WHERE
+        cycle_id IN
+        <if test="cycleIds != null and cycleIds.size > 0">
+            <foreach item="cycle" index="index" collection="cycleIds"
+                     open="(" separator="," close=")">
+                #{cycle}
+            </foreach>
+        </if>
+    </update>
 </mapper>
 
 

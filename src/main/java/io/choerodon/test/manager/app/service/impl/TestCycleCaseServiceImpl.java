@@ -1022,6 +1022,18 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         return caseVOPageInfo;
     }
 
+    @Override
+    public void assignCaseByCycle(Long projectId, Long assignUserId, Long cycleId, Long planId) {
+        Set<Long> cycleIds = new HashSet<>();
+        if (!ObjectUtils.isEmpty(cycleId)) {
+            cycleIds.addAll(queryCycleIds(cycleId, planId));
+        }
+        if (CollectionUtils.isEmpty(cycleIds)) {
+            return;
+        }
+        testCycleCaseMapper.batchAssignByCycle(assignUserId, cycleIds);
+    }
+
     private void queryUserProjects(Long organizationId, Long projectId, List<Long> projectIds, List<ProjectDTO> projects, Long userId) {
         if (ObjectUtils.isEmpty(projectId)) {
             List<ProjectDTO> projectVOS = baseFeignClient.queryOrgProjects(organizationId,userId).getBody();

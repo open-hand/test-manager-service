@@ -141,4 +141,13 @@ public interface TestCycleCaseService {
     void batchUpdateCycleCasePriority(Long organizationId, Long priorityId, Long changePriorityId, Long userId, List<Long> projectIds);
 
     Page<TestFolderCycleCaseVO> pagedQueryMyExecutionalCase(Long organizationId, Long projectId, PageRequest pageRequest);
+
+    /**
+     * 批量指派文件夹中的用例
+     * @param projectId 项目id
+     * @param assignUserId 指派人
+     * @param cycleId 循环id
+     * @param planId 计划id
+     */
+    void assignCaseByCycle(Long projectId, Long assignUserId, Long cycleId, Long planId);
 }
