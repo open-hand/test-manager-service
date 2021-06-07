@@ -100,6 +100,8 @@ public class TestFolderCycleCaseVO {
 
     private String customNum;
 
+    private String cycleName;
+
     public String getCaseNum() {
         return caseNum;
     }
@@ -347,5 +349,13 @@ public class TestFolderCycleCaseVO {
 
     public void setCustomNum(String customNum) {
         this.customNum = customNum;
+    }
+
+    public String getCycleName() {
+        return cycleName;
+    }
+
+    public void setCycleName(String cycleName) {
+        this.cycleName = cycleName;
     }
 }
