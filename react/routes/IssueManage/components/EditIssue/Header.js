@@ -1,5 +1,5 @@
 import React, { useCallback, useContext } from 'react';
-import { Input, Icon } from 'choerodon-ui';
+import { Input, Tooltip, Icon } from 'choerodon-ui';
 import { TextField, Modal, Button } from 'choerodon-ui/pro';
 import { observer } from 'mobx-react-lite';
 import { TextEditToggle, TextEditTogglePro } from '@/components';
@@ -106,10 +106,11 @@ function Header({
                 maxLength={16}
                 autoFocus
                 clearButton
-                pattern={/^(([A-Za-z]+)|([0-9]+)|([A-Za-z]+-[0-9]+))$/}
+                help={(<Tooltip title="编码只能由大小写字母、数字、&quot;-&quot;组成，不能以&quot;-&quot;开头或结尾，且不能连续出现两个&quot;-&quot;。"><Icon type="help" /></Tooltip>)}
+                pattern={/^([A-Za-z0-9]+(-[A-Za-z0-9]+)*)$/}
                 validationRenderer={(result) => {
                   if (result.ruleName === 'patternMismatch') {
-                    return <span>编码只能由大小写字母、数字、&quot;-&quot;组成，如有字母，须以字母开头，不能以&quot;-&quot;结尾</span>;
+                    return <span>编码只能由大小写字母、数字、&quot;-&quot;组成，不能以&quot;-&quot;开头或结尾，且不能连续出现两个&quot;-&quot;。</span>;
                   }
                   return result.validationMessage;
                 }}

@@ -188,7 +188,6 @@ function ExecuteDetailSide(props) {
 
           <div className="c7ntest-ExecuteDetailSide" ref={container}>
             <div className="c7ntest-ExecuteDetailSide-divider" />
-
             <div className="c7ntest-content">
               <div className="c7ntest-content-top">
                 <div className="c7ntest-between-center">

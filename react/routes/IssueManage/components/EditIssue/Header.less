@@ -6,16 +6,23 @@
     &-field {
       white-space: nowrap;
       &-value {
+        position: relative;
         & > div > div > div {
           display: flex;
           align-items: center;
           position: relative;
           .c7n-pro-input-length-info {
             position: absolute;
-            right: -50px;
+            right: -75px;
           }
+        }
+        .c7n-pro-field-help {
+          position: absolute;
+          right: -30px ;
+          top: 8px;
         }
       }
     }
+    
   }
 }
