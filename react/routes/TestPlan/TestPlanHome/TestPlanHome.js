@@ -248,6 +248,10 @@ function TestPlanHome({ history }) {
     });
   };
 
+  const handleSkipToFolder = (execute) => {
+    // 当前选中的planId拼上文件夹id
+    testPlanStore.resetCurrentCycleById(`${testPlanStore.getCurrentPlanId}%${execute.cycleId}`);
+  };
   const handleSearchAssign = (value) => {
     const { filter } = testPlanStore;
     filter.assignUser = value || undefined;
@@ -368,6 +372,7 @@ function TestPlanHome({ history }) {
                           onDeleteExecute={handleDeleteExecute}
                           onQuickPass={handleQuickPassOrFail}
                           onQuickFail={handleQuickPassOrFail}
+                          onSkipToFolder={handleSkipToFolder}
                           onOpenUpdateRemind={handleOpenUpdateRemind}
                           onTableSummaryClick={handleTableSummaryClick}
                           onSearchAssign={handleSearchAssign}

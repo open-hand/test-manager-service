@@ -32,6 +32,7 @@ const propTypes = {
   onDeleteExecute: PropTypes.func.isRequired,
   onQuickPass: PropTypes.func.isRequired,
   onQuickFail: PropTypes.func.isRequired,
+  onSkipToFolder: PropTypes.func.isRequired,
   onOpenUpdateRemind: PropTypes.func.isRequired,
 };
 const TestPlanTable = observer(({
@@ -41,6 +42,7 @@ const TestPlanTable = observer(({
   onDeleteExecute,
   onQuickPass,
   onQuickFail,
+  onSkipToFolder,
   onOpenUpdateRemind,
   onSearchAssign,
   onOnlyMeCheckedChange,
@@ -224,7 +226,7 @@ const TestPlanTable = observer(({
     dataIndex: 'customNum',
     key: 'customNum',
     flex: 1.5,
-    width: 100,
+    width: 90,
     filters: [],
     render: (customNum) => renderIssueNum(customNum),
   }, {
@@ -362,11 +364,14 @@ const TestPlanTable = observer(({
     columns.push({
       title: '',
       key: 'action',
-      width: 90,
+      width: 120,
       render: (text, record) => (
         record.projectId !== 0
         && (
           <div style={{ display: 'flex' }}>
+            <Tooltip title="定位所在文件夹">
+              <Button shape="circle" funcType="flat" icon="my_location" onClick={onSkipToFolder.bind(this, record, true)} />
+            </Tooltip>
             <Tooltip title={<FormattedMessage id="execute_quickPass" />}>
               <Button shape="circle" funcType="flat" icon="check_circle" onClick={onQuickPass.bind(this, record, true)} />
             </Tooltip>

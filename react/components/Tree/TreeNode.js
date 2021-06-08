@@ -1,4 +1,6 @@
-import React, { Fragment, useCallback } from 'react';
+import React, {
+  Fragment, useCallback, useEffect, useRef,
+} from 'react';
 import classNames from 'classnames';
 import {
   Icon, Button, TextField,
@@ -48,6 +50,12 @@ function TreeNode(props) {
   const {
     provided, onSelect, path, item, onExpand, onCollapse, onMenuClick, onCreate, search, onEdit, enableAction, menuItems, enableAddFolder, getFolderIcon,
   } = props;
+  const ref = useRef();
+  useEffect(() => {
+    if (ref.current && item.selected) {
+      ref.current.scrollIntoViewIfNeeded();
+    }
+  });
   const getIcon = useCallback(() => {
     const expandIcon = (
       <Icon
@@ -150,7 +158,10 @@ function TreeNode(props) {
   );
   return (
     <div
-      ref={provided.innerRef}
+      ref={(instance) => {
+        provided.innerRef(instance);
+        ref.current = instance;
+      }}
       {...provided.draggableProps}
       {...provided.dragHandleProps}
     >

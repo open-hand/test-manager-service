@@ -72,18 +72,17 @@ class TestPlanTreeStore {
     }
     if (id.split('%').length === 1) {
       return [id, ''];
-    } else if (id.split('%').length === 2) {
+    } if (id.split('%').length === 2) {
       const [planId, folderId] = id.split('%');
       return [planId, folderId];
-    } else {
-      return [id, ''];
     }
+    return [id, ''];
   }
 
   isPlan(id) {
     if (id.split('%').length === 1) {
       return true;
-    } else if (id && id.split('%').length === 2) {
+    } if (id && id.split('%').length === 2) {
       return false;
     }
     return false;
@@ -212,6 +211,14 @@ class TestPlanTreeStore {
     const data = this.treeFolderMaps.get(id);
     if (data) {
       this.setCurrentCycle(data);
+    }
+  }
+
+  @action resetCurrentCycleById(id) {
+    const data = this.treeFolderMaps.get(id);
+    if (data) {
+      // 这里克隆一下，这样每次都会认为是新选中的，保证自动展开生效
+      this.setCurrentCycle(toJS(data));
     }
   }
 
