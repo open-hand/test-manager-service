@@ -176,3 +176,11 @@ export function batchRemove(executeIds) {
     data: executeIds,
   });
 }
+
+export function batchAssignFolder(data) {
+  return request.put(`/test/v1/projects/${getProjectId()}/cycle/case/assign`, {}, { params: data });
+}
+
+export function batchCancelAssignFolder(data) {
+  return request.delete(`/test/v1/projects/${getProjectId()}/cycle/case/assign`, { params: data });
+}
