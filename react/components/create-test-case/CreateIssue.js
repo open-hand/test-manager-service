@@ -109,7 +109,7 @@ function CreateIssue(props) {
   return (
     <>
       <Form dataSet={createDataset} className={`test-create-issue-form ${visibleDetail ? '' : 'test-create-issue-form-hidden'}`}>
-        <TextField name="summary" maxLength={44} valueChangeAction="input" />
+        <TextField name="summary" maxLength={44} valueChangeAction="input" placeholder="根据功能编写测试用例，例如：用户维护配送信息" />
         <SelectTree name="folder" parentDataSet={createDataset} defaultValue={defaultFolderValue ? defaultFolderValue.id : undefined} />
         <Select name="priorityId" />
         <TextField
