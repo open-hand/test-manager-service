@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
 import {
   Button, Dropdown, Menu, Icon,
@@ -8,7 +9,7 @@ import './TableDropMenu.less';
 /**
  * 表格中的下拉菜单
  * 4个参数
- * menu 菜单 Menu 组件构成的菜单项 
+ * menu 菜单 Menu 组件构成的菜单项
  *      无传入则代表无下来菜单，仅渲染text内容
  * text 该列需渲染的文字部分
  * onClickEdit 点击文件编辑事件
@@ -28,6 +29,7 @@ const TableDropMenu = (props) => {
   // 渲染文本
   const renderText = () => {
     const textA = (
+      // eslint-disable-next-line jsx-a11y/interactive-supports-focus
       <a role="button" onClick={onClickEdit} onKeyDown={null}>
         {text}
       </a>
@@ -37,7 +39,7 @@ const TableDropMenu = (props) => {
   return (
     <div
       style={{
-        display: 'flex', justifyContent: 'space-between', lineHeight: '24px', cursor: 'pointer', width: '100%', 
+        display: 'flex', justifyContent: 'space-between', lineHeight: '24px', cursor: 'pointer', width: '100%',
       }}
       className={className || 'table-drop-menu-base'}
     >
@@ -53,14 +55,13 @@ const TableDropMenu = (props) => {
               {renderText()}
             </Permission>
           )
-          : renderText()
-        }
+          : renderText()}
       </span>
       {isHasMenu && menu
         ? (
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <Dropdown overlay={menu} trigger={['click']}>
-              <Icon shape="circle" type="more_vert" />
+              <Icon shape="circle" type="more_vert" style={{ color: 'var(--primary-color)' }} />
             </Dropdown>
           </div>
         ) : null}
