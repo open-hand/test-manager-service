@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { Upload, Button } from 'choerodon-ui';
+import { Upload } from 'choerodon-ui';
+import { Button } from 'choerodon-ui/pro';
 import { randomWord } from '@/common/utils';
 import './UploadButton.less';
 
@@ -22,7 +23,7 @@ const UploadButton = (props) => {
       {...props}
       className={`c7nagile-upload-button ${className}`}
     >
-      <Button funcType="raised" type="primary" style={{ color: 'white' }} icon="file_upload" shape="circle" />
+      <Button icon="backup-o">上传附件</Button>
     </Upload>
   );
 };
