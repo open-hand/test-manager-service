@@ -85,6 +85,8 @@ class PriorityList extends Component {
 
   handleChooseMenu = (key, record) => {
     if (key === 'edit') {
+      this.handleEdit(record.id);
+    } else if (key === 'enabled') {
       this.handleChangeEnable(record);
     } else if (key === 'del') {
       this.handleDelete(record);
@@ -102,10 +104,15 @@ class PriorityList extends Component {
     }
     const menu = (
       <Menu onClick={(item) => this.handleChooseMenu(item.key, record)}>
+        <Menu.Item key="edit">
+          <span>
+            编辑
+          </span>
+        </Menu.Item>
         {record.enableFlag && enableList && enableList.length === 1
           ? null
           : (
-            <Menu.Item key="edit">
+            <Menu.Item key="enabled">
               <span>
                 <FormattedMessage id={record.enableFlag ? 'disable' : 'enable'} />
               </span>
@@ -125,7 +132,6 @@ class PriorityList extends Component {
         menu={menu}
         text={name}
         isHasMenu={!(record.enableFlag && enableList && enableList.length === 1)}
-        onClickEdit={this.handleEdit.bind(this, record.id)}
       />
     );
   };

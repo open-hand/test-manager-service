@@ -77,6 +77,7 @@ export const OpenBatchModal = ({ testPlanStore }: Props) => {
   window.modal = Modal.open({
     key: 'batchModal',
     className: styles.batchModal,
+    zIndex: 999,
     header: <ObserverHeader
       close={() => {
         modal?.close();
