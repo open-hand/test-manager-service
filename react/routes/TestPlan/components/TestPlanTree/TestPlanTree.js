@@ -182,7 +182,7 @@ class TestPlanTree extends Component {
           const [planId, cycleId] = String(nodeItem.id).split('%');
           let handleOk = () => { };
           const [currentPlanId, currentCycleId] = testPlanStore.getId();
-          if (currentPlanId === planId && currentCycleId === cycleId && testPlanStore.mainActiveTab !== 'testPlanSchedule') {
+          if (currentPlanId === planId && (currentCycleId === cycleId || currentCycleId === '') && testPlanStore.mainActiveTab !== 'testPlanSchedule') {
             handleOk = () => testPlanStore.loadRightData();
           }
           openBatchAssignModal({ planId, cycleId }, handleOk);
