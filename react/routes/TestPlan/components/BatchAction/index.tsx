@@ -6,6 +6,7 @@ import Modal from '@choerodon/agile/lib/routes/Issue/components/Modal';
 import openBatchDeleteModal from './BatchDeleteConfirm';
 import BatchModal from './BatchModal';
 import { TestPlanStore } from '../../stores/TestPlanStore';
+import styles from './index.less';
 
 interface Props {
   close: () => void,
@@ -75,6 +76,7 @@ export const OpenBatchModal = ({ testPlanStore }: Props) => {
 
   window.modal = Modal.open({
     key: 'batchModal',
+    className: styles.batchModal,
     header: <ObserverHeader
       close={() => {
         modal?.close();

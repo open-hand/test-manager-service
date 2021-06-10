@@ -1,7 +1,7 @@
 import React from 'react';
 import { Choerodon } from '@choerodon/boot';
 import {
-  Tooltip, Menu, Dropdown, Button,
+  Tooltip, Menu, Dropdown, Icon,
 } from 'choerodon-ui';
 import { Modal } from 'choerodon-ui/pro';
 import { FormattedMessage } from 'react-intl';
@@ -10,8 +10,8 @@ import './tags.less';
 
 export function renderIssueNum(caseNum) {
   return (
-    <Tooltip mouseEnterDelay={0.5} title={<FormattedMessage id="issue_issueNum" values={{ num: caseNum }} />}>
-      <span className="c7ntest-text-dot" style={{ wordBreak: 'break-all' }}>
+    <Tooltip title={<FormattedMessage id="issue_issueNum" values={{ num: caseNum }} />}>
+      <span className="c7ntest-text-dot" style={{ wordBreak: 'break-all', width: '100%' }}>
         {caseNum}
       </span>
     </Tooltip>
@@ -23,7 +23,7 @@ export function renderIssueNum(caseNum) {
  * @param {*} history
  * @param {*} reLoadTable
  */
-export function renderAction(record, history, reLoadTable) {
+export function renderAction(record, history, reLoadTable, onEditClick) {
   const { caseId, caseNum } = record;
   const handleDeleteIssue = () => {
     Modal.open({
@@ -42,6 +42,10 @@ export function renderAction(record, history, reLoadTable) {
   function handleItemClick(e) {
     // const { issueInfo, enterLoad, leaveLoad, history } = this.props;
     switch (e.key) {
+      case 'edit': {
+        onEditClick(record);
+        break;
+      }
       case 'copy': {
         copyIssues([{
           caseId: record.caseId,
@@ -64,6 +68,9 @@ export function renderAction(record, history, reLoadTable) {
 
   const menu = (
     <Menu onClick={handleItemClick}>
+      <Menu.Item key="edit">
+        编辑
+      </Menu.Item>
       <Menu.Item key="copy">
         复制用例
       </Menu.Item>
@@ -74,7 +81,7 @@ export function renderAction(record, history, reLoadTable) {
   );
   return (
     <Dropdown overlay={menu} trigger={['click']} getPopupContainer={(trigger) => trigger.parentNode}>
-      <Button shape="circle" icon="more_vert" />
+      <Icon type="more_vert" style={{ color: 'var(--primary-color)', cursor: 'pointer' }} />
     </Dropdown>
   );
 }
@@ -90,9 +97,6 @@ export function renderSummary(summary, record, onClick) {
           }}
         >
           <span
-            role="none"
-            onClick={() => onClick(record)}
-            className="c7n-agile-table-cell-click"
             style={{
               overflow: 'hidden',
               textOverflow: 'ellipsis',
