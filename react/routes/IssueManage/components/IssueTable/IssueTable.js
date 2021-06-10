@@ -307,7 +307,7 @@ export default observer((props) => {
     },
     {
       key: 'action',
-      render: (text, record) => renderAction(record, history, reLoadTable),
+      render: (text, record) => renderAction(record, history, reLoadTable, props.onClick),
       width: '0.6rem',
     },
 

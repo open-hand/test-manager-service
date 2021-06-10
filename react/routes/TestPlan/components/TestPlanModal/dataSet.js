@@ -2,7 +2,7 @@ import { getProjectId } from '@/common/utils';
 import { toJS } from 'mobx';
 import { checkPlanName } from '@/api/TestPlanApi';
 
-export default function DataSetFactory({ initValue = {} }, mode) {
+export default function DataSetFactory({ initValue = {} }, mode, dataSetUpdate = () => {}) {
   return {
     autoCreate: false,
     fields: [
@@ -68,5 +68,8 @@ export default function DataSetFactory({ initValue = {} }, mode) {
         name: 'autoSync', type: 'boolean', label: '自动同步', defaultValue: true,
       },
     ],
+    events: {
+      update: dataSetUpdate,
+    },
   };
 }
