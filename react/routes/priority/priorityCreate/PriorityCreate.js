@@ -165,6 +165,7 @@ class PriorityCreate extends Component {
                   label={<FormattedMessage id="priority.des" />}
                   placeholder={intl.formatMessage({ id: 'priority.create.des.placeholder' })}
                   maxLength={45}
+                  autosize
                 />,
               )
             }
