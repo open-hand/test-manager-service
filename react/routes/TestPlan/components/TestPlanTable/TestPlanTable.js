@@ -113,7 +113,10 @@ const TestPlanTable = observer(({
           }}
           className="c7n-agile-table-cell-click"
           role="none"
-          onClick={onTableSummaryClick.bind(this, record)}
+          onClick={() => {
+            closeBatchModal({ testPlanStore });
+            onTableSummaryClick(record);
+          }}
         >
           {text}
         </span>

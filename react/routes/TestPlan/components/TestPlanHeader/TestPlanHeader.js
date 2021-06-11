@@ -14,6 +14,7 @@ import { openCreatePlan, openEditPlan } from '../TestPlanModal';
 import ConfirmCompleteModalChildren from './components/ConfirmCompleteModalChildren';
 import Store from '../../stores';
 import './TestPlanHeader.less';
+import { closeBatchModal } from '../BatchAction';
 
 const { AppState } = stores;
 const confirmCompletePlanModalKey = Modal.key();
@@ -113,8 +114,9 @@ function TestPlanHeader() {
     });
   }, [getCurrentPlanId, handlePlanEdit]);
   const handleReportClick = useCallback(() => {
+    closeBatchModal({ testPlanStore });
     history.push(`/testManager/TestPlan/report/${getCurrentPlanId}?${queryStr}`);
-  }, [getCurrentPlanId, history, queryStr]);
+  }, [getCurrentPlanId, history, queryStr, testPlanStore]);
 
   const handleOpenCreatePlan = useCallback(() => {
     openCreatePlan({
