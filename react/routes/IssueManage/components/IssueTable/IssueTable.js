@@ -307,7 +307,7 @@ export default observer((props) => {
     },
     {
       key: 'action',
-      render: (text, record) => renderAction(record, history, reLoadTable, props.onClick),
+      render: (text, record) => renderAction(record, history, reLoadTable),
       width: '0.6rem',
     },
 
@@ -341,7 +341,7 @@ export default observer((props) => {
       title: '创建人',
       dataIndex: 'createUser',
       key: 'createUser',
-      render: (createUser) => createUser && <UserHead user={createUser} />,
+      render: (createUser) => createUser && <UserHead user={createUser} style={{ display: 'flex' }} />,
       width: '1rem',
     },
     {
@@ -355,7 +355,7 @@ export default observer((props) => {
       title: '更新人',
       dataIndex: 'lastUpdateUser',
       key: 'lastUpdateUser',
-      render: (lastUpdateUser) => lastUpdateUser && <UserHead user={lastUpdateUser} />,
+      render: (lastUpdateUser) => lastUpdateUser && <UserHead user={lastUpdateUser} style={{ display: 'flex' }} />,
       width: '1rem',
     },
     {

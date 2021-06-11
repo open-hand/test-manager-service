@@ -277,7 +277,7 @@ class IssueManage extends Component {
                 width: 'auto',
               }}
             >
-              <div>
+              <div style={{ height: '100%' }}>
                 {
                 noFolder ? (
                   <Empty
@@ -292,10 +292,11 @@ class IssueManage extends Component {
                     className="c7ntest-content-issue"
                     style={{
                       flex: 1,
-                      display: 'block',
-                      overflowY: 'auto',
-                      overflowX: 'hidden',
+                      overflow: 'hidden',
                       padding: '0 20px',
+                      height: '100%',
+                      display: 'flex',
+                      flexDirection: 'column',
                     }}
                   >
                     <div className="c7ntest-content-issueFolderName">
