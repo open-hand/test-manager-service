@@ -78,7 +78,7 @@ const CaseListItem = ({
                 cancelText="取消"
                 okType="danger"
               >
-                <Icon type="delete_forever pointer" />
+                <Icon type="delete_sweep-o pointer" />
               </Popconfirm>
             </div>
           )
