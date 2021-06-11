@@ -91,10 +91,10 @@ class CreateStatus extends Component {
           // onCancel={onCancel}
           // confirmLoading={loading}
           footer={[
+            <Button key="back" funcType="raised" onClick={onCancel}><FormattedMessage id="cancel" /></Button>,
             <Button key="submit" color="primary" funcType="raised" loading={loading} onClick={this.handleOk}>
               <FormattedMessage id="save" />
             </Button>,
-            <Button key="back" funcType="raised" onClick={onCancel}><FormattedMessage id="cancel" /></Button>,
           ]}
           width={380}
         >

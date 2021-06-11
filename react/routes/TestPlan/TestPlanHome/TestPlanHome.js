@@ -1,17 +1,17 @@
 /* eslint-disable react/jsx-no-bind */
 import React, {
-  useCallback, useContext, useEffect,
+  useContext, useEffect,
 } from 'react';
 import { observer } from 'mobx-react-lite';
 import { withRouter } from 'react-router-dom';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import {
   Page, Header, Content, Breadcrumb, Choerodon, stores,
 } from '@choerodon/boot';
-import { HeaderButtons } from '@choerodon/master';
 import { Tabs, Modal, Button } from 'choerodon-ui/pro';
 
 import { localPageCacheStore } from '@choerodon/agile/lib/stores/common/LocalPageCacheStore';
+import { EmptyPage } from '@choerodon/components';
 import {
   deleteExecute, updateExecute, comfirmUpdate, ignoreUpdate,
 } from '../../../api/TestPlanApi';
@@ -22,9 +22,7 @@ import UpdateRemindModalChildren from '../components/UpdateRemindModalChildren';
 import TestPlanTree from '../components/TestPlanTree';
 import TestPlanTable from '../components/TestPlanTable';
 import TestPlanHeader from '../components/TestPlanHeader';
-import { openCreatePlan } from '../components/TestPlanModal';
 import EventCalendar from '../components/EventCalendar';
-import Empty from '../../../components/Empty';
 import testCaseEmpty from './testCaseEmpty.svg';
 
 import Store from '../stores';
@@ -34,7 +32,6 @@ import { getDragRank, executeDetailLink } from '../../../common/utils';
 const { AppState } = stores;
 
 const { TabPane } = Tabs;
-const { confirm } = Modal;
 const updateRemindModal = Modal.key();
 let updateModal;
 
@@ -335,10 +332,9 @@ function TestPlanHome({ history }) {
           </div>
           {
             noSelected ? (
-              <Empty
+              <EmptyPage
                 loading={loading}
-                pic={testCaseEmpty}
-                title="暂无计划"
+                image={testCaseEmpty}
                 description={description}
               />
             ) : (
