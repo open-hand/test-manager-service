@@ -113,12 +113,12 @@ const LinkIssueModal: React.FC<Props> = (props) => {
       <Table
         dataSet={dataSet}
         queryBar={() => (
-          <Form dataSet={queryDataSet} columns={5}>
-            <TextField name="content" prefix={<Icon type="search" />} />
-            <SelectStatus name="status" request={() => statusApi.loadByProject('agile')} />
-            <SelectPriority name="priority" />
-            <SelectUser name="assignee" />
-            <SelectSprint name="sprint" />
+          <Form dataSet={queryDataSet} columns={6}>
+            <TextField name="content" prefix={<Icon type="search" />} colSpan={2} />
+            <SelectStatus name="status" request={() => statusApi.loadByProject('agile')} dropdownMatchSelectWidth={false} />
+            <SelectPriority name="priority" dropdownMatchSelectWidth={false} />
+            <SelectUser name="assignee" dropdownMatchSelectWidth={false} />
+            <SelectSprint name="sprint" dropdownMatchSelectWidth={false} />
           </Form>
         )}
       >
