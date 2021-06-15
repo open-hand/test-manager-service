@@ -1,7 +1,7 @@
 // @ts-nocheck
 import React, { useCallback } from 'react';
 import { observer } from 'mobx-react-lite';
-import { Button } from 'choerodon-ui';
+import { Button } from 'choerodon-ui/pro';
 import Modal from '@choerodon/agile/lib/routes/Issue/components/Modal';
 import openBatchDeleteModal from './BatchDeleteConfirm';
 import BatchModal from './BatchModal';
@@ -44,6 +44,7 @@ const Header: React.FC<Props> = ({
             icon="edit-o"
             style={{ color: 'white', marginRight: 6 }}
             onClick={handleClickAssign}
+            className={styles.batch_btn}
           >
             批量指派
           </Button>
@@ -51,6 +52,7 @@ const Header: React.FC<Props> = ({
             icon="delete_forever"
             style={{ color: 'white', marginRight: 18 }}
             onClick={onClickDelete}
+            className={styles.batch_btn}
           >
             批量移除
           </Button>
