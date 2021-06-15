@@ -107,8 +107,8 @@ export const OpenBatchModal = ({ testPlanStore }: Props) => {
 };
 
 export const closeBatchModal = ({ testPlanStore }) => {
-  if (modal) {
-    modal?.close();
+  if (window.modal) {
+    window.modal?.close();
     testPlanStore.checkIdMap.clear();
     testPlanStore.setBatchAction(undefined);
   }
