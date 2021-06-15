@@ -28,6 +28,7 @@ import testCaseEmpty from './testCaseEmpty.svg';
 import Store from '../stores';
 import './TestPlanHome.less';
 import { getDragRank, executeDetailLink } from '../../../common/utils';
+import { closeBatchModal } from '../components/BatchAction';
 
 const { AppState } = stores;
 
@@ -297,6 +298,9 @@ function TestPlanHome({ history }) {
       }
     }
     testPlanStore.loadAllData();
+    return () => {
+      closeBatchModal({ testPlanStore });
+    };
   }, [testPlanStore]);
   const noSelected = !currentCycle.id;
   let description;
