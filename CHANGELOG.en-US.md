@@ -2,6 +2,26 @@
 
 All notable changes to choerodon-front-agile will be documented in this file.
 
+## [1.0.0] - 2021-06-18
+
+### Added
+
+- Test execution supports locating the folder.
+- Batch allocation of test executors by folder.
+
+### Changed
+
+- Optimize test plan progress display.
+- User defined number is supported when creating use cases.
+- User defined numbering rules for optimized use cases.
+
+### Fixed
+
+- Fix the problem that the selection box of associated problems is misplaced when creating defects in the test plan.
+- Fix the problem that the operator displays garbled code when creating defects in the test plan.
+
+
+
 ## [0.25.0] - 2021-04-09
 
 ### Added
