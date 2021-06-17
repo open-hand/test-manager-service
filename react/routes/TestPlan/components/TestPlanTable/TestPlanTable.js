@@ -419,6 +419,7 @@ const TestPlanTable = observer(({
               <SelectUser
                 flat
                 self={false}
+                clearButton
                 placeholder="计划执行人"
                 onChange={onSearchAssign}
                 value={isSelf ? undefined : testPlanStore.filter.assignUser}
