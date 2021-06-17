@@ -34,19 +34,19 @@ build front:
       - /^.*hotfix.*$/
       - /^.*release.*$/
 
-tag front:
-  stage: build
-  script:
-    - npm config set "//${NPM_REPO}:_authToken" "${NPM_TOKEN}"
-    - npm config set "//${NPM_REGISTRY}:_authToken" "${NPM_TOKEN}"
-    - npm config set always-auth true
-    - yarn install --registry "https://${NPM_REPO}" --sass-binary-site=http://npm.taobao.org/mirrors/node-sass
-    - chmod -R 755 node_modules
-    - npm run compile
-    - npm publish --registry "https://${NPM_REGISTRY}"
-  only:
-    refs:
-      - tags
+#tag front:
+#  stage: build
+#  script:
+#    - npm config set "//${NPM_REPO}:_authToken" "${NPM_TOKEN}"
+#    - npm config set "//${NPM_REGISTRY}:_authToken" "${NPM_TOKEN}"
+#    - npm config set always-auth true
+#    - yarn install --registry "https://${NPM_REPO}" --sass-binary-site=http://npm.taobao.org/mirrors/node-sass
+#    - chmod -R 755 node_modules
+#    - npm run compile
+#    - npm publish --registry "https://${NPM_REGISTRY}"
+#  only:
+#    refs:
+#      - tags
 
 build backend:
   stage: build
