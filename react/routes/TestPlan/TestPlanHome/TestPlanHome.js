@@ -254,6 +254,7 @@ function TestPlanHome({ history }) {
     const { filter } = testPlanStore;
     filter.assignUser = value || undefined;
     testPlanStore.setFilter(filter);
+    testPlanStore.setExecutePagination({ current: 1, pageSize: 20 });
     testPlanStore.loadExecutes();
   };
   const handleOnlyMeCheckedChange = (e) => {
@@ -265,6 +266,7 @@ function TestPlanHome({ history }) {
       filter.assignUser = undefined;
     }
     testPlanStore.setFilter(filter);
+    testPlanStore.setExecutePagination({ current: 1, pageSize: 20 });
     testPlanStore.loadExecutes();
   };
 
