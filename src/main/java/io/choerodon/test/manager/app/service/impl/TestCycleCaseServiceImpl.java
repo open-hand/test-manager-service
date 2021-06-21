@@ -1001,7 +1001,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
     @Override
-    public Page<TestFolderCycleCaseVO> pagedQueryMyExecutionalCase(Long organizationId, Long projectId, PageRequest pageRequest) {
+    public Page<TestFolderCycleCaseVO> pagedQueryMyExecutionalCase(Long organizationId, Long projectId, PageRequest pageRequest, CaseSearchVO caseSearchVO) {
         if (ObjectUtils.isEmpty(organizationId)) {
             throw new CommonException("error.organizationId.is.null");
         }
@@ -1016,7 +1016,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
         Map<Long, ProjectDTO> projectVOMap = projects.stream().collect(Collectors.toMap(ProjectDTO::getId, Function.identity()));
         Page<TestFolderCycleCaseVO> caseVOPageInfo = PageHelper.doPageAndSort(pageRequest,() ->
-                testCycleCaseMapper.pagedQueryMyExecutionalCase(userId, projectIds, organizationId));
+                testCycleCaseMapper.pagedQueryMyExecutionalCase(userId, projectIds, organizationId, caseSearchVO));
         caseVOPageInfo.getContent().forEach(v -> v.setProjectDTO(projectVOMap.get(v.getProjectId())));
 
         return caseVOPageInfo;

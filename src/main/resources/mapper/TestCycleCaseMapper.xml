@@ -850,6 +850,10 @@
             <foreach collection="projectIds" item="projectId" open="(" separator="," close=")">
                 #{projectId}
             </foreach>
+            <include refid="sqlParam"/>
+            <if test="searchDTO != null and searchDTO.searchArgs != null and searchDTO.searchArgs.priorityId != null">
+                AND tcc.priority_id = #{searchDTO.searchArgs.priorityId}
+            </if>
             AND organization_id = #{organizationId}
             AND tp.status_code = 'doing'
         ORDER BY

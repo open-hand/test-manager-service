@@ -4,6 +4,7 @@ import io.choerodon.core.domain.Page;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.swagger.annotation.Permission;
+import io.choerodon.test.manager.api.vo.CaseSearchVO;
 import io.choerodon.test.manager.api.vo.TestFolderCycleCaseVO;
 import io.choerodon.test.manager.app.service.TestCycleCaseService;
 import io.swagger.annotations.ApiOperation;
@@ -28,7 +29,8 @@ public class TestWorkBenchController {
     public ResponseEntity<Page<TestFolderCycleCaseVO>> pagedQueryMyExecutionalCase(@ApiParam(value = "组织id", required = true)
                                                                                    @PathVariable(name = "organization_id") Long organizationId,
                                                                                    @RequestParam(required = false) Long projectId,
-                                                                                   PageRequest pageRequest) {
-        return ResponseEntity.ok(testCycleCaseService.pagedQueryMyExecutionalCase(organizationId, projectId, pageRequest));
+                                                                                   PageRequest pageRequest,
+                                                                                   @RequestBody(required = false) CaseSearchVO caseSearchVO) {
+        return ResponseEntity.ok(testCycleCaseService.pagedQueryMyExecutionalCase(organizationId, projectId, pageRequest, caseSearchVO));
     }
 }
