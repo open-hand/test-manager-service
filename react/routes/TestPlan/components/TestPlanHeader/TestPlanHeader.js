@@ -14,6 +14,7 @@ import { openCreatePlan, openEditPlan } from '../TestPlanModal';
 import ConfirmCompleteModalChildren from './components/ConfirmCompleteModalChildren';
 import Store from '../../stores';
 import './TestPlanHeader.less';
+import { closeBatchModal } from '../BatchAction';
 
 const { AppState } = stores;
 const confirmCompletePlanModalKey = Modal.key();
@@ -113,8 +114,9 @@ function TestPlanHeader() {
     });
   }, [getCurrentPlanId, handlePlanEdit]);
   const handleReportClick = useCallback(() => {
+    closeBatchModal({ testPlanStore });
     history.push(`/testManager/TestPlan/report/${getCurrentPlanId}?${queryStr}`);
-  }, [getCurrentPlanId, history, queryStr]);
+  }, [getCurrentPlanId, history, queryStr, testPlanStore]);
 
   const handleOpenCreatePlan = useCallback(() => {
     openCreatePlan({
@@ -139,22 +141,22 @@ function TestPlanHeader() {
       handler: handleOpenCreatePlan,
     }, {
       name: intl.formatMessage({ id: 'testPlan_editPlan' }),
-      display: testPlanStatus !== 'done' && getCurrentPlanId,
+      display: Boolean(testPlanStatus !== 'done' && getCurrentPlanId),
       icon: 'edit-o',
       handler: handleOpenEditPlan,
     }, {
       name: intl.formatMessage({ id: 'testPlan_manualTest' }),
-      display: getCurrentPlanId && testPlanStatus === 'todo',
+      display: Boolean(getCurrentPlanId && testPlanStatus === 'todo'),
       icon: 'play_circle_filled',
       handler: handleUpdatePlanStatus.bind(this, 'doing'),
     }, {
       name: intl.formatMessage({ id: 'testPlan_completePlan' }),
-      display: getCurrentPlanId && testPlanStatus === 'doing',
+      display: Boolean(getCurrentPlanId && testPlanStatus === 'doing'),
       icon: 'finished',
       handler: handleUpdatePlanStatus.bind(this, 'done'),
     }, {
       name: '计划报告',
-      display: getCurrentPlanId && testPlanStatus !== 'todo',
+      display: Boolean(getCurrentPlanId && testPlanStatus !== 'todo'),
       icon: 'find_in_page-o',
       handler: handleReportClick,
     }, {

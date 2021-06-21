@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useMemo, useCallback,
+  useEffect, useMemo, useCallback, useState,
 } from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -21,6 +21,7 @@ import DataSetFactory from './dataSet';
 import SelectIssue from './SelectIssue';
 import SelectIssueStore from './SelectIssueStore';
 import Context from './context';
+import styles from './index.less';
 
 const key = Modal.key();
 
@@ -34,6 +35,7 @@ const defaultProps = {
 function TestPlanModal({
   modal, initValue, submit, onSubmit, mode = 'create',
 }) {
+  const [, setUpdateCount] = useState(0);
   const hasAgile = useHasAgile();
   const { caseSelected: initCaseSelected } = initValue;
   const init = useMemo(() => {
@@ -46,7 +48,12 @@ function TestPlanModal({
     };
   }, [initValue]);
   const selectIssueStore = useMemo(() => new SelectIssueStore(), []);
-  const dataSet = useMemo(() => new DataSet(DataSetFactory({ initValue }, mode)), [initValue, mode]);
+  const dataSetUpdate = useCallback(({ name }) => {
+    if (name === 'custom') {
+      setUpdateCount((count) => count + 1);
+    }
+  }, []);
+  const dataSet = useMemo(() => new DataSet(DataSetFactory({ initValue }, mode, dataSetUpdate)), [dataSetUpdate, initValue, mode]);
   useEffect(() => {
     dataSet.create(init);
   }, [dataSet, init]);
@@ -133,11 +140,11 @@ function TestPlanModal({
             </div>
             <div>
               <div style={{ marginTop: 10 }}>
-                <Radio name="custom" value={false}>全部用例</Radio>
+                <Radio name="custom" value={false} className={styles.radio}>全部用例</Radio>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', marginTop: 15 }}>
-                <Radio name="custom" value>自选用例</Radio>
-                {hasAgile && <CheckBox style={{ marginTop: -8, marginLeft: -10 }} name="sprintLink">选择当前测试计划所属迭代中问题项关联的所有用例</CheckBox>}
+                <Radio name="custom" value className={styles.radio}>自选用例</Radio>
+                {hasAgile && dataSet.toData() && dataSet.toData()[0]?.custom && <CheckBox style={{ marginTop: -8, marginLeft: -10 }} name="sprintLink">选择当前测试计划所属迭代中问题项关联的所有用例</CheckBox>}
               </div>
             </div>
           </div>

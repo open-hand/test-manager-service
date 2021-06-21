@@ -16,6 +16,7 @@ import openDragPlanFolder from '../DragPlanFolder';
 import openImportIssue from '../ImportIssue';
 import TreeNode from './TreeNode';
 import Store from '../../stores';
+import openBatchAssignModal from '../BatchAssignModal';
 
 @observer
 class TestPlanTree extends Component {
@@ -176,6 +177,18 @@ class TestPlanTree extends Component {
         testPlanStore.RankByDate(nodeItem.id);
         break;
       }
+      case 'assign': {
+        if (nodeItem.id) {
+          const [planId, cycleId] = String(nodeItem.id).split('%');
+          let handleOk = () => { };
+          const [currentPlanId, currentCycleId] = testPlanStore.getId();
+          if (currentPlanId === planId && (currentCycleId === cycleId || currentCycleId === '') && testPlanStore.mainActiveTab !== 'testPlanSchedule') {
+            handleOk = () => testPlanStore.loadRightData();
+          }
+          openBatchAssignModal({ planId, cycleId }, handleOk);
+        }
+        break;
+      }
       default: {
         break;
       }
@@ -240,6 +253,9 @@ class TestPlanTree extends Component {
       <Menu.Item key="rename">
         重命名
       </Menu.Item>,
+      <Menu.Item key="assign">
+        批量指派
+      </Menu.Item>,
       <Menu.Item key="delete">
         删除
       </Menu.Item>,
@@ -249,6 +265,9 @@ class TestPlanTree extends Component {
     ] : [
       <Menu.Item key="rename">
         重命名
+      </Menu.Item>,
+      <Menu.Item key="assign">
+        批量指派
       </Menu.Item>,
       <Menu.Item key="delete">
         删除

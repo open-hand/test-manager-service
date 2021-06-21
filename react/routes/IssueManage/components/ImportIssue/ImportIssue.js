@@ -367,9 +367,25 @@ function ImportIssue(props) {
       </ImportIssueForm>
       <div className="c7ntest-ImportIssue-form-modal-footer">
         {visibleCancelBtn
-          ? <Button disabled={!visibleCancelBtn} hidden={!visibleCancelBtn} funcType="raised" color="primary" onClick={handleCancelImport}>取消导入</Button>
+          ? (
+            <Button
+              disabled={!visibleCancelBtn}
+              hidden={!visibleCancelBtn}
+              funcType="raised"
+              color="primary"
+              onClick={handleCancelImport}
+              style={{ marginLeft: 10 }}
+            >
+              取消导入
+            </Button>
+          )
           : (
-            <Button funcType="raised" color="primary" onClick={() => importExcel()}>
+            <Button
+              funcType="raised"
+              color="primary"
+              onClick={() => importExcel()}
+              style={{ marginLeft: 10 }}
+            >
               <FormattedMessage id="issue_import" />
             </Button>
           )}

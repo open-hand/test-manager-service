@@ -1,7 +1,7 @@
 import React from 'react';
 import { Choerodon } from '@choerodon/boot';
 import {
-  Tooltip, Menu, Dropdown, Button,
+  Tooltip, Menu, Dropdown, Icon,
 } from 'choerodon-ui';
 import { Modal } from 'choerodon-ui/pro';
 import { FormattedMessage } from 'react-intl';
@@ -11,7 +11,7 @@ import './tags.less';
 export function renderIssueNum(caseNum) {
   return (
     <Tooltip mouseEnterDelay={0.5} title={<FormattedMessage id="issue_issueNum" values={{ num: caseNum }} />}>
-      <span className="c7ntest-text-dot" style={{ wordBreak: 'break-all' }}>
+      <span className="c7ntest-text-dot" style={{ wordBreak: 'break-all', display: 'block' }}>
         {caseNum}
       </span>
     </Tooltip>
@@ -74,7 +74,7 @@ export function renderAction(record, history, reLoadTable) {
   );
   return (
     <Dropdown overlay={menu} trigger={['click']} getPopupContainer={(trigger) => trigger.parentNode}>
-      <Button shape="circle" icon="more_vert" />
+      <Icon type="more_vert" className="action-icon" />
     </Dropdown>
   );
 }

@@ -8,7 +8,7 @@ import { observer } from 'mobx-react-lite';
 import { Choerodon, WSHandler } from '@choerodon/boot';
 import { IModalProps } from '@choerodon/agile/lib/common/types';
 import { getProjectId } from '@/common/utils';
-
+import { ButtonColor } from 'choerodon-ui/pro/lib/button/interface';
 import { ProgressStatus } from 'choerodon-ui/lib/progress/enum';
 import { TestPlanStore } from '@/routes/TestPlan/stores/TestPlanStore';
 import styles from './index.less';
@@ -68,22 +68,24 @@ const BatchDeleteModal: React.FC<Props> = (props) => {
 
   return (
     <div>
-      {`确定要移除选中的${checkIdMap.size}个执行用例吗？`}
-      <span style={{ color: '#F44336' }}>
-        请谨慎操作！
-      </span>
-      <WSHandler
-        messageKey={`test-batch-delete-cycle-case-${getProjectId()}`}
-        onMessage={handleMessage}
-      >
-        { loading && (
+      <div style={{ marginBottom: 20 }}>
+        {`确定要移除选中的${checkIdMap.size}个执行用例吗？`}
+        <span style={{ color: '#F44336' }}>
+          请谨慎操作！
+        </span>
+        <WSHandler
+          messageKey={`test-batch-delete-cycle-case-${getProjectId()}`}
+          onMessage={handleMessage}
+        >
+          { loading && (
           <div style={{ color: 'rgba(254,71,87,1)', textAlign: 'center', marginTop: 16 }}>
             {loading === 'success' ? '移除成功' : ['正在移除，请稍等片刻', <span className={styles.dot}>…</span>]}
             <Progress status={'success' as ProgressStatus} value={Math.round(progress * 100)} />
           </div>
-        )}
-      </WSHandler>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 10 }}>
+          )}
+        </WSHandler>
+      </div>
+      <div className={styles.footer} style={{ display: 'flex', justifyContent: 'flex-end' }}>
         <Button
           onClick={handleCancel}
           disabled={!!loading}
@@ -94,6 +96,7 @@ const BatchDeleteModal: React.FC<Props> = (props) => {
           取消
         </Button>
         <Button
+          color={'primary' as ButtonColor}
           className={styles.batchDeleteBtn}
           disabled={!!loading}
           loading={Boolean(loading)}

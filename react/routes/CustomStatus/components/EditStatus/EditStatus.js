@@ -1,9 +1,9 @@
 /*
- * @Author: LainCarl 
- * @Date: 2019-01-25 11:37:12 
+ * @Author: LainCarl
+ * @Date: 2019-01-25 11:37:12
  * @Last Modified by: LainCarl
  * @Last Modified time: 2019-01-25 13:51:42
- * @Feature: 编辑状态侧边栏 
+ * @Feature: 编辑状态侧边栏
  */
 
 import React, { Component } from 'react';
@@ -32,18 +32,18 @@ class EditStatus extends Component {
     const { setFieldsValue } = this.props.form;
     if (this.props.visible === false && nextProps.visible === true) {
       const { statusName, description, statusColor } = nextProps.initValue;
-      setFieldsValue({ statusName, description, statusColor });    
+      setFieldsValue({ statusName, description, statusColor });
     }
   }
 
   handleCheckColor = (rule, statusColor, callback) => {
     const { statusType, statusId } = this.props.initValue;
-    this.props.onCheckStatusRepeat({ statusType, statusColor, statusId })(rule, statusColor, callback);    
+    this.props.onCheckStatusRepeat({ statusType, statusColor, statusId })(rule, statusColor, callback);
   }
 
-  handleCheckStatusRepeat = (...args) => { 
+  handleCheckStatusRepeat = (...args) => {
     const { getFieldValue } = this.props.form;
-    const statusName = getFieldValue('statusName');    
+    const statusName = getFieldValue('statusName');
     const { statusType, statusId } = this.props.initValue;
     this.props.onCheckStatusRepeat({ statusId, statusName, statusType })(...args);
   }
@@ -65,18 +65,19 @@ class EditStatus extends Component {
   render() {
     const {
       visible, onCancel, loading, initValue,
-    } = this.props; 
+    } = this.props;
     const { getFieldDecorator } = this.props.form;
     return (
       <div>
         <Sidebar
+          className="c7ntest-editStatus-modal"
           title={`编辑${initValue.statusType === 'CYCLE_CASE' ? '执行' : '步骤'}状态`}
           visible={visible}
           onOk={this.handleOk}
           onCancel={onCancel}
           confirmLoading={loading}
           width={380}
-        >         
+        >
           <Form>
             <FormItem>
               {getFieldDecorator('statusName', {
@@ -103,12 +104,12 @@ class EditStatus extends Component {
                   required: true, message: '请选择颜色',
                 }, {
                   validator: this.handleCheckColor,
-                }],                 
+                }],
               })(
                 <ColorPicker />,
               )}
-            </FormItem>               
-          </Form>   
+            </FormItem>
+          </Form>
         </Sidebar>
       </div>
     );

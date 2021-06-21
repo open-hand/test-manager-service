@@ -277,7 +277,7 @@ function TestStepTable(props) {
                 stepIsCreating
                   ? (
                     <span className="c7ntest-text-wrap">
-                      {newValue || <span style={{ color: 'var(--text-color3)', whiteSpace: 'nowrap' }}>测试步骤</span>}
+                      {newValue || <span style={{ color: 'var(--text-color3)', whiteSpace: 'nowrap' }}>例如：进入商品详情页面</span>}
                     </span>
                   )
                   : <span className="c7ntest-text-wrap">{newValue || '-'}</span>
@@ -330,7 +330,7 @@ function TestStepTable(props) {
                 stepIsCreating
                   ? (
                     <span className="c7ntest-text-wrap">
-                      {newValue || <span style={{ color: 'var(--text-color3)', whiteSpace: 'nowrap' }}>测试数据</span>}
+                      {newValue || <span style={{ color: 'var(--text-color3)', whiteSpace: 'nowrap' }}>例如：商品A</span>}
                     </span>
                   )
                   : <span className="c7ntest-text-wrap">{newValue || '-'}</span>
@@ -386,7 +386,7 @@ function TestStepTable(props) {
                 stepIsCreating
                   ? (
                     <span className="c7ntest-text-wrap">
-                      {newValue || <span style={{ color: 'var(--text-color3)', whiteSpace: 'nowrap' }}>预期结果</span>}
+                      {newValue || <span style={{ color: 'var(--text-color3)', whiteSpace: 'nowrap' }}>例如：成功展示商品详情</span>}
                     </span>
                   )
                   : <span className="c7ntest-text-wrap">{newValue || '-'}</span>

@@ -1,17 +1,17 @@
 /* eslint-disable react/jsx-no-bind */
 import React, {
-  useCallback, useContext, useEffect,
+  useContext, useEffect,
 } from 'react';
 import { observer } from 'mobx-react-lite';
 import { withRouter } from 'react-router-dom';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import {
   Page, Header, Content, Breadcrumb, Choerodon, stores,
 } from '@choerodon/boot';
-import { HeaderButtons } from '@choerodon/master';
 import { Tabs, Modal, Button } from 'choerodon-ui/pro';
 
 import { localPageCacheStore } from '@choerodon/agile/lib/stores/common/LocalPageCacheStore';
+import { EmptyPage } from '@choerodon/components';
 import {
   deleteExecute, updateExecute, comfirmUpdate, ignoreUpdate,
 } from '../../../api/TestPlanApi';
@@ -22,19 +22,17 @@ import UpdateRemindModalChildren from '../components/UpdateRemindModalChildren';
 import TestPlanTree from '../components/TestPlanTree';
 import TestPlanTable from '../components/TestPlanTable';
 import TestPlanHeader from '../components/TestPlanHeader';
-import { openCreatePlan } from '../components/TestPlanModal';
 import EventCalendar from '../components/EventCalendar';
-import Empty from '../../../components/Empty';
 import testCaseEmpty from './testCaseEmpty.svg';
 
 import Store from '../stores';
 import './TestPlanHome.less';
 import { getDragRank, executeDetailLink } from '../../../common/utils';
+import { closeBatchModal } from '../components/BatchAction';
 
 const { AppState } = stores;
 
 const { TabPane } = Tabs;
-const { confirm } = Modal;
 const updateRemindModal = Modal.key();
 let updateModal;
 
@@ -248,10 +246,15 @@ function TestPlanHome({ history }) {
     });
   };
 
+  const handleSkipToFolder = (execute) => {
+    // 当前选中的planId拼上文件夹id
+    testPlanStore.resetCurrentCycleById(`${testPlanStore.getCurrentPlanId}%${execute.cycleId}`);
+  };
   const handleSearchAssign = (value) => {
     const { filter } = testPlanStore;
     filter.assignUser = value || undefined;
     testPlanStore.setFilter(filter);
+    testPlanStore.setExecutePagination({ current: 1, pageSize: 20 });
     testPlanStore.loadExecutes();
   };
   const handleOnlyMeCheckedChange = (e) => {
@@ -263,6 +266,7 @@ function TestPlanHome({ history }) {
       filter.assignUser = undefined;
     }
     testPlanStore.setFilter(filter);
+    testPlanStore.setExecutePagination({ current: 1, pageSize: 20 });
     testPlanStore.loadExecutes();
   };
 
@@ -296,6 +300,9 @@ function TestPlanHome({ history }) {
       }
     }
     testPlanStore.loadAllData();
+    return () => {
+      closeBatchModal({ testPlanStore });
+    };
   }, [testPlanStore]);
   const noSelected = !currentCycle.id;
   let description;
@@ -331,10 +338,9 @@ function TestPlanHome({ history }) {
           </div>
           {
             noSelected ? (
-              <Empty
+              <EmptyPage
                 loading={loading}
-                pic={testCaseEmpty}
-                title="暂无计划"
+                image={testCaseEmpty}
                 description={description}
               />
             ) : (
@@ -368,6 +374,7 @@ function TestPlanHome({ history }) {
                           onDeleteExecute={handleDeleteExecute}
                           onQuickPass={handleQuickPassOrFail}
                           onQuickFail={handleQuickPassOrFail}
+                          onSkipToFolder={handleSkipToFolder}
                           onOpenUpdateRemind={handleOpenUpdateRemind}
                           onTableSummaryClick={handleTableSummaryClick}
                           onSearchAssign={handleSearchAssign}

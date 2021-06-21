@@ -1,11 +1,12 @@
 import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Dropdown, Button, Menu, Icon,
+  Button, Menu, Icon,
 } from 'choerodon-ui';
+import { Dropdown } from 'choerodon-ui/pro';
 import { debounce } from 'lodash';
 import { StatusTags } from '../../../../../../components';
-import './QuickOperate.less';
+import styles from './QuickOperate.less';
 
 const style = {
   border: '1px solid #00BF96',
@@ -48,14 +49,6 @@ const QuickOperate = ({
   onSubmit,
   readOnly,
 }) => {
-  const menuItems = statusList.filter(status => !statusArr.some(s => s.name === status.statusName)).map(item => (
-    <Menu.Item key={item.statusId} style={{ display: 'flex', alignItems: 'center' }}>
-      <StatusTags
-        color={item.statusColor}
-        name={item.statusName}
-      />
-    </Menu.Item>
-  ));
   const menu = (
     <Menu onClick={(item) => {
       if (!readOnly) {
@@ -65,14 +58,25 @@ const QuickOperate = ({
       }
     }}
     >
-      {menuItems}
+      {statusList.filter((status) => !statusArr.some((s) => s.name === status.statusName)).map((item) => (
+        <Menu.Item key={item.statusId} className={styles.menuItem}>
+          <StatusTags
+            color={item.statusColor}
+            name={item.statusName}
+            style={{
+              height: 22,
+              lineHeight: '22px',
+            }}
+          />
+        </Menu.Item>
+      ))}
     </Menu>
   );
   return (
     <div style={{ fontSize: '14px', display: 'flex', alignItems: 'center' }}>
       快速操作:
       {
-        statusArr.map(status => (
+        statusArr.map((status) => (
           <QuickStatus name={status.name} color={status.color} onClick={debounce(quickHandle, 300)} disable={readOnly}>
             {status.name}
           </QuickStatus>

@@ -1,127 +1,129 @@
-include: https://api.choerodon.com.cn/devops/v1/projects/1528/ci_contents/pipelines/c16e5183-1a56-4e59-9bb5-56c2bc851f5b/content.yaml
+image: registry.cn-shanghai.aliyuncs.com/c7n/cibase:0.11.4
 
-#image: registry.cn-shanghai.aliyuncs.com/c7n/cibase:0.11.0
-#
-#stages:
-#  - build
-#  - release
-#
-#build front:
-#  stage: build
-#  script:
-#    - npm install --registry ${NPM_REPO} --sass-binary-site=http://npm.taobao.org/mirrors/node-sass
-#    - chmod -R 755 node_modules
-#    - npm run compile
-#    - echo "//${NPM_REGISTRY}:_authToken=${NPM_TOKEN}">.npmrc
-#    - npm publish --registry ${NPM_PUBLISH_REGISTRY}
-#    - curl -sX POST -F token=${FRONT_REPOSITORY_TOKEN} -F ref=${REF_NAME} https://code.choerodon.com.cn/api/v4/projects/7909/trigger/pipeline
-#  except:
-#    changes:
-#      - pom.xml
-#      - src/**/*
-#      - docker/**/*
-#      - chart/**/*
-#      - init-mysql-database.sh
-#      - .circleci/**/*
-#      - .gitignore
-#      - .github/**/*
-#      - .gitlab-ci.yml
-#      - "*.md"
-#  only:
-#      refs:
-#      - master
-#      - /^.*bugfix.*$/
-#      - /^.*hotfix.*$/
-#      - /^.*release.*$/
-#
+stages:
+  - build
+  - release
+
+build front:
+  stage: build
+  script:
+    - npm config set "//${NPM_REPO}:_authToken" "${NPM_TOKEN}"
+    - npm config set "//${NPM_REGISTRY}:_authToken" "${NPM_TOKEN}"
+    - npm config set always-auth true
+    - yarn install --registry "https://${NPM_REPO}" --sass-binary-site=http://npm.taobao.org/mirrors/node-sass
+    - chmod -R 755 node_modules
+    - npm run compile
+    - npm publish --registry "https://${NPM_REGISTRY}"
+    - curl -sX POST -F token=${FRONT_REPOSITORY_TOKEN} -F ref=${REF_NAME} https://code.choerodon.com.cn/api/v4/projects/7909/trigger/pipeline
+  except:
+    changes:
+      - pom.xml
+      - src/**/*
+      - docker/**/*
+      - chart/**/*
+      - init-mysql-database.sh
+      - .circleci/**/*
+      - .gitignore
+      - .github/**/*
+      - .gitlab-ci.yml
+      - "*.md"
+  only:
+    refs:
+      - master
+      - /^.*bugfix.*$/
+      - /^.*hotfix.*$/
+      - /^.*release.*$/
+
 #tag front:
 #  stage: build
 #  script:
-#    - npm install --registry ${NPM_REPO} --sass-binary-site=http://npm.taobao.org/mirrors/node-sass
+#    - npm config set "//${NPM_REPO}:_authToken" "${NPM_TOKEN}"
+#    - npm config set "//${NPM_REGISTRY}:_authToken" "${NPM_TOKEN}"
+#    - npm config set always-auth true
+#    - yarn install --registry "https://${NPM_REPO}" --sass-binary-site=http://npm.taobao.org/mirrors/node-sass
 #    - chmod -R 755 node_modules
 #    - npm run compile
-#    - echo "//${NPM_REGISTRY}:_authToken=${NPM_TOKEN}">.npmrc
-#    - npm publish --registry ${NPM_PUBLISH_REGISTRY}
+#    - npm publish --registry "https://${NPM_REGISTRY}"
 #  only:
 #    refs:
-#    - tags
-#
-#build backend:
-#  stage: build
-#  script:
-#    - update_pom_version
-#    - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent test -Dmaven.test.failure.ignore=true -DskipTests=true -U
-#    - mvn package spring-boot:repackage
-#    - mv target/app.jar $PWD/docker
-#    - saveImageMetadata
-#    - kaniko -c $PWD/docker -f $PWD/docker/Dockerfile -d ${DOCKER_REGISTRY}/${GROUP_NAME}/${PROJECT_NAME}:${CI_COMMIT_TAG}
-#  except:
-#    changes:
-#      - .editorconfig
-#      - .eslintrc.json
-#      - .stylelintrc.json
-#      - gulpfile.js
-#      - package.json
-#      - react/**/*
-#      - .gitignore
-#      - .github/**/*
-#      - .gitlab-ci.yml
-#      - "*.md"
-#  only:
-#    refs:
-#    - master
-#    - /^.*bugfix.*$/
-#    - /^.*hotfix.*$/
-#    - /^.*release.*$/
-#
-#tag backend:
-#  stage: build
-#  script:
-#    - update_pom_version
-#    - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent test -Dmaven.test.failure.ignore=true -DskipTests=true -U
-#    - mvn package spring-boot:repackage
-#    - mv target/app.jar $PWD/docker
-#    - saveImageMetadata
-#    - docker build --platform linux/arm64 -t ${DOCKER_REGISTRY}/${GROUP_NAME}/${PROJECT_NAME}:${CI_COMMIT_TAG}-arm -f $PWD/docker/Dockerfile $PWD/docker
-#    - docker push ${DOCKER_REGISTRY}/${GROUP_NAME}/${PROJECT_NAME}:${CI_COMMIT_TAG}-arm
-#    - kaniko -c $PWD/docker -f $PWD/docker/Dockerfile -d ${DOCKER_REGISTRY}/${GROUP_NAME}/${PROJECT_NAME}:${CI_COMMIT_TAG}
-#  only:
-#    refs:
-#    - tags
-#
-#
-#release backend:
-#  stage: release
-#  script:
-#    - chart_build
-#  except:
-#    changes:
-#      - .editorconfig
-#      - .eslintrc.json
-#      - .stylelintrc.json
-#      - gulpfile.js
-#      - package.json
-#      - react/**/*
-#      - .gitignore
-#      - .github/**/*
-#      - .gitlab-ci.yml
-#      - "*.md"
-#
-#
-#tag release:
-#  stage: release
-#  script:
-#    - chart_build
-#  only:
-#    - tags
-#
-#.auto_devops: &auto_devops |
-#  http_status_code=`curl -o .auto_devops.sh -s -m 10 --connect-timeout 10 -w %{http_code} "${CHOERODON_URL}/devops/ci?token=${Token}&type=microservice"`
-#  if [ "$http_status_code" != "200" ]; then
-#    cat .auto_devops.sh
-#    exit 1
-#  fi
-#  source .auto_devops.sh
-#
-#before_script:
-#  - *auto_devops
+#      - tags
+
+build backend:
+  stage: build
+  script:
+    - update_pom_version
+    - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent test -Dmaven.test.failure.ignore=true -DskipTests=true -U
+    - mvn package spring-boot:repackage
+    - mv target/app.jar $PWD/docker
+    - saveImageMetadata
+    - kaniko -c $PWD/docker -f $PWD/docker/Dockerfile -d ${DOCKER_REGISTRY}/${GROUP_NAME}/${PROJECT_NAME}:${CI_COMMIT_TAG}
+  except:
+    changes:
+      - .editorconfig
+      - .eslintrc.json
+      - .stylelintrc.json
+      - gulpfile.js
+      - package.json
+      - react/**/*
+      - .gitignore
+      - .github/**/*
+      - .gitlab-ci.yml
+      - "*.md"
+  only:
+    refs:
+      - master
+      - /^.*bugfix.*$/
+      - /^.*hotfix.*$/
+      - /^.*release.*$/
+
+tag backend:
+  stage: build
+  script:
+    - update_pom_version
+    - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent test -Dmaven.test.failure.ignore=true -DskipTests=true -U
+    - mvn package spring-boot:repackage
+    - mv target/app.jar $PWD/docker
+    - saveImageMetadata
+    - docker build --platform linux/arm64 -t ${DOCKER_REGISTRY}/${GROUP_NAME}/${PROJECT_NAME}:${CI_COMMIT_TAG}-arm -f $PWD/docker/Dockerfile $PWD/docker
+    - docker push ${DOCKER_REGISTRY}/${GROUP_NAME}/${PROJECT_NAME}:${CI_COMMIT_TAG}-arm
+    - kaniko -c $PWD/docker -f $PWD/docker/Dockerfile -d ${DOCKER_REGISTRY}/${GROUP_NAME}/${PROJECT_NAME}:${CI_COMMIT_TAG}
+  only:
+    refs:
+      - tags
+
+
+release backend:
+  stage: release
+  script:
+    - chart_build
+  except:
+    changes:
+      - .editorconfig
+      - .eslintrc.json
+      - .stylelintrc.json
+      - gulpfile.js
+      - package.json
+      - react/**/*
+      - .gitignore
+      - .github/**/*
+      - .gitlab-ci.yml
+      - "*.md"
+
+
+tag release:
+  stage: release
+  script:
+    - chart_build
+  only:
+    - tags
+
+.auto_devops: &auto_devops |
+  http_status_code=`curl -o .auto_devops.sh -s -m 10 --connect-timeout 10 -w %{http_code} "${CHOERODON_URL}/devops/ci?token=${Token}&type=microservice"`
+  if [ "$http_status_code" != "200" ]; then
+    cat .auto_devops.sh
+    exit 1
+  fi
+  source .auto_devops.sh
+
+before_script:
+  - *auto_devops

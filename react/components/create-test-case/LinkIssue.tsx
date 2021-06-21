@@ -122,8 +122,8 @@ const LinkIssueModal: React.FC<Props> = (props) => {
       <Table
         dataSet={dataSet}
         queryBar={() => (
-          <Form dataSet={queryDataSet} columns={5}>
-            <TextField name="content" prefix={<Icon type="search" />} />
+          <Form dataSet={queryDataSet} columns={6}>
+            <TextField colSpan={2} name="content" prefix={<Icon type="search" />} />
             <SelectStatus name="status" request={() => statusApi.loadByProject('agile')} />
             <SelectPriority name="priority" />
             <SelectUser name="assignee" />
