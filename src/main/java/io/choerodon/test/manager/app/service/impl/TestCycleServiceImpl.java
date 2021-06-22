@@ -148,7 +148,6 @@ public class TestCycleServiceImpl implements TestCycleService {
         checkRank(testCycleVO);
         testCycleDTO.setRank(RankUtil.Operation.INSERT.getRank(null, getLastedRank(testCycleVO)));
         cycleMapper.insert(testCycleDTO);
-
         return modelMapper.map(testCycleDTO, TestCycleVO.class);
     }
 
@@ -357,20 +356,11 @@ public class TestCycleServiceImpl implements TestCycleService {
     }
 
     private Long getCount(TestCycleVO testCycleVO) {
-        if (testCycleVO.getType().equals(TestCycleType.CYCLE)) {
-            return cycleMapper.getCycleCountInVersion(testCycleVO.getVersionId());
-        } else {
-            return cycleMapper.getFolderCountInCycle(testCycleVO.getParentCycleId());
-        }
+        return cycleMapper.countCycles(testCycleVO.getProjectId(), testCycleVO.getParentCycleId(), testCycleVO.getPlanId());
     }
 
     private void fixRank(TestCycleVO testCycleVO) {
-        List<TestCycleDTO> cycleES;
-        if (testCycleVO.getType().equals(TestCycleType.CYCLE)) {
-            cycleES = cycleMapper.queryCycleInVersion(modelMapper.map(testCycleVO, TestCycleDTO.class));
-        } else {
-            cycleES = cycleMapper.listRankIsNullCycle(testCycleVO.getProjectId(), testCycleVO.getParentCycleId());
-        }
+        List<TestCycleDTO> cycleES = cycleMapper.listRankIsNullCycle(testCycleVO.getProjectId(), testCycleVO.getParentCycleId());
         for (int a = 0; a < cycleES.size(); a++) {
             TestCycleDTO testCycleETemp = cycleES.get(a);
             List<TestCycleDTO> list = cycleMapper.select(testCycleETemp);

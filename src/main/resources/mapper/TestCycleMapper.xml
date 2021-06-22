@@ -441,4 +441,15 @@
             and rank is null
         </where>
     </select>
+
+    <select id="countCycles" resultType="java.lang.Long">
+        select
+           COUNT(cycle_id)
+        FROM test_cycle
+        where
+         project_id = #{projectId}
+         and parent_cycle_id = #{parentCycleId}
+         and plan_id = #{planId}
+    </select>
+
 </mapper>

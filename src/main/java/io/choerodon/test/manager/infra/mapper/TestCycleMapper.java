@@ -68,4 +68,6 @@ public interface TestCycleMapper extends BaseMapper<TestCycleDTO> {
     List<TestCycleDTO> selectAndOrderByIds(@Param("projectId")Long projectId, @Param("cycleIds") List<Long> cycleIds);
 
     List<TestCycleDTO> listRankIsNullCycle(@Param("projectId") Long projectId, @Param("parentCycleId") Long parentCycleId);
+
+    Long countCycles(@Param("projectId") Long projectId, @Param("parentCycleId") Long parentCycleId, @Param("planId") Long planId);
 }
