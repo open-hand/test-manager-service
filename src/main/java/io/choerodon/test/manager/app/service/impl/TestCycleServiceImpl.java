@@ -143,6 +143,7 @@ public class TestCycleServiceImpl implements TestCycleService {
     private TestCycleVO baseInsert(Long projectId, TestCycleVO testCycleVO) {
         TestCycleDTO testCycleDTO = modelMapper.map(testCycleVO, TestCycleDTO.class);
         testCycleDTO.setProjectId(projectId);
+        testCycleVO.setProjectId(projectId);
         validateCycle(testCycleDTO);
         checkRank(testCycleVO);
         testCycleDTO.setRank(RankUtil.Operation.INSERT.getRank(null, getLastedRank(testCycleVO)));
@@ -368,9 +369,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         if (testCycleVO.getType().equals(TestCycleType.CYCLE)) {
             cycleES = cycleMapper.queryCycleInVersion(modelMapper.map(testCycleVO, TestCycleDTO.class));
         } else {
-            TestCycleDTO testCycleDTO = new TestCycleDTO();
-            testCycleDTO.setCycleId(testCycleVO.getParentCycleId());
-            cycleES = cycleMapper.queryChildCycle(testCycleDTO);
+            cycleES = cycleMapper.listRankIsNullCycle(testCycleVO.getProjectId(), testCycleVO.getParentCycleId());
         }
         for (int a = 0; a < cycleES.size(); a++) {
             TestCycleDTO testCycleETemp = cycleES.get(a);

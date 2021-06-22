@@ -426,4 +426,19 @@
         </foreach>
         END
     </select>
+
+    <select id="listRankIsNullCycle" resultType="io.choerodon.test.manager.infra.dto.TestCycleDTO">
+        SELECT
+            cycle_id,
+            cycle_name,
+            rank
+        FROM test_cycle
+        <where>
+            project_id = #{projectId}
+            <if test="parentCycleId != null">
+             and parent_cycle_id = #{parentCycleId}
+            </if>
+            and rank is null
+        </where>
+    </select>
 </mapper>
