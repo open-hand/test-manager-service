@@ -262,6 +262,7 @@
             test_cycle
         WHERE
            plan_id=#{planId}
+           and parent_cycle_id = #{parentCycleId}
         ORDER BY
             rank ASC
             LIMIT 1

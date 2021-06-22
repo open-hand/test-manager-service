@@ -379,7 +379,7 @@ public class TestCycleServiceImpl implements TestCycleService {
     }
 
     private String getLastedRank(TestCycleVO testCycleVO) {
-        return cycleMapper.getPlanLastedRank(testCycleVO.getPlanId());
+        return cycleMapper.getPlanLastedRank(testCycleVO.getPlanId(), testCycleVO.getParentCycleId());
     }
 
     private TestCycleDTO updateSelf(TestCycleDTO testCycleE) {
