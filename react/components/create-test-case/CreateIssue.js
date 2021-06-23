@@ -105,7 +105,7 @@ function CreateIssue(props) {
     // 初始化属性
     modal.handleOk(handleCreateIssue);
   }, [handleCreateIssue, modal]);
-
+  // 前置条件显示与隐藏用class类样式实现，增加表单项后，需修改less
   return (
     <>
       <Form dataSet={createDataset} className={`test-create-issue-form ${visibleDetail ? '' : 'test-create-issue-form-hidden'}`}>
