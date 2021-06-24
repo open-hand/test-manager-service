@@ -64,7 +64,7 @@ WHERE
     </select>
 
     <select id="queryMyExecutionalCaseStatus"
-            resultType="io.choerodon.test.manager.api.vo.TestMyExecutionCaseStatusVO">
+            resultType="io.choerodon.test.manager.api.vo.TestStatusVO">
         SELECT
             status_id,
             status_name,
@@ -75,11 +75,11 @@ WHERE
             project_id
         from test_status
         <where>
-            project_id in
+            project_id IN
             <foreach collection="projectIds" item="projectId" open="(" close=")" separator=",">
                 #{projectId}
             </foreach>
-            and status_type= 'CYCLE_CASE'
+            AND status_type= 'CYCLE_CASE'
         </where>
         UNION
         SELECT
@@ -90,10 +90,10 @@ WHERE
             status_type,
             object_version_number,
             project_id
-        from test_status
+        FROM test_status
         <where>
             project_id = 0
-            and status_type= 'CYCLE_CASE'
+            AND status_type= 'CYCLE_CASE'
         </where>
     </select>
 

@@ -850,9 +850,27 @@
             <foreach collection="projectIds" item="projectId" open="(" separator="," close=")">
                 #{projectId}
             </foreach>
-            <include refid="sqlParam"/>
-            <if test="searchDTO != null and searchDTO.searchArgs != null and searchDTO.searchArgs.priorityId != null">
-                AND tcc.priority_id = #{searchDTO.searchArgs.priorityId}
+            <if test="searchDTO != null">
+                <if test="searchDTO.contents != null and searchDTO.contents.size > 0">
+                    AND
+                    <foreach collection="searchDTO.contents" item="content" open="(" separator=" OR " close=")">
+                        (tcc.summary LIKE CONCAT(CONCAT('%', #{content, jdbcType=VARCHAR}),'%'))
+                    </foreach>
+                </if>
+                <if test="searchDTO.searchArgs != null">
+                    <if test='searchDTO.searchArgs.summary != null'>
+                        AND tcc.summary  LIKE CONCAT(CONCAT('%', #{searchDTO.searchArgs.summary, jdbcType=VARCHAR}),'%')
+                    </if>
+                    <if test="searchDTO.searchArgs.priorityId != null">
+                        AND tcc.priority_id = #{searchDTO.searchArgs.priorityId}
+                    </if>
+                    <if test="searchDTO.searchArgs.executionStatusList != null and searchDTO.searchArgs.executionStatusList.size >0">
+                        AND tcc.execution_status IN
+                        <foreach collection="searchDTO.searchArgs.executionStatusList" item="executionStatus" open="(" separator="," close=")">
+                          #{executionStatus}
+                        </foreach>
+                    </if>
+                </if>
             </if>
             AND organization_id = #{organizationId}
             AND tp.status_code = 'doing'

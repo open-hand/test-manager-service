@@ -1035,28 +1035,27 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
     @Override
-    public List<TestMyExecutionCaseStatusVO> queryMyExecutionalCaseStatus(Long organizationId, Long projectId) {
+    public Page<TestStatusVO> pageQueryMyExecutionalCaseStatus(Long organizationId, Long projectId, PageRequest pageRequest) {
         if (ObjectUtils.isEmpty(organizationId)) {
             throw new CommonException("error.organizationId.is.null");
         }
         List<Long> projectIds = new ArrayList<>();
         List<ProjectDTO> projects = new ArrayList<>();
         Long userId = DetailsHelper.getUserDetails().getUserId();
-
         queryUserProjects(organizationId, projectId, projectIds, projects, userId);
         Map<Long, ProjectDTO> projectVOMap = projects.stream().collect(Collectors.toMap(ProjectDTO::getId, Function.identity()));
-        List<TestMyExecutionCaseStatusVO> statusVoList = testStatusMapper.queryMyExecutionalCaseStatus(projectIds);
-        if (CollectionUtils.isEmpty(statusVoList)){
-            return new ArrayList<>();
+        Page<TestStatusVO> statusVoPageInfo = PageHelper.doPageAndSort(pageRequest, () -> testStatusMapper.queryMyExecutionalCaseStatus(projectIds));
+        if (CollectionUtils.isEmpty(statusVoPageInfo.getContent())){
+            return new Page<>();
         }
-        statusVoList.forEach(v -> {
+        statusVoPageInfo.getContent().forEach(v -> {
             if (v.getProjectId() == 0){
                 v.setProjectName("null");
             }else{
                 v.setProjectName(projectVOMap.get(v.getProjectId()).getName());
             }
         });
-        return statusVoList;
+        return statusVoPageInfo;
     }
 
     private void queryUserProjects(Long organizationId, Long projectId, List<Long> projectIds, List<ProjectDTO> projects, Long userId) {

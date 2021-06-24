@@ -36,6 +36,9 @@ public class CaseSearchVO {
 
         @Encrypt
         private Long executionStatus;
+
+        private List<Long> executionStatusList;
+
         @Encrypt
         private Long assignUser;
 
@@ -88,6 +91,14 @@ public class CaseSearchVO {
 
         public void setExecutionStatus(Long executionStatus) {
             this.executionStatus = executionStatus;
+        }
+
+        public List<Long> getExecutionStatusList() {
+            return executionStatusList;
+        }
+
+        public void setExecutionStatusList(List<Long> executionStatusList) {
+            this.executionStatusList = executionStatusList;
         }
 
         public Long getAssignUser() {

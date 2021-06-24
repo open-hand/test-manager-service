@@ -151,5 +151,5 @@ public interface TestCycleCaseService {
      */
     void assignCaseByCycle(Long projectId, Long assignUserId, Long cycleId, Long planId);
 
-    List<TestMyExecutionCaseStatusVO> queryMyExecutionalCaseStatus(Long organizationId, Long projectId);
+    Page<TestStatusVO> pageQueryMyExecutionalCaseStatus(Long organizationId, Long projectId, PageRequest pageRequest);
 }
