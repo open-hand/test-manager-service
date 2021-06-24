@@ -1035,7 +1035,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
     @Override
-    public Page<TestStatusVO> pageQueryMyExecutionalCaseStatus(Long organizationId, Long projectId, PageRequest pageRequest) {
+    public Page<TestStatusVO> pageQueryCaseStatus(Long organizationId, Long projectId, PageRequest pageRequest) {
         if (ObjectUtils.isEmpty(organizationId)) {
             throw new CommonException("error.organizationId.is.null");
         }
@@ -1049,9 +1049,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             return new Page<>();
         }
         statusVoPageInfo.getContent().forEach(v -> {
-            if (v.getProjectId() == 0){
-                v.setProjectName("null");
-            }else{
+            if (v.getProjectId() != 0){
                 v.setProjectName(projectVOMap.get(v.getProjectId()).getName());
             }
         });

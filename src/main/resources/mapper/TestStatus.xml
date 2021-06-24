@@ -73,27 +73,18 @@ WHERE
             status_type,
             object_version_number,
             project_id
-        from test_status
+        FROM test_status
         <where>
+            status_type= 'CYCLE_CASE'
+            AND
+            (
+            project_id = 0
+            OR
             project_id IN
             <foreach collection="projectIds" item="projectId" open="(" close=")" separator=",">
                 #{projectId}
             </foreach>
-            AND status_type= 'CYCLE_CASE'
-        </where>
-        UNION
-        SELECT
-            status_id,
-            status_name,
-            description,
-            status_color,
-            status_type,
-            object_version_number,
-            project_id
-        FROM test_status
-        <where>
-            project_id = 0
-            AND status_type= 'CYCLE_CASE'
+            )
         </where>
     </select>
 
