@@ -63,6 +63,40 @@ WHERE
 	step_status = #{statusId}
     </select>
 
+    <select id="queryMyExecutionalCaseStatus"
+            resultType="io.choerodon.test.manager.api.vo.TestMyExecutionCaseStatusVO">
+        SELECT
+            status_id,
+            status_name,
+            description,
+            status_color,
+            status_type,
+            object_version_number,
+            project_id
+        from test_status
+        <where>
+            project_id in
+            <foreach collection="projectIds" item="projectId" open="(" close=")" separator=",">
+                #{projectId}
+            </foreach>
+            and status_type= 'CYCLE_CASE'
+        </where>
+        UNION
+        SELECT
+            status_id,
+            status_name,
+            description,
+            status_color,
+            status_type,
+            object_version_number,
+            project_id
+        from test_status
+        <where>
+            project_id = 0
+            and status_type= 'CYCLE_CASE'
+        </where>
+    </select>
+
     <update id="updateAuditFields">
         update test_status
         set created_by = #{userId}, creation_date = #{date}, last_updated_by = #{userId}, last_update_date = #{date}

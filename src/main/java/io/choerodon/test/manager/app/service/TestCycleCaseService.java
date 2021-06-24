@@ -150,4 +150,6 @@ public interface TestCycleCaseService {
      * @param planId 计划id
      */
     void assignCaseByCycle(Long projectId, Long assignUserId, Long cycleId, Long planId);
+
+    List<TestMyExecutionCaseStatusVO> queryMyExecutionalCaseStatus(Long organizationId, Long projectId);
 }

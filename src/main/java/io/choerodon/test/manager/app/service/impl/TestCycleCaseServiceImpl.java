@@ -1034,6 +1034,31 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         testCycleCaseMapper.batchAssignByCycle(assignUserId, cycleIds);
     }
 
+    @Override
+    public List<TestMyExecutionCaseStatusVO> queryMyExecutionalCaseStatus(Long organizationId, Long projectId) {
+        if (ObjectUtils.isEmpty(organizationId)) {
+            throw new CommonException("error.organizationId.is.null");
+        }
+        List<Long> projectIds = new ArrayList<>();
+        List<ProjectDTO> projects = new ArrayList<>();
+        Long userId = DetailsHelper.getUserDetails().getUserId();
+
+        queryUserProjects(organizationId, projectId, projectIds, projects, userId);
+        Map<Long, ProjectDTO> projectVOMap = projects.stream().collect(Collectors.toMap(ProjectDTO::getId, Function.identity()));
+        List<TestMyExecutionCaseStatusVO> statusVoList = testStatusMapper.queryMyExecutionalCaseStatus(projectIds);
+        if (CollectionUtils.isEmpty(statusVoList)){
+            return new ArrayList<>();
+        }
+        statusVoList.forEach(v -> {
+            if (v.getProjectId() == 0){
+                v.setProjectName("null");
+            }else{
+                v.setProjectName(projectVOMap.get(v.getProjectId()).getName());
+            }
+        });
+        return statusVoList;
+    }
+
     private void queryUserProjects(Long organizationId, Long projectId, List<Long> projectIds, List<ProjectDTO> projects, Long userId) {
         if (ObjectUtils.isEmpty(projectId)) {
             List<ProjectDTO> projectVOS = baseFeignClient.queryOrgProjects(organizationId,userId).getBody();

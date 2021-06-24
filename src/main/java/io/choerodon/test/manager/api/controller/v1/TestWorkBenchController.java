@@ -5,6 +5,7 @@ import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.test.manager.api.vo.CaseSearchVO;
+import io.choerodon.test.manager.api.vo.TestMyExecutionCaseStatusVO;
 import io.choerodon.test.manager.api.vo.TestFolderCycleCaseVO;
 import io.choerodon.test.manager.app.service.TestCycleCaseService;
 import io.swagger.annotations.ApiOperation;
@@ -12,6 +13,8 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author huaxin.deng@hand-china.com 2021-03-02 13:48:55
@@ -32,5 +35,14 @@ public class TestWorkBenchController {
                                                                                    PageRequest pageRequest,
                                                                                    @RequestBody(required = false) CaseSearchVO caseSearchVO) {
         return ResponseEntity.ok(testCycleCaseService.pagedQueryMyExecutionalCase(organizationId, projectId, pageRequest, caseSearchVO));
+    }
+
+    @Permission(level = ResourceLevel.ORGANIZATION, permissionLogin = true)
+    @ApiOperation("工作台查询我执行的用例状态")
+    @PostMapping("/personal/my_execution_case/status/query")
+    public ResponseEntity<List<TestMyExecutionCaseStatusVO>> query(@ApiParam(value = "组织id", required = true)
+                                                                   @PathVariable(name="organization_id") Long organizationId,
+                                                                   @RequestParam(required = false) Long projectId){
+        return ResponseEntity.ok(testCycleCaseService.queryMyExecutionalCaseStatus(organizationId, projectId));
     }
 }
