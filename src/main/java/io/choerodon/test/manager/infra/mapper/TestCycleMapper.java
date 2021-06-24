@@ -13,17 +13,7 @@ import io.choerodon.test.manager.infra.dto.TestCycleDTO;
  */
 public interface TestCycleMapper extends BaseMapper<TestCycleDTO> {
 
-    List<TestCycleDTO> query(@Param("projectId") Long projectId, @Param("versionIds") Long[] versionId, @Param("assignedTo") Long assignedTo);
-
     List<TestCycleDTO> queryOneCycleBar(@Param("cycleId") Long cycleId);
-
-    /**
-     * 获取version下的所有循环Id
-     *
-     * @param versionIds
-     * @return
-     */
-    List<Long> selectCyclesInVersions(@Param("versionIds") Long[] versionIds);
 
     /**
      * 验证version下是否有重名cycle
@@ -35,17 +25,11 @@ public interface TestCycleMapper extends BaseMapper<TestCycleDTO> {
 
     List<TestCycleDTO> queryChildCycle(@Param("dto") TestCycleDTO testCycleDTO);
 
-    List<TestCycleDTO> queryCycleInVersion(@Param("dto") TestCycleDTO testCycleDTO);
-
     List<TestCycleDTO> queryByIds(@Param("cycleIds") List<Long> cycleIds);
 
     void updateAuditFields(@Param("cycleIds") Long[] cycleId, @Param("userId") Long userId, @Param("date") Date date);
 
-    String getCycleLastedRank(@Param("versionId") Long versionId);
-
-    String getPlanLastedRank(@Param("planId") Long planId);
-
-    Long getCycleCountInVersion(@Param("versionId") Long versionId);
+    String getPlanLastedRank(@Param("planId") Long planId, @Param("parentCycleId") Long parentCycleId);
 
     Long getFolderCountInCycle(@Param("cycleId") Long cycleId);
 
@@ -66,4 +50,8 @@ public interface TestCycleMapper extends BaseMapper<TestCycleDTO> {
     List<TestCycleDTO> listByPlanIdAndProjectId(@Param("projectId") Long projectId,@Param("planId") Long plandId);
 
     List<TestCycleDTO> selectAndOrderByIds(@Param("projectId")Long projectId, @Param("cycleIds") List<Long> cycleIds);
+
+    List<TestCycleDTO> listRankIsNullCycle(@Param("projectId") Long projectId, @Param("parentCycleId") Long parentCycleId);
+
+    Long countCycles(@Param("projectId") Long projectId, @Param("parentCycleId") Long parentCycleId, @Param("planId") Long planId);
 }
