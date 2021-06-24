@@ -74,9 +74,7 @@ WHERE
             object_version_number,
             project_id
         FROM test_status
-        <where>
-            status_type= 'CYCLE_CASE'
-            AND
+        where
             (
             project_id = 0
             OR
@@ -85,7 +83,7 @@ WHERE
                 #{projectId}
             </foreach>
             )
-        </where>
+            AND status_type= 'CYCLE_CASE'
     </select>
 
     <update id="updateAuditFields">

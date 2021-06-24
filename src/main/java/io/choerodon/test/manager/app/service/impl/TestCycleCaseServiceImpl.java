@@ -1049,7 +1049,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             return new Page<>();
         }
         statusVoPageInfo.getContent().forEach(v -> {
-            if (v.getProjectId() != 0){
+            ProjectDTO projectDTO = projectVOMap.get(v.getProjectId());
+            if (!ObjectUtils.isEmpty(projectDTO)){
                 v.setProjectName(projectVOMap.get(v.getProjectId()).getName());
             }
         });
