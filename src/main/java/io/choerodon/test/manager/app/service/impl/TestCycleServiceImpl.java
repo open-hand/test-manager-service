@@ -143,11 +143,11 @@ public class TestCycleServiceImpl implements TestCycleService {
     private TestCycleVO baseInsert(Long projectId, TestCycleVO testCycleVO) {
         TestCycleDTO testCycleDTO = modelMapper.map(testCycleVO, TestCycleDTO.class);
         testCycleDTO.setProjectId(projectId);
+        testCycleVO.setProjectId(projectId);
         validateCycle(testCycleDTO);
         checkRank(testCycleVO);
         testCycleDTO.setRank(RankUtil.Operation.INSERT.getRank(null, getLastedRank(testCycleVO)));
         cycleMapper.insert(testCycleDTO);
-
         return modelMapper.map(testCycleDTO, TestCycleVO.class);
     }
 
@@ -356,22 +356,11 @@ public class TestCycleServiceImpl implements TestCycleService {
     }
 
     private Long getCount(TestCycleVO testCycleVO) {
-        if (testCycleVO.getType().equals(TestCycleType.CYCLE)) {
-            return cycleMapper.getCycleCountInVersion(testCycleVO.getVersionId());
-        } else {
-            return cycleMapper.getFolderCountInCycle(testCycleVO.getParentCycleId());
-        }
+        return cycleMapper.countCycles(testCycleVO.getProjectId(), testCycleVO.getParentCycleId(), testCycleVO.getPlanId());
     }
 
     private void fixRank(TestCycleVO testCycleVO) {
-        List<TestCycleDTO> cycleES;
-        if (testCycleVO.getType().equals(TestCycleType.CYCLE)) {
-            cycleES = cycleMapper.queryCycleInVersion(modelMapper.map(testCycleVO, TestCycleDTO.class));
-        } else {
-            TestCycleDTO testCycleDTO = new TestCycleDTO();
-            testCycleDTO.setCycleId(testCycleVO.getParentCycleId());
-            cycleES = cycleMapper.queryChildCycle(testCycleDTO);
-        }
+        List<TestCycleDTO> cycleES = cycleMapper.listRankIsNullCycle(testCycleVO.getProjectId(), testCycleVO.getParentCycleId());
         for (int a = 0; a < cycleES.size(); a++) {
             TestCycleDTO testCycleETemp = cycleES.get(a);
             List<TestCycleDTO> list = cycleMapper.select(testCycleETemp);
@@ -390,7 +379,7 @@ public class TestCycleServiceImpl implements TestCycleService {
     }
 
     private String getLastedRank(TestCycleVO testCycleVO) {
-        return cycleMapper.getPlanLastedRank(testCycleVO.getPlanId());
+        return cycleMapper.getPlanLastedRank(testCycleVO.getPlanId(), testCycleVO.getParentCycleId());
     }
 
     private TestCycleDTO updateSelf(TestCycleDTO testCycleE) {

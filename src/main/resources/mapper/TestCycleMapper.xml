@@ -102,71 +102,6 @@
             color1.statusId
     </select>
 
-    <select id="query" resultMap="queryAboutBarResultMap">
-        SELECT
-            cycle1.cycle_id,
-            cycle1.parent_cycle_id,
-            cycle1.folder_id,
-            cycle1.cycle_name,
-            cycle1.type,
-            cycle1.version_id,
-            cycle1.description,
-            cycle1.build,
-            cycle1.environment,
-            cycle1.from_date,
-            cycle1.to_date,
-            cycle1.object_version_number,
-            cycle1.created_by,
-            cycle1.rank,
-            color1.projectId,
-            color1.color,
-            color1.counts,
-            color1.statusName,
-            color1.statusId
-        FROM
-            test_cycle cycle1
-            LEFT JOIN (
-            SELECT
-                color,
-                count( 1 ) counts,
-                temp1.cycle_id,
-                statusId,
-                statusName,
-                projectId
-            FROM
-                (
-                SELECT
-                    cycle.execute_id,
-                    cycle.cycle_id,
-                    status1.status_id statusId,
-                    status1.status_color color,
-                    status1.status_name statusName,
-                    status1.project_id projectId
-                FROM
-                    test_cycle_case cycle
-                    LEFT JOIN test_status status1 ON cycle.execution_status = status1.status_id
-                where cycle.project_id = #{projectId}
-            <if test="assignedTo!=null">
-                AND cycle.assigned_to = #{assignedTo}
-            </if>
-                ) temp1
-            GROUP BY
-                temp1.statusId,
-                temp1.cycle_id
-            ) color1 ON color1.cycle_id = cycle1.cycle_id
-        WHERE
-            cycle1.project_id = #{projectId} AND
-            cycle1.version_id IN
-            <foreach item="item" index="index" collection="versionIds"
-                     open="(" separator="," close=")">
-                #{item}
-            </foreach>
-        ORDER BY
-            cycle1.rank,
-            cycle1.cycle_id,
-            color1.statusId
-    </select>
-
     <select id="validateCycle" resultType="java.lang.Long">
         select count(cycle_id) from test_cycle
         <where>
@@ -185,19 +120,6 @@
         </where>
     </select>
 
-    <select id="selectCyclesInVersions" resultType="java.lang.Long">
-        SELECT DISTINCT
-        cycle_id
-        FROM
-        test_cycle
-        WHERE
-        version_id IN
-        <foreach item="item" index="index" collection="versionIds"
-                 open="(" separator="," close=")">
-            #{item}
-        </foreach>
-    </select>
-
     <select id="queryChildCycle" resultMap="BaseResultMap">
         SELECT
         cycle_id,cycle_name,rank
@@ -206,23 +128,6 @@
         <where>
             <if test="dto!=null and dto.cycleId != null">
                 parent_cycle_id=#{dto.cycleId}
-            </if>
-        </where>
-        ORDER BY
-        rank
-    </select>
-
-    <select id="queryCycleInVersion" resultType="io.choerodon.test.manager.infra.dto.TestCycleDTO">
-        SELECT
-        cycle_id,cycle_name,rank
-        FROM
-        test_cycle
-        <where>
-            <if test="dto!=null and dto.versionId != null">
-                version_id = #{dto.versionId}
-            </if>
-            <if test="dto!=null and dto.type != null">
-                AND type = #{dto.type}
             </if>
         </where>
         ORDER BY
@@ -242,19 +147,6 @@
         rank
     </select>
 
-    <select id="getCycleLastedRank" resultType="java.lang.String">
-        SELECT
-            rank
-        FROM
-            test_cycle
-        WHERE
-            version_id = #{versionId}
-            AND type = 'cycle'
-        ORDER BY
-            rank DESC
-            LIMIT 1
-    </select>
-
     <select id="getPlanLastedRank" resultType="java.lang.String">
         SELECT
             rank
@@ -262,19 +154,10 @@
             test_cycle
         WHERE
            plan_id=#{planId}
+           and parent_cycle_id = #{parentCycleId}
         ORDER BY
             rank ASC
             LIMIT 1
-    </select>
-
-    <select id="getCycleCountInVersion" resultType="java.lang.Long">
-        SELECT
-            COUNT( 1 )
-        FROM
-            test_cycle
-        WHERE
-            type = 'cycle'
-            AND version_id = #{versionId}
     </select>
 
     <select id="getFolderCountInCycle" resultType="java.lang.Long">
@@ -426,4 +309,30 @@
         </foreach>
         END
     </select>
+
+    <select id="listRankIsNullCycle" resultType="io.choerodon.test.manager.infra.dto.TestCycleDTO">
+        SELECT
+            cycle_id,
+            cycle_name,
+            rank
+        FROM test_cycle
+        <where>
+            project_id = #{projectId}
+            <if test="parentCycleId != null">
+             and parent_cycle_id = #{parentCycleId}
+            </if>
+            and rank is null
+        </where>
+    </select>
+
+    <select id="countCycles" resultType="java.lang.Long">
+        select
+           COUNT(cycle_id)
+        FROM test_cycle
+        where
+         project_id = #{projectId}
+         and parent_cycle_id = #{parentCycleId}
+         and plan_id = #{planId}
+    </select>
+
 </mapper>
