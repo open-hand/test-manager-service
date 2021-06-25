@@ -26,5 +26,5 @@ public interface TestStatusMapper extends BaseMapper<TestStatusDTO> {
 
     void updateAuditFields(@Param("statusId") Long statusId, @Param("userId") Long userId, @Param("date") Date date);
 
-    List<TestStatusVO> queryMyExecutionalCaseStatus(@Param("projectIds") List<Long> projectIds, @Param("statusName") String param);
+    List<TestStatusVO> queryMyExecutionalCaseStatus(@Param("projectIds") List<Long> projectIds, @Param("statusName") String statusName);
 }
