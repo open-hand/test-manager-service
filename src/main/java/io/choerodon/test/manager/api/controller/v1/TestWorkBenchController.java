@@ -4,7 +4,9 @@ import io.choerodon.core.domain.Page;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.swagger.annotation.Permission;
+import io.choerodon.test.manager.api.vo.CaseSearchVO;
 import io.choerodon.test.manager.api.vo.TestFolderCycleCaseVO;
+import io.choerodon.test.manager.api.vo.TestStatusVO;
 import io.choerodon.test.manager.app.service.TestCycleCaseService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -28,7 +30,19 @@ public class TestWorkBenchController {
     public ResponseEntity<Page<TestFolderCycleCaseVO>> pagedQueryMyExecutionalCase(@ApiParam(value = "组织id", required = true)
                                                                                    @PathVariable(name = "organization_id") Long organizationId,
                                                                                    @RequestParam(required = false) Long projectId,
-                                                                                   PageRequest pageRequest) {
-        return ResponseEntity.ok(testCycleCaseService.pagedQueryMyExecutionalCase(organizationId, projectId, pageRequest));
+                                                                                   PageRequest pageRequest,
+                                                                                   @RequestBody(required = false) CaseSearchVO caseSearchVO) {
+        return ResponseEntity.ok(testCycleCaseService.pagedQueryMyExecutionalCase(organizationId, projectId, pageRequest, caseSearchVO));
+    }
+
+    @Permission(level = ResourceLevel.ORGANIZATION, permissionLogin = true)
+    @ApiOperation("工作台查询我执行的用例状态")
+    @PostMapping("/personal/my_execution_case/status/query")
+    public ResponseEntity<Page<TestStatusVO>> pageQueryCaseStatus(@ApiParam(value = "组织id", required = true)
+                                                                  @PathVariable(name="organization_id") Long organizationId,
+                                                                  @RequestParam(required = false) Long projectId,
+                                                                  PageRequest pageRequest,
+                                                                  @RequestParam(required = false) String param){
+        return ResponseEntity.ok(testCycleCaseService.pageQueryCaseStatus(organizationId, projectId, pageRequest, param));
     }
 }

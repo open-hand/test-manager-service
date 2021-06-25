@@ -63,6 +63,33 @@ WHERE
 	step_status = #{statusId}
     </select>
 
+    <select id="queryMyExecutionalCaseStatus"
+            resultType="io.choerodon.test.manager.api.vo.TestStatusVO">
+        SELECT
+            status_id,
+            status_name,
+            description,
+            status_color,
+            status_type,
+            object_version_number,
+            project_id
+        FROM test_status
+        WHERE 1=1
+        AND
+        (
+        project_id = 0
+        OR
+        project_id IN
+        <foreach collection="projectIds" item="projectId" open="(" close=")" separator=",">
+            #{projectId}
+        </foreach>
+        )
+        <if test="statusName != null">
+            AND status_name LIKE CONCAT(CONCAT('%', #{statusName}), '%')
+        </if>
+        AND status_type= 'CYCLE_CASE'
+    </select>
+
     <update id="updateAuditFields">
         update test_status
         set created_by = #{userId}, creation_date = #{date}, last_updated_by = #{userId}, last_update_date = #{date}

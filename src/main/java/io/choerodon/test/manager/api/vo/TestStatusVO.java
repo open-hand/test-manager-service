@@ -30,6 +30,9 @@ public class TestStatusVO {
     @ApiModelProperty(value = "项目ID")
     private Long projectId;
 
+    @ApiModelProperty(value = "项目名称")
+    private String projectName;
+
     @ApiModelProperty(value = "数量")
     private Long count;
 
@@ -95,5 +98,13 @@ public class TestStatusVO {
 
     public void setCount(Long count) {
         this.count = count;
+    }
+
+    public String getProjectName() {
+        return projectName;
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
     }
 }
