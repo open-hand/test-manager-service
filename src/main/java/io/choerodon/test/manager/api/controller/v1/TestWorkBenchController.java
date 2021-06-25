@@ -41,7 +41,8 @@ public class TestWorkBenchController {
     public ResponseEntity<Page<TestStatusVO>> pageQueryCaseStatus(@ApiParam(value = "组织id", required = true)
                                                                   @PathVariable(name="organization_id") Long organizationId,
                                                                   @RequestParam(required = false) Long projectId,
-                                                                  PageRequest pageRequest){
-        return ResponseEntity.ok(testCycleCaseService.pageQueryCaseStatus(organizationId, projectId, pageRequest));
+                                                                  PageRequest pageRequest,
+                                                                  @RequestParam(required = false) String param){
+        return ResponseEntity.ok(testCycleCaseService.pageQueryCaseStatus(organizationId, projectId, pageRequest, param));
     }
 }

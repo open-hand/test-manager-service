@@ -74,16 +74,20 @@ WHERE
             object_version_number,
             project_id
         FROM test_status
-        where
-            (
-            project_id = 0
-            OR
-            project_id IN
-            <foreach collection="projectIds" item="projectId" open="(" close=")" separator=",">
-                #{projectId}
-            </foreach>
-            )
-            AND status_type= 'CYCLE_CASE'
+        WHERE 1=1
+        AND
+        (
+        project_id = 0
+        OR
+        project_id IN
+        <foreach collection="projectIds" item="projectId" open="(" close=")" separator=",">
+            #{projectId}
+        </foreach>
+        )
+        <if test="statusName != null">
+            AND status_name LIKE CONCAT(CONCAT('%', #{statusName}), '%')
+        </if>
+        AND status_type= 'CYCLE_CASE'
     </select>
 
     <update id="updateAuditFields">

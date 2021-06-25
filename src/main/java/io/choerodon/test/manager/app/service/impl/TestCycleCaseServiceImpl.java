@@ -1035,7 +1035,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
     @Override
-    public Page<TestStatusVO> pageQueryCaseStatus(Long organizationId, Long projectId, PageRequest pageRequest) {
+    public Page<TestStatusVO> pageQueryCaseStatus(Long organizationId, Long projectId, PageRequest pageRequest, String param) {
         if (ObjectUtils.isEmpty(organizationId)) {
             throw new CommonException("error.organizationId.is.null");
         }
@@ -1044,14 +1044,14 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         Long userId = DetailsHelper.getUserDetails().getUserId();
         queryUserProjects(organizationId, projectId, projectIds, projects, userId);
         Map<Long, ProjectDTO> projectVOMap = projects.stream().collect(Collectors.toMap(ProjectDTO::getId, Function.identity()));
-        Page<TestStatusVO> statusVoPageInfo = PageHelper.doPageAndSort(pageRequest, () -> testStatusMapper.queryMyExecutionalCaseStatus(projectIds));
+        Page<TestStatusVO> statusVoPageInfo = PageHelper.doPageAndSort(pageRequest, () -> testStatusMapper.queryMyExecutionalCaseStatus(projectIds, param));
         if (CollectionUtils.isEmpty(statusVoPageInfo.getContent())){
             return new Page<>();
         }
         statusVoPageInfo.getContent().forEach(v -> {
             ProjectDTO projectDTO = projectVOMap.get(v.getProjectId());
             if (!ObjectUtils.isEmpty(projectDTO)){
-                v.setProjectName(projectVOMap.get(v.getProjectId()).getName());
+                v.setProjectName(projectDTO.getName());
             }
         });
         return statusVoPageInfo;
