@@ -861,8 +861,11 @@
                     <if test='searchDTO.searchArgs.summary != null'>
                         AND tcc.summary  LIKE CONCAT(CONCAT('%', #{searchDTO.searchArgs.summary, jdbcType=VARCHAR}),'%')
                     </if>
-                    <if test="searchDTO.searchArgs.priorityId != null">
-                        AND tcc.priority_id = #{searchDTO.searchArgs.priorityId}
+                    <if test="searchDTO.searchArgs.priorityIdList != null and searchDTO.searchArgs.priorityIdList.size >0">
+                        AND tcc.priority_id IN
+                        <foreach collection="searchDTO.searchArgs.priorityIdList" item="priorityId" open="(" separator="," close=")">
+                            #{priorityId}
+                        </foreach>
                     </if>
                     <if test="searchDTO.searchArgs.executionStatusList != null and searchDTO.searchArgs.executionStatusList.size >0">
                         AND tcc.execution_status IN

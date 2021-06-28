@@ -52,6 +52,9 @@ public class CaseSearchVO {
         @Encrypt
         private Long priorityId;
 
+        @Encrypt
+        private List<Long> priorityIdList;
+
         private String customNum;
 
         public Long getPriorityId() {
@@ -60,6 +63,14 @@ public class CaseSearchVO {
 
         public void setPriorityId(Long priorityId) {
             this.priorityId = priorityId;
+        }
+
+        public List<Long> getPriorityIdList() {
+            return priorityIdList;
+        }
+
+        public void setPriorityIdList(List<Long> priorityIdList) {
+            this.priorityIdList = priorityIdList;
         }
 
         public Long getPreviousExecuteId() {
