@@ -3,6 +3,7 @@ package io.choerodon.test.manager.infra.mapper;
 import java.util.Date;
 import java.util.List;
 
+import io.choerodon.test.manager.api.vo.TestStatusVO;
 import org.apache.ibatis.annotations.Param;
 
 import io.choerodon.mybatis.common.BaseMapper;
@@ -24,4 +25,6 @@ public interface TestStatusMapper extends BaseMapper<TestStatusDTO> {
     TestStatusDTO queryDefaultStatus(@Param("statusType") String statusType,@Param("statusName")String statusName);
 
     void updateAuditFields(@Param("statusId") Long statusId, @Param("userId") Long userId, @Param("date") Date date);
+
+    List<TestStatusVO> queryMyExecutionalCaseStatus(@Param("projectIds") List<Long> projectIds, @Param("statusName") String statusName);
 }

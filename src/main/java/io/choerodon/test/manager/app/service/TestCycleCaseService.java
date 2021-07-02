@@ -140,7 +140,7 @@ public interface TestCycleCaseService {
 
     void batchUpdateCycleCasePriority(Long organizationId, Long priorityId, Long changePriorityId, Long userId, List<Long> projectIds);
 
-    Page<TestFolderCycleCaseVO> pagedQueryMyExecutionalCase(Long organizationId, Long projectId, PageRequest pageRequest);
+    Page<TestFolderCycleCaseVO> pagedQueryMyExecutionalCase(Long organizationId, Long projectId, PageRequest pageRequest, CaseSearchVO caseSearchVO);
 
     /**
      * 批量指派文件夹中的用例
@@ -150,4 +150,6 @@ public interface TestCycleCaseService {
      * @param planId 计划id
      */
     void assignCaseByCycle(Long projectId, Long assignUserId, Long cycleId, Long planId);
+
+    Page<TestStatusVO> pageQueryCaseStatus(Long organizationId, Long projectId, PageRequest pageRequest, String param);
 }

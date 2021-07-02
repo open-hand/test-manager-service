@@ -993,7 +993,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
     @Override
-    public Page<TestFolderCycleCaseVO> pagedQueryMyExecutionalCase(Long organizationId, Long projectId, PageRequest pageRequest) {
+    public Page<TestFolderCycleCaseVO> pagedQueryMyExecutionalCase(Long organizationId, Long projectId, PageRequest pageRequest, CaseSearchVO caseSearchVO) {
         if (ObjectUtils.isEmpty(organizationId)) {
             throw new CommonException("error.organizationId.is.null");
         }
@@ -1008,7 +1008,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
         Map<Long, ProjectDTO> projectVOMap = projects.stream().collect(Collectors.toMap(ProjectDTO::getId, Function.identity()));
         Page<TestFolderCycleCaseVO> caseVOPageInfo = PageHelper.doPageAndSort(pageRequest,() ->
-                testCycleCaseMapper.pagedQueryMyExecutionalCase(userId, projectIds, organizationId));
+                testCycleCaseMapper.pagedQueryMyExecutionalCase(userId, projectIds, organizationId, caseSearchVO));
         caseVOPageInfo.getContent().forEach(v -> v.setProjectDTO(projectVOMap.get(v.getProjectId())));
 
         return caseVOPageInfo;
@@ -1024,6 +1024,29 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             return;
         }
         testCycleCaseMapper.batchAssignByCycle(assignUserId, cycleIds);
+    }
+
+    @Override
+    public Page<TestStatusVO> pageQueryCaseStatus(Long organizationId, Long projectId, PageRequest pageRequest, String param) {
+        if (ObjectUtils.isEmpty(organizationId)) {
+            throw new CommonException("error.organizationId.is.null");
+        }
+        List<Long> projectIds = new ArrayList<>();
+        List<ProjectDTO> projects = new ArrayList<>();
+        Long userId = DetailsHelper.getUserDetails().getUserId();
+        queryUserProjects(organizationId, projectId, projectIds, projects, userId);
+        Map<Long, ProjectDTO> projectVOMap = projects.stream().collect(Collectors.toMap(ProjectDTO::getId, Function.identity()));
+        Page<TestStatusVO> statusVoPageInfo = PageHelper.doPageAndSort(pageRequest, () -> testStatusMapper.queryMyExecutionalCaseStatus(projectIds, param));
+        if (CollectionUtils.isEmpty(statusVoPageInfo.getContent())){
+            return new Page<>();
+        }
+        statusVoPageInfo.getContent().forEach(v -> {
+            ProjectDTO projectDTO = projectVOMap.get(v.getProjectId());
+            if (!ObjectUtils.isEmpty(projectDTO)){
+                v.setProjectName(projectDTO.getName());
+            }
+        });
+        return statusVoPageInfo;
     }
 
     private void queryUserProjects(Long organizationId, Long projectId, List<Long> projectIds, List<ProjectDTO> projects, Long userId) {

@@ -102,7 +102,7 @@ function TestPlanModal({
   return (
     <Context.Provider value={{ SelectIssueStore: selectIssueStore }}>
       <Form dataSet={dataSet} style={{ width: 512 }}>
-        <TextField name="name" required maxLength={44} valueChangeAction="input" placeholder="例如：用户管理V1.0全流程测试" />
+        <TextField name="name" required maxLength={44} valueChangeAction="input" placeholder="请输入计划名称，例如：用户管理V1.0全流程测试" />
         <TextArea
           name="description"
           placeholder="在此输入描述内容"

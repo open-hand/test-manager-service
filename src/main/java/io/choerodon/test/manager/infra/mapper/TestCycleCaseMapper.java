@@ -141,7 +141,8 @@ public interface TestCycleCaseMapper extends BaseMapper<TestCycleCaseDTO> {
 
     List<TestFolderCycleCaseVO> pagedQueryMyExecutionalCase(@Param("userId") Long userId,
                                                             @Param("projectIds") List<Long> projectIds,
-                                                            @Param("organizationId") Long organizationId);
+                                                            @Param("organizationId") Long organizationId,
+                                                            @Param("searchDTO") CaseSearchVO caseSearchVO);
 
     /**
      * 查询测试用例关联的指定冲刺下的执行
