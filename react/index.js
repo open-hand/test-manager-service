@@ -2,7 +2,7 @@ import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { ModalContainer } from 'choerodon-ui/pro';
 import { inject } from 'mobx-react';
-import { asyncLocaleProvider, asyncRouter, nomatch } from '@choerodon/boot';
+import { asyncLocaleProvider, nomatch } from '@choerodon/boot';
 import { localPageCacheStore } from '@choerodon/agile/lib/stores/common/LocalPageCacheStore';
 import 'moment/locale/zh-cn';
 import 'moment/locale/en-nz';
@@ -10,12 +10,12 @@ import moment from 'moment';
 import RunWhenProjectChange from './common/RunWhenProjectChange';
 import './index.less';
 
-const TestPlanIndex = asyncRouter(() => import('./routes/TestPlan'));
-const CustomStatusIndex = asyncRouter(() => import('./routes/CustomStatus'));
-const ReportIndex = asyncRouter(() => import('./routes/Report'));
-const IssueManageIndex = asyncRouter(() => import('./routes/IssueManage'));
-const AutoTestIndex = asyncRouter(() => import('./routes/AutoTest'));
-const Priority = asyncRouter(() => import('./routes/priority'));
+const TestPlanIndex = React.lazy(() => import('./routes/TestPlan'));
+const CustomStatusIndex = React.lazy(() => import('./routes/CustomStatus'));
+const ReportIndex = React.lazy(() => import('./routes/Report'));
+const IssueManageIndex = React.lazy(() => import('./routes/IssueManage'));
+const AutoTestIndex = React.lazy(() => import('./routes/AutoTest'));
+const Priority = React.lazy(() => import('./routes/priority'));
 
 @inject('AppState')
 class TestManagerIndex extends React.Component {

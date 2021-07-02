@@ -1,9 +1,9 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
-import { asyncRouter, nomatch } from '@choerodon/boot';
+import {  nomatch } from '@choerodon/boot';
 import { PermissionRoute } from '@choerodon/master';
 
-const CustomStatusHome = asyncRouter(() => import('./CustomStatusHome'));
+const CustomStatusHome = React.lazy(() => import('./CustomStatusHome'));
 
 const CustomStatusIndex = ({ match }) => (
   <Switch>

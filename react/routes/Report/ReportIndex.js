@@ -1,12 +1,12 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
-import { asyncRouter, nomatch } from '@choerodon/boot';
+import {  nomatch } from '@choerodon/boot';
 import { PermissionRoute } from '@choerodon/master';
 
-const ReportHome = asyncRouter(() => import('./ReportHome'));
-const ReportStory = asyncRouter(() => import('./ReportStory'));
-const ReportTest = asyncRouter(() => import('./ReportTest'));
-const ReportProgress = asyncRouter(() => import('./ReportProgress'));
+const ReportHome = React.lazy(() => import('./ReportHome'));
+const ReportStory = React.lazy(() => import('./ReportStory'));
+const ReportTest = React.lazy(() => import('./ReportTest'));
+const ReportProgress = React.lazy(() => import('./ReportProgress'));
 const CycleIndex = ({ match }) => (
   <Switch>
     <Route exact path={match.url} component={ReportHome} />

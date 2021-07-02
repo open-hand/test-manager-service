@@ -3,12 +3,12 @@ import {
   Route,
   Switch,
 } from 'react-router-dom';
-import { asyncRouter, nomatch } from '@choerodon/boot';
+import {  nomatch } from '@choerodon/boot';
 import { PermissionRoute } from '@choerodon/master';
 
-const CreateAutoTest = asyncRouter(() => (import('./CreateAutoTest')));
-const AutoTestList = asyncRouter(() => import('./AutoTestList'));
-const TestReport = asyncRouter(() => import('./TestReport'));
+const CreateAutoTest = React.lazy(() => (import('./CreateAutoTest')));
+const AutoTestList = React.lazy(() => import('./AutoTestList'));
+const TestReport = React.lazy(() => import('./TestReport'));
 const TestIndex = ({ match }) => (
   <Switch>
     <Route exact path={`${match.url}/create`} component={CreateAutoTest} />
