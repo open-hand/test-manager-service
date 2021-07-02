@@ -1,11 +1,11 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
-import { asyncRouter, nomatch } from '@choerodon/boot';
+import { nomatch } from '@choerodon/boot';
 import { PermissionRoute } from '@choerodon/master';
 
-const TestPlanExecuteDetail = asyncRouter(() => import('./components/TestPlanExecuteDetail'));
-const TestPlanIndex = asyncRouter(() => import('./TestPlanIndex'));
-const TestPlanReport = asyncRouter(() => import('./plan-report'));
+const TestPlanExecuteDetail = React.lazy(() => import('./components/TestPlanExecuteDetail'));
+const TestPlanIndex = React.lazy(() => import('./TestPlanIndex'));
+const TestPlanReport = React.lazy(() => import('./plan-report'));
 
 const TestPlan = ({ match }) => (
   <Switch>
