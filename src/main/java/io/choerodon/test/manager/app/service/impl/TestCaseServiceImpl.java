@@ -487,12 +487,10 @@ public class TestCaseServiceImpl implements TestCaseService {
         testCaseLinkDTO.setProjectId(projectId);
         if (caseId != 0L) {
             testCaseLinkDTO.setLinkCaseId(caseId);
-        }
-        List<TestCaseLinkDTO> caseLinkList = testCaseLinkMapper.select(testCaseLinkDTO);
-        if(!CollectionUtils.isEmpty(caseLinkList)){
-            caseLinkList.forEach(caseLink -> {
-                issueIds.add(caseLink.getIssueId());
-            });
+            List<TestCaseLinkDTO> caseLinkList = testCaseLinkMapper.select(testCaseLinkDTO);
+            if (!CollectionUtils.isEmpty(caseLinkList)) {
+                caseLinkList.forEach(caseLink -> issueIds.add(caseLink.getIssueId()));
+            }
         }
         searchDTO.getOtherArgs().put("excludeIssueIds", issueIds);
         return agileClientOperator.queryListIssueWithSub(projectId, searchDTO, pageRequest, organizationId);
