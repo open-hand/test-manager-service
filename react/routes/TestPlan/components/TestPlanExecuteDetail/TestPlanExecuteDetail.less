@@ -1,12 +1,16 @@
 .c7n-test-execute-detail {
   .c7n-spin-nested-loading {
-    flex: 1;
+    height: 100%;
+    .c7n-spin-container {
+      height: 100%;
+    }
   }
 
   &-header {
+    flex-shrink: 0;
     display: flex;
     justify-content: space-between;
-    margin: .12rem .24rem 0;
+    padding: .12rem .24rem;
   }
 
   &-card {
