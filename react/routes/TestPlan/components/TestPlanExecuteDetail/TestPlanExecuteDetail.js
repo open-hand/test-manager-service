@@ -282,14 +282,14 @@ function TestPlanExecuteDetail(props) {
       ),
       footer: (okBtn, cancelBtn) => (
         <div>
-          {okBtn}
+          {cancelBtn}
           {detailData.caseHasExist ? <Button loading={syncLoading} funcType="raised" color="primary" onClick={handleSaveSyncCase.bind(this, editModal)}>保存并同步到用例库</Button>
             : (
               <Tooltip title="相关用例已删除">
                 <Button funcType="raised" color="primary">保存并同步到用例库</Button>
               </Tooltip>
             )}
-          {cancelBtn}
+          {okBtn}
         </div>
       ),
       okText: '保存',
