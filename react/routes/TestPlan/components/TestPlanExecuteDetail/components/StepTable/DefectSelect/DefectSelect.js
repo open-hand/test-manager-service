@@ -9,11 +9,14 @@ import { removeDefect } from '@/api/ExecuteDetailApi';
 import { getIssuesForDefects } from '@/api/agileApi';
 import './DefectSelect.less';
 import { axios } from '@choerodon/boot';
+import openCreateBugModal from '@/components/create-bug';
 import { delta2Html, getProjectId, getOrganizationId } from '../../../../../../../common/utils';
 
 const { Option } = Select;
 function DefectSelect(props) {
-  const { defects, executeId, currentPageIndex } = props;
+  const {
+    defects, executeId, currentPageIndex, onCreateBug,
+  } = props;
   const selectRef = useRef();
   const [defectIds, setDefectIds] = useState(defects ? defects.map((defect) => defect.issueId.toString()) : []);
   const [originDefects, setOriginDefects] = useState(defects ? defects.map((defect) => defect.issueId.toString()) : []);
@@ -172,12 +175,14 @@ function DefectSelect(props) {
                   defaultDescription += line(`预期结果：${expectedResult}`);
                 });
                 // defaultDescription.splice(3, 0, ...newDescription, String(newDescription[newDescription.length - 1].insert));
-                ExecuteDetailStore.setDefaultDefectDescription(defaultDescription);
               });
-
-              ExecuteDetailStore.setCreateBugShow(true);
-              ExecuteDetailStore.setDefectType('CASE_STEP');
-              ExecuteDetailStore.setCreateDefectTypeId(executeStepId);
+              openCreateBugModal({
+                onCreateBug,
+                stepId: executeStepId,
+                defaultValues: {
+                  description: defaultDescription,
+                },
+              });
               if (selectRef.current) {
                 selectRef.current.rcSelect.setOpenState(false, false);
               }

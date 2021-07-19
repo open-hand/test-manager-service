@@ -69,7 +69,7 @@ const DefectSelectText = memo(({
 
 function StepTable(props) {
   const {
-    dataSet, ExecuteDetailStore, readOnly = false, operateStatus = false, testStatusDataSet, updateHistory, executeId, openIssue,
+    dataSet, ExecuteDetailStore, readOnly = false, operateStatus = false, testStatusDataSet, updateHistory, executeId, openIssue, onCreateBug,
   } = props;
   const [lock, setLock] = useState('right');
   const [editing, setEditing] = useState();
@@ -256,6 +256,7 @@ function StepTable(props) {
               handleSubmit={handleAddDefects}
               executeId={executeId}
               currentPageIndex={record.index}
+              onCreateBug={onCreateBug}
             />
           </div>
         </Edit>
