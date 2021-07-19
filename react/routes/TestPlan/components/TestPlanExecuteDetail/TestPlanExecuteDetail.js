@@ -3,13 +3,12 @@ import React, {
   useEffect, useContext, useState,
 } from 'react';
 import {
-  Icon, Card, Spin, Tooltip,
+  Card, Spin, Tooltip,
 } from 'choerodon-ui';
 import {
   Page, Header, Content, Breadcrumb,
   Choerodon,
 } from '@choerodon/boot';
-import JsonBig from 'json-bigint';
 import DetailContainer, { useDetail } from '@choerodon/agile/lib/components/detail-container';
 import { HeaderButtons } from '@choerodon/master';
 import { observer } from 'mobx-react-lite';
@@ -26,7 +25,7 @@ import {
 import { updateDetail, updateSidebarDetail } from '../../../../api/ExecuteDetailApi';
 import './TestPlanExecuteDetail.less';
 import {
-  ExecuteDetailSide, CreateBug, StepTable, QuickOperate, ExecuteHistoryTable,
+  ExecuteDetailSide, StepTable, QuickOperate, ExecuteHistoryTable,
 } from './components';
 import Store from './stores';
 import EditExecuteIssue from './components/EditExecuteIssue';
@@ -134,12 +133,12 @@ function TestPlanExecuteDetail(props) {
     ExecuteDetailStore.setCreateBugShow(false);
   };
 
-  const handleBugCreate = (res, requestData) => {
-    const { assigneeId, projectId } = requestData;
-    sessionStorage.setItem('test.plan.execute.detail.create.bug.default.value', JsonBig.stringify({
-      assigneeId, projectId,
-    }));
-    ExecuteDetailStore.setCreateBugShow(false);
+  const handleBugCreate = () => {
+    // const { assigneeId, projectId } = requestData;
+    // sessionStorage.setItem('test.plan.execute.detail.create.bug.default.value', JsonBig.stringify({
+    //   assigneeId, projectId,
+    // }));
+    // ExecuteDetailStore.setCreateBugShow(false);
     ExecuteDetailStore.getInfo();
     stepTableDataSet.query();
   };
@@ -326,9 +325,6 @@ function TestPlanExecuteDetail(props) {
     const detailData = ExecuteDetailStore.getDetailData;
     const visible = ExecuteDetailStore.ExecuteDetailSideVisible;
     const statusList = ExecuteDetailStore.getStatusList;
-    const createBugShow = ExecuteDetailStore.getCreateBugShow;
-    const defectType = ExecuteDetailStore.getDefectType;
-    const createDefectTypeId = ExecuteDetailStore.getCreateDefectTypeId;
     const { statusColor, statusName } = ExecuteDetailStore.getStatusById(detailData.executionStatus);
     const {
       summary, nextExecuteId, previousExecuteId, planStatus = 'done',
@@ -433,6 +429,7 @@ function TestPlanExecuteDetail(props) {
                       ExecuteDetailStore={ExecuteDetailStore}
                       executeId={executeId}
                       openIssue={handleOpenIssue}
+                      onCreateBug={handleBugCreate}
                     />
                   </CardWrapper>
                   <CardWrapper title={<FormattedMessage id="execute_executeHistory" />}>
@@ -452,18 +449,6 @@ function TestPlanExecuteDetail(props) {
                   onClose={handleToggleExecuteDetailSide}
                 />
               )}
-              {
-                createBugShow && (
-                  <CreateBug
-                    visible={createBugShow}
-                    defectType={defectType}
-                    description={ExecuteDetailStore.getDefaultDefectDescription}
-                    id={createDefectTypeId}
-                    onCancel={handleHiddenCreateBug}
-                    onOk={handleBugCreate}
-                  />
-                )
-              }
             </div>
           </Spin>
           <DetailContainer {...detailProps} />
