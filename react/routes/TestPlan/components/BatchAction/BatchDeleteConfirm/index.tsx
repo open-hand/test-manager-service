@@ -87,15 +87,6 @@ const BatchDeleteModal: React.FC<Props> = (props) => {
       </div>
       <div className={styles.footer} style={{ display: 'flex', justifyContent: 'flex-end' }}>
         <Button
-          onClick={handleCancel}
-          disabled={!!loading}
-          style={{
-            fontWeight: 500,
-          }}
-        >
-          取消
-        </Button>
-        <Button
           color={'primary' as ButtonColor}
           className={styles.batchDeleteBtn}
           disabled={!!loading}
@@ -108,6 +99,15 @@ const BatchDeleteModal: React.FC<Props> = (props) => {
           }}
         >
           移除
+        </Button>
+        <Button
+          onClick={handleCancel}
+          disabled={!!loading}
+          style={{
+            fontWeight: 500,
+          }}
+        >
+          取消
         </Button>
       </div>
     </div>
