@@ -8,6 +8,7 @@ import {
 import { Menu, Dropdown } from 'choerodon-ui';
 import { observer } from 'mobx-react-lite';
 import SmartTooltip from '@/components/SmartTooltip';
+import '@/scrollIntoViewIfNeededPolyfill';
 
 function callFunction(prop, ...args) {
   if (typeof prop === 'function') {
