@@ -8,7 +8,6 @@ import {
 import { Menu, Dropdown } from 'choerodon-ui';
 import { observer } from 'mobx-react-lite';
 import SmartTooltip from '@/components/SmartTooltip';
-import '@/scrollIntoViewIfNeededPolyfill';
 
 function callFunction(prop, ...args) {
   if (typeof prop === 'function') {
@@ -51,12 +50,6 @@ function TreeNode(props) {
   const {
     provided, onSelect, path, item, onExpand, onCollapse, onMenuClick, onCreate, search, onEdit, enableAction, menuItems, enableAddFolder, getFolderIcon,
   } = props;
-  const ref = useRef();
-  useEffect(() => {
-    if (ref.current && item.selected) {
-      ref.current.scrollIntoViewIfNeeded();
-    }
-  });
   const getIcon = useCallback(() => {
     const expandIcon = (
       <Icon
@@ -159,9 +152,9 @@ function TreeNode(props) {
   );
   return (
     <div
+      data-id={item.id}
       ref={(instance) => {
         provided.innerRef(instance);
-        ref.current = instance;
       }}
       {...provided.draggableProps}
       {...provided.dragHandleProps}

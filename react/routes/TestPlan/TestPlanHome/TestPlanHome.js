@@ -12,6 +12,7 @@ import { Tabs, Modal, Button } from 'choerodon-ui/pro';
 
 import { localPageCacheStore } from '@choerodon/agile/lib/stores/common/LocalPageCacheStore';
 import { EmptyPage } from '@choerodon/components';
+import '@/scrollIntoViewIfNeededPolyfill';
 import {
   deleteExecute, updateExecute, comfirmUpdate, ignoreUpdate,
 } from '../../../api/TestPlanApi';
@@ -249,6 +250,13 @@ function TestPlanHome({ history }) {
   const handleSkipToFolder = (execute) => {
     // 当前选中的planId拼上文件夹id
     testPlanStore.resetCurrentCycleById(`${testPlanStore.getCurrentPlanId}%${execute.cycleId}`);
+    // 等待渲染完成
+    setTimeout(() => {
+      const element = document.querySelector(`[data-id="${testPlanStore.getCurrentPlanId}%${execute.cycleId}"]`);
+      if (element && element.scrollIntoViewIfNeeded) {
+        element.scrollIntoViewIfNeeded();
+      }
+    });
   };
   const handleSearchAssign = (value) => {
     const { filter } = testPlanStore;
