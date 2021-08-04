@@ -128,7 +128,7 @@ class CreateStatus extends Component {
             <FormItem>
               {getFieldDecorator('description', {
               })(
-                <Input maxLength={30} label={<FormattedMessage id="comment" />} />,
+                <Input style={{ marginTop: 20 }} maxLength={30} label={<FormattedMessage id="comment" />} />,
               )}
             </FormItem>
             <FormItem className="c7ntest-color-container">
