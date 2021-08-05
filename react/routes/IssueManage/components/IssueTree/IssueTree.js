@@ -8,8 +8,8 @@ import {
   addFolder, editFolder, deleteFolder, moveFolder,
 } from '@/api/IssueManageApi';
 import './IssueTree.less';
-
-import { Loading } from '@/components';
+import Loading from '@choerodon/agile/lib/components/Loading';
+// import { Loading } from '@/components';
 import Tree from '@/components/Tree';
 import IssueStore from '../../stores/IssueStore';
 import IssueTreeStore from '../../stores/IssueTreeStore';
@@ -192,7 +192,7 @@ class IssueTree extends Component {
 
     return (
       <div className="c7ntest-IssueTree">
-        <Loading loading={loading} />
+        <Loading loading={loading} loadId="tree" allowSelfLoading />
         <WSHandler
           messageKey={`COPY_TEST_FOLDER-${getProjectId()}`}
           onMessage={this.handleMessage}

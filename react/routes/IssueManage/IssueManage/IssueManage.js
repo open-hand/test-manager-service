@@ -12,6 +12,7 @@ import empty from '@/assets/empty.png';
 import priorityApi from '@/api/priority';
 import { localPageCacheStore } from '@choerodon/agile/lib/stores/common/LocalPageCacheStore';
 import ResizeContainer from '@/components/ResizeDivider/ResizeContainer';
+import { LoadingContext } from '@choerodon/agile/lib/components/Loading';
 import CreateIssue from '@/components/create-test-case';
 import IssueStore from '../stores/IssueStore';
 import { getParams } from '../../../common/utils';
@@ -122,6 +123,7 @@ class IssueManage extends Component {
   }
 
   handleRefresh = () => {
+    this.props.change('IssueManage', true);
     this.getTestCase();
     // IssueTreeStore.loadIssueTree();
   }
@@ -279,35 +281,35 @@ class IssueManage extends Component {
             >
               <div style={{ height: '100%' }}>
                 {
-                noFolder ? (
-                  <Empty
-                    loading={loading}
-                    pic={empty}
-                    title="暂无目录"
-                    description="当前项目下无目录，请创建"
-                    extra={<Button type="primary" funcType="raised" onClick={this.handleAddFolderClick}>创建一级目录</Button>}
-                  />
-                ) : currentFolder.id && (
-                  <div
-                    className="c7ntest-content-issue"
-                    style={{
-                      flex: 1,
-                      overflow: 'hidden',
-                      padding: '0 20px',
-                      height: '100%',
-                      display: 'flex',
-                      flexDirection: 'column',
-                    }}
-                  >
-                    <div className="c7ntest-content-issueFolderName">
-                      {currentFolder.data.name}
-                    </div>
-                    <IssueTable
-                      onClick={this.handleTableRowClick}
+                  noFolder ? (
+                    <Empty
+                      loading={loading}
+                      pic={empty}
+                      title="暂无目录"
+                      description="当前项目下无目录，请创建"
+                      extra={<Button type="primary" funcType="raised" onClick={this.handleAddFolderClick}>创建一级目录</Button>}
                     />
-                  </div>
-                )
-              }
+                  ) : currentFolder.id && (
+                    <div
+                      className="c7ntest-content-issue"
+                      style={{
+                        flex: 1,
+                        overflow: 'hidden',
+                        padding: '0 20px',
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                      }}
+                    >
+                      <div className="c7ntest-content-issueFolderName">
+                        {currentFolder.data.name}
+                      </div>
+                      <IssueTable
+                        onClick={this.handleTableRowClick}
+                      />
+                    </div>
+                  )
+                }
               </div>
             </Section>
           </ResizeContainer>

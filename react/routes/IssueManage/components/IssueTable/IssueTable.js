@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-bind */
 import React, {
   useRef, useEffect, useState, useCallback,
 } from 'react';
@@ -11,6 +12,7 @@ import { Droppable, DragDropContext } from 'react-beautiful-dnd';
 import { localPageCacheStore } from '@choerodon/agile/lib/stores/common/LocalPageCacheStore';
 import UserHead from '@/components/UserHead';
 import useAvoidClosure from '@/hooks/useAvoidClosure';
+import Loading from '@choerodon/agile/lib/components/Loading';
 import CreateIssueTiny from '../CreateIssueTiny';
 import IssueStore from '../../stores/IssueStore';
 import TableDraggleItem from './TableDraggleItem';
@@ -158,8 +160,8 @@ export default observer((props) => {
         return tds(index);
       }
       return (
-      // 由于drag结束后要经过一段时间，由于有动画，所以大约33-400ms后才执行onDragEnd,
-      // 所以在这期间如果获取用例的接口速度很快，重新渲染table中的项，会无法执行onDragEnd,故加此key
+        // 由于drag结束后要经过一段时间，由于有动画，所以大约33-400ms后才执行onDragEnd,
+        // 所以在这期间如果获取用例的接口速度很快，重新渲染table中的项，会无法执行onDragEnd,故加此key
         <TableDraggleItem key={`${issue.caseId}-${issue.objectVersionNumber}`} handleClickIssue={handleClickIssue.bind(this)} issue={issue} index={index} instanceRef={instance} onRow={onRow}>
           {tds(index)}
         </TableDraggleItem>
@@ -385,10 +387,9 @@ export default observer((props) => {
           width: '100%',
         }}
       >
-        <Spin spinning={IssueStore.loading}>
+        <Loading loading={IssueStore.loading} allowSelfLoading loadId="table" className="c7ntest-issueManage-table-loading">
           {renderTable(columns)}
-        </Spin>
-
+        </Loading>
         <div
           className="c7ntest-backlog-sprintIssue"
           role="button"
