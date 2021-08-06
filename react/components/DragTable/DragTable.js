@@ -1,9 +1,12 @@
+/* eslint-disable react/no-deprecated */
 // 可拖动table
 import React, { Component } from 'react';
 import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
 import { Table } from 'choerodon-ui';
-import CustomCheckBox from '../CustomCheckBox';
 import './DragTable.less';
+import { omit } from 'lodash';
+import Loading from '@choerodon/agile/lib/components/Loading';
+import CustomCheckBox from '../CustomCheckBox';
 
 const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
@@ -99,6 +102,7 @@ class DragTable extends Component {
         </table>
       );
       return disabled || disableContext ? table : (
+        // eslint-disable-next-line react/jsx-no-bind
         <DragDropContext onDragEnd={this.onDragEnd.bind(this)} onDragStart={this.onDragStart}>
           {table}
         </DragDropContext>
@@ -119,8 +123,8 @@ class DragTable extends Component {
     const {
       columns, checkedMap, dataSource, checkField, onChangeCallBack,
     } = this.props;
-    const Columns = columns.filter(column => this.shouldColumnShow(column));
-    const ths = Columns.map(column => (
+    const Columns = columns.filter((column) => this.shouldColumnShow(column));
+    const ths = Columns.map((column) => (
       <th style={{ flex: column.width ? 'unset' : (column.flex || 1), width: column.width }}>
         {(column.key !== 'checkbox' || dataSource.length === 0) ? column.title : (
           <CustomCheckBox value="all" checkedMap={checkedMap} dataSource={dataSource} field={checkField} onChangeCallBack={onChangeCallBack} />
@@ -134,8 +138,8 @@ class DragTable extends Component {
     const {
       columns, dragKey, disabled, customDragHandle, onRow,
     } = this.props;
-    const judgeProps = props => (customDragHandle ? {} : props);
-    const Columns = columns.filter(column => this.shouldColumnShow(column));
+    const judgeProps = (props) => (customDragHandle ? {} : props);
+    const Columns = columns.filter((column) => this.shouldColumnShow(column));
     const rows = data && data.length > 0 && data.map((item, index) => (
       disabled
         ? (
@@ -184,7 +188,6 @@ class DragTable extends Component {
                     renderedItem = data[index][dataIndex];
                   }
 
-
                   return (
                     <td
                       className={className}
@@ -197,8 +200,7 @@ class DragTable extends Component {
                   );
                 })}
               </tr>
-            )
-            }
+            )}
           </Draggable>
         )
     ));
@@ -209,13 +211,15 @@ class DragTable extends Component {
     const { data } = this.state;
     return (
       <div className="c7ntest-dragtable">
-        <Table
-          {...this.props}
-          dataSource={data}
-          components={this.components}
-          onColumnFilterChange={this.handleColumnFilterChange}
-          filterBarPlaceholder="过滤表"
-        />
+        <Loading loading={this.props.loading}>
+          <Table
+            {...omit(this.props, 'loading')}
+            dataSource={data}
+            components={this.components}
+            onColumnFilterChange={this.handleColumnFilterChange}
+            filterBarPlaceholder="过滤表"
+          />
+        </Loading>
       </div>
     );
   }

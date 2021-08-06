@@ -11,6 +11,7 @@ import { FormattedMessage } from 'react-intl';
 import useHasAgile from '@/hooks/useHasAgile';
 import _ from 'lodash';
 
+import Loading from '@choerodon/agile/lib/components/Loading';
 import { addDefects } from '../../../../../../api/ExecuteDetailApi';
 import './StepTable.less';
 import {
@@ -287,17 +288,19 @@ function StepTable(props) {
   }, [dataSet]);
   const hasAgile = useHasAgile();
   return (
-    <Table dataSet={dataSet} queryBar="none" className="c7n-test-execute-detail-step-table" rowHeight="auto">
-      <Column name="index" width={80} align="left" renderer={renderIndex} />
-      <Column name="testStep" align="left" minWidth={200} tooltip="overflow" renderer={renderText} />
-      <Column name="testData" align="left" minWidth={120} tooltip="overflow" renderer={renderText} />
-      <Column name="expectedResult" align="left" minWidth={150} tooltip="overflow" renderer={renderText} />
-      <Column name="stepStatus" align="left" width={85} className="c7n-test-execute-detail-step-table-status" renderer={renderStatus} editor={!editing && operateStatus && <Select optionRenderer={renderStatus} />} />
-      <Column name="stepAttachment" renderer={renderAttachment} align="left" width={200} />
-      <Column name="description" editor={!editing && !readOnly} align="left" tooltip="overflow" renderer={renderText} />
-      {hasAgile && <Column name="defects" renderer={renderDefects} width={260} />}
-      <Column name="action" width={110} lock={lock} renderer={renderAction} hidden={getActionHidden()} />
-    </Table>
+    <Loading loadId="stepTable" loading={dataSet.status === 'loading'}>
+      <Table dataSet={dataSet} spin={{ spinning: false }} queryBar="none" className="c7n-test-execute-detail-step-table" rowHeight="auto">
+        <Column name="index" width={80} align="left" renderer={renderIndex} />
+        <Column name="testStep" align="left" minWidth={200} tooltip="overflow" renderer={renderText} />
+        <Column name="testData" align="left" minWidth={120} tooltip="overflow" renderer={renderText} />
+        <Column name="expectedResult" align="left" minWidth={150} tooltip="overflow" renderer={renderText} />
+        <Column name="stepStatus" align="left" width={85} className="c7n-test-execute-detail-step-table-status" renderer={renderStatus} editor={!editing && operateStatus && <Select optionRenderer={renderStatus} />} />
+        <Column name="stepAttachment" renderer={renderAttachment} align="left" width={200} />
+        <Column name="description" editor={!editing && !readOnly} align="left" tooltip="overflow" renderer={renderText} />
+        {hasAgile && <Column name="defects" renderer={renderDefects} width={260} />}
+        <Column name="action" width={110} lock={lock} renderer={renderAction} hidden={getActionHidden()} />
+      </Table>
+    </Loading>
   );
 }
 

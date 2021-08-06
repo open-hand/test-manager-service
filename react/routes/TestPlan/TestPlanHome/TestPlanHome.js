@@ -13,6 +13,7 @@ import { Tabs, Modal, Button } from 'choerodon-ui/pro';
 import { localPageCacheStore } from '@choerodon/agile/lib/stores/common/LocalPageCacheStore';
 import { EmptyPage } from '@choerodon/components';
 import '@/scrollIntoViewIfNeededPolyfill';
+import { LoadingHiddenWrap } from '@choerodon/agile/lib/components/Loading';
 import {
   deleteExecute, updateExecute, comfirmUpdate, ignoreUpdate,
 } from '../../../api/TestPlanApi';
@@ -346,11 +347,13 @@ function TestPlanHome({ history }) {
           </div>
           {
             noSelected ? (
-              <EmptyPage
-                loading={loading}
-                image={testCaseEmpty}
-                description={description}
-              />
+              <LoadingHiddenWrap>
+                <EmptyPage
+                  loading={loading}
+                  image={testCaseEmpty}
+                  description={description}
+                />
+              </LoadingHiddenWrap>
             ) : (
               <div className={`${prefixCls}-contentWrap-right`}>
                 <div className={`${prefixCls}-contentWrap-right-currentPlanName`}>

@@ -3,7 +3,7 @@ import React, {
   useEffect, useContext, useState,
 } from 'react';
 import {
-  Card, Spin, Tooltip,
+  Card, Spin,
 } from 'choerodon-ui';
 import {
   Page, Header, Content, Breadcrumb,
@@ -15,9 +15,12 @@ import { observer } from 'mobx-react-lite';
 import { withRouter } from 'react-router-dom';
 import { FormattedMessage, useIntl } from 'react-intl';
 import _ from 'lodash';
-import { Modal, Button, message } from 'choerodon-ui/pro';
+import {
+  Modal, Button, message, Tooltip,
+} from 'choerodon-ui/pro';
 import queryString from 'query-string';
 import { uploadFile, deleteFile } from '@/api/FileApi';
+import Loading, { LoadingProvider } from '@choerodon/agile/lib/components/Loading';
 import { StatusTags } from '../../../../components';
 import {
   executeDetailLink,
@@ -370,7 +373,8 @@ function TestPlanExecuteDetail(props) {
         <Breadcrumb title={detailData ? renderBreadcrumbTitle(summary) : null} />
         <Content style={{ padding: visible ? '0 437px 0 0' : 0 }}>
 
-          <Spin spinning={ExecuteDetailStore.loading} style={{ display: 'flex', height: '100%' }}>
+          <LoadingProvider>
+            <Loading loadId="detail" loading={ExecuteDetailStore.loading} />
             <div style={{ display: 'flex', width: '100%', height: '100%' }}>
               {/* 左边内容区域 */}
               <div
@@ -450,7 +454,7 @@ function TestPlanExecuteDetail(props) {
                 />
               )}
             </div>
-          </Spin>
+          </LoadingProvider>
           <DetailContainer {...detailProps} />
         </Content>
 

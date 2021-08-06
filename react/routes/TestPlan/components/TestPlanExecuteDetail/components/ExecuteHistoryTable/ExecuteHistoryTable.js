@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Popover } from 'choerodon-ui';
 import { Table } from 'choerodon-ui/pro';
+import Loading from '@choerodon/agile/lib/components/Loading';
 import { delta2Text } from '@/common/utils';
 import { CKEditorViewer, User } from '../../../../../../components';
 import './ExecuteHistoryTable.less';
@@ -34,19 +35,21 @@ const ExecuteHistoryTable = ({
     ) : text);
   return (
     // 状态
-    <Table dataSet={dataSet} queryBar="none">
-      <Column name="user" renderer={renderUser} />
-      <Column name="lastUpdateDate" />
-      <Column name="field" />
-      <Column
-        name="oldValue"
-        renderer={renderValue}
-      />
-      <Column
-        name="newValue"
-        renderer={renderValue}
-      />
-    </Table>
+    <Loading loadId="history" loading={dataSet.status === 'loading'}>
+      <Table dataSet={dataSet} spin={{ spinning: false }} queryBar="none">
+        <Column name="user" renderer={renderUser} />
+        <Column name="lastUpdateDate" />
+        <Column name="field" />
+        <Column
+          name="oldValue"
+          renderer={renderValue}
+        />
+        <Column
+          name="newValue"
+          renderer={renderValue}
+        />
+      </Table>
+    </Loading>
   );
 };
 ExecuteHistoryTable.propTypes = propTypes;

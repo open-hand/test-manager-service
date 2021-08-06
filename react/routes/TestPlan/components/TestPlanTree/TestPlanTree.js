@@ -7,7 +7,7 @@ import './TestPlanTree.less';
 import {
   editPlan, deletePlan, addFolder, editFolder, deleteFolder, checkPlanName,
 } from '@/api/TestPlanApi';
-import { Loading } from '@/components';
+import Loading from '@choerodon/agile/lib/components/Loading';
 import Tree from '@/components/Tree';
 
 import { localPageCacheStore } from '@choerodon/agile/lib/stores/common/LocalPageCacheStore';
