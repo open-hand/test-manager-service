@@ -42,7 +42,7 @@ const Test = (props) => {
   return (
     <>
       {stableActiveKey === 'test-case' && (
-      <LoadingProvider loadId="IssueManage">
+      <LoadingProvider loadId="IssueManage" style={{ height: '100%' }}>
         <LoadingContext.Consumer>
           {({ change }) => <IssueManage {...props} tab={tabComponent} hasExtraTab={has(code)} change={change} />}
         </LoadingContext.Consumer>

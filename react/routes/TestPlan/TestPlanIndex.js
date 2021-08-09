@@ -5,7 +5,7 @@ import TestPlan from './TestPlanHome';
 
 export default function Index(props) {
   return (
-    <LoadingProvider>
+    <LoadingProvider style={{ height: '100%' }}>
       <StoreProvider {...props}>
         <TestPlan />
       </StoreProvider>
