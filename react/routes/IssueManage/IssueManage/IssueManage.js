@@ -7,12 +7,12 @@ import { Button, Icon } from 'choerodon-ui';
 import { Modal } from 'choerodon-ui/pro';
 import { HeaderButtons } from '@choerodon/master';
 import { FormattedMessage, injectIntl } from 'react-intl';
+import { localPageCacheStore } from '@choerodon/agile/lib/stores/common/LocalPageCacheStore';
+import Loading, { LoadingHiddenWrap } from '@choerodon/agile/lib/components/Loading';
 import Empty from '@/components/Empty';
 import empty from '@/assets/empty.png';
 import priorityApi from '@/api/priority';
-import { localPageCacheStore } from '@choerodon/agile/lib/stores/common/LocalPageCacheStore';
 import ResizeContainer from '@/components/ResizeDivider/ResizeContainer';
-import { LoadingContext } from '@choerodon/agile/lib/components/Loading';
 import CreateIssue from '@/components/create-test-case';
 import IssueStore from '../stores/IssueStore';
 import { getParams } from '../../../common/utils';
@@ -282,13 +282,15 @@ class IssueManage extends Component {
               <div style={{ height: '100%' }}>
                 {
                   noFolder ? (
-                    <Empty
-                      loading={loading}
-                      pic={empty}
-                      title="暂无目录"
-                      description="当前项目下无目录，请创建"
-                      extra={<Button type="primary" funcType="raised" onClick={this.handleAddFolderClick}>创建一级目录</Button>}
-                    />
+                    <LoadingHiddenWrap>
+                      <Empty
+                        // loading={loading}
+                        pic={empty}
+                        title="暂无目录"
+                        description="当前项目下无目录，请创建"
+                        extra={<Button type="primary" funcType="raised" onClick={this.handleAddFolderClick}>创建一级目录</Button>}
+                      />
+                    </LoadingHiddenWrap>
                   ) : currentFolder.id && (
                     <div
                       className="c7ntest-content-issue"
@@ -311,6 +313,7 @@ class IssueManage extends Component {
                   )
                 }
               </div>
+              <Loading loadId="tree" loading={loading} />
             </Section>
           </ResizeContainer>
 

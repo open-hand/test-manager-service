@@ -6,13 +6,13 @@ import { findIndex, set } from 'lodash';
 import { toJS } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import {
-  Spin, Table, Pagination, Tooltip, Icon,
+  Table, Pagination, Tooltip, Icon,
 } from 'choerodon-ui';
 import { Droppable, DragDropContext } from 'react-beautiful-dnd';
 import { localPageCacheStore } from '@choerodon/agile/lib/stores/common/LocalPageCacheStore';
+import Loading from '@choerodon/agile/lib/components/Loading';
 import UserHead from '@/components/UserHead';
 import useAvoidClosure from '@/hooks/useAvoidClosure';
-import Loading from '@choerodon/agile/lib/components/Loading';
 import CreateIssueTiny from '../CreateIssueTiny';
 import IssueStore from '../../stores/IssueStore';
 import TableDraggleItem from './TableDraggleItem';
