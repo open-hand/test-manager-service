@@ -65,7 +65,7 @@ function CreateIssueDataSet(intlPrefix, intl, priorityOptionsDataSet) {
         // },
       },
       {
-        name: 'customNum', type: 'string', label: '自定义编号', pattern: /^(([A-Za-z]+)|([0-9]+)|([A-Za-z]+-[0-9]+))$/, maxLength: 16,
+        name: 'customNum', type: 'string', label: '自定义编号', pattern: /^([A-Za-z0-9]+(-[A-Za-z0-9]+)*)$/, maxLength: 16,
       },
       {
         name: 'fileList',
