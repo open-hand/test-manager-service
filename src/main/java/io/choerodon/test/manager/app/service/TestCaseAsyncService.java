@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface TestCaseAsyncService {
 
-    void asyncBatchDeleteCase(Long projectId, List<Long> caseIds);
+    void batchDeleteAsync(Long projectId, List<Long> caseIds);
 
 }

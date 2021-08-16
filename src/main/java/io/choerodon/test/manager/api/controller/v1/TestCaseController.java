@@ -294,12 +294,12 @@ public class TestCaseController {
 
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("异步批量删除测试用例")
-    @PostMapping("/async_batch_delete")
-    public ResponseEntity asyncBatchDeleteCase(@ApiParam(value = "项目id", required = true)
-                                               @PathVariable("project_id") Long projectId,
-                                               @ApiParam(value = "caseIds", required = true)
-                                               @RequestBody @Encrypt List<Long> caseIds) {
-        testCaseAsyncService.asyncBatchDeleteCase(projectId, caseIds);
+    @PostMapping("/batch_delete_async")
+    public ResponseEntity batchDeleteAsync(@ApiParam(value = "项目id", required = true)
+                                           @PathVariable("project_id") Long projectId,
+                                           @ApiParam(value = "caseIds", required = true)
+                                           @RequestBody @Encrypt List<Long> caseIds) {
+        testCaseAsyncService.batchDeleteAsync(projectId, caseIds);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 

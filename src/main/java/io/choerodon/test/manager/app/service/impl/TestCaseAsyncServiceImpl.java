@@ -32,7 +32,7 @@ public class TestCaseAsyncServiceImpl implements TestCaseAsyncService {
 
     @Async
     @Override
-    public void asyncBatchDeleteCase(Long projectId, List<Long> caseIds) {
+    public void batchDeleteAsync(Long projectId, List<Long> caseIds) {
         if (CollectionUtils.isEmpty(caseIds)) {
             return;
         }
