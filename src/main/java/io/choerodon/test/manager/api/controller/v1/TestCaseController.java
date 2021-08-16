@@ -13,7 +13,6 @@ import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.swagger.annotation.CustomPageRequest;
 import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.api.vo.agile.IssueListFieldKVVO;
-import io.choerodon.test.manager.api.vo.agile.IssueNumDTO;
 import io.choerodon.test.manager.infra.util.EncryptUtil;
 import io.choerodon.test.manager.infra.util.VerifyUpdateUtil;
 import io.swagger.annotations.ApiOperation;
@@ -64,6 +63,9 @@ public class TestCaseController {
 
     @Autowired
     private EncryptUtil encryptUtil;
+
+    @Autowired
+    private TestCaseAsyncService testCaseAsyncService;
 
     @Autowired
     public TestCaseController(ExcelServiceHandler excelServiceHandler) {
@@ -288,6 +290,17 @@ public class TestCaseController {
         return Optional.ofNullable(testCaseService.listUnLinkIssue(caseId, projectId, searchDTO, pageRequest, organizationId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.Issue.listUnLinkIssue"));
+    }
+
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @ApiOperation("异步批量删除测试用例")
+    @PostMapping("/async_batch_delete")
+    public ResponseEntity asyncBatchDeleteCase(@ApiParam(value = "项目id", required = true)
+                                               @PathVariable("project_id") Long projectId,
+                                               @ApiParam(value = "caseIds", required = true)
+                                               @RequestBody @Encrypt List<Long> caseIds) {
+        testCaseAsyncService.asyncBatchDeleteCase(projectId, caseIds);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
 }
