@@ -29,3 +29,11 @@ export interface IIssueType {
   enabled: boolean
 }
 export type IFeatureType = 'business' | 'enabler'
+export interface IStatus {
+  id: string
+  valueCode: 'todo' | 'doing' | 'done' | 'prepare'
+  type: 'todo' | 'doing' | 'done' | 'prepare'
+  name: string
+  code: string
+  complete: boolean
+}

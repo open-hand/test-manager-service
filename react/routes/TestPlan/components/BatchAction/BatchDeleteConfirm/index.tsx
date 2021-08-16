@@ -7,10 +7,10 @@ import {
 import { observer } from 'mobx-react-lite';
 import { Choerodon, WSHandler } from '@choerodon/boot';
 import { IModalProps } from '@choerodon/agile/lib/common/types';
-import { getProjectId } from '@/common/utils';
 import { ButtonColor } from 'choerodon-ui/pro/lib/button/interface';
-import { ProgressStatus } from 'choerodon-ui/lib/progress/enum';
+import { getProjectId } from '@/common/utils';
 import { TestPlanStore } from '@/routes/TestPlan/stores/TestPlanStore';
+import STATUS_COLOR from '@/constants/STATUS';
 import styles from './index.less';
 
 interface Props {
@@ -44,6 +44,7 @@ const BatchDeleteModal: React.FC<Props> = (props) => {
       switch (status) {
         case 'success': {
           setLoading('success');
+          setProgress(Number(rate));
           setTimeout(() => {
             Choerodon.prompt('移除成功');
             modal?.close();
@@ -78,9 +79,9 @@ const BatchDeleteModal: React.FC<Props> = (props) => {
           onMessage={handleMessage}
         >
           { loading && (
-          <div style={{ color: 'rgba(254,71,87,1)', textAlign: 'center', marginTop: 16 }}>
+          <div style={{ textAlign: 'center', marginTop: 16 }}>
             {loading === 'success' ? '移除成功' : ['正在移除，请稍等片刻', <span className={styles.dot}>…</span>]}
-            <Progress status={'success' as ProgressStatus} value={Math.round(progress * 100)} />
+            <Progress strokeColor={STATUS_COLOR.done} value={Math.round(progress * 100)} />
           </div>
           )}
         </WSHandler>
