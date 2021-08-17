@@ -4,9 +4,11 @@ import {
 } from 'mobx';
 import { Choerodon } from '@choerodon/boot';
 import { findIndex } from 'lodash';
-import { handleRequestFailed } from '@/common/utils';
 import { localPageCacheStore } from '@choerodon/agile/lib/stores/common/LocalPageCacheStore';
-import { getIssuesByFolder, moveIssues, copyIssues } from '../../../api/IssueManageApi';
+import { handleRequestFailed } from '@/common/utils';
+import {
+  getIssuesByFolder, moveIssues, copyIssues, batchDeleteCase,
+} from '../../../api/IssueManageApi';
 import IssueTreeStore from './IssueTreeStore';
 
 class IssueStore {
@@ -46,6 +48,8 @@ class IssueStore {
   @observable copy = false;
 
   @observable tableDraging = false;
+
+  @observable checkIdMap = observable.map();
 
   @action clearStore = () => {
     this.issues = [];
@@ -212,6 +216,10 @@ class IssueStore {
 
   @action setDescriptionChanged = (data) => {
     this.descriptionChanged = data;
+  }
+
+  @action batchRemove() {
+    return batchDeleteCase(Object.keys(toJS(this.checkIdMap)));
   }
 }
 export default new IssueStore();

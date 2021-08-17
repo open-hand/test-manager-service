@@ -26,7 +26,7 @@ const CustomCheckBox = observer((props) => {
       } else {
         checkedMap.set(newValue, true);
       }
-      onChangeCallBack();
+      onChangeCallBack && onChangeCallBack();
     } else if (oldValue) {
       if (oldValue === 'all') {
         if (dataSource && dataSource.length) {
@@ -39,7 +39,7 @@ const CustomCheckBox = observer((props) => {
       } else {
         checkedMap.delete(oldValue);
       }
-      onChangeCallBack();
+      onChangeCallBack && onChangeCallBack();
     }
   };
 
