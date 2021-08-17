@@ -38,10 +38,15 @@ class IssueManage extends Component {
     this.getInit();
   }
 
-  // componentWillUnmount() {
-  //   IssueTreeStore.clearStore();
-  //   IssueStore.clearStore();
-  // }
+  componentWillUnmount() {
+    // IssueTreeStore.clearStore();
+    // IssueStore.clearStore();
+    this.clearCheckIdMap();
+  }
+
+  clearCheckIdMap = () => {
+    IssueStore.checkIdMap.clear();
+  };
 
   getInit = () => {
     const Request = getParams(this.props.location.search);
@@ -213,6 +218,11 @@ class IssueManage extends Component {
     }
   }
 
+  afterBatchDeleteModal = () => {
+    this.handleRefresh();
+    this.clearCheckIdMap();
+  };
+
   handleBatchDeleteCase = async () => {
     await IssueStore.batchRemove();
   };
@@ -258,7 +268,7 @@ class IssueManage extends Component {
             handler: () => openBatchDeleteModal({
               handleDelete: this.handleBatchDeleteCase,
               deleteCount: checkIdMap.size,
-              refresh: this.handleRefresh,
+              refresh: this.afterBatchDeleteModal,
             }),
           }, {
             iconOnly: true,

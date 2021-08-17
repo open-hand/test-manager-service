@@ -2,13 +2,13 @@ import React, { Component, createRef } from 'react';
 import { WSHandler, Choerodon } from '@choerodon/boot';
 import { observer } from 'mobx-react';
 import { Menu } from 'choerodon-ui';
+import Loading from '@choerodon/agile/lib/components/Loading';
 import { getProjectId, handleRequestFailed } from '@/common/utils';
 import {
   preCopyFolder, copyFolder,
   addFolder, editFolder, deleteFolder, moveFolder,
 } from '@/api/IssueManageApi';
 import './IssueTree.less';
-import Loading from '@choerodon/agile/lib/components/Loading';
 // import { Loading } from '@/components';
 import Tree from '@/components/Tree';
 import IssueStore from '../../stores/IssueStore';
@@ -125,6 +125,7 @@ class IssueTree extends Component {
       orderType: '',
     });
     IssueStore.loadIssues();
+    IssueStore.checkIdMap.clear();
   }
 
   handleUpdateItem = (item) => {
