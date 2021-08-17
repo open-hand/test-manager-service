@@ -25,6 +25,7 @@ import TestCaseDetail from '../components/TestCaseDetail';
 import openCreateFolder from '../components/CreateFolder';
 import './IssueManage.less';
 import IssueTreeStore from '../stores/IssueTreeStore';
+import openBatchDeleteModal from '../components/batch-delete-confirm';
 
 const { Section, Divider } = ResizeContainer;
 
@@ -212,8 +213,12 @@ class IssueManage extends Component {
     }
   }
 
+  handleBatchDeleteCase = async () => {
+    await IssueStore.batchRemove();
+  };
+
   render() {
-    const { clickIssue } = IssueStore;
+    const { clickIssue, checkIdMap } = IssueStore;
     const currentFolder = IssueTreeStore.getCurrentFolder;
     const { loading, rootIds } = IssueTreeStore;
     const noFolder = rootIds.length === 0;
@@ -245,6 +250,16 @@ class IssueManage extends Component {
             display: !noFolder,
             icon: 'archive-o',
             handler: this.handleOpenImportIssue,
+          }, {
+            name: '批量移除用例',
+            display: !noFolder,
+            disabled: !checkIdMap.size,
+            icon: 'delete_sweep-o',
+            handler: () => openBatchDeleteModal({
+              handleDelete: this.handleBatchDeleteCase,
+              deleteCount: checkIdMap.size,
+              refresh: this.handleRefresh,
+            }),
           }, {
             iconOnly: true,
             display: true,

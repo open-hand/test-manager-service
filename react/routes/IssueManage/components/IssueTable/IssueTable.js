@@ -23,6 +23,9 @@ import {
 } from './tags';
 import './IssueTable.less';
 import PriorityTag from '../../../../components/PriorityTag';
+import CustomCheckBox from '@/components/CustomCheckBox';
+
+const CHECKBOX_KEY = 'checkbox';
 
 export default observer((props) => {
   const [firstIndex, setFirstIndex] = useState(null);
@@ -95,9 +98,20 @@ export default observer((props) => {
         style={{ width: column.width, flex: column.width ? 'unset' : (column.flex || 1) }}
         onClick={column.sorter && handleSortByField.bind(this, column.key)}
       >
-        <span>{column.title}</span>
-        {column.sorter && <Icon type="arrow_upward" className="c7ntest-issuetable-sorter-icon" />}
-        {' '}
+        {column.key === CHECKBOX_KEY && !column.title ? (
+          <CustomCheckBox
+            value="all"
+            checkedMap={IssueStore.checkIdMap}
+            dataSource={IssueStore.getIssues}
+            field="caseId"
+          />
+        ) : (
+          <>
+            <span>{column.title}</span>
+            {column.sorter && <Icon type="arrow_upward" className="c7ntest-issuetable-sorter-icon" />}
+            {' '}
+          </>
+        )}
       </th>
     ));
     return (<tr>{ths}</tr>);
@@ -300,6 +314,19 @@ export default observer((props) => {
 
   const { onClick, history } = props;
   const columns = manageVisible([
+    {
+      title: '',
+      key: CHECKBOX_KEY,
+      width: 40,
+      render: (text, record) => (
+        <CustomCheckBox
+          checkedMap={IssueStore.checkIdMap}
+          value={record.caseId}
+          field="caseId"
+          dataSource={IssueStore.getIssues}
+        />
+      ),
+    },
     {
       title: '用例名称',
       dataIndex: 'summary',

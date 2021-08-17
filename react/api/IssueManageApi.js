@@ -332,3 +332,7 @@ export function uploadFile(caseId, data) {
 export function deleteFile(id) {
   return request.delete(`/test/v1/projects/${getProjectId()}/attachment/${id}`);
 }
+
+export function batchDeleteCase(data) {
+  return request.post(`/test/v1/projects/${getProjectId()}/case/batch_delete_async`, data);
+}
