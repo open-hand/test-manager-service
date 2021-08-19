@@ -97,6 +97,11 @@ const TestPlanTable = observer(({
     }
   };
 
+  const tableSummaryClick = (record) => {
+    closeBatchModal({ testPlanStore });
+    onTableSummaryClick(record);
+  };
+
   const renderMenu = (text, record) => (testPlanStatus !== 'done' ? (
     <span style={{
       display: 'flex', overflow: 'hidden', alignItems: 'center',
@@ -113,10 +118,7 @@ const TestPlanTable = observer(({
           }}
           className="c7n-agile-table-cell-click"
           role="none"
-          onClick={() => {
-            closeBatchModal({ testPlanStore });
-            onTableSummaryClick(record);
-          }}
+          onClick={tableSummaryClick.bind(this, record)}
         >
           {text}
         </span>
@@ -152,7 +154,7 @@ const TestPlanTable = observer(({
           cursor: 'pointer', maxWidth: '3rem', textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden', width: '100%',
         }}
         role="none"
-        onClick={onTableSummaryClick.bind(this, record)}
+        onClick={tableSummaryClick.bind(this, record)}
       >
         {text}
       </span>
@@ -162,12 +164,18 @@ const TestPlanTable = observer(({
   const renderMoreAction = (record) => {
     const action = [{
       text: '移除',
-      action: () => onDeleteExecute(record),
+      action: () => {
+        closeBatchModal({ testPlanStore });
+        onDeleteExecute(record);
+      },
     }];
     if (testPlanStatus !== 'done' && record.hasChange) {
       action.unshift({
         text: '查看更新',
-        action: () => onOpenUpdateRemind(record),
+        action: () => {
+          closeBatchModal({ testPlanStore });
+          onOpenUpdateRemind(record);
+        },
       });
     }
     return testPlanStatus !== 'done' && <Action className="action-icon" data={action} />;

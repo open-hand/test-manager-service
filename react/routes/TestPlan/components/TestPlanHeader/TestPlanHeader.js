@@ -85,6 +85,7 @@ function TestPlanHeader() {
   const handleUpdatePlanStatus = useCallback((newStatus) => {
     const { getItem } = testPlanStore.treeRef.current || {};
     const planItem = getItem(testPlanStore.getCurrentPlanId) || {};
+    closeBatchModal({ testPlanStore });
     if (planItem.item && planItem.item.id) {
       if (newStatus === 'doing') {
         onUpdatePlanStatus(planItem, newStatus);

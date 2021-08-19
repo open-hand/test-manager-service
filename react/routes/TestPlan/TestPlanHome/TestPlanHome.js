@@ -46,6 +46,7 @@ function TestPlanHome({ history }) {
     loading, checkIdMap, testList, testPlanStatus, planInfo, statusList, currentCycle, mainActiveTab, times, calendarLoading,
   } = testPlanStore;
   const handleTabsChange = (value) => {
+    closeBatchModal({ testPlanStore });
     testPlanStore.setTestPlanStatus(value);
     testPlanStore.setCurrentCycle({});
     testPlanStore.setFilter({});

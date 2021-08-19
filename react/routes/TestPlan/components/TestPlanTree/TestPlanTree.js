@@ -2,21 +2,20 @@ import React, { Component, createRef } from 'react';
 import { observer } from 'mobx-react';
 import { Menu, Icon } from 'choerodon-ui';
 import { Choerodon } from '@choerodon/master';
+import Loading from '@choerodon/agile/lib/components/Loading';
 import { handleRequestFailed, getProjectId } from '@/common/utils';
 import './TestPlanTree.less';
 import {
   editPlan, deletePlan, addFolder, editFolder, deleteFolder, checkPlanName,
 } from '@/api/TestPlanApi';
-import Loading from '@choerodon/agile/lib/components/Loading';
 import Tree from '@/components/Tree';
-
-import { localPageCacheStore } from '@choerodon/agile/lib/stores/common/LocalPageCacheStore';
 import { openClonePlan } from '../TestPlanModal';
 import openDragPlanFolder from '../DragPlanFolder';
 import openImportIssue from '../ImportIssue';
 import TreeNode from './TreeNode';
 import Store from '../../stores';
 import openBatchAssignModal from '../BatchAssignModal';
+import { closeBatchModal } from '../BatchAction';
 
 @observer
 class TestPlanTree extends Component {
@@ -125,7 +124,7 @@ class TestPlanTree extends Component {
       testPlanStore.setMainActiveTab('testPlanTable');
       testPlanStore.setFilter({});
       testPlanStore.setBarFilter([]);
-      testPlanStore.checkIdMap.clear();
+      closeBatchModal({ testPlanStore });
       testPlanStore.setExecutePagination({
         ...executePagination,
         current: 1,
