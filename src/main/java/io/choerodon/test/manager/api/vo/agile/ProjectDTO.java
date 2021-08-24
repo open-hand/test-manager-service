@@ -9,6 +9,7 @@ import org.springframework.util.StringUtils;
 
 import io.choerodon.core.exception.CommonException;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -39,6 +40,12 @@ public class ProjectDTO {
 
     @ApiModelProperty(value = "项目类型(非开源，一对多)")
     private List<ProjectCategoryDTO> categories;
+
+    @ApiModelProperty(value = "项目图标url")
+    private String imageUrl;
+
+    @ApiModelProperty(value = "创建时间")
+    private Date creationDate;
 
     public Long getId() {
         return id;
@@ -94,6 +101,22 @@ public class ProjectDTO {
 
     public void setCategories(List<ProjectCategoryDTO> categories) {
         this.categories = categories;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
     }
 
     public void updateCheck() {
