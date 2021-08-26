@@ -13,7 +13,8 @@ import { Tabs, Modal, Button } from 'choerodon-ui/pro';
 import { localPageCacheStore } from '@choerodon/agile/lib/stores/common/LocalPageCacheStore';
 import { EmptyPage } from '@choerodon/components';
 import '@/scrollIntoViewIfNeededPolyfill';
-import { LoadingHiddenWrap } from '@choerodon/agile/lib/components/Loading';
+import { LoadingHiddenWrap, useLoading } from '@choerodon/agile/lib/components/Loading';
+
 import {
   deleteExecute, updateExecute, comfirmUpdate, ignoreUpdate,
 } from '../../../api/TestPlanApi';
@@ -42,10 +43,22 @@ function TestPlanHome({ history }) {
   const {
     prefixCls, createAutoTestStore, testPlanStore,
   } = useContext(Store);
+  const { change } = useLoading();
   const {
-    loading, checkIdMap, testList, testPlanStatus, planInfo, statusList, currentCycle, mainActiveTab, times, calendarLoading,
+    loading, tableLoading, treeLoading, checkIdMap, testList, testPlanStatus, planInfo, statusList, currentCycle, mainActiveTab, times, calendarLoading,
   } = testPlanStore;
+  useEffect(() => {
+    loading && change('plan', true);
+  }, [change, loading]);
+  useEffect(() => {
+    // 延迟关闭
+    treeLoading ? change('tree', true) : setTimeout(() => change('tree', treeLoading), 600);
+  }, [change, treeLoading]);
+  useEffect(() => {
+    change('DragTable', tableLoading);
+  }, [change, tableLoading]);
   const handleTabsChange = (value) => {
+    change('plan', true);
     closeBatchModal({ testPlanStore });
     testPlanStore.setTestPlanStatus(value);
     testPlanStore.setCurrentCycle({});
@@ -281,6 +294,7 @@ function TestPlanHome({ history }) {
   };
 
   useEffect(() => {
+    change('plan', true); // 初次进入直接加载
     // 加载缓存
     const defaultTreeActiveTab = localPageCacheStore.getItem('testPlan.tree.activeTab');
     const defaultTreeSelected = localPageCacheStore.getItem('testPlan.tree.selected');
@@ -300,6 +314,7 @@ function TestPlanHome({ history }) {
       } = defaultTreeQueryParams;
       const { searchArgs, contents } = search;
       if (defaultTableActiveTab === 'mineTestPlanTable') {
+        change('DragTable', true);
         testPlanStore.setMineExecutePagination({ current, pageSize });
         testPlanStore.setMineFilter(searchArgs);
         testPlanStore.setMineBarFilter(contents);
@@ -331,7 +346,9 @@ function TestPlanHome({ history }) {
       <Header
         title={<FormattedMessage id="testPlan_name" />}
       >
-        <TestPlanHeader />
+        <LoadingHiddenWrap>
+          <TestPlanHeader />
+        </LoadingHiddenWrap>
       </Header>
       <Breadcrumb />
       <Content style={{ display: 'flex', padding: '0', borderTop: '0.01rem solid rgba(0,0,0,0.12)' }}>
@@ -346,62 +363,62 @@ function TestPlanHome({ history }) {
               <TestPlanTree status={testPlanStatus} />
             </div>
           </div>
-          {
-            noSelected ? (
-              <LoadingHiddenWrap>
+          <LoadingHiddenWrap>
+            {
+              noSelected ? (
                 <EmptyPage
-                  loading={loading}
                   image={testCaseEmpty}
                   description={description}
                 />
-              </LoadingHiddenWrap>
-            ) : (
-              <div className={`${prefixCls}-contentWrap-right`}>
-                <div className={`${prefixCls}-contentWrap-right-currentPlanName`}>
-                  <span>{`计划名称: ${planInfo.name ?? ''}`}</span>
-                  <TestPlanStatusCard />
-                </div>
-                <div className={`${prefixCls}-contentWrap-right-card`}>
-                  <TestPlanDetailCard />
-                  <div className={`${prefixCls}-contentWrap-main`}>
-                    <Tabs
-                      defaultActiveKey="testPlanTable"
-                      onChange={handleMainTabsChange}
-                      activeKey={mainActiveTab}
-                    >
-                      <TabPane tab="测试用例" key="testPlanTable" />
+              ) : (
+                <div className={`${prefixCls}-contentWrap-right`}>
+                  <div className={`${prefixCls}-contentWrap-right-currentPlanName`}>
+                    <span>{`计划名称: ${planInfo.name ?? ''}`}</span>
+                    <TestPlanStatusCard />
+                  </div>
+                  <div className={`${prefixCls}-contentWrap-right-card`}>
+                    <TestPlanDetailCard />
+                    <div className={`${prefixCls}-contentWrap-main`}>
+                      <Tabs
+                        defaultActiveKey="testPlanTable"
+                        onChange={handleMainTabsChange}
+                        activeKey={mainActiveTab}
+                      >
+                        <TabPane tab="测试用例" key="testPlanTable" />
+                        {
+                          testPlanStore.isPlan(currentCycle.id) ? (
+                            <TabPane tab="计划日历" key="testPlanSchedule">
+                              <EventCalendar key={currentCycle.id} showMode="multi" times={times} calendarLoading={calendarLoading} />
+                            </TabPane>
+                          ) : ''
+                        }
+                      </Tabs>
                       {
-                        testPlanStore.isPlan(currentCycle.id) ? (
-                          <TabPane tab="计划日历" key="testPlanSchedule">
-                            <EventCalendar key={currentCycle.id} showMode="multi" times={times} calendarLoading={calendarLoading} />
-                          </TabPane>
-                        ) : ''
+                        mainActiveTab !== 'testPlanSchedule' && (
+                          <TestPlanTable
+                            onDragEnd={onDragEnd}
+                            onTableChange={mainActiveTab === 'testPlanTable' ? handleExecuteTableChange : handleMineExecuteTableChange}
+                            onDeleteExecute={handleDeleteExecute}
+                            onQuickPass={handleQuickPassOrFail}
+                            onQuickFail={handleQuickPassOrFail}
+                            onSkipToFolder={handleSkipToFolder}
+                            onOpenUpdateRemind={handleOpenUpdateRemind}
+                            onTableSummaryClick={handleTableSummaryClick}
+                            onSearchAssign={handleSearchAssign}
+                            onOnlyMeCheckedChange={handleOnlyMeCheckedChange}
+                            hasCheckBox={mainActiveTab === 'testPlanTable'}
+                            isMine={mainActiveTab === 'mineTestPlanTable'}
+                            key={mainActiveTab}
+                          />
+                        )
                       }
-                    </Tabs>
-                    {
-                      mainActiveTab !== 'testPlanSchedule' && (
-                        <TestPlanTable
-                          onDragEnd={onDragEnd}
-                          onTableChange={mainActiveTab === 'testPlanTable' ? handleExecuteTableChange : handleMineExecuteTableChange}
-                          onDeleteExecute={handleDeleteExecute}
-                          onQuickPass={handleQuickPassOrFail}
-                          onQuickFail={handleQuickPassOrFail}
-                          onSkipToFolder={handleSkipToFolder}
-                          onOpenUpdateRemind={handleOpenUpdateRemind}
-                          onTableSummaryClick={handleTableSummaryClick}
-                          onSearchAssign={handleSearchAssign}
-                          onOnlyMeCheckedChange={handleOnlyMeCheckedChange}
-                          hasCheckBox={mainActiveTab === 'testPlanTable'}
-                          isMine={mainActiveTab === 'mineTestPlanTable'}
-                          key={mainActiveTab}
-                        />
-                      )
-                    }
+                    </div>
                   </div>
                 </div>
-              </div>
-            )
-          }
+              )
+            }
+          </LoadingHiddenWrap>
+
         </div>
       </Content>
       <CreateAutoTest createAutoTestStore={createAutoTestStore} />

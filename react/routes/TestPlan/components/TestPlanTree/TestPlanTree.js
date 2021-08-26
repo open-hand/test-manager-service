@@ -280,7 +280,7 @@ class TestPlanTree extends Component {
     const { treeData } = testPlanStore;
     return (
       <div className="c7ntest-TestPlanTree">
-        <Loading loading={treeLoading} />
+        <Loading loadId="tree" />
         <Tree
           ref={this.treeRef}
           data={treeData}

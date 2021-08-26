@@ -8,10 +8,11 @@ import {
 } from 'choerodon-ui';
 import { Button, Select, Table } from 'choerodon-ui/pro';
 import { FormattedMessage } from 'react-intl';
-import useHasAgile from '@/hooks/useHasAgile';
 import _ from 'lodash';
+import { observer } from 'mobx-react-lite';
 
 import Loading from '@choerodon/agile/lib/components/Loading';
+import useHasAgile from '@/hooks/useHasAgile';
 import { addDefects } from '../../../../../../api/ExecuteDetailApi';
 import './StepTable.less';
 import {
@@ -304,4 +305,4 @@ function StepTable(props) {
   );
 }
 
-export default StepTable;
+export default observer(StepTable);

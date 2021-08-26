@@ -10,6 +10,8 @@ import {
 } from 'choerodon-ui';
 import { Action, stores } from '@choerodon/boot';
 import _ from 'lodash';
+import { useUpdateEffect } from 'ahooks';
+import { useLoading } from '@choerodon/agile/lib/components/Loading';
 import { renderIssueNum } from '@/routes/IssueManage/components/IssueTable/tags';
 import SelectUser from '@/components/select/select-user';
 import {
@@ -52,7 +54,7 @@ const TestPlanTable = observer(({
   const {
     testPlanStore,
   } = useContext(Store);
-
+  const { change } = useLoading();
   const {
     tableLoading, statusList, executePagination, mineExecutePagination, testList, checkIdMap, testPlanStatus, priorityList,
   } = testPlanStore;
@@ -443,7 +445,6 @@ const TestPlanTable = observer(({
       }
       <DragTable
         pagination={isMine ? mineExecutePagination : executePagination}
-        loading={tableLoading}
         onChange={onTableChange}
         dataSource={data}
         columns={columns}
