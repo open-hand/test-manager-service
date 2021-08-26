@@ -492,7 +492,11 @@ public class TestCaseServiceImpl implements TestCaseService {
                 caseLinkList.forEach(caseLink -> issueIds.add(caseLink.getIssueId()));
             }
         }
-        searchDTO.getOtherArgs().put("excludeIssueIds", issueIds);
+        Map<String, Object> otherArgs = searchDTO.getOtherArgs();
+        otherArgs.put("excludeIssueIds", issueIds);
+        List<String> excludeTypeCodes = new ArrayList<>();
+        excludeTypeCodes.add("issue_epic");
+        otherArgs.put("excludeTypeCodes", excludeTypeCodes);
         return agileClientOperator.queryListIssueWithSub(projectId, searchDTO, pageRequest, organizationId);
     }
 
