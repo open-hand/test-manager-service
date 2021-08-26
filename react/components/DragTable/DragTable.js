@@ -15,6 +15,10 @@ const reorder = (list, startIndex, endIndex) => {
 
   return result;
 };
+/**
+ *   拖拽表格
+ *  loadId: DragTable
+ */
 class DragTable extends Component {
   constructor(props) {
     super(props);
@@ -211,7 +215,7 @@ class DragTable extends Component {
     const { data } = this.state;
     return (
       <div className="c7ntest-dragtable">
-        <Loading loading={this.props.loading}>
+        <Loading loadId="DragTable">
           <Table
             {...omit(this.props, 'loading')}
             dataSource={data}

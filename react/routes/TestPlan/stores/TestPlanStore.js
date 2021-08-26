@@ -3,12 +3,12 @@ import {
 } from 'mobx';
 import { Choerodon, stores } from '@choerodon/boot';
 import moment from 'moment';
+import { localPageCacheStore } from '@choerodon/agile/lib/stores/common/LocalPageCacheStore';
 import { getStatusList } from '@/api/TestStatusApi';
 import priorityApi from '@/api/priority';
 import {
   getExecutesByFolder, getStatusByFolder, getPlanDetail, executesAssignTo, batchRemove,
 } from '@/api/TestPlanApi';
-import { localPageCacheStore } from '@choerodon/agile/lib/stores/common/LocalPageCacheStore';
 import TestPlanTreeStore from './TestPlanTreeStore';
 
 const { AppState } = stores;
@@ -327,10 +327,12 @@ class TestPlanStore extends TestPlanTreeStore {
       this.setLoading(false);
       this.setPriorityList(priorityList);
       this.setStatusList(statusList);
-      if (this.mainActiveTab !== 'testPlanSchedule' && this.getCurrentPlanId) {
+      if (this.getCurrentPlanId) {
         this.loadPlanDetail();
-        this.loadExecutes();
-        this.loadStatusRes();
+        if (this.mainActiveTab !== 'testPlanSchedule') {
+          this.loadExecutes();
+          this.loadStatusRes();
+        }
       }
     }).catch((e) => {
       Choerodon.prompt(e.message);

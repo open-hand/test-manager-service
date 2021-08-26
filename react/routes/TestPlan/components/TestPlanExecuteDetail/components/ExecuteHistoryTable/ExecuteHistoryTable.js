@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Popover } from 'choerodon-ui';
 import { Table } from 'choerodon-ui/pro';
+import { observer } from 'mobx-react-lite';
 import Loading from '@choerodon/agile/lib/components/Loading';
 import { delta2Text } from '@/common/utils';
 import { CKEditorViewer, User } from '../../../../../../components';
@@ -53,4 +54,4 @@ const ExecuteHistoryTable = ({
   );
 };
 ExecuteHistoryTable.propTypes = propTypes;
-export default ExecuteHistoryTable;
+export default observer(ExecuteHistoryTable);
