@@ -56,9 +56,9 @@ function SelectIssue() {
   return (
     <div className={prefix}>
       <div className={`${prefix}-header`}>
-        <span>已添加用例：</span>
-        <span style={{ fontSize: '16px', color: 'var(--primary-color)', marginLeft: 5 }}>
-          {SelectIssueStore.getSelectedIssueNum}
+        <span>已添加用例:</span>
+        <span style={{ color: 'var(--primary-color)', marginLeft: 5 }}>
+          {`${SelectIssueStore.getSelectedIssueNum} `}
         </span>
         <span>条</span>
       </div>
