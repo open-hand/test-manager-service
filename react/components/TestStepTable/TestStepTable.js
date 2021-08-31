@@ -243,7 +243,8 @@ function TestStepTable(props) {
       title: null,
       dataIndex: 'stepId',
       key: 'stepId',
-      flex: 0.3,
+      width: 40,
+      align: 'left',
       render(stepId, record, index) {
         return index + 1;
       },
@@ -409,13 +410,12 @@ function TestStepTable(props) {
       title: null,
       dataIndex: 'action',
       key: 'action',
-      flex: 'unset 0 0%',
-      width: 105,
+      flex: 1.3,
       render: (text, record, index, provided) => {
         const { stepIsCreating } = record;
         return !stepIsCreating ? (
           <div style={{
-            display: 'flex', alignItems: 'center', minWidth: 120,
+            display: 'flex', alignItems: 'center',
           }}
           >
             <Tooltip title={<FormattedMessage id="execute_move" defaultMessage="移动" />}>
