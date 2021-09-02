@@ -28,13 +28,14 @@ class CreateAutoTest extends Component {
     const {
       currentStep, app, env, version, appVersion, loading,
     } = CreateAutoTestStore;
-    const { intl } = this.props;   
+    const { intl } = this.props;
     const { formatMessage } = intl;
     const data = CreateAutoTestStore.getNewConfigValue;
     switch (currentStep) {
       case 1: {
         return (
-          <Fragment>
+          <>
+            <Button funcType="raised" className="c7ntest-autotest-clear" onClick={CreateAutoTestStore.clearTestInfo}>{formatMessage({ id: 'cancel' })}</Button>
             <Button
               type="primary"
               funcType="raised"
@@ -43,13 +44,14 @@ class CreateAutoTest extends Component {
             >
               {formatMessage({ id: 'next' })}
             </Button>
-            <Button funcType="raised" className="c7ntest-autotest-clear" onClick={CreateAutoTestStore.clearTestInfo}>{formatMessage({ id: 'cancel' })}</Button>
-          </Fragment>
+          </>
         );
       }
       case 2: {
         return (
-          <Fragment>
+          <>
+            <Button funcType="raised" className="c7ntest-autotest-clear" onClick={CreateAutoTestStore.clearTestInfo}>{formatMessage({ id: 'cancel' })}</Button>
+            <Button onClick={CreateAutoTestStore.preStep} funcType="raised">{formatMessage({ id: 'previous' })}</Button>
             <Button
               type="primary"
               funcType="raised"
@@ -58,18 +60,16 @@ class CreateAutoTest extends Component {
             >
               {formatMessage({ id: 'next' })}
             </Button>
-            <Button onClick={CreateAutoTestStore.preStep} funcType="raised">{formatMessage({ id: 'previous' })}</Button>
-            <Button funcType="raised" className="c7ntest-autotest-clear" onClick={CreateAutoTestStore.clearTestInfo}>{formatMessage({ id: 'cancel' })}</Button>
-          </Fragment>
+          </>
         );
       }
       case 3: {
         return (
-          <Fragment>
-            <Button type="primary" funcType="raised" onClick={this.handleDeploy} loading={loading}>{formatMessage({ id: 'autotestbtn_autotest' })}</Button>
-            <Button funcType="raised" onClick={CreateAutoTestStore.preStep}>{formatMessage({ id: 'previous' })}</Button>
+          <>
             <Button funcType="raised" className="c7ntest-autotest-clear" onClick={CreateAutoTestStore.clearTestInfo}>{formatMessage({ id: 'cancel' })}</Button>
-          </Fragment>
+            <Button funcType="raised" onClick={CreateAutoTestStore.preStep}>{formatMessage({ id: 'previous' })}</Button>
+            <Button type="primary" funcType="raised" onClick={this.handleDeploy} loading={loading}>{formatMessage({ id: 'autotestbtn_autotest' })}</Button>
+          </>
         );
       }
       default: {
