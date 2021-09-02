@@ -1,9 +1,12 @@
 .test-create-issue {
+  .c7n-pro-modal-body {
+    overflow-x: hidden;
+  }
   &-line {
     height: .01rem;
     border-bottom: .01rem solid var(--divider);
     width: 7.4rem;
-    margin-left: -.3rem;
+    margin-left: -.2rem;
   }
 
   &-head {
@@ -27,7 +30,8 @@
   }
 
   &-form {
-    width: 5.12rem;
+    width: 100%;
+    // overflow-x: hidden;
 
     tr:nth-child(5) {
       .test-create-issue-head {
