@@ -5,12 +5,12 @@ import { withRouter } from 'react-router-dom';
 import {
   Form, DataSet, Icon, message, Select, Button, TextField,
 } from 'choerodon-ui/pro';
-import { PromptInput } from '@/components';
 import { observer } from 'mobx-react-lite';
+import { remove } from 'lodash';
+import { PromptInput } from '@/components';
 import { uploadFile, createLink } from '@/api/IssueManageApi';
 import LinkList from '@/components/LinkList';
 import CKEditor from '@/components/CKEditor';
-import { remove } from 'lodash';
 import UploadButton from './UploadButton';
 import CreateIssueDataSet from './store/CreateIssueDataSet';
 import CreateTestStepTable from './CreateTestStepTable';
@@ -105,6 +105,12 @@ function CreateIssue(props) {
     // 初始化属性
     modal.handleOk(handleCreateIssue);
   }, [handleCreateIssue, modal]);
+  useEffect(() => {
+    // 附加最外层样式
+    modal.update({
+      className: 'test-create-issue',
+    });
+  }, []);
   // 前置条件显示与隐藏用class类样式实现，增加表单项后，需修改less
   return (
     <>
