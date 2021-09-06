@@ -72,7 +72,8 @@
         rank,
         folder_id,
         project_id,
-        custom_num
+        custom_num,
+        priority_id
         FROM
         test_case
         WHERE
