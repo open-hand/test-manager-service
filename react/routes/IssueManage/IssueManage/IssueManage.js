@@ -279,7 +279,10 @@ class IssueManage extends Component {
           />
         </Header>
         <Breadcrumb />
-        <Content style={{ display: 'flex', padding: '0', borderTop: '0.01rem solid rgba(0,0,0,0.12)' }}>
+        <Content style={{
+          display: 'flex', padding: '0', borderTop: '0.01rem solid rgba(0,0,0,0.12)', overflow: 'hidden',
+        }}
+        >
           <ResizeContainer type="horizontal">
             <Section
               size={{

@@ -355,7 +355,7 @@ function TestPlanHome({ history }) {
         <div className={`${prefixCls}-contentWrap`}>
           <div className={`${prefixCls}-contentWrap-left`}>
             <div className={`${prefixCls}-contentWrap-testPlanTree`}>
-              <Tabs onChange={handleTabsChange} activeKey={testPlanStatus} tabBarGutter={35}>
+              <Tabs onChange={handleTabsChange} activeKey={testPlanStatus} tabBarGutter={0}>
                 <TabPane tab="未开始" key="todo" />
                 <TabPane tab="进行中" key="doing" />
                 <TabPane tab="已完成" key="done" />

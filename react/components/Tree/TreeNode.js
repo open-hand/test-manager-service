@@ -4,8 +4,8 @@ import React, {
 import classNames from 'classnames';
 import {
   Icon, Button, TextField,
+  Menu, Dropdown,
 } from 'choerodon-ui/pro';
-import { Menu, Dropdown } from 'choerodon-ui';
 import { observer } from 'mobx-react-lite';
 import SmartTooltip from '@/components/SmartTooltip';
 
@@ -38,7 +38,7 @@ const getAction = (item, menuItems, enableAddFolder, onMenuClick) => {
     <div key={item.id} role="none" onClick={(e) => { e.stopPropagation(); }} className={`${prefix}-tree-item-action`}>
       {(callFunction(enableAddFolder, item)) && <Icon type="create_new_folder" style={{ marginRight: 6 }} onClick={() => { onMenuClick(item, { key: 'add' }); }} />}
       {menus && (
-        <Dropdown overlay={menu} trigger={['click']} getPopupContainer={(trigger) => trigger.parentNode}>
+        <Dropdown overlay={menu} trigger={['click']}>
           <Button funcType="flat" icon="more_vert" size="small" />
         </Dropdown>
       )}
