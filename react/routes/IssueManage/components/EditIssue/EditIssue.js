@@ -132,6 +132,7 @@ function EditIssue() {
       top: 50 + announcementHeight,
       bottom: 0,
       zIndex: 998,
+      height: '100%',
       overflowY: 'hidden',
       overflowX: 'visible',
     }}
