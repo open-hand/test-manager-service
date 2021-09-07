@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import {
-  Table, Button, Modal, Select, Icon, message, Menu,
+  Table, Modal, Select, Icon, message, Menu,
 } from 'choerodon-ui';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import {
@@ -16,6 +16,7 @@ import PriorityCreate from '../priorityCreate';
 import PriorityEdit from '../priorityEdit';
 import BodyRow from './bodyRow';
 import TableDropMenu from '../../../common/TableDropMenu';
+import PriorityStore from '../stores/PriorityStore';
 
 import './PriorityList.less';
 
@@ -55,8 +56,6 @@ class PriorityList extends Component {
 
   moveRow = (dragIndex, hoverIndex) => {
     const orgId = AppState.currentMenuType.organizationId;
-
-    const { PriorityStore } = this.props;
     const { getPriorityList } = PriorityStore;
     const dragRow = getPriorityList[dragIndex];
     if (!dragRow.enableFlag) {
@@ -94,7 +93,7 @@ class PriorityList extends Component {
   };
 
   renderMenu = (text, record) => {
-    const { PriorityStore, intl } = this.props;
+    const { intl } = this.props;
     const enableList = PriorityStore.getPriorityList.filter((item) => item.enableFlag);
     let name;
     if (record.defaultFlag) {
@@ -136,42 +135,37 @@ class PriorityList extends Component {
     );
   };
 
-  getColumns = () => {
-    const { PriorityStore, intl } = this.props;
-    const enableList = PriorityStore.getPriorityList.filter((item) => item.enableFlag);
-    return [
-      {
-        title: <FormattedMessage id="priority.name" />,
-        dataIndex: 'name',
-        key: 'name',
-        width: 270,
-        filters: [],
-        onFilter: (value, record) => record.name.toString().indexOf(value) !== -1,
-        render: (text, record) => this.renderMenu(text, record),
-      },
-      {
-        title: <FormattedMessage id="priority.des" />,
-        dataIndex: 'description',
-        key: 'des',
-        width: 450,
-        filters: [],
-        className: 'issue-priority-des',
-        onFilter: (value, record) => record.description && record.description.toString().indexOf(value) !== -1,
-      },
-      {
-        title: <FormattedMessage id="priority.color" />,
-        dataIndex: 'colour',
-        key: 'color',
-        width: 100,
-        render: (text, record) => (
-          <ColorBlock color={text} />
-        ),
-      },
-    ];
-  };
+  getColumns = () => [
+    {
+      title: <FormattedMessage id="priority.name" />,
+      dataIndex: 'name',
+      key: 'name',
+      width: 270,
+      filters: [],
+      onFilter: (value, record) => record.name.toString().indexOf(value) !== -1,
+      render: (text, record) => this.renderMenu(text, record),
+    },
+    {
+      title: <FormattedMessage id="priority.des" />,
+      dataIndex: 'description',
+      key: 'des',
+      width: 450,
+      filters: [],
+      className: 'issue-priority-des',
+      onFilter: (value, record) => record.description && record.description.toString().indexOf(value) !== -1,
+    },
+    {
+      title: <FormattedMessage id="priority.color" />,
+      dataIndex: 'colour',
+      key: 'color',
+      width: 100,
+      render: (text, record) => (
+        <ColorBlock color={text} />
+      ),
+    },
+  ];
 
   handleEdit = (priorityId) => {
-    const { PriorityStore } = this.props;
     PriorityStore.setEditingPriorityId(priorityId);
     this.showSideBar('edit');
   };
@@ -183,8 +177,7 @@ class PriorityList extends Component {
   };
 
   handleDelete = async (priority) => {
-    const { intl, PriorityStore } = this.props;
-    const orgId = AppState.currentMenuType.organizationId;
+    const { intl } = this.props;
     const that = this;
     const count = await priorityApi.checkBeforeDel(priority.id);
     const priorityList = PriorityStore.getPriorityList.filter((item) => item.id !== priority.id);
@@ -251,7 +244,6 @@ class PriorityList extends Component {
   };
 
   deletePriority = async (id, defaultId) => {
-    const { PriorityStore } = this.props;
     const { priorityId } = this.state;
     const orgId = AppState.currentMenuType.organizationId;
     try {
@@ -291,7 +283,6 @@ class PriorityList extends Component {
   };
 
   enablePriority = async (priority) => {
-    const { PriorityStore } = this.props;
     const orgId = AppState.currentMenuType.organizationId;
     try {
       await priorityApi.updateStatus(priority.id, !priority.enableFlag);
@@ -302,7 +293,6 @@ class PriorityList extends Component {
   };
 
   showSideBar = (operation) => {
-    const { PriorityStore } = this.props;
     switch (operation) {
       case 'create':
         PriorityStore.setOnCreatingPriority(true);
@@ -316,7 +306,6 @@ class PriorityList extends Component {
   };
 
   async loadPriorityList(orgId) {
-    const { PriorityStore } = this.props;
     try {
       await PriorityStore.loadPriorityList(orgId);
     } catch (err) {
@@ -325,7 +314,8 @@ class PriorityList extends Component {
   }
 
   render() {
-    const { PriorityStore, intl } = this.props;
+    const { intl } = this.props;
+
     const {
       getPriorityList,
       onLoadingList,

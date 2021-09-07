@@ -3,7 +3,7 @@ import { Route, Switch } from 'react-router-dom';
 import { nomatch } from '@choerodon/boot';
 import { PermissionRoute } from '@choerodon/master';
 
-const PriorityList = React.lazy(() => import('./priorityList'), () => import('./stores/PriorityStore'));
+const PriorityList = React.lazy(() => import('./priorityList'));
 
 const PriorityIndex = ({ match }) => (
   <Switch>
