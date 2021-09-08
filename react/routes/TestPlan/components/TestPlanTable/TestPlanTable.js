@@ -433,7 +433,7 @@ const TestPlanTable = observer(({
                 placeholder="计划执行人"
                 onChange={onSearchAssign}
                 value={isSelf ? undefined : testPlanStore.filter.assignUser}
-                style={{ marginLeft: 30 }}
+                style={{ marginLeft: 30, width: 120 }}
                 dropdownAlign={{
                   points: ['tl', 'bl'],
                   overflow: { adjustX: true },
