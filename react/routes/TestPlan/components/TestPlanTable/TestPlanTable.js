@@ -9,7 +9,7 @@ import {
   Tooltip, Button, Icon, Checkbox,
 } from 'choerodon-ui';
 import { Action, stores } from '@choerodon/boot';
-import _ from 'lodash';
+import _, { isString } from 'lodash';
 import { useUpdateEffect } from 'ahooks';
 import { useLoading } from '@choerodon/agile/lib/components/Loading';
 import { renderIssueNum } from '@/routes/IssueManage/components/IssueTable/tags';
@@ -250,7 +250,7 @@ const TestPlanTable = observer(({
       .map((priorityVO) => ({ text: priorityVO.name, value: priorityVO.id })),
     filteredValue: getPriorityFilteredValue(),
     flex: 1,
-    width: 100,
+    width: 90,
     render(priorityId) {
       const priorityVO = _.find(priorityList, { id: priorityId }) || {};
       return (
@@ -281,7 +281,7 @@ const TestPlanTable = observer(({
     title: '实际执行人',
     dataIndex: 'lastUpdateUser',
     key: 'lastUpdateUser',
-    flex: 1.2,
+    flex: 1.5,
     style: {
       overflow: 'hidden',
     },
@@ -447,7 +447,7 @@ const TestPlanTable = observer(({
         pagination={isMine ? mineExecutePagination : executePagination}
         onChange={onTableChange}
         dataSource={data}
-        columns={columns}
+        columns={columns.map((item) => ({ ...item, title: isString(item.title) || React.isValidElement(item.title) ? <Tooltip title={item.title}><span>{item.title}</span></Tooltip> : item.title }))}
         onDragEnd={onDragEnd}
         dragKey="executeId"
         checkedMap={checkIdMap}

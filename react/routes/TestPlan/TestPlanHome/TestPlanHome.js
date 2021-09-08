@@ -346,9 +346,7 @@ function TestPlanHome({ history }) {
       <Header
         title={<FormattedMessage id="testPlan_name" />}
       >
-        <LoadingHiddenWrap>
-          <TestPlanHeader />
-        </LoadingHiddenWrap>
+        <TestPlanHeader />
       </Header>
       <Breadcrumb />
       <Content style={{ display: 'flex', padding: '0', borderTop: '0.01rem solid rgba(0,0,0,0.12)' }}>
