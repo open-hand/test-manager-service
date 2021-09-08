@@ -39,9 +39,11 @@ export default observer(() => {
           ))
         }
       </div>
-      <div className="c7ntest-testPlan-statusCard-count">
-        {`已测: ${doneCount ?? 0}/${totalCount ?? 0}`}
-      </div>
+      {doneCount || totalCount ? (
+        <div className="c7ntest-testPlan-statusCard-count">
+          {`已测: ${doneCount ?? 0}/${totalCount ?? 0}`}
+        </div>
+      ) : null}
     </div>
   );
 });
