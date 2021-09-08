@@ -363,13 +363,15 @@ function TestPlanHome({ history }) {
               <TestPlanTree status={testPlanStatus} />
             </div>
           </div>
-          <LoadingHiddenWrap>
-            {
+
+          {
               noSelected ? (
-                <EmptyPage
-                  image={testCaseEmpty}
-                  description={description}
-                />
+                <LoadingHiddenWrap>
+                  <EmptyPage
+                    image={testCaseEmpty}
+                    description={description}
+                  />
+                </LoadingHiddenWrap>
               ) : (
                 <div className={`${prefixCls}-contentWrap-right`}>
                   <div className={`${prefixCls}-contentWrap-right-currentPlanName`}>
@@ -417,7 +419,6 @@ function TestPlanHome({ history }) {
                 </div>
               )
             }
-          </LoadingHiddenWrap>
 
         </div>
       </Content>
