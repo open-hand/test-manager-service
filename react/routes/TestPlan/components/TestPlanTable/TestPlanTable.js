@@ -447,7 +447,7 @@ const TestPlanTable = observer(({
         pagination={isMine ? mineExecutePagination : executePagination}
         onChange={onTableChange}
         dataSource={data}
-        columns={columns.map((item) => ({ ...item, title: isString(item.title) || React.isValidElement(item.title) ? <Tooltip title={item.title}><span>{item.title}</span></Tooltip> : item.title }))}
+        columns={columns.map((item) => ({ ...item, title: (isString(item.title) && !!String(item.title).length) || React.isValidElement(item.title) ? <Tooltip title={item.title}><span>{item.title}</span></Tooltip> : item.title }))}
         onDragEnd={onDragEnd}
         dragKey="executeId"
         checkedMap={checkIdMap}
