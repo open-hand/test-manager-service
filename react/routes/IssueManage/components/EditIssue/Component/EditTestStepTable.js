@@ -114,7 +114,7 @@ function EditTestStepTable({ onUpdateDetail, IssueStore }) {
           <>
             <span className="c7ntest-edit-test-step-item-title-text">前置条件</span>
             <div className="c7ntest-edit-test-step-item-title-btn">
-              <Tooltip title="编辑" getPopupContainer={(triggerNode) => triggerNode.parentNode.parentNode}>
+              <Tooltip title="编辑">
                 <Button
                   icon="edit-o"
                   onClick={() => {

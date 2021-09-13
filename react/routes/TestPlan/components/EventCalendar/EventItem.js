@@ -85,16 +85,15 @@ const styles = {
   },
 };
 const AUTOSCROLL_RATE = 7;
-const isScrollable = (...values) => values.some(value => value === 'auto' || value === 'scroll');
+const isScrollable = (...values) => values.some((value) => value === 'auto' || value === 'scroll');
 function findScroller(n) {
   let node = n;
   while (node) {
     const style = window.getComputedStyle(node);
     if (isScrollable(style.overflow, style.overflowY, style.overflowX)) {
       return node;
-    } else {
-      node = node.parentNode;
     }
+    node = node.parentNode;
   }
   return null;
 }
@@ -136,7 +135,6 @@ class EventItem extends Component {
     this.singleWidth = document.getElementsByClassName('CalendarBackItem')[0] ? document.getElementsByClassName('CalendarBackItem')[0].offsetWidth : 0;
     // console.log(this.singleWidth, this.state.flex);
   }
-
 
   componentDidUpdate(prevProps, prevState) {
     this.singleWidth = document.getElementsByClassName('CalendarBackItem')[0] ? document.getElementsByClassName('CalendarBackItem')[0].offsetWidth : 0;
@@ -238,7 +236,7 @@ class EventItem extends Component {
     cancelAnimationFrame(this.scrollTimer);
   }
 
-  saveRef = name => (ref) => {
+  saveRef = (name) => (ref) => {
     this[name] = ref;
   }
 
@@ -274,7 +272,7 @@ class EventItem extends Component {
         {canResize && <div className="c7ntest-EventItem-event-resizer-right" style={{ right: lastFlex === 0 ? 0 : -10 }} onMouseDown={this.handleMouseDown.bind(this, 'right')} role="none" />}
         {(enter || resizing) && <div className="c7ntest-EventItem-event-tip-left" style={{ background: styles[level] && styles[level].tipBackground }} />}
         {(enter || resizing) && <div className="c7ntest-EventItem-event-tip-right" style={{ background: styles[level] && styles[level].tipBackground }} />}
-        <Tooltip getPopupContainer={triggerNode => triggerNode.parentNode} title={tipTitle} placement="topLeft">
+        <Tooltip title={tipTitle} placement="topLeft">
           <div className="c7ntest-EventItem-event-title c7ntest-text-dot" onMouseDown={canResize ? this.handleMouseDown.bind(this, 'move') : null} role="none">
             {title}
           </div>
@@ -512,9 +510,9 @@ class EventItem extends Component {
 
 EventItem.propTypes = propTypes;
 
-export default props => (
+export default (props) => (
   <Store.Consumer>
-    {context => (
+    {(context) => (
       <EventItem {...props} context={context} />
     )}
   </Store.Consumer>

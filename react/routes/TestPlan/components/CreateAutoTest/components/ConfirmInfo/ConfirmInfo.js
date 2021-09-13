@@ -396,7 +396,6 @@ class ConfirmInfo extends Component {
             trigger="click"
             placement="bottom"
             overlayClassName="c7ntest-task-detail-popover"
-          // getPopupContainer={() => document.getElementsByClassName('sidebar-content')[0].parentNode}
           >
             <Icon
               onClick={this.checkCron}
