@@ -87,7 +87,6 @@ function TreeNode({
                 </Menu>
               )}
               trigger={['click']}
-              getPopupContainer={(trigger) => trigger.parentNode}
             >
               <Button funcType="flat" icon="more_vert" size="small" />
             </Dropdown>

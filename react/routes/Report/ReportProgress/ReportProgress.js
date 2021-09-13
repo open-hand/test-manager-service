@@ -163,16 +163,15 @@ class ReportProgress extends Component {
           </div>
         </div>
       );
-    } else {
-      return (
-        <Empty
-          loading={loading}
-          pic={EmptyPng}
-          title={`${planList && planList.length > 0 ? '暂无测试用例' : '暂无计划'}`}
-          description={`${planList && planList.length > 0 ? '当前计划下暂无测试用例' : '当前项目下无计划'}`}
-        />
-      );
     }
+    return (
+      <Empty
+        loading={loading}
+        pic={EmptyPng}
+        title={`${planList && planList.length > 0 ? '暂无测试用例' : '暂无计划'}`}
+        description={`${planList && planList.length > 0 ? '当前计划下暂无测试用例' : '当前项目下无计划'}`}
+      />
+    );
   }
 
   render() {
@@ -203,7 +202,6 @@ class ReportProgress extends Component {
             <div className="c7ntest-switchVersion">
               <Select
                 className="c7ntest-version-filter-item"
-                getPopupContainer={(triggerNode) => triggerNode.parentNode}
                 value={currentPlanId}
                 label="计划"
                 onChange={this.handlePlanChange}

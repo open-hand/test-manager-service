@@ -136,7 +136,7 @@ function ExportSide(props) {
     return (value === 2
       ? <div>已完成</div>
       : (
-        <Tooltip title={`进度：${record.get('rate') ? record.get('rate').toFixed(1) : 0}%`} getPopupContainer={(ele) => ele.parentNode}>
+        <Tooltip title={`进度：${record.get('rate') ? record.get('rate').toFixed(1) : 0}%`}>
           <Progress percent={record.get('rate')} showInfo={false} />
         </Tooltip>
       ));

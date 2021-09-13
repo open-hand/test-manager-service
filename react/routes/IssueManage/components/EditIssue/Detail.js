@@ -160,7 +160,7 @@ function Detail({
           <section id="link_task" style={{ marginBottom: 20 }}>
             <TitleWrap title="问题链接">
               <div style={{ marginLeft: '14px' }}>
-                <Tooltip title="问题链接" getPopupContainer={(triggerNode) => triggerNode.parentNode}>
+                <Tooltip title="问题链接">
                   <Button
                     icon="playlist_add"
                     onClick={() => {

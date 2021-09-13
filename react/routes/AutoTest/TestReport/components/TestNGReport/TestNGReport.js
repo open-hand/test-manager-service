@@ -10,7 +10,6 @@ import './TestNGReport.less';
 const { TabPane } = Tabs;
 const { Option } = Select;
 
-
 class TestNGReport extends Component {
   state = {
     selectedSuites: [],
@@ -24,14 +23,13 @@ class TestNGReport extends Component {
     });
   }
 
-  static getDerivedStateFromProps(props, state) { 
+  static getDerivedStateFromProps(props, state) {
     const suites = JSON.parse(JSON.stringify(props.data['testng-results'].suite));
     const filteredSuites = suites.filter((suite) => {
-      if (state.selectedSuites.length === 0) { return suite.test; } else {
-        return suite.test && state.selectedSuites.includes(suite.name);
-      }
+      if (state.selectedSuites.length === 0) { return suite.test; }
+      return suite.test && state.selectedSuites.includes(suite.name);
     });
-    const allSuites = suites.filter(suite => suite.test);
+    const allSuites = suites.filter((suite) => suite.test);
     return {
       allSuites,
       filteredSuites,
@@ -43,11 +41,11 @@ class TestNGReport extends Component {
     const { filteredSuites, allSuites } = this.state;
     const { creationDate } = this.props;
     return (
-      <Content 
+      <Content
         title="自动化测试报告"
-        description={`报告生成时间：${moment(creationDate).format('YYYY年MM月DD日 HH:mm:ss')}`}    
-      >    
-        <div className="c7ntest-TestNGReport">        
+        description={`报告生成时间：${moment(creationDate).format('YYYY年MM月DD日 HH:mm:ss')}`}
+      >
+        <div className="c7ntest-TestNGReport">
           <Tabs defaultActiveKey="1">
             <TabPane tab="总览" key="1">
               <section style={{ display: 'flex', alignItems: 'center', marginBottom: '15px' }}>
@@ -57,12 +55,12 @@ class TestNGReport extends Component {
                   className="quickSearchSelect"
                   placeholder="Suite"
                   maxTagCount={0}
-                  maxTagPlaceholder={ommittedValues => `${ommittedValues.map(item => item).join(', ')}`}
+                  maxTagPlaceholder={(ommittedValues) => `${ommittedValues.map((item) => item).join(', ')}`}
                   onChange={this.handleSelect}
-                  getPopupContainer={triggerNode => triggerNode.parentNode}
+
                 >
                   {
-                  allSuites.map(suite => (
+                  allSuites.map((suite) => (
                     <Option key={suite.name} value={suite.name}>
                       {suite.name}
                     </Option>
@@ -72,7 +70,7 @@ class TestNGReport extends Component {
               </section>
               <section>
                 {
-                filteredSuites.map(suite => <TestTable suite={suite} />)
+                filteredSuites.map((suite) => <TestTable suite={suite} />)
               }
               </section>
             </TabPane>

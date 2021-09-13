@@ -17,14 +17,14 @@ const InnerTable = (TestClass) => {
       dataIndex: 'name',
       key: 'name',
       colSpan: 3,
-      render: testName => <div className="c7ntest-text-dot">{testName}</div>,
+      render: (testName) => <div className="c7ntest-text-dot">{testName}</div>,
     },
     {
       title: '时长',
       dataIndex: 'duration-ms',
       key: 'duration-ms',
       colSpan: 0,
-      render: duration => <div className="c7ntest-text-dot">{`${duration}ms`}</div>,
+      render: (duration) => <div className="c7ntest-text-dot">{`${duration}ms`}</div>,
     },
     {
       title: 'log',
@@ -35,7 +35,7 @@ const InnerTable = (TestClass) => {
         return (
           <div>
             {groups && <div>{`Group: ${groups.join(',')}`}</div>}
-            {params && <div>{`[DATA] ${toArray(params.param).map(param => param.value).join(',')}`}</div>}
+            {params && <div>{`[DATA] ${toArray(params.param).map((param) => param.value).join(',')}`}</div>}
             {exception && <div className="primary">{exception.message}</div>}
             {exception && <div style={{ whiteSpace: 'pre-wrap' }}>{exception['full-stacktrace']}</div>}
           </div>
@@ -99,13 +99,13 @@ class TestTable extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    const suite = JSON.parse(JSON.stringify(props.suite));        
+    const suite = JSON.parse(JSON.stringify(props.suite));
     const allGroups = toArray(suite.groups.group);
-    // 
+    //
     setGroup(allGroups, suite, state.selectedGroup);
     const tests = toArray(suite.test);
     // 计算总计
-    calculateTestByTest(tests); 
+    calculateTestByTest(tests);
     return {
       tests,
       allGroups,
@@ -120,18 +120,18 @@ class TestTable extends Component {
 
   render() {
     const { suite } = this.props;
-    const { allGroups, tests } = this.state;    
-    
+    const { allGroups, tests } = this.state;
+
     const columns = [
       { title: '测试', dataIndex: 'name', key: 'name' },
       {
-        title: '持续时间', dataIndex: 'duration-ms', key: 'duration-ms', render: duration => duration !== undefined && `${duration}ms`,
+        title: '持续时间', dataIndex: 'duration-ms', key: 'duration-ms', render: (duration) => duration !== undefined && `${duration}ms`,
       },
       {
         title:
   <span>
     <Badge status="success" />
-            通过
+    通过
   </span>,
         dataIndex: 'pass',
         key: 'pass',
@@ -141,7 +141,7 @@ class TestTable extends Component {
         title:
   <span>
     <Badge status="warning" />
-            跳过
+    跳过
   </span>,
         dataIndex: 'skip',
         key: 'skip',
@@ -151,7 +151,7 @@ class TestTable extends Component {
         title:
   <span>
     <Badge status="error" />
-            失败
+    失败
   </span>,
         dataIndex: 'fail',
         key: 'fail',
@@ -171,12 +171,11 @@ class TestTable extends Component {
         className="quickSearchSelect"
         placeholder="Group"
         maxTagCount={0}
-        maxTagPlaceholder={ommittedValues => `${ommittedValues.map(item => item).join(', ')}`}
+        maxTagPlaceholder={(ommittedValues) => `${ommittedValues.map((item) => item).join(', ')}`}
         onChange={this.handleSelectGroup}
-        getPopupContainer={triggerNode => triggerNode.parentNode}
       >
         {
-          allGroups.map(group => (
+          allGroups.map((group) => (
             <Option key={group.name} value={group.name}>
               {group.name}
             </Option>
