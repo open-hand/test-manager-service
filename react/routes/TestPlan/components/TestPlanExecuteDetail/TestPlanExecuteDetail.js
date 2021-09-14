@@ -19,8 +19,8 @@ import {
   Modal, Button, message, Tooltip,
 } from 'choerodon-ui/pro';
 import queryString from 'query-string';
-import { uploadFile, deleteFile } from '@/api/FileApi';
 import Loading, { LoadingProvider } from '@choerodon/agile/lib/components/Loading';
+import { uploadFile, deleteFile } from '@/api/FileApi';
 import { StatusTags } from '../../../../components';
 import {
   executeDetailLink,
@@ -302,7 +302,8 @@ function TestPlanExecuteDetail(props) {
   const renderBreadcrumbTitle = (text) => {
     const ellipsis = '...';
     const textArr = [...text];
-    return textArr.length > 15 ? <Tooltip title={text}>{`${textArr.slice(0, 15).join('') + ellipsis}`}</Tooltip> : text;
+    return <Tooltip title={text}><span className="c7n-test-execute-detail-summary">{text}</span></Tooltip>;
+    // return textArr.length > 15 ? <Tooltip title={text}>{`${textArr.slice(0, 15).join('') + ellipsis}`}</Tooltip> : text;
   };
   function handleOpenIssue(issueId) {
     const { open } = detailProps;
@@ -388,10 +389,15 @@ function TestPlanExecuteDetail(props) {
               >
                 <div className="c7n-test-execute-detail-header">
                   {detailData && (
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                      <span style={{ fontSize: '20px' }}>{renderBreadcrumbTitle(summary)}</span>
+                    <div style={{
+                      display: 'flex', alignItems: 'center', maxWidth: 'calc(100% - 4rem)', paddingRight: '.2rem',
+                    }}
+                    >
+                      <span className="c7n-test-execute-detail-summary" style={{ fontSize: '20px', overflow: 'hidden' }}>{renderBreadcrumbTitle(summary)}</span>
                       <StatusTags
-                        style={{ height: 20, lineHeight: '20px', marginLeft: 10 }}
+                        style={{
+                          height: 20, lineHeight: '20px', marginLeft: 10, flexShrink: 0,
+                        }}
                         color={statusColor}
                         name={statusName}
                       />
@@ -422,7 +428,7 @@ function TestPlanExecuteDetail(props) {
                           <span style={{ marginLeft: 5 }}>{`（${stepTableDataSet.totalCount}）`}</span>,
                         ]}
                       </div>
-                  )}
+                    )}
                   >
                     <StepTable
                       dataSet={stepTableDataSet}
