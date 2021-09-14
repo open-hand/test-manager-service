@@ -10,10 +10,9 @@ import {
 } from 'choerodon-ui';
 import { Action, stores } from '@choerodon/boot';
 import _, { isString } from 'lodash';
-import { useUpdateEffect } from 'ahooks';
 import { useLoading } from '@choerodon/agile/lib/components/Loading';
+import SelectUser from '@choerodon/agile/lib/components/select/select-user';
 import { renderIssueNum } from '@/routes/IssueManage/components/IssueTable/tags';
-import SelectUser from '@/components/select/select-user';
 import {
   StatusTags, DragTable,
 } from '../../../../components';
@@ -427,17 +426,13 @@ const TestPlanTable = observer(({
                 <Checkbox style={{ marginLeft: 4 }} checked={isSelf} onChange={onOnlyMeCheckedChange} />
               </div>
               <SelectUser
-                flat
-                self={false}
                 clearButton
                 placeholder="计划执行人"
                 onChange={onSearchAssign}
                 value={isSelf ? undefined : testPlanStore.filter.assignUser}
                 style={{ marginLeft: 30, width: 120 }}
-                dropdownAlign={{
-                  points: ['tl', 'bl'],
-                  overflow: { adjustX: true },
-                }}
+                selected={isSelf ? undefined : testPlanStore.filter.assignUser}
+                excludeIds={AppState.userInfo.id.toString()}
               />
             </span>
           </div>
