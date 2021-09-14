@@ -5,6 +5,7 @@ import {
   Button,
 } from 'choerodon-ui/pro';
 import { observer } from 'mobx-react-lite';
+import SelectUser from '@choerodon/agile/lib/components/select/select-user';
 import SelectFocusLoad from '@/components/SelectFocusLoad';
 import styles from './index.less';
 
@@ -37,17 +38,15 @@ function BatchModal({
           justifyContent: 'space-between',
         }}
         >
-          <SelectFocusLoad
-            allowClear
-            loadWhenMount
-            style={{ display: 'flex', margin: '15px 0' }}
+          <SelectUser
+            clearButton
             placeholder="批量指派"
-            type="user"
-            value={testPlanStore.assignToUserId}
             onChange={handleAssignToChange}
-            dropdownClassName={styles.assignSelectDropdown}
+            value={testPlanStore.assignToUserId}
+            style={{ display: 'flex', margin: '15px 0' }}
+            selected={testPlanStore.assignToUserId}
+            className={styles.assignToUserSelect}
           />
-
           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
             <Button
               onClick={onCancel}
