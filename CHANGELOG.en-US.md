@@ -2,6 +2,23 @@
 
 All notable changes to choerodon-front-agile will be documented in this file.
 
+## [1.1.0-alpha] - 2021-09-18
+
+### Added
+
+- Case library supports batch deletion of test cases.
+
+### Changed
+
+- Optimize the batch selection style of test cases in case library.
+
+
+### Fixed
+
+- Fix the problem that the operation buttons of test details steps under partial resolution are blocked.
+
+
+
 ## [1.0.0] - 2021-06-18
 
 ### Added
