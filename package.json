@@ -33,7 +33,7 @@
     "@choerodon/agile": "1.1.0-alpha.1",
     "@choerodon/boot": "0.23.3",
     "@choerodon/compiler": "^0.0.1",
-    "@choerodon/master": "1.1.0",
+    "@choerodon/master": "1.1.0-alpha.1",
     "@types/echarts": "^4.6.5",
     "@types/file-saver": "^2.0.2",
     "@types/lodash": "^4.14.165",

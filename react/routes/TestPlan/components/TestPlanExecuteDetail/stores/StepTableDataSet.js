@@ -32,9 +32,6 @@ function StepTableDataSet(projectId, orgId, intl, caseId, testStatusDataSet, exe
     selection: false,
     paging: true,
     modifiedCheck: false,
-    data: [{
-      testData: 'testData', expectedResult: 'expectedResult', stepStatus: '3', stepAttachment: [], defects: [], comment: '2222',
-    }],
     fields: [
       {
         name: 'index', type: 'string', label: '编号',
