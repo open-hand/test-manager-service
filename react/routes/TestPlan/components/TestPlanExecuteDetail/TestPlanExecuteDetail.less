@@ -1,6 +1,12 @@
 .c7n-test-execute-detail {
+  &-summary {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   .c7n-spin-nested-loading {
     height: 100%;
+
     .c7n-spin-container {
       height: 100%;
     }
@@ -58,6 +64,7 @@
 
             .ck-content {
               background: inherit;
+
               p:first-child {
                 margin: 0;
               }
@@ -68,7 +75,7 @@
               overflow: hidden;
 
               .c7ntest-read-delta {
-                & > div {
+                &>div {
                   width: ~"calc(100% - 3em)";
                   float: left;
                 }

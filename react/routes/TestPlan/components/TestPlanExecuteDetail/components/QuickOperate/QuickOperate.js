@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/interactive-supports-focus */
+/* eslint-disable react/require-default-props */
 import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -73,7 +75,10 @@ const QuickOperate = ({
     </Menu>
   );
   return (
-    <div style={{ fontSize: '14px', display: 'flex', alignItems: 'center' }}>
+    <div style={{
+      fontSize: '14px', display: 'flex', alignItems: 'center', flexShrink: 0,
+    }}
+    >
       快速操作:
       {
         statusArr.map((status) => (
