@@ -7,10 +7,10 @@ import { Table, DataSet, Tooltip } from 'choerodon-ui/pro';
 import { observer } from 'mobx-react-lite';
 import { useHistory } from 'react-router-dom';
 // @ts-ignore
+import { find } from 'lodash';
 import StatusTag from '@/components/StatusTag';
 // @ts-ignore
 import { getProjectId } from '@/common/utils';
-import { find } from 'lodash';
 import { getStatusList } from '@/api/TestStatusApi';
 import { renderStatus, renderAssignee } from './renderer';
 import context from '../../context';
@@ -44,7 +44,7 @@ const BugTable: React.FC = () => {
     },
     fields: [{
       name: 'summary',
-      label: '问题概要',
+      label: '工作项概要',
     }, {
       name: 'statusMapVO',
       label: '状态',
@@ -60,7 +60,7 @@ const BugTable: React.FC = () => {
     }],
     queryFields: [{
       name: 'summary',
-      label: '问题概要',
+      label: '工作项概要',
     }, {
       name: 'caseSummary',
       label: '关联测试',
@@ -95,7 +95,7 @@ const BugTable: React.FC = () => {
     <Card className={styles.table_card}>
       <div style={{ width: '100%' }}>
         <div className={styles.header}>
-          关联的问题项
+          关联的工作项
         </div>
         {preview ? <PreviewFailedTable /> : (
           <Table

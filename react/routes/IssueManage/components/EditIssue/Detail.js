@@ -26,10 +26,10 @@ const { API_HOST } = window._env_;
 
 const { TitleWrap, ContentWrap, PropertyWrap } = EditDetailWrap;
 /**
- * 问题详情
+ * 工作项详情
  * folder
  * @param {*} linkIssues
- * @param {*} reloadIssue  重载问题
+ * @param {*} reloadIssue  重载工作项
  */
 function Detail({
   onUpdate, handleCreateLinkIssue,
@@ -155,12 +155,12 @@ function Detail({
           </ContentWrap>
         </section>
         <div className="c7nTest-detail-divider" />
-        {/** 问题链接 */}
+        {/** 工作项链接 */}
         {hasAgile && (
           <section id="link_task" style={{ marginBottom: 20 }}>
-            <TitleWrap title="问题链接">
+            <TitleWrap title="工作项链接">
               <div style={{ marginLeft: '14px' }}>
-                <Tooltip title="问题链接">
+                <Tooltip title="工作项链接">
                   <Button
                     icon="playlist_add"
                     onClick={() => {

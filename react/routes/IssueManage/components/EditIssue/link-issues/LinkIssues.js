@@ -3,11 +3,11 @@ import { map } from 'lodash';
 import LinkList from '@/components/LinkList';
 import { deleteLink } from '@/api/IssueManageApi';
 /**
- * 问题链接
- * 
- * @param {*} linkIssues  问题链接集
- * @param {*} reloadIssue 重载问题函数
- * @param {*} issueId 
+ * 工作项链接
+ *
+ * @param {*} linkIssues  工作项链接集
+ * @param {*} reloadIssue 重载工作项函数
+ * @param {*} issueId
  */
 const LinkIssues = (props) => {
   const { linkIssues, reloadIssue, issueId } = props;

@@ -31,7 +31,7 @@ function CreateIssueDataSet(intlPrefix, intl, priorityOptionsDataSet) {
   const description = '用例前置条件';
   const priority = intl.formatMessage({ id: `${intlPrefix}_issueFilterByPriority`, defaultMessage: '优先级' });
   const folderId = intl.formatMessage({ id: `${intlPrefix}_folder`, defaultMessage: '目录' });
-  const Issuelabel = intl.formatMessage({ id: 'summary_label', defaultMessage: '问题链接' });
+  const Issuelabel = intl.formatMessage({ id: 'summary_label', defaultMessage: '工作项链接' });
   return {
     autoQuery: false,
     selection: false,

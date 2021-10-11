@@ -144,7 +144,7 @@ function TestPlanModal({
               </div>
               <div style={{ display: 'flex', alignItems: 'center', marginTop: 15 }}>
                 <Radio name="custom" value className={styles.radio}>自选用例</Radio>
-                {hasAgile && dataSet.toData() && dataSet.toData()[0]?.custom && <CheckBox style={{ marginTop: -8, marginLeft: -10 }} name="sprintLink">选择当前测试计划所属迭代中问题项关联的所有用例</CheckBox>}
+                {hasAgile && dataSet.toData() && dataSet.toData()[0]?.custom && <CheckBox style={{ marginTop: -8, marginLeft: -10 }} name="sprintLink">选择当前测试计划所属迭代中工作项关联的所有用例</CheckBox>}
               </div>
             </div>
           </div>

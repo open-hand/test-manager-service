@@ -70,7 +70,7 @@ const CaseListItem = ({
               }}
             >
               <Popconfirm
-                title="确认要删除该问题关联的测试用例吗?"
+                title="确认要删除该工作项关联的测试用例吗?"
                 placement="left"
                 onConfirm={() => handleDelete()}
                 //   onCancel={this.cancel}

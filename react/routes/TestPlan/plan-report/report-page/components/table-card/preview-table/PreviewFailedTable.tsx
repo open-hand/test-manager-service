@@ -8,12 +8,12 @@ import { observer } from 'mobx-react-lite';
 import { axios } from '@choerodon/boot';
 import { useHistory } from 'react-router-dom';
 // @ts-ignore
+import { find } from 'lodash';
 import Tip from '@/components/Tip';
 // @ts-ignore
 import StatusTag from '@/components/StatusTag';
 // @ts-ignore
 import { getProjectId } from '@/common/utils';
-import { find } from 'lodash';
 import { renderStatus, renderAssignee } from '../renderer';
 import context from '../../../context';
 import Table, { Column } from './table';
@@ -41,7 +41,7 @@ const PreviewFailedTable: React.FC = () => {
     loadData();
   }, [loadData]);
   const columns: Column<any>[] = [
-    { title: '问题概要', dataIndex: 'summary' },
+    { title: '工作项概要', dataIndex: 'summary' },
     { title: '状态', dataIndex: 'statusMapVO', render: ({ statusMapVO }) => renderStatus({ value: statusMapVO }) },
     { title: '经办人', dataIndex: 'assignee', render: ({ assignee }) => renderAssignee({ value: assignee }) },
     {

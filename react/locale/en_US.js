@@ -134,7 +134,7 @@ const enUS = {
   status_name: 'Status Name',
   status_comment: 'Comment',
   status_color: 'Color',
-  // 自定义状态侧边栏 
+  // 自定义状态侧边栏
   status_side_content_title: 'Create status in project “{name}”',
   status_side_edit_content_title: 'Edit status in project “{name}”',
   status_side_content_description: 'You can create status which includes execute status and step status.',
@@ -155,7 +155,7 @@ const enUS = {
   report_chooseQuestion: 'choose question',
   report_defectCount: 'Defect count',
   report_total: 'Total',
-  // 选择问题侧边栏
+  // 选择工作项侧边栏
   report_select_title: 'Choose questions',
 
   report_select_content_description: 'You can choose any questions to generate report',
@@ -348,7 +348,7 @@ const enUS = {
   issue_edit_step_title: 'Test detail',
   issue_edit_step_content_title: 'Edit detail of test step“{testStep}”',
   issue_edit_step_content_description: 'You can edit the details of the test steps.',
-  // 
+  //
   issue_create_bug: 'Create bug',
   // issue树
   issue_tree_rename: 'rename',
