@@ -4,14 +4,14 @@ import { getProjectId, request } from '../common/utils';
 
 /**
  * 更新执行用例详情（用于状态更改）
- * @param {*} data 
+ * @param {*} data
  */
 export function updateDetail(data) {
   return request.put(`test/v1/projects/${getProjectId()}/cycle/case/cycle_case`, data);
 }
 /**
  * 更新执行用例详情（用于弹窗修改内容）
- * @param {*} data 
+ * @param {*} data
  */
 export function updateSidebarDetail(data) {
   const { isAsync = false } = data;
@@ -19,8 +19,8 @@ export function updateSidebarDetail(data) {
 }
 
 /**
- * 获取问题链接信息
- * @param {*} data 
+ * 获取工作项链接信息
+ * @param {*} data
  */
 export function getIssueInfos(caseId) {
   return request.get(`test/v1/projects/${getProjectId()}/case_link/list_issue_info?case_id=${caseId}`);
@@ -55,7 +55,7 @@ export function getDetailsData(cycleCaseId, param, data) {
 }
 /**
  * 在执行详情中为执行或步骤增加缺陷
- * 
+ *
  */
 export function addBugForExecuteOrStep(defectType, id, data) {
   return request.post(`test/v1/projects/${getProjectId()}/defect/createIssueAndDefect/${defectType}/${id}?applyType=agile`, data);

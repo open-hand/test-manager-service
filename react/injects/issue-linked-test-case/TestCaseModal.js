@@ -75,7 +75,7 @@ const openTestCaseModal = (testLinkStore, intl) => {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <span>关联测试用例</span>
 
-        <Tooltip title="创建测试用例并关联到问题项" arrowPointAtCenter>
+        <Tooltip title="创建测试用例并关联到工作项" arrowPointAtCenter>
           <Button funcType="flat" icon="playlist_add" onClick={handleOpenCreateIssue} />
         </Tooltip>
 

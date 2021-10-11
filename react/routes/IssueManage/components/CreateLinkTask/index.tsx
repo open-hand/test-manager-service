@@ -135,7 +135,7 @@ const LinkIssueModal: React.FC<Props> = (props) => {
 const openLinkIssueModal = (props: Props) => {
   Modal.open({
     key: 'LinkIssueModal',
-    title: '测试用例关联问题项',
+    title: '测试用例关联工作项',
     style: {
       width: MODAL_WIDTH.middle + 100,
     },

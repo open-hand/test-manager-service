@@ -17,9 +17,9 @@ import renderStatus from '@choerodon/agile/lib/components/column-renderer/status
 import renderSummary from '@choerodon/agile/lib/components/column-renderer/summary';
 import renderPriority from '@choerodon/agile/lib/components/column-renderer/priority';
 import renderSprint from '@choerodon/agile/lib/components/column-renderer/sprint';
-import { getProjectId } from '@/common/utils';
 import Record from 'choerodon-ui/pro/lib/data-set/Record';
 import { find } from 'lodash';
+import { getProjectId } from '@/common/utils';
 
 interface Props {
   modal?: IModalProps,
@@ -144,7 +144,7 @@ const LinkIssueModal: React.FC<Props> = (props) => {
 const openLinkIssueModal = (props: Props) => {
   Modal.open({
     key: 'LinkIssueModal',
-    title: '测试用例关联问题项',
+    title: '测试用例关联工作项',
     style: {
       width: MODAL_WIDTH.middle + 100,
     },

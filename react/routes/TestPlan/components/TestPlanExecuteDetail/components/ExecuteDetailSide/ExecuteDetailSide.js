@@ -287,11 +287,11 @@ function ExecuteDetailSide(props) {
                     fileList={fileList}
                   />
                 </Section>
-                {/* 问题链接 */}
+                {/* 工作项链接 */}
                 <Section
                   id="issueLink"
                   icon="attach_file"
-                  title="问题链接"
+                  title="工作项链接"
                   isLastOne
                 >
                   <LinkIssues

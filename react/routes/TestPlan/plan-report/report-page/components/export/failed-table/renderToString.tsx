@@ -2,8 +2,8 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import React from 'react';
 // @ts-ignore
-import StatusTag from '@/components/StatusTag';
 import { find } from 'lodash';
+import StatusTag from '@/components/StatusTag';
 import { renderStatus, renderAssignee } from '../../table-card/renderer';
 import Table, { Column } from '../table';
 import Section from '../section';
@@ -21,7 +21,7 @@ interface PreviewFailedTableProps {
 }
 const PreviewFailedTable: React.FC<PreviewFailedTableProps> = ({ data, statusList }) => {
   const columns: Column<any>[] = [
-    { title: '问题概要', dataIndex: 'summary' },
+    { title: '工作项概要', dataIndex: 'summary' },
     { title: '状态', dataIndex: 'statusMapVO', render: ({ statusMapVO }) => renderStatus({ value: statusMapVO }) },
     { title: '经办人', dataIndex: 'assignee', render: ({ assignee }) => renderAssignee({ value: assignee }) },
     {
@@ -75,7 +75,7 @@ const PreviewFailedTable: React.FC<PreviewFailedTableProps> = ({ data, statusLis
     },
   ];
   return (
-    <Section title="关联的问题项">
+    <Section title="关联的工作项">
       <Table<any>
         data={data}
         columns={columns}

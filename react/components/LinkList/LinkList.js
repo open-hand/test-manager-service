@@ -98,7 +98,7 @@ function LinkList(props) {
         >
           {
             deleteLink && <Popconfirm
-              title="确认要删除该问题链接吗?"
+              title="确认要删除该工作项链接吗?"
               placement="left"
               onConfirm={confirm.bind(this, linkId)}
               onCancel={null}

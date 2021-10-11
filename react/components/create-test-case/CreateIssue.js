@@ -157,7 +157,7 @@ function CreateIssue(props) {
         <>
           <div role="none" style={{ display: 'flex', marginTop: '.195rem' }}>
             <span className="test-create-issue-head">
-              问题链接
+              工作项链接
             </span>
             <Button
               style={{ marginLeft: 'auto' }}

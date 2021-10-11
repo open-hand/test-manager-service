@@ -1,7 +1,7 @@
-import { addBugForExecuteOrStep } from '@/api/ExecuteDetailApi';
-import { getProjectId } from '@/common/utils';
 import openCreateIssueModal, { CreateIssueProps } from '@choerodon/agile/lib/components/create-issue';
 import { CreateIssueBaseProps } from '@choerodon/agile/lib/components/create-issue/BaseComponent';
+import { addBugForExecuteOrStep } from '@/api/ExecuteDetailApi';
+import { getProjectId } from '@/common/utils';
 
 export type CreateBugProps = CreateIssueProps & Required<Pick<CreateIssueBaseProps, 'parentIssue'>> & {
   stepId: string

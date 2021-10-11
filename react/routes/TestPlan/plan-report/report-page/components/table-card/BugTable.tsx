@@ -5,12 +5,12 @@ import { Table, DataSet, Tooltip } from 'choerodon-ui/pro';
 import { observer } from 'mobx-react-lite';
 import { useHistory } from 'react-router-dom';
 // @ts-ignore
+import { find } from 'lodash';
 import Tip from '@/components/Tip';
 // @ts-ignore
 import StatusTag from '@/components/StatusTag';
 // @ts-ignore
 import { getProjectId } from '@/common/utils';
-import { find } from 'lodash';
 import { renderStatus, renderAssignee } from './renderer';
 import context from '../../context';
 import Card from '../card';
@@ -56,7 +56,7 @@ const BugTable: React.FC = () => {
     }],
     queryFields: [{
       name: 'summary',
-      label: '问题概要',
+      label: '缺陷概要',
     }, {
       name: 'caseSummary',
       label: '关联测试',

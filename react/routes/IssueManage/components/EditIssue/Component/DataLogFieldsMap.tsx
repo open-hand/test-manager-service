@@ -4,7 +4,7 @@ import { ILog } from '@choerodon/agile/lib/common/types';
 const fieldsMap = new Map([
 
   ['summary', {
-    name: '问题概要',
+    name: '测试用例概要',
   }],
   ['Attachment', {
     name: '附件',
@@ -46,7 +46,7 @@ const fieldsMap = new Map([
     name: '优先级',
   }],
   ['createInitType', {
-    name: '创建问题',
+    name: '创建测试用例',
     create: {
       render: (log: ILog) => (
         <span>
