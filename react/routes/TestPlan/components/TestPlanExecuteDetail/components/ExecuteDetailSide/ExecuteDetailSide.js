@@ -9,7 +9,7 @@ import {
   Button, Tooltip,
 } from 'choerodon-ui';
 import { stores } from '@choerodon/boot';
-
+import useGetAnnouncementHeight from '@choerodon/agile/lib/hooks/useGetAnnouncementHeight';
 import { issueLink } from '../../../../../../common/utils';
 import {
   StatusTags, User, CKEditorViewer,
@@ -79,6 +79,7 @@ function ExecuteDetailSide(props) {
   const { detailData } = props;
   const [currentNav, setCurrentNav] = useState('detail');
   const [issueInfosVO, setIssueInfosVO] = useState([]);
+  const topAnnouncementHeight = useGetAnnouncementHeight();
   function isInLook(ele) {
     const a = ele.offsetTop;
     const target = document.getElementById('scroll-area');
@@ -164,7 +165,7 @@ function ExecuteDetailSide(props) {
       <div style={{
         position: 'fixed',
         right: 0,
-        top: HeaderStore.announcementClosed ? 50 : 100,
+        top: `calc(50px + ${topAnnouncementHeight})`,
         bottom: 0,
         zIndex: 101,
         overflowY: 'hidden',
