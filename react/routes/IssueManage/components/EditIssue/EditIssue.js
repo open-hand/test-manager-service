@@ -129,7 +129,7 @@ function EditIssue() {
     <div style={{
       position: 'fixed',
       right: 0,
-      top: 50 + announcementHeight,
+      top: `calc(50px + ${announcementHeight})`,
       bottom: 0,
       zIndex: 998,
       height: '100%',
