@@ -1,9 +1,10 @@
-import React, { useMemo, useContext } from 'react';
+import React, { useMemo, useContext, useEffect } from 'react';
 import { DataSet, Table } from 'choerodon-ui/pro';
 import { observer } from 'mobx-react-lite';
-import { getProjectId } from '@/common/utils';
-import PriorityTag from '@/components/PriorityTag';
 import { usePersistFn } from 'ahooks';
+import { getProjectId } from '@/common/utils';
+import priorityApi from '@/api/priority';
+import PriorityTag from '@/components/PriorityTag';
 import Context from './context';
 import { autoSelect } from './utils';
 
@@ -32,6 +33,15 @@ function IssueTable({
   });
   const { SelectIssueStore } = useContext(Context);
   const { treeMap } = SelectIssueStore;
+  const priorityDs = useMemo(() => new DataSet({
+    autoCreate: false,
+    autoQuery: false,
+  }), []);
+  useEffect(() => {
+    priorityApi.load().then((res) => {
+      priorityDs.loadData(res?.map((item) => ({ meaning: item.name, value: item.id })));
+    });
+  }, [priorityDs]);
   const dataSet = useMemo(() => new DataSet({
     primaryKey: 'caseId',
     autoQuery: true,
@@ -42,7 +52,7 @@ function IssueTable({
         method: 'post',
         transformRequest: (data) => {
           const {
-            params, summary, caseNum, customNum,
+            params, summary, caseNum, customNum, priorityId,
           } = data;
           return JSON.stringify({
             contents: params ? [params] : [],
@@ -50,6 +60,7 @@ function IssueTable({
               summary,
               caseNum,
               customNum,
+              priorityId,
             },
           });
         },
@@ -83,9 +94,12 @@ function IssueTable({
     queryFields: [
       { name: 'summary', type: 'string', label: '用例名称' },
       { name: 'caseNum', type: 'string', label: '用例编号' },
+      {
+        name: 'priorityId', type: 'string', label: '优先级', options: priorityDs,
+      },
       { name: 'customNum', type: 'string', label: '自定义编号' },
     ],
-  }), [SelectIssueStore, folderId, treeMap]);
+  }), [SelectIssueStore, folderId, treeMap, priorityDs]);
   // 让父组件访问dataSet
   saveDataSet(dataSet);
   return (
@@ -93,7 +107,7 @@ function IssueTable({
       <Table
         dataSet={dataSet}
         autoHeight
-        // className={styles.selectIssue_table}
+      // className={styles.selectIssue_table}
       >
         <Column name="summary" className="c7n-agile-table-cell" tooltip="overflow" />
         <Column name="caseNum" className="c7n-agile-table-cell" width={100} />
