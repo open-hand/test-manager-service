@@ -94,10 +94,10 @@ function IssueTable({
     queryFields: [
       { name: 'summary', type: 'string', label: '用例名称' },
       { name: 'caseNum', type: 'string', label: '用例编号' },
+      { name: 'customNum', type: 'string', label: '自定义编号' },
       {
         name: 'priorityId', type: 'string', label: '优先级', options: priorityDs,
       },
-      { name: 'customNum', type: 'string', label: '自定义编号' },
     ],
   }), [SelectIssueStore, folderId, treeMap, priorityDs]);
   // 让父组件访问dataSet
