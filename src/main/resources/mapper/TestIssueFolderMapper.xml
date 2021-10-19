@@ -21,13 +21,13 @@
         </foreach>
     </update>
     <select id="selectChildrenByParentId" resultType="io.choerodon.test.manager.infra.dto.TestIssueFolderDTO">
-        SELECT  *  FROM test_issue_folder tif WHERE tif.parent_id=#{parentId} AND tif.type !='api' AND tif.type != 'replay' AND tif.type!= 'ui'
+        SELECT  *  FROM test_issue_folder tif WHERE tif.parent_id=#{parentId} AND tif.type = 'cycle'
     </select>
 
     <select id="selectProjectIdList" resultType="Long">
        select DISTINCT tif.project_id
        from test_issue_folder tif
-       WHERE  tif.type !='api' and tif.type !='replay' and tif.type!= 'ui'
+       WHERE  tif.type = 'cycle'
        ORDER BY tif.project_id
     </select>
 
@@ -39,7 +39,7 @@
         LEFT JOIN test_case tc ON tif.folder_id =tc.folder_id
         WHERE
             tif.project_id = #{projectId}
-            AND tif.type !='api' and tif.type !='replay' and tif.type!= 'ui'
+            AND tif.type = 'cycle'
         GROUP BY tif.folder_id
         ) a where tf.folder_id=a.folder_id ORDER BY
             tf.rank
@@ -48,20 +48,20 @@
     <select id="selectVersionIdList" resultType="Long">
          SELECT  DISTINCT tif.version_id
          FROM test_issue_folder tif
-         WHERE tif.project_id = #{projectId} AND tif.type !='api' and tif.type !='replay' and tif.type!= 'ui'
+         WHERE tif.project_id = #{projectId} AND tif.type = 'cycle'
          ORDER BY tif.version_id
     </select>
 
     <update id="updateByVersionId" >
          UPDATE test_issue_folder tif
          SET tif.parent_id=#{parentId}
-         WHERE tif.project_id=#{projectId} AND tif.version_id=#{versionId} AND  tif.type !='api' and tif.type !='replay' and tif.type!= 'ui'
+         WHERE tif.project_id=#{projectId} AND tif.version_id=#{versionId} AND  tif.type = 'cycle'
     </update>
 
     <select id="listFolderByFolderIds" resultType="io.choerodon.test.manager.infra.dto.TestIssueFolderDTO">
          select * from test_issue_folder tif
          where
-         tif.type !='api' and  tif.type !='replay' and tif.type!= 'ui' and
+         tif.type = 'cycle' and
          tif.folder_id in
          <foreach collection="folderIds" item="folderId" open="(" separator="," close=")">
              #{folderId}
@@ -73,11 +73,11 @@
             update test_issue_folder tif
             set tif.rank = #{folder.rank}
             where tif.folder_id = #{folder.folderId}
-            and tif.type !='api' and tif.type !='replay' and tif.type!= 'ui'
+            and tif.type = 'cycle'
         </foreach>
     </update>
 
     <select id="projectLastRank" resultType="String">
-        select min(tif.rank) from test_issue_folder tif where tif.project_id=#{projectId} and tif.type !='api' and tif.type !='replay' and tif.type!= 'ui'
+        select min(tif.rank) from test_issue_folder tif where tif.project_id=#{projectId} and tif.type = 'cycle'
     </select>
 </mapper>
