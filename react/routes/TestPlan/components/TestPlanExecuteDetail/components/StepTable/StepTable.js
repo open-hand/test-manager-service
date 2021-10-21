@@ -248,7 +248,7 @@ function StepTable(props) {
           >
             <DefectSelect
               defaultOpen
-              getPopupContainer={() => document.getElementsByClassName('c7n-test-execute-detail-card-title')[0]}
+              // getPopupContainer={() => document.getElementsByClassName('c7n-test-execute-detail-card-title')[0]}
               defects={defects}
               ExecuteDetailStore={ExecuteDetailStore}
               setNeedAdd={(needAdd) => { record.set('tempDefects', needAdd); }}
