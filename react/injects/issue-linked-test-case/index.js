@@ -49,7 +49,7 @@ const TestLink = ({
         {
           !disabled && (
             <div className="c7n-title-right" style={{ marginLeft: '14px' }}>
-              <Tooltip placement="topRight" title="关联测试用例" >
+              <Tooltip placement="topRight" title="关联测试用例">
                 <Button onClick={() => openTestCaseModal(testLinkStore, intl)}>
                   <Icon type="playlist_add icon" />
                 </Button>
