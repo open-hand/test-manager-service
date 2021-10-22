@@ -2,6 +2,7 @@ import { useLocalStore } from 'mobx-react-lite';
 import { axios, stores, Choerodon } from '@choerodon/boot';
 import queryString from 'query-string';
 import { useHistory } from 'react-router-dom';
+import to from '@choerodon/agile/lib/utils/to';
 import { getProjectId, getOrganizationId } from '@/common/utils';
 
 const { AppState } = stores;
@@ -20,15 +21,15 @@ function TestLinkStore(projectId, issueId) {
       const queryStr = queryString.stringify({
         page, size: 20, content: filter, issueId,
       });
-      return axios.get(`/test/v1/projects/${getProjectId()}/case/case/summary?${queryStr}`);
+      return axios.get(`/test/v1/projects/${projectId || getProjectId()}/case/case/summary?${queryStr}`);
     },
     delete(linkId) {
       const queryStr = queryString.stringify({ linkId, organizationId: getOrganizationId() });
-      return axios.delete(`test/v1/projects/${getProjectId()}/case_link?${queryStr}`).then(() => this.loadData());
+      return axios.delete(`test/v1/projects/${projectId || getProjectId()}/case_link?${queryStr}`).then(() => this.loadData());
     },
     createLink(caseIds = []) {
       return axios({
-        url: `test/v1/projects/${getProjectId()}/case_link/create_by_issue`,
+        url: `test/v1/projects/${projectId || getProjectId()}/case_link/create_by_issue`,
         method: 'post',
         params: {
           issue_id: this.issueId,
@@ -40,7 +41,7 @@ function TestLinkStore(projectId, issueId) {
     },
     createCaseAndLink(data) {
       return axios({
-        url: `test/v1/projects/${getProjectId()}/case_link/create_and_link`,
+        url: `test/v1/projects/${projectId || getProjectId()}/case_link/create_and_link`,
         params: {
           issue_id: this.issueId,
         },
@@ -56,20 +57,15 @@ function TestLinkStore(projectId, issueId) {
       }).catch(() => Choerodon.prompt('关联错误，请重试', 'error'));
     },
     toLink(linkId, paramName, folderId) {
-      const {
-        id, name, category, organizationId,
-      } = AppState.currentMenuType;
-      const queryStr = queryString.stringify({
-        id,
-        name,
-        category,
+      to('/testManager/IssueManage', {
         type: 'project',
-        organizationId,
-        paramIssueId: linkId,
-        paramName,
-        folderId,
+        id: projectId,
+        params: {
+          paramIssueId: linkId,
+          paramName,
+          folderId,
+        },
       });
-      history.push(`/testManager/IssueManage?${queryStr}`);
     },
   }));
 }

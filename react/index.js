@@ -4,6 +4,7 @@ import { ModalContainer } from 'choerodon-ui/pro';
 import { inject } from 'mobx-react';
 import { asyncLocaleProvider, nomatch } from '@choerodon/boot';
 import { localPageCacheStore } from '@choerodon/agile/lib/stores/common/LocalPageCacheStore';
+import { setHistory } from '@choerodon/agile/lib/utils/to';
 import 'moment/locale/zh-cn';
 import 'moment/locale/en-nz';
 import moment from 'moment';
@@ -19,6 +20,11 @@ const Priority = React.lazy(() => import('./routes/priority'));
 
 @inject('AppState')
 class TestManagerIndex extends React.Component {
+  constructor(props) {
+    super(props);
+    setHistory(props.history);
+  }
+
   componentWillUnmount() {
     RunWhenProjectChange(localPageCacheStore.clear);
   }
@@ -43,6 +49,7 @@ class TestManagerIndex extends React.Component {
               <Route path={`${match.url}/status`} component={CustomStatusIndex} />
               <Route path={`${match.url}/AutoTest`} component={AutoTestIndex} />
               <Route path={`${match.url}/priority`} component={Priority} />
+
               <Route path="*" component={nomatch} />
             </Switch>
             <ModalContainer />
