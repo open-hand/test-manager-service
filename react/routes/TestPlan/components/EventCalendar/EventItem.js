@@ -1,3 +1,5 @@
+/* eslint-disable react/state-in-constructor */
+/* eslint-disable react/forbid-prop-types */
 /* eslint-disable react/no-find-dom-node */
 import React, { Component } from 'react';
 import { Choerodon } from '@choerodon/boot';

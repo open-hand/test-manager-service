@@ -90,6 +90,8 @@ class TestPlanTree extends Component {
       await handleRequestFailed(deleteFolder(folderId));
       testPlanStore.loadIssueTree();
     }
+    console.log('handleDelete');
+    // testPlanStore.loadAllData();
   }
 
   handleCreateFolder = async (value, parentId, item) => {
@@ -133,6 +135,29 @@ class TestPlanTree extends Component {
       testPlanStore.loadRightData(planId, folderId);
     }
     testPlanStore.setCurrentCycle(item);
+  }
+
+  handleAfterDelete = (deleteItem, target) => {
+    const { context: { testPlanStore } } = this.props;
+    console.log('handleAfterDelete', target);
+    // 删除的不是选中时
+    if (!target) {
+      const [planId, folderId] = testPlanStore.getId();
+      const { executePagination } = testPlanStore;
+      if (folderId === '') { // 如果是计划
+        testPlanStore.updateTimes([testPlanStore.treeFolderMaps.get(planId)]);
+      }
+      testPlanStore.setMainActiveTab('testPlanTable');
+      testPlanStore.setFilter({});
+      testPlanStore.setBarFilter([]);
+      closeBatchModal({ testPlanStore });
+      testPlanStore.setExecutePagination({
+        ...executePagination,
+        current: 1,
+        pageSize: 20,
+      });
+      testPlanStore.loadRightData(planId, folderId);
+    }
   }
 
   handleMenuClick = (key, nodeItem) => {
@@ -292,6 +317,7 @@ class TestPlanTree extends Component {
             return isPlan ? '确认删除计划? |删除后计划下的所有执行也将被删除' : '确认删除目录? |删除后目录下的所有执行也将被删除';
           }}
           selected={testPlanStore.currentCycle}
+          onAfterDelete={this.handleAfterDelete}
           setSelected={this.setSelected}
           updateItem={this.handleUpdateItem}
           renderTreeNode={this.renderTreeNode}

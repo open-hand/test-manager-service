@@ -28,6 +28,7 @@ const propTypes = {
   onSubmit: PropTypes.func.isRequired,
 };
 class EditStatus extends Component {
+  // eslint-disable-next-line react/no-deprecated
   componentWillReceiveProps(nextProps) {
     const { setFieldsValue } = this.props.form;
     if (this.props.visible === false && nextProps.visible === true) {
@@ -73,6 +74,7 @@ class EditStatus extends Component {
           className="c7ntest-editStatus-modal"
           title={`编辑${initValue.statusType === 'CYCLE_CASE' ? '执行' : '步骤'}状态`}
           visible={visible}
+          maskClosable={false}
           onOk={this.handleOk}
           onCancel={onCancel}
           confirmLoading={loading}

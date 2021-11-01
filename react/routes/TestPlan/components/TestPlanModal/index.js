@@ -128,7 +128,7 @@ function TestPlanModal({
             display: 'block',
           },
         })}
-        <DatePicker range name="range" min={Date.now()} />
+        <DatePicker range name="range" />
         {mode === 'create' && (
           <div>
             <div style={{

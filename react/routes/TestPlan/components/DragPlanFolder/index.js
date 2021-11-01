@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-bind */
 import React, {
   useCallback, useRef, useState,
 } from 'react';
@@ -122,11 +123,13 @@ function DragPlanFolder({
       setLoading(false);
     } catch (error) {
       setLoading(false);
+      return false;
     }
+    return true;
   }, [planId, selectedNodeMaps]);
   const handleDrag = useCallback(async (sourceItem, destination) => {
-    move(sourceItem, destination);
-    return true;
+    const res = move(sourceItem, destination);
+    return res;
   }, [move]);
   return (
     <div className="c7ntest-DragPlanFolder-content">
