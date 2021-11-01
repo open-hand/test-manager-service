@@ -2,13 +2,13 @@ import React, {
   useState, useEffect, useReducer, useCallback, useRef,
 } from 'react';
 import { Select, Button } from 'choerodon-ui';
+import { axios } from '@choerodon/boot';
 import _ from 'lodash';
 import { observer } from 'mobx-react-lite';
 import { FormattedMessage } from 'react-intl';
 import { removeDefect } from '@/api/ExecuteDetailApi';
 import { getIssuesForDefects } from '@/api/agileApi';
 import './DefectSelect.less';
-import { axios } from '@choerodon/boot';
 import openCreateBugModal from '@/components/create-bug';
 import { delta2Html, getProjectId, getOrganizationId } from '../../../../../../../common/utils';
 
@@ -154,10 +154,10 @@ function DefectSelect(props) {
         loading={selectLoading}
         defaultValue={defects.map((defect) => defect.issueId.toString())}
         footer={(
-          <div
+          <Button
             className="primary"
-            style={{ cursor: 'pointer' }}
-            role="none"
+            style={{ margin: '-.1rem 0' }}
+            // role="none"
             onClick={() => {
               handleSubmit(record);
               const {
@@ -189,7 +189,7 @@ function DefectSelect(props) {
             }}
           >
             <FormattedMessage id="issue_create_bug" />
-          </div>
+          </Button>
         )}
         style={{ width: '100%' }}
         onChange={handleDefectsChange}
