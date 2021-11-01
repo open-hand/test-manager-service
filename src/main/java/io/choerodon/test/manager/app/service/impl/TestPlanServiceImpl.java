@@ -101,7 +101,7 @@ public class TestPlanServiceImpl implements TestPlanService {
 
     @Override
     public TestPlanVO update(Long projectId, TestPlanVO testPlanVO) {
-        if (Boolean.TRUE.equals(checkNameUpdate(projectId, testPlanVO.getName(), testPlanVO.getPlanId()))) {
+        if (!ObjectUtils.isEmpty(testPlanVO.getName()) &&  Boolean.TRUE.equals(checkNameUpdate(projectId, testPlanVO.getName(), testPlanVO.getPlanId()))) {
             throw new CommonException("error.update.plan.name.exist");
         }
         TestPlanDTO testPlan = testPlanMapper.selectByPrimaryKey(testPlanVO.getPlanId());
