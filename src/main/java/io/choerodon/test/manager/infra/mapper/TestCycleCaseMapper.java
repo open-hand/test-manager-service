@@ -80,7 +80,7 @@ public interface TestCycleCaseMapper extends BaseMapper<TestCycleCaseDTO> {
      * @param executeId
      * @return
      */
-    TestCycleCaseDTO queryByCaseId(@Param("executeId") Long executeId);
+    TestCycleCaseDTO queryByCaseId(@Param("projectId") Long projectId, @Param("executeId") Long executeId);
 
     /**
      * 查询状态总览
