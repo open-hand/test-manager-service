@@ -481,7 +481,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             cycleIds.addAll(queryCycleIds(cycleId, planId));
         }
         // 查询循环下的用例
-        List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.queryFolderCycleCase(planId, cycleIds, caseSearchVO);
+        Sort sort = new Sort(new Sort.Order(Sort.Direction.ASC, "rank"));
+        List<TestCycleCaseDTO> testCycleCaseDTOS = PageHelper.doSort(sort, () -> testCycleCaseMapper.queryFolderCycleCase(planId, cycleIds, caseSearchVO));
         int index = 0;
         TestCycleCaseDTO testCycleCaseDTO = null;
         for (TestCycleCaseDTO cyclecase : testCycleCaseDTOS) {
