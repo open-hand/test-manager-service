@@ -273,7 +273,7 @@ const zhCN = {
   issue_issueFilterBySummary: '概要',
   issue_issueFilterByPriority: '优先级',
   issue_issueFilterByStatus: '状态',
-  issue_issueCreate: '创建测试用例',
+  issue_issueCreate: '创建用例',
   issue_whatToDo: '需要做什么',
   issue_issueType: '任务类型:   {type}',
   issue_issueNum: '任务编号:   {num}',

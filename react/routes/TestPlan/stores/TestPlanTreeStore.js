@@ -4,8 +4,8 @@ import {
 } from 'mobx';
 import moment from 'moment';
 import { find, findIndex, pull } from 'lodash';
-import { getPlanTree } from '@/api/TestPlanApi';
 import { localPageCacheStore } from '@choerodon/agile/lib/stores/common/LocalPageCacheStore';
+import { getPlanTree } from '@/api/TestPlanApi';
 // import { getIssueTree } from '@/api/IssueManageApi';
 // 数据处理成tree形式，便于查看数据
 function makeTree(rootIds, treeFolder) {
@@ -151,7 +151,6 @@ class TestPlanTreeStore {
     }
     this.setTreeData(treeData, defaultSelectId);
     // console.log('loadIssueTree', treeData, defaultSelectId);
-
     this.setTreeLoading(false);
   }
 

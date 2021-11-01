@@ -77,6 +77,7 @@ function PureTree({
   onCreate,
   onEdit,
   onDelete,
+  onAfterDelete,
   afterDrag,
   beforeDrag,
   selected,
@@ -167,8 +168,8 @@ function PureTree({
     try {
       await onDelete(item);
       setTree((oldTree) => removeItem(oldTree, item.path));
+      let target;
       if (selected.id === item.id) {
-        let target;
         // 这里用旧的tree获取目标id，用新tree获取数据
         setTree((newTree) => {
           target = getSiblingOrParent(tree, newTree, item);
@@ -178,10 +179,11 @@ function PureTree({
           setSelected(target);
         }
       }
+      onAfterDelete && await onAfterDelete(item, target);
     } catch (error) {
       Choerodon.prompt(error.message);
     }
-  }, [onDelete, selected.id, setSelected, tree]);
+  }, [onAfterDelete, onDelete, selected.id, setSelected, tree]);
   const handleDelete = useCallback((item) => {
     Modal.open({
       title: getDeleteTitle ? callFunction(getDeleteTitle, item).split('|')[0] : '确认删除目录',
