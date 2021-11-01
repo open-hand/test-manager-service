@@ -90,8 +90,6 @@ class TestPlanTree extends Component {
       await handleRequestFailed(deleteFolder(folderId));
       testPlanStore.loadIssueTree();
     }
-    console.log('handleDelete');
-    // testPlanStore.loadAllData();
   }
 
   handleCreateFolder = async (value, parentId, item) => {
@@ -139,7 +137,6 @@ class TestPlanTree extends Component {
 
   handleAfterDelete = (deleteItem, target) => {
     const { context: { testPlanStore } } = this.props;
-    console.log('handleAfterDelete', target);
     // 删除的不是选中时
     if (!target) {
       const [planId, folderId] = testPlanStore.getId();

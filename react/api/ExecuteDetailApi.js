@@ -48,7 +48,7 @@ export function removeDefect(defectId) {
 
 export function editCycleStep(data) {
   // /v1/projects/28/cycle/case/case_step/25 /v1/projects/28/cycle/case/step
-  return Axios.put(`/test/v1/projects/${getProjectId()}/cycle/case/step`, data);
+  return request.put(`/test/v1/projects/${getProjectId()}/cycle/case/step`, data);
 }
 export function getDetailsData(cycleCaseId, param, data) {
   return request.post(`test/v1/projects/${getProjectId()}/cycle/case/${cycleCaseId}/info?${queryString.stringify(param)}`, data);
