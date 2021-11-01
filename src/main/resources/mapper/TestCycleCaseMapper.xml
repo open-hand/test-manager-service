@@ -484,13 +484,17 @@
 
     <select id="queryByCaseId" resultType="io.choerodon.test.manager.infra.dto.TestCycleCaseDTO">
         SELECT
+            tp.status_code AS plan_status,
             tcc.*, ts.status_name executionStatusName,
             ts.status_color statusColor
         FROM
             `test_cycle_case` tcc
         LEFT JOIN test_status ts ON ts.status_id = tcc.execution_status
+        LEFT JOIN test_cycle tc ON tc.cycle_id = tcc.cycle_id AND tc.project_id = tcc.project_id
+        LEFT JOIN test_plan tp ON tp.plan_id = tc.plan_id AND tp.project_id = tcc.project_id
         WHERE
-            tcc.execute_id = #{executeId};
+            tcc.execute_id = #{executeId}
+        AND tcc.project_id = #{projectId}
     </select>
 
     <select id="queryExecutionStatus" resultType="io.choerodon.test.manager.infra.dto.TestStatusDTO">

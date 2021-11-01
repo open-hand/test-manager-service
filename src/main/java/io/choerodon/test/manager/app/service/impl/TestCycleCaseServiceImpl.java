@@ -471,7 +471,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
     @Override
     public TestCycleCaseInfoVO queryCycleCaseInfo(Long executeId, Long projectId, Long planId, Long cycleId, CaseSearchVO caseSearchVO) {
-        TestCycleCaseDTO cycleCaseDTO = testCycleCaseMapper.selectByPrimaryKey(executeId);
+        TestCycleCaseDTO cycleCaseDTO = testCycleCaseMapper.queryByCaseId(projectId, executeId);
         if (ObjectUtils.isEmpty(cycleCaseDTO)) {
             throw new CommonException("error.cycle.case.not.exist");
         }
