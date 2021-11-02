@@ -1,4 +1,3 @@
-import Axios from 'axios';
 import queryString from 'query-string';
 import { getProjectId, request } from '../common/utils';
 
