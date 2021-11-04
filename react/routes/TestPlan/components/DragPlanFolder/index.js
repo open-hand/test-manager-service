@@ -128,8 +128,9 @@ function DragPlanFolder({
     return true;
   }, [planId, selectedNodeMaps]);
   const handleDrag = useCallback(async (sourceItem, destination) => {
-    const res = move(sourceItem, destination);
-    return res;
+    move(sourceItem, destination);
+    // 临时解决， 不进行后续操作
+    return false;
   }, [move]);
   return (
     <div className="c7ntest-DragPlanFolder-content">
