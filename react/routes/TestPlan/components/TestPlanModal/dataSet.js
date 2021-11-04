@@ -1,5 +1,5 @@
-import { getProjectId } from '@/common/utils';
 import { toJS } from 'mobx';
+import { getProjectId } from '@/common/utils';
 import { checkPlanName } from '@/api/TestPlanApi';
 
 export default function DataSetFactory({ initValue = {} }, mode, dataSetUpdate = () => {}) {
@@ -46,20 +46,6 @@ export default function DataSetFactory({ initValue = {} }, mode, dataSetUpdate =
         type: 'string',
         label: '负责人',
         required: true,
-        dynamicProps: {
-          lookupAxiosConfig: ({ record, dataSet: ds }) => {
-            let managerId = null;
-            if (record && record.data.managerId) {
-              // eslint-disable-next-line prefer-destructuring
-              managerId = record.data.managerId;
-            }
-            return {
-              url: `/iam/choerodon/v1/projects/${getProjectId()}/users${managerId && managerId === initValue.managerId ? `?id=${managerId}` : ''}`,
-            };
-          },
-        },
-        textField: 'realName',
-        valueField: 'id',
       },
       {
         name: 'custom', type: 'boolean', label: '导入方式',
