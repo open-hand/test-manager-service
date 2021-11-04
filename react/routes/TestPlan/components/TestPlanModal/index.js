@@ -9,6 +9,7 @@ import { mount } from '@choerodon/inject';
 import { Choerodon } from '@choerodon/boot';
 import { observer } from 'mobx-react-lite';
 import moment from 'moment';
+import SelectUser from '@choerodon/agile/lib/components/select/select-user';
 import UserHead from '@/components/UserHead';
 import Tip from '@/components/Tip';
 import { getProjectId } from '@/common/utils';
@@ -107,12 +108,9 @@ function TestPlanModal({
           name="description"
           placeholder="在此输入描述内容"
         />
-        <Select
+        <SelectUser
           name="managerId"
-          searchable
-          searchMatcher="param"
-          optionRenderer={({ record }) => <UserHead user={record.toData()} />}
-        // renderer={({ record }) => <UserHead user={record.toData()} />}
+          selected={initValue.managerId}
         />
         {hasAgile && mount('agile:SelectSprint', {
           name: 'sprintId',
