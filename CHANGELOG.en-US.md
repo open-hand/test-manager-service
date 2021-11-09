@@ -2,6 +2,17 @@
 
 All notable changes to choerodon-front-agile will be documented in this file.
 
+## [1.1.0] - 2021-11-05
+
+### Added
+
+- Test plan import case supports filtering according to case priority.
+- The test plan supports filtering test cases by priority.
+
+### Fixed
+
+- Fixed the problem that test cases cannot be moved in batch in the test module case library.
+
 ## [1.1.0-alpha] - 2021-09-18
 
 ### Added
