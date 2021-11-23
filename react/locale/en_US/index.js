@@ -411,4 +411,4 @@ const enUS = {
   'priority.disable.notice': 'Note: Your issue will not be able to choose this priority after disable.',
 
 };
-export default enUS;
+export { enUS as TEST_EN_US };
