@@ -31,9 +31,9 @@
   },
   "devDependencies": {
     "@choerodon/agile": "1.2.0",
-    "@choerodon/boot": "0.23.3",
+    "@choerodon/boot": "1.2.0",
     "@choerodon/compiler": "^0.0.1",
-    "@choerodon/master": "1.1.0",
+    "@choerodon/master": "1.2.0",
     "@types/echarts": "^4.6.5",
     "@types/file-saver": "^2.0.2",
     "@types/lodash": "^4.14.165",
