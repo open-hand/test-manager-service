@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.hzero.starter.keyencrypt.core.EncryptType;
 import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
 
@@ -19,4 +20,6 @@ public interface ExcelImportService {
                             EncryptType encryptType, RequestAttributes requestAttributes);
 
     Workbook buildImportTemp(Long organizationId, Long projectId);
+
+    void validateFileSize(MultipartFile excelFile);
 }

@@ -177,6 +177,7 @@ public class TestCaseController {
         } catch (IOException e) {
             throw new CommonException("error.io.new.workbook", e);
         }
+        excelImportService.validateFileSize(excelFile);
         excelImportService.importIssueByExcel(projectId, folderId,
                 DetailsHelper.getUserDetails().getUserId(),
                 inputStream, EncryptContext.encryptType(), RequestContextHolder.currentRequestAttributes());
