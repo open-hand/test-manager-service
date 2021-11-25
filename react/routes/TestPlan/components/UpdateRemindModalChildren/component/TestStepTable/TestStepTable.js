@@ -9,8 +9,8 @@ const TestStepTable = (props) => {
   const { dataSet } = props;
 
   const renderIndex = ({
-    value, dataSet,
-  }) => dataSet.findIndex((item) => Number(item.get('stepId')) === Number(value)) + 1;
+    value, record,
+  }) => record.index + 1;
 
   const renderColumn = ({ value }) => (
     <Tooltip title={value} placement="topLeft">

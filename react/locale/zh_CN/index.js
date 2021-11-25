@@ -554,4 +554,4 @@ const zhCN = {
 
 };
 
-export default zhCN;
+export { zhCN as TEST_ZHCH };
