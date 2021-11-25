@@ -1,5 +1,6 @@
 /* eslint-disable */
 import { getProjectId, request } from '../common/utils';
+import { axios } from '@choerodon/boot';
 
 
 // 敏捷接口
@@ -111,9 +112,19 @@ export function deleteFile(id) {
 export function deleteAttachment(id) {
   return request.delete(`test/v1/projects/${getProjectId()}/test/case/attachment/delete/bucket/test/attach/${id}`);
 }
-export function importIssue(data, versionId) {
+export function importIssue(data, versionId, noPrompt = false) {
   const axiosConfig = {
     headers: { 'content-type': 'multipart/form-data' },
   };
-  return request.post(`/test/v1/projects/${getProjectId()}/case/import/testCase?folder_id=${versionId}`, data, axiosConfig);
+  return axios({
+    headers: { 'content-type': 'multipart/form-data' },
+    url: `/test/v1/projects/${getProjectId()}/case/import/testCase`,
+    method: 'post',
+    noPrompt,
+    params: {
+      folder_id: versionId,
+    },
+    data,
+  });
+  // return request.post(`/test/v1/projects/${getProjectId()}/case/import/testCase?folder_id=${versionId}`, data, axiosConfig);
 }
