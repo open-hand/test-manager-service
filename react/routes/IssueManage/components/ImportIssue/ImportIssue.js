@@ -146,14 +146,18 @@ function ImportIssue(props) {
     const formData = new FormData();
     formData.append('file', file);
     dispatch({ type: 'import' });
-    importIssue(formData, dataSet.current.get('folderId')).then(() => {
+    importIssue(formData, dataSet.current.get('folderId'), true).then(() => {
       uploadInput.current.value = '';
       setImportRecord({
         ...importRecord,
         status: 1,
       });
     }).catch((e) => {
-      Choerodon.prompt('导入失败');
+      if (e?.failed && e?.code === 'error.test.case.import.max.size') {
+        Choerodon.prompt('测试用例导入文件大小不能超过1M');
+      } else {
+        Choerodon.prompt('导入失败');
+      }
     });
   };
 
