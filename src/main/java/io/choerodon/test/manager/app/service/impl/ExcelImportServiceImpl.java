@@ -46,6 +46,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -178,6 +179,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     @Override
     public void importIssueByExcel(Long projectId, Long folderId, Long userId, InputStream inputStream,
                                    EncryptType encryptType, RequestAttributes requestAttributes) {
+        TestFileLoadHistoryDTO testFileLoadHistoryDTO = initLoadHistory(projectId, folderId, userId);
         Workbook issuesWorkbook;
         try {
             issuesWorkbook = new XSSFWorkbook(inputStream);
@@ -193,7 +195,6 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         TestProjectInfoDTO testProjectInfo = testProjectInfoMapper.selectOne(testProjectInfoDTO);
         // 默认是导入到导入文件夹，不存在则创建
         Sheet testCasesSheet = issuesWorkbook.getSheet("测试用例");
-        TestFileLoadHistoryDTO testFileLoadHistoryDTO = initLoadHistory(projectId, folderId, userId);
         TestFileLoadHistoryEnums.Status status = TestFileLoadHistoryEnums.Status.SUCCESS;
         List<Long> issueIds = new ArrayList<>();
         TestPriorityDTO priorityDTO = new TestPriorityDTO();
@@ -388,6 +389,15 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         addTestCaseSheet(importTemp, userNameList, priorityNameList);
 
         return importTemp;
+    }
+
+    @Override
+    public void validateFileSize(MultipartFile excelFile) {
+        Long size = excelFile.getSize();
+        Long maxSize = 1L * 1024 * 1024;
+        if (size > maxSize) {
+            throw new CommonException("error.test.case.import.max.size");
+        }
     }
 
     private void addReadMeSheet(Workbook workbook) {

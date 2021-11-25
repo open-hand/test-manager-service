@@ -171,6 +171,7 @@ public class TestCaseController {
                                        @RequestParam("file") MultipartFile excelFile,
                                        @RequestParam("folder_id")
                                        @Encrypt Long folderId) {
+        excelImportService.validateFileSize(excelFile);
         InputStream inputStream;
         try {
             inputStream = excelFile.getInputStream();

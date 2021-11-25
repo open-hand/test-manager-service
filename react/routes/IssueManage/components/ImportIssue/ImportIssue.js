@@ -146,14 +146,18 @@ function ImportIssue(props) {
     const formData = new FormData();
     formData.append('file', file);
     dispatch({ type: 'import' });
-    importIssue(formData, dataSet.current.get('folderId')).then(() => {
+    importIssue(formData, dataSet.current.get('folderId'), true).then(() => {
       uploadInput.current.value = '';
       setImportRecord({
         ...importRecord,
         status: 1,
       });
     }).catch((e) => {
-      Choerodon.prompt('导入失败');
+      if (e?.failed && e?.code === 'error.test.case.import.max.size') {
+        Choerodon.prompt('测试用例导入文件大小不能超过1M');
+      } else {
+        Choerodon.prompt('导入失败');
+      }
     });
   };
 
@@ -210,8 +214,15 @@ function ImportIssue(props) {
 
   const beforeUpload = (e) => {
     if (e.target.files[0]) {
+      const fileSize = e.target.files[0].size / 1024;
+      if (fileSize > 1024) {
+        Choerodon.prompt('导入文件最大为1M');
+        return false;
+      }
       upload(e.target.files[0]);
+      return true;
     }
+    return false;
   };
 
   const debounceSetImportRecord = _.debounce((e) => {
@@ -346,6 +357,7 @@ function ImportIssue(props) {
       <ImportIssueForm
         title="导入测试用例"
       >
+        <div className="c7ntest-ImportIssue-tips">导入文件最大为1M</div>
         <Form dataSet={dataSet}>
           <SelectTree
             name="folder"
