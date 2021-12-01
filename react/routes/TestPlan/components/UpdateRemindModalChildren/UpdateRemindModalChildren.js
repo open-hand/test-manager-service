@@ -16,11 +16,14 @@ import User from '../../../../components/User';
 import './UpdateRemindModalChildren.less';
 import UpdateStepTableDataSet from '../../stores/UpdateStepTableDataSet';
 import { getUpdateCompared } from '../../../../api/TestPlanApi';
+import useFormatMessage from '@/hooks/useFormatMessage';
 
 const prefix = 'c7ntest-testPlan-updateRemind';
 
 const UpdateRemindModalChildren = (props) => {
   const { testPlanStore, executeId, cycleName } = props;
+  const formatMessage = useFormatMessage('test.plan');
+
   const newStepTableDataSet = useMemo(() => new DataSet(UpdateStepTableDataSet({ stepData: (testPlanStore.comparedInfo.testCase && testPlanStore.comparedInfo.testCase.testCaseStepS) || [] })), [testPlanStore.comparedInfo.testCase]);
   const oldStepTableDataSet = useMemo(() => new DataSet(UpdateStepTableDataSet({ stepData: (testPlanStore.comparedInfo.testCycleCase && testPlanStore.comparedInfo.testCycleCase.cycleCaseStep) || [] })), [testPlanStore.comparedInfo.testCycleCase]);
   const [loading, setLoading] = useState(false);
@@ -45,11 +48,11 @@ const UpdateRemindModalChildren = (props) => {
     <div className={`${prefix}-modal-children`}>
       <Spin spinning={loading}>
         <div className={`${prefix}-item`}>
-          <span className={`${prefix}-item-field`}>更新人</span>
+          <span className={`${prefix}-item-field`}>{formatMessage({ id: 'boot.updater' })}</span>
           <span className={`${prefix}-item-value`}><User user={lastUpdateUser} style={{ color: 'var(--text-color)' }} /></span>
         </div>
         <div className={`${prefix}-item`}>
-          <span className={`${prefix}-item-field`}>更新时间</span>
+          <span className={`${prefix}-item-field`}>{formatMessage({ id: 'test.plan.update.date' })}</span>
           <span className={`${prefix}-item-value`}>{lastUpdateDate || ''}</span>
         </div>
         <div className={`${prefix}-updateContent`}>

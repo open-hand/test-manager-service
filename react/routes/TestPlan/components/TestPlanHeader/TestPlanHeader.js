@@ -136,12 +136,12 @@ function TestPlanHeader() {
 
   return (
     <HeaderButtons items={[{
-      name: intl.formatMessage({ id: 'testPlan_createPlan' }),
+      name: intl.formatMessage({ id: 'test.plan.create' }),
       display: true,
       icon: 'playlist_add',
       handler: handleOpenCreatePlan,
     }, {
-      name: intl.formatMessage({ id: 'testPlan_editPlan' }),
+      name: intl.formatMessage({ id: 'test.plan.edit' }),
       display: Boolean(testPlanStatus !== 'done' && getCurrentPlanId),
       icon: 'edit-o',
       handler: handleOpenEditPlan,
@@ -151,17 +151,17 @@ function TestPlanHeader() {
       icon: 'play_circle_filled',
       handler: handleUpdatePlanStatus.bind(this, 'doing'),
     }, {
-      name: intl.formatMessage({ id: 'testPlan_completePlan' }),
+      name: intl.formatMessage({ id: 'test.plan.completed' }),
       display: Boolean(getCurrentPlanId && testPlanStatus === 'doing'),
       icon: 'finished',
       handler: handleUpdatePlanStatus.bind(this, 'done'),
     }, {
-      name: '计划报告',
+      name: intl.formatMessage({ id: 'test.plan.report' }),
       display: Boolean(getCurrentPlanId && testPlanStatus !== 'todo'),
       icon: 'find_in_page-o',
       handler: handleReportClick,
     }, {
-      name: intl.formatMessage({ id: 'refresh' }),
+      name: intl.formatMessage({ id: 'boot.refresh' }),
       display: true,
       icon: 'refresh',
       handler: handleRefresh,

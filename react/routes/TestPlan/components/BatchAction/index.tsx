@@ -7,6 +7,7 @@ import openBatchDeleteModal from './BatchDeleteConfirm';
 import BatchModal from './BatchModal';
 import { TestPlanStore } from '../../stores/TestPlanStore';
 import styles from './index.less';
+import useFormatMessage from '@/hooks/useFormatMessage';
 
 interface Props {
   close: () => void,
@@ -18,6 +19,8 @@ const Header: React.FC<Props> = ({
   close, onClickDelete, testPlanStore,
 }) => {
   const { checkIdMap } = testPlanStore;
+  const formatMessage = useFormatMessage();
+
   const handleClickAssign = useCallback(() => {
     testPlanStore.setBatchAction('assign');
   }, [testPlanStore]);
@@ -46,7 +49,7 @@ const Header: React.FC<Props> = ({
             onClick={handleClickAssign}
             className={styles.batch_btn}
           >
-            批量指派
+            {formatMessage({ id: 'batch.assign' })}
           </Button>
           <Button
             icon="delete_forever"

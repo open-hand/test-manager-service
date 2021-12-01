@@ -122,7 +122,7 @@ class CreateStatus extends Component {
                   validator: this.handleCheckStatusRepeat,
                 }],
               })(
-                <Input maxLength={30} label={<FormattedMessage id="status_name" />} />,
+                <Input maxLength={30} label={<FormattedMessage id="test.status.name" />} />,
               )}
             </FormItem>
             <FormItem>

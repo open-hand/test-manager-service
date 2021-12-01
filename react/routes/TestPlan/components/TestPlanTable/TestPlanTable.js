@@ -23,6 +23,7 @@ import './TestPlanTable.less';
 import Store from '../../stores';
 import PriorityTag from '../../../../components/PriorityTag';
 import { OpenBatchModal, closeBatchModal } from '../BatchAction';
+import useFormatMessage from '@/hooks/useFormatMessage';
 
 const { AppState } = stores;
 
@@ -57,6 +58,7 @@ const TestPlanTable = observer(({
   const {
     tableLoading, statusList, executePagination, mineExecutePagination, testList, checkIdMap, testPlanStatus, priorityList,
   } = testPlanStore;
+  const formatMessage = useFormatMessage();
 
   const divRef = useRef();
   const [tipVisible, setTipVisible] = useState(false);
@@ -164,7 +166,7 @@ const TestPlanTable = observer(({
 
   const renderMoreAction = (record) => {
     const action = [{
-      text: '移除',
+      text: formatMessage({ id: 'test.plan.remove' }),
       action: () => {
         closeBatchModal({ testPlanStore });
         onDeleteExecute(record);
@@ -223,7 +225,7 @@ const TestPlanTable = observer(({
     return testPlanStore.mineFilter && testPlanStore.mineFilter.priorityId ? [testPlanStore.mineFilter.priorityId] : [];
   };
   const columns = [{
-    title: '执行名称',
+    title: formatMessage({ id: 'test.plan.execute.name' }),
     dataIndex: 'summary',
     key: 'summary',
     filters: [],
@@ -234,7 +236,7 @@ const TestPlanTable = observer(({
     },
     render: (text, record) => renderMenu(record.summary, record),
   }, {
-    title: '自定义编号',
+    title: formatMessage({ id: 'test.common.custom.num' }),
     dataIndex: 'customNum',
     key: 'customNum',
     flex: 1.5,
@@ -242,7 +244,7 @@ const TestPlanTable = observer(({
     filters: [],
     render: (customNum) => renderIssueNum(customNum),
   }, {
-    title: <FormattedMessage id="priority" />,
+    title: formatMessage({ id: 'test.common.priority' }),
     dataIndex: 'priorityId',
     key: 'priorityId',
     filters: priorityList && priorityList.filter((priorityVO) => priorityVO.enableFlag)
@@ -259,7 +261,7 @@ const TestPlanTable = observer(({
       );
     },
   }, {
-    title: '计划执行人',
+    title: formatMessage({ id: 'test.plan.plan.executor' }),
     dataIndex: 'assignedUser',
     key: 'assignedUser',
     flex: 1.5,
@@ -277,7 +279,7 @@ const TestPlanTable = observer(({
     },
   },
   {
-    title: '实际执行人',
+    title: formatMessage({ id: 'test.plan.actual.executor' }),
     dataIndex: 'lastUpdateUser',
     key: 'lastUpdateUser',
     flex: 1.5,
@@ -295,7 +297,7 @@ const TestPlanTable = observer(({
       );
     },
   }, {
-    title: <FormattedMessage id="cycle_updatedDate" />,
+    title: formatMessage({ id: 'test.plan.update.date' }),
     dataIndex: 'lastUpdateDate',
     key: 'lastUpdateDate',
     flex: 1.5,
@@ -317,7 +319,7 @@ const TestPlanTable = observer(({
   },
 
   {
-    title: <FormattedMessage id="status" />,
+    title: formatMessage({ id: 'test.plan.execute.status' }),
     dataIndex: 'executionStatus',
     key: 'executionStatus',
     filters: statusList && statusList.map((status) => ({ text: status.statusName, value: status.statusId.toString() })),
@@ -421,13 +423,13 @@ const TestPlanTable = observer(({
             >
               <div>
                 <span style={{ color: 'var(--text-color)' }}>
-                  只看我的
+                  {formatMessage({ id: 'test.plan.only.me' })}
                 </span>
                 <Checkbox style={{ marginLeft: 4 }} checked={isSelf} onChange={onOnlyMeCheckedChange} />
               </div>
               <SelectUser
                 clearButton
-                placeholder="计划执行人"
+                placeholder={formatMessage({ id: 'test.plan.plan.executor' })}
                 onChange={onSearchAssign}
                 value={isSelf ? undefined : testPlanStore.filter.assignUser}
                 style={{ marginLeft: 30, width: 120 }}

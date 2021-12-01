@@ -1,3 +1,9 @@
+export * from './caseLibrary';
+export * from './common';
+export * from './plan';
+export * from './priority';
+export * from './status';
+export * from './autoTest';
 // zh_CN.js
 
 // 文档地址前缀

@@ -12,6 +12,7 @@ import { getProjectId } from '@/common/utils';
 import { TestPlanStore } from '@/routes/TestPlan/stores/TestPlanStore';
 import STATUS_COLOR from '@/constants/STATUS';
 import styles from './index.less';
+import useFormatMessage from '@/hooks/useFormatMessage';
 
 interface Props {
   modal?: IModalProps,
@@ -23,6 +24,8 @@ const BatchDeleteModal: React.FC<Props> = (props) => {
   const {
     modal, testPlanStore, close,
   } = props;
+  const formatMessage = useFormatMessage();
+
   const { checkIdMap } = testPlanStore;
   const [loading, setLoading] = useState<boolean | string>(false);
   const [progress, setProgress] = useState(0);
@@ -99,7 +102,7 @@ const BatchDeleteModal: React.FC<Props> = (props) => {
             handleDelete();
           }}
         >
-          移除
+          {formatMessage({ id: 'test.plan.remove' })}
         </Button>
         <Button
           onClick={handleCancel}
@@ -108,7 +111,7 @@ const BatchDeleteModal: React.FC<Props> = (props) => {
             fontWeight: 500,
           }}
         >
-          取消
+          {formatMessage({ id: 'boot.cancel' })}
         </Button>
       </div>
     </div>

@@ -32,6 +32,7 @@ import Store from '../stores';
 import './TestPlanHome.less';
 import { getDragRank, executeDetailLink } from '../../../common/utils';
 import { closeBatchModal } from '../components/BatchAction';
+import useFormatMessage from '@/hooks/useFormatMessage';
 
 const { AppState } = stores;
 
@@ -43,6 +44,8 @@ function TestPlanHome({ history }) {
   const {
     prefixCls, createAutoTestStore, testPlanStore,
   } = useContext(Store);
+  const formatMessage = useFormatMessage();
+
   const { change } = useLoading();
   const {
     loading, tableLoading, treeLoading, checkIdMap, testList, testPlanStatus, planInfo, statusList, currentCycle, mainActiveTab, times, calendarLoading,
@@ -330,14 +333,10 @@ function TestPlanHome({ history }) {
     };
   }, [testPlanStore]);
   const noSelected = !currentCycle.id;
-  let description;
-  if (testPlanStatus === 'todo') {
-    description = '当前项目下无未开始的计划';
-  } else if (testPlanStatus === 'doing') {
-    description = '当前项目下无进行中的计划';
-  } else if (testPlanStatus === 'done') {
-    description = '当前项目下无已完成的计划';
-  }
+
+  const description = formatMessage({ id: 'test.plan.current.no.plan' }, {
+    status: String(formatMessage({ id: `test.plan.${testPlanStatus}` })).toLowerCase(),
+  });
 
   return (
     <Page
@@ -354,69 +353,72 @@ function TestPlanHome({ history }) {
           <div className={`${prefixCls}-contentWrap-left`}>
             <div className={`${prefixCls}-contentWrap-testPlanTree`}>
               <Tabs onChange={handleTabsChange} activeKey={testPlanStatus}>
-                <TabPane tab="未开始" key="todo" />
-                <TabPane tab="进行中" key="doing" />
-                <TabPane tab="已完成" key="done" />
+                <TabPane tab={formatMessage({ id: 'test.plan.todo' })} key="todo" />
+                <TabPane tab={formatMessage({ id: 'test.plan.doing' })} key="doing" />
+                <TabPane tab={formatMessage({ id: 'test.plan.done' })} key="done" />
               </Tabs>
               <TestPlanTree status={testPlanStatus} />
             </div>
           </div>
 
           {
-              noSelected ? (
-                <LoadingHiddenWrap>
-                  <EmptyPage
-                    image={testCaseEmpty}
-                    description={description}
-                  />
-                </LoadingHiddenWrap>
-              ) : (
-                <div className={`${prefixCls}-contentWrap-right`}>
-                  <div className={`${prefixCls}-contentWrap-right-currentPlanName`}>
-                    <span>{`计划名称: ${planInfo.name ?? ''}`}</span>
-                    <TestPlanStatusCard />
-                  </div>
-                  <div className={`${prefixCls}-contentWrap-right-card`}>
-                    <TestPlanDetailCard />
-                    <div className={`${prefixCls}-contentWrap-main`}>
-                      <Tabs
-                        defaultActiveKey="testPlanTable"
-                        onChange={handleMainTabsChange}
-                        activeKey={mainActiveTab}
-                      >
-                        <TabPane tab="测试用例" key="testPlanTable" />
-                        {
-                          testPlanStore.isPlan(currentCycle.id) ? (
-                            <TabPane tab="计划日历" key="testPlanSchedule">
-                              <EventCalendar key={currentCycle.id} showMode="multi" times={times} calendarLoading={calendarLoading} />
-                            </TabPane>
-                          ) : ''
-                        }
-                      </Tabs>
+            noSelected ? (
+              <LoadingHiddenWrap>
+                <EmptyPage
+                  image={testCaseEmpty}
+                  description={description}
+                />
+              </LoadingHiddenWrap>
+            ) : (
+              <div className={`${prefixCls}-contentWrap-right`}>
+                <div className={`${prefixCls}-contentWrap-right-currentPlanName`}>
+                  <span>
+                    {formatMessage({ id: 'test.plan.name' })}
+                    {`: ${planInfo.name ?? ''}`}
+                  </span>
+                  <TestPlanStatusCard />
+                </div>
+                <div className={`${prefixCls}-contentWrap-right-card`}>
+                  <TestPlanDetailCard />
+                  <div className={`${prefixCls}-contentWrap-main`}>
+                    <Tabs
+                      defaultActiveKey="testPlanTable"
+                      onChange={handleMainTabsChange}
+                      activeKey={mainActiveTab}
+                    >
+                      <TabPane tab={formatMessage({ id: 'test.plan.case' })} key="testPlanTable" />
                       {
-                        mainActiveTab !== 'testPlanSchedule' && (
-                          <TestPlanTable
-                            onDragEnd={onDragEnd}
-                            onTableChange={mainActiveTab === 'testPlanTable' ? handleExecuteTableChange : handleMineExecuteTableChange}
-                            onDeleteExecute={handleDeleteExecute}
-                            onQuickPass={handleQuickPassOrFail}
-                            onQuickFail={handleQuickPassOrFail}
-                            onSkipToFolder={handleSkipToFolder}
-                            onOpenUpdateRemind={handleOpenUpdateRemind}
-                            onTableSummaryClick={handleTableSummaryClick}
-                            onSearchAssign={handleSearchAssign}
-                            onOnlyMeCheckedChange={handleOnlyMeCheckedChange}
-                            hasCheckBox={mainActiveTab === 'testPlanTable'}
-                            isMine={mainActiveTab === 'mineTestPlanTable'}
-                            key={mainActiveTab}
-                          />
-                        )
+                        testPlanStore.isPlan(currentCycle.id) ? (
+                          <TabPane tab={formatMessage({ id: 'test.plan.calendar' })} key="testPlanSchedule">
+                            <EventCalendar key={currentCycle.id} showMode="multi" times={times} calendarLoading={calendarLoading} />
+                          </TabPane>
+                        ) : ''
                       }
-                    </div>
+                    </Tabs>
+                    {
+                      mainActiveTab !== 'testPlanSchedule' && (
+                        <TestPlanTable
+                          onDragEnd={onDragEnd}
+                          onTableChange={mainActiveTab === 'testPlanTable' ? handleExecuteTableChange : handleMineExecuteTableChange}
+                          onDeleteExecute={handleDeleteExecute}
+                          onQuickPass={handleQuickPassOrFail}
+                          onQuickFail={handleQuickPassOrFail}
+                          onSkipToFolder={handleSkipToFolder}
+                          onOpenUpdateRemind={handleOpenUpdateRemind}
+                          onTableSummaryClick={handleTableSummaryClick}
+                          onSearchAssign={handleSearchAssign}
+                          onOnlyMeCheckedChange={handleOnlyMeCheckedChange}
+                          hasCheckBox={mainActiveTab === 'testPlanTable'}
+                          isMine={mainActiveTab === 'mineTestPlanTable'}
+                          key={mainActiveTab}
+                        />
+                      )
+                    }
                   </div>
                 </div>
-              )
-            }
+              </div>
+            )
+          }
 
         </div>
       </Content>

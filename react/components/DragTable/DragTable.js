@@ -1,6 +1,7 @@
 /* eslint-disable react/no-deprecated */
 // 可拖动table
 import React, { Component } from 'react';
+import { C7NFormat } from '@choerodon/master';
 import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
 import { Table } from 'choerodon-ui';
 import './DragTable.less';
@@ -221,7 +222,12 @@ class DragTable extends Component {
             dataSource={data}
             components={this.components}
             onColumnFilterChange={this.handleColumnFilterChange}
-            filterBarPlaceholder="过滤表"
+            filterBarPlaceholder={(
+              <C7NFormat
+                intlPrefix="test.common"
+                id="filter"
+              />
+            )}
           />
         </Loading>
       </div>

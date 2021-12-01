@@ -2,6 +2,7 @@ import React, {
   useEffect, useMemo, useCallback,
 } from 'react';
 import PropTypes from 'prop-types';
+import { C7NFormat } from '@choerodon/master';
 import { Modal } from 'choerodon-ui/pro';
 import { observer } from 'mobx-react-lite';
 import { importIssueToFolder } from '@/api/TestPlanApi';
@@ -53,7 +54,10 @@ export default function openImportIssue({
   onSubmit, planId, folderId,
 }) {
   Modal.open({
-    title: '导入用例',
+    title: <C7NFormat
+      intlPrefix="test.plan"
+      id="import"
+    />,
     key,
     drawer: true,
     style: {

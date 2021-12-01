@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { C7NFormat } from '@choerodon/master';
 import PropTypes from 'prop-types';
 import {
   Select, Table, Badge,
@@ -20,7 +21,10 @@ const InnerTable = (TestClass) => {
       render: (testName) => <div className="c7ntest-text-dot">{testName}</div>,
     },
     {
-      title: '时长',
+      title: <C7NFormat
+        intlPrefix="test.autoTest"
+        id="during"
+      />,
       dataIndex: 'duration-ms',
       key: 'duration-ms',
       colSpan: 0,
@@ -93,6 +97,7 @@ const expandedRowRender = (record) => {
   );
 };
 class TestTable extends Component {
+  // eslint-disable-next-line react/state-in-constructor
   state={
     allGroups: [],
     selectedGroup: [],
