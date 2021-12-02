@@ -184,7 +184,7 @@ function TestPlanHome({ history }) {
     testPlanStore.setBarFilter(barFilters || []);
     if (pagination.current) {
       testPlanStore.setFilter(filter);
-      testPlanStore.setExecutePagination(pagination);
+      testPlanStore.setExecutePagination({ ...pagination, current: testPlanStore.getExecutePagination?.pageSize !== pagination.pageSize ? 1 : pagination.current });
       testPlanStore.loadExecutes();
     }
   };
@@ -202,7 +202,7 @@ function TestPlanHome({ history }) {
     testPlanStore.setMineBarFilter(barFilters || []);
     if (pagination.current) {
       testPlanStore.setMineFilter(mineFilter);
-      testPlanStore.setMineExecutePagination(pagination);
+      testPlanStore.setMineExecutePagination({ ...pagination, current: testPlanStore.getMineExecutePagination?.pageSize !== pagination.pageSize ? 1 : pagination.current });
       testPlanStore.loadExecutes(undefined, undefined, true);
     }
   };
