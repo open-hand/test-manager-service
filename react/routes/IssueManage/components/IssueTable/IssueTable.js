@@ -24,10 +24,13 @@ import {
 import './IssueTable.less';
 import PriorityTag from '../../../../components/PriorityTag';
 import CustomCheckBox from '@/components/CustomCheckBox';
+import useFormatMessage from '@/hooks/useFormatMessage';
 
 const CHECKBOX_KEY = 'checkbox';
 
 export default observer((props) => {
+  const formatMessage = useFormatMessage();
+
   const [firstIndex, setFirstIndex] = useState(null);
   const [filteredColumns, setFilteredColumns] = useState([]);
   const instance = useRef();
@@ -292,7 +295,7 @@ export default observer((props) => {
         onColumnFilterChange={handleColumnFilterChange}
         pagination={false}
         filters={IssueStore.getBarFilters || []}
-        filterBarPlaceholder="过滤表"
+        filterBarPlaceholder={formatMessage({ id: 'test.common.filter' })}
         noFilter
       />
     </div>
@@ -328,7 +331,7 @@ export default observer((props) => {
       ),
     },
     {
-      title: '用例名称',
+      title: formatMessage({ id: 'test.caseLibrary.name' }),
       dataIndex: 'summary',
       key: 'summary',
       filters: [],
@@ -341,7 +344,7 @@ export default observer((props) => {
     },
 
     {
-      title: '用例编号',
+      title: formatMessage({ id: 'test.caseLibrary.num' }),
       dataIndex: 'caseNum',
       key: 'caseId',
       sorter: true,
@@ -349,7 +352,7 @@ export default observer((props) => {
       render: (caseNum) => renderIssueNum(caseNum),
     },
     {
-      title: '自定义编号',
+      title: formatMessage({ id: 'test.common.custom.num' }),
       dataIndex: 'customNum',
       key: 'customNum',
       sorter: true,
@@ -357,7 +360,7 @@ export default observer((props) => {
       render: (customNum) => renderIssueNum(customNum),
     },
     {
-      title: '优先级',
+      title: formatMessage({ id: 'test.common.priority' }),
       dataIndex: 'priorityId',
       key: 'sequence',
       sorter: true,
@@ -367,28 +370,28 @@ export default observer((props) => {
       render: (priorityId, record) => priorityId && <PriorityTag priority={record.priorityVO} />,
     },
     {
-      title: '创建人',
+      title: formatMessage({ id: 'test.common.creator' }),
       dataIndex: 'createUser',
       key: 'createUser',
       render: (createUser) => createUser && <UserHead user={createUser} style={{ display: 'flex' }} />,
       width: '1rem',
     },
     {
-      title: '创建时间',
+      title: formatMessage({ id: 'test.common.create.date' }),
       dataIndex: 'creationDate',
       key: 'creationDate',
       sorter: true,
       render: (creationDate) => <Tooltip title={creationDate}><span>{creationDate}</span></Tooltip>,
     },
     {
-      title: '更新人',
+      title: formatMessage({ id: 'test.common.update.user' }),
       dataIndex: 'lastUpdateUser',
       key: 'lastUpdateUser',
       render: (lastUpdateUser) => lastUpdateUser && <UserHead user={lastUpdateUser} style={{ display: 'flex' }} />,
       width: '1rem',
     },
     {
-      title: '更新时间',
+      title: formatMessage({ id: 'test.common.update.date' }),
       dataIndex: 'lastUpdateDate',
       key: 'lastUpdateDate',
       sorter: true,
@@ -402,11 +405,11 @@ export default observer((props) => {
     <div className="c7ntest-issueArea">
       <div id="template_copy" style={{ display: 'none' }}>
         当前状态：
-        <span style={{ fontWeight: 500 }}>复制</span>
+        <span style={{ fontWeight: 500 }}>{ formatMessage({ id: 'test.common.copy' })}</span>
       </div>
       <div id="template_move" style={{ display: 'none' }}>
         当前状态：
-        <span style={{ fontWeight: 500 }}>移动</span>
+        <span style={{ fontWeight: 500 }}>{ formatMessage({ id: 'test.common.move' })}</span>
       </div>
       <section
         style={{

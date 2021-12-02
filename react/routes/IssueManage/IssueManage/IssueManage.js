@@ -150,7 +150,7 @@ class IssueManage extends Component {
     Modal.open({
       key: 'createIssue',
       // title:<FormattedMessage id='issue_create_name'  />,
-      title: intl.formatMessage({ id: 'issue_create_name' }),
+      title: intl.formatMessage({ id: 'test.caseLibrary.create' }),
       drawer: true,
       style: {
         width: 740,
@@ -169,10 +169,12 @@ class IssueManage extends Component {
   }
 
   handleOpenImportIssue = () => {
+    const { intl } = this.props;
+
     Modal.open({
       key: 'importIssue',
       // title:<FormattedMessage id='issue_create_name'  />,
-      title: '导入用例',
+      title: intl.formatMessage({ id: 'test.caseLibrary.import' }),
       drawer: true,
       destroyOnClose: false,
       style: {
@@ -187,9 +189,10 @@ class IssueManage extends Component {
   }
 
   handleOpenExportIssue = () => {
+    const { intl } = this.props;
     Modal.open({
       key: 'exportIssue',
-      title: '导出用例',
+      title: intl.formatMessage({ id: 'test.caseLibrary.export' }),
       drawer: true,
       style: {
         width: 1090,
@@ -241,27 +244,27 @@ class IssueManage extends Component {
           title={<FormattedMessage id="issue_name" />}
         >
           <HeaderButtons items={[{
-            name: intl.formatMessage({ id: 'issue_createTestIssue' }),
+            name: intl.formatMessage({ id: 'test.caseLibrary.create' }),
             display: !noFolder,
             icon: 'playlist_add',
             handler: () => this.handleOpenCreateIssue(),
           }, {
-            name: '创建一级目录',
+            name: intl.formatMessage({ id: 'test.caseLibrary.create.root.dir' }),
             display: true,
             icon: 'playlist_add',
             handler: this.handleAddFolderClick,
           }, {
-            name: intl.formatMessage({ id: 'issue_export' }),
+            name: intl.formatMessage({ id: 'test.caseLibrary.export' }),
             display: !noFolder,
             icon: 'unarchive-o',
             handler: this.handleOpenExportIssue,
           }, {
-            name: intl.formatMessage({ id: 'issue_import' }),
+            name: intl.formatMessage({ id: 'test.caseLibrary.import' }),
             display: !noFolder,
             icon: 'archive-o',
             handler: this.handleOpenImportIssue,
           }, {
-            name: '批量移除用例',
+            name: intl.formatMessage({ id: 'test.caseLibrary.batch.remove' }),
             display: !noFolder,
             disabled: !checkIdMap.size,
             icon: 'delete_sweep-o',
@@ -314,9 +317,9 @@ class IssueManage extends Component {
                       <Empty
                         // loading={loading}
                         pic={empty}
-                        title="暂无目录"
-                        description="当前项目下无目录，请创建"
-                        extra={<Button type="primary" funcType="raised" onClick={this.handleAddFolderClick}>创建一级目录</Button>}
+                        title={intl.formatMessage({ id: 'test.common.empty.data' })}
+                        description={intl.formatMessage({ id: 'test.caseLibrary.empty.dir.description' })}
+                        extra={<Button type="primary" funcType="raised" onClick={this.handleAddFolderClick}>{intl.formatMessage({ id: 'test.caseLibrary.create.root.dir' })}</Button>}
                       />
                     </LoadingHiddenWrap>
                   ) : currentFolder.id && (

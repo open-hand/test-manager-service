@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-bind */
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import {
@@ -33,6 +34,7 @@ const formItemLayout = {
 @Form.create()
 @observer
 class ConfirmInfo extends Component {
+  // eslint-disable-next-line react/state-in-constructor
   state = {
     triggerType: 'easy',
     testType: 'instant',
@@ -481,9 +483,11 @@ class ConfirmInfo extends Component {
             <div>
               <div className="deployApp-title">
                 <span className="deployApp-title-text">
-                  应用版本：
+                  {intl.formatMessage({ id: 'app.version' })}
+                  ：
                 </span>
               </div>
+              )
               <div className="deployApp-text">
                 {appVersion && appVersion.version}
               </div>

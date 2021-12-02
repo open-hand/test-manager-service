@@ -1,8 +1,10 @@
+/* eslint-disable react/jsx-no-bind */
 import React from 'react';
 import { Choerodon } from '@choerodon/boot';
 import {
   Tooltip, Menu, Dropdown, Icon,
 } from 'choerodon-ui';
+import { C7NFormat } from '@choerodon/master';
 import { Modal } from 'choerodon-ui/pro';
 import { FormattedMessage } from 'react-intl';
 import { copyIssues, deleteIssue } from '../../../../api/IssueManageApi';
@@ -65,10 +67,16 @@ export function renderAction(record, history, reLoadTable) {
   const menu = (
     <Menu onClick={handleItemClick}>
       <Menu.Item key="copy">
-        复制用例
+        <C7NFormat
+          intlPrefix="test.caseLibrary"
+          id="copy.case"
+        />
       </Menu.Item>
       <Menu.Item key="delete">
-        删除
+        <C7NFormat
+          intlPrefix="boot"
+          id="delete"
+        />
       </Menu.Item>
     </Menu>
   );

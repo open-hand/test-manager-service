@@ -3,10 +3,12 @@ import { observer } from 'mobx-react-lite';
 import { Tooltip } from 'choerodon-ui';
 import './TestPlanStatusCard.less';
 import Store from '../../stores';
+import useFormatMessage from '@/hooks/useFormatMessage';
 
 export default observer(() => {
   const { testPlanStore } = useContext(Store);
   const { statusRes } = testPlanStore;
+  const formatMessage = useFormatMessage('test.plan');
 
   const handleQueryExecutesByStatus = (status) => {
     const { filter } = testPlanStore;
@@ -41,7 +43,10 @@ export default observer(() => {
       </div>
       {doneCount || totalCount ? (
         <div className="c7ntest-testPlan-statusCard-count">
-          {`已测: ${doneCount ?? 0}/${totalCount ?? 0}`}
+          {formatMessage({ id: 'complete.progress' }, {
+            done: doneCount ?? 0,
+            total: totalCount ?? 0,
+          })}
         </div>
       ) : null}
     </div>

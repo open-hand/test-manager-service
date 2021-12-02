@@ -8,12 +8,14 @@ import { observer } from 'mobx-react-lite';
 import SelectUser from '@choerodon/agile/lib/components/select/select-user';
 import SelectFocusLoad from '@/components/SelectFocusLoad';
 import styles from './index.less';
+import useFormatMessage from '@/hooks/useFormatMessage';
 
 function BatchModal({
   onCancel, onAssign, testPlanStore,
 }) {
   const { checkIdMap, assignToUserId } = testPlanStore;
   const [loading, setLoading] = useState(false);
+  const formatMessage = useFormatMessage();
 
   const submit = async () => {
     setLoading(true);
@@ -40,7 +42,7 @@ function BatchModal({
         >
           <SelectUser
             clearButton
-            placeholder="批量指派"
+            placeholder={formatMessage({ id: 'test.plan.batch.assign' })}
             onChange={handleAssignToChange}
             value={testPlanStore.assignToUserId}
             style={{ display: 'flex', margin: '15px 0' }}
@@ -55,7 +57,7 @@ function BatchModal({
                 fontWeight: 500,
               }}
             >
-              取消
+              {formatMessage({ id: 'boot.cancel' })}
             </Button>
             <Button
               disabled={checkIdMap.size === 0 || !assignToUserId?.length}
@@ -68,7 +70,7 @@ function BatchModal({
                 submit();
               }}
             >
-              确定
+              {formatMessage({ id: 'boot.confirm' })}
             </Button>
           </div>
         </div>

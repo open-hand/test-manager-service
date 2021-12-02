@@ -20,6 +20,7 @@ import {
 } from './utils';
 import FilterInput from './FilterInput';
 import './index.less';
+import useFormatMessage from '@/hooks/useFormatMessage';
 
 const PADDING_PER_LEVEL = 16;
 const prefix = 'c7ntest-tree';
@@ -90,6 +91,8 @@ function PureTree({
   searchAutoFilter = false,
   ...restProps
 }, ref) {
+  const formatMessage = useFormatMessage('test.common');
+
   const [tree, setTree] = useState(mapDataToTree(data));
   useEffect(() => {
     setTree(mapDataToTree(data));
@@ -365,7 +368,7 @@ function PureTree({
         </div>
         {isEmpty ? (
           <div className={`${prefix}-empty`}>
-            暂无数据
+            {formatMessage({ id: 'empty.data' })}
           </div>
         ) : (
           <div className={`${prefix}-scroll`}>

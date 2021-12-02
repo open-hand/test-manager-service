@@ -6,6 +6,7 @@ import { TextEditToggle, TextEditTogglePro } from '@/components';
 import EditIssueContext from './stores';
 import './Header.less';
 import TypeTag from '../../../../components/TypeTag';
+import useFormatMessage from '@/hooks/useFormatMessage';
 
 const { TextArea } = Input;
 const { Text, Edit } = TextEditToggle;
@@ -16,6 +17,8 @@ function Header({
   const {
     store, disabled, prefixCls, onClose,
   } = useContext(EditIssueContext);
+  const formatMessage = useFormatMessage();
+
   const { issueInfo } = store;
   const { caseNum, summary, customNum } = issueInfo;
 
@@ -85,7 +88,10 @@ function Header({
         </TextEditToggle>
       </div>
       <div className={`${prefixCls}-content-header-customNum`}>
-        <span className={`${prefixCls}-content-header-customNum-field`}>自定义编号：</span>
+        <span className={`${prefixCls}-content-header-customNum-field`}>
+          {formatMessage({ id: 'test.common.custom.num' })}
+          ：
+        </span>
         <div
           className={`${prefixCls}-content-header-customNum-field-value`}
           style={{

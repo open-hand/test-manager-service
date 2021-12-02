@@ -1,4 +1,6 @@
+import React from 'react';
 import { toJS } from 'mobx';
+import { C7NFormat } from '@choerodon/master';
 import { getProjectId } from '@/common/utils';
 import { checkPlanName } from '@/api/TestPlanApi';
 
@@ -9,7 +11,13 @@ export default function DataSetFactory({ initValue = {} }, mode, dataSetUpdate =
       {
         name: 'name',
         type: 'string',
-        label: '计划名称',
+        label: (
+          <span>
+            <C7NFormat
+              intlPrefix="test.plan"
+              id="name"
+            />
+          </span>),
         required: true,
         validator: async (value) => {
           if (mode === 'edit' && value === initValue.name) {
@@ -33,18 +41,46 @@ export default function DataSetFactory({ initValue = {} }, mode, dataSetUpdate =
         },
       },
       {
-        name: 'description', type: 'string', label: '描述',
+        name: 'description',
+        type: 'string',
+        label: (
+          <span>
+            <C7NFormat
+              intlPrefix="test.plan"
+              id="description"
+            />
+          </span>),
       },
       {
-        name: 'sprintId', label: '所属冲刺',
+        name: 'sprintId',
+        label: (
+          <span>
+            <C7NFormat
+              intlPrefix="test.plan"
+              id="belong.sprint"
+            />
+          </span>),
       },
       {
-        name: 'productVersionId', label: '所属版本',
+        name: 'productVersionId',
+        label: (
+          <span>
+            <C7NFormat
+              intlPrefix="test.plan"
+              id="belong.version"
+            />
+          </span>),
       },
       {
         name: 'managerId',
         type: 'string',
-        label: '负责人',
+        label: (
+          <span>
+            <C7NFormat
+              intlPrefix="test.plan"
+              id="responsible"
+            />
+          </span>),
         required: true,
       },
       {

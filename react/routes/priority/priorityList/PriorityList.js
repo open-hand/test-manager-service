@@ -137,7 +137,7 @@ class PriorityList extends Component {
 
   getColumns = () => [
     {
-      title: <FormattedMessage id="priority.name" />,
+      title: <FormattedMessage id="test.common.name" />,
       dataIndex: 'name',
       key: 'name',
       width: 270,
@@ -146,7 +146,7 @@ class PriorityList extends Component {
       render: (text, record) => this.renderMenu(text, record),
     },
     {
-      title: <FormattedMessage id="priority.des" />,
+      title: <FormattedMessage id="test.common.description" />,
       dataIndex: 'description',
       key: 'des',
       width: 450,
@@ -155,7 +155,7 @@ class PriorityList extends Component {
       onFilter: (value, record) => record.description && record.description.toString().indexOf(value) !== -1,
     },
     {
-      title: <FormattedMessage id="priority.color" />,
+      title: <FormattedMessage id="test.common.color" />,
       dataIndex: 'colour',
       key: 'color',
       width: 100,
@@ -327,9 +327,9 @@ class PriorityList extends Component {
       <Page
         className="c7ntest-priority"
       >
-        <Header title={<FormattedMessage id="priority.title" />}>
+        <Header title={<FormattedMessage id="test.priority.route" />}>
           <HeaderButtons items={[{
-            name: intl.formatMessage({ id: 'priority.create' }),
+            name: intl.formatMessage({ id: 'test.priority.create' }),
             display: true,
             handler: () => this.showSideBar('create'),
             icon: 'playlist_add',
@@ -339,7 +339,7 @@ class PriorityList extends Component {
         <Breadcrumb />
         <Content>
           <Table
-            filterBarPlaceholder="过滤表"
+            filterBarPlaceholder={intl.formatMessage({ id: 'test.common.filter' })}
             columns={this.getColumns()}
             dataSource={getPriorityList}
             rowKey={(record) => record.id}

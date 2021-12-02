@@ -1,6 +1,7 @@
 import React, { Component, createRef } from 'react';
 import { WSHandler, Choerodon } from '@choerodon/boot';
 import { observer } from 'mobx-react';
+import { C7NFormat } from '@choerodon/master';
 import { Menu } from 'choerodon-ui';
 import Loading from '@choerodon/agile/lib/components/Loading';
 import { getProjectId, handleRequestFailed } from '@/common/utils';
@@ -177,13 +178,22 @@ class IssueTree extends Component {
   getMenuItems = () => ([
 
     <Menu.Item key="rename">
-      重命名
+      <C7NFormat
+        intlPrefix="test.common"
+        id="rename"
+      />
     </Menu.Item>,
     <Menu.Item key="copy">
-      复制
+      <C7NFormat
+        intlPrefix="test.common"
+        id="copy"
+      />
     </Menu.Item>,
     <Menu.Item key="delete">
-      删除
+      <C7NFormat
+        intlPrefix="boot"
+        id="delete"
+      />
     </Menu.Item>,
 
   ]);
