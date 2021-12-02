@@ -306,7 +306,8 @@ export default observer((props) => {
   };
 
   const handlePaginationShowSizeChange = (current, size) => {
-    IssueStore.loadIssues(current, size);
+    const newCurrent = IssueStore.pagination.pageSize !== current ? 1 : current;
+    IssueStore.loadIssues(newCurrent, size);
   };
 
   const manageVisible = (columns) => columns.map((column) => (shouldColumnShow(column) ? { ...column, hidden: false } : { ...column, hidden: true }));
@@ -405,11 +406,11 @@ export default observer((props) => {
     <div className="c7ntest-issueArea">
       <div id="template_copy" style={{ display: 'none' }}>
         当前状态：
-        <span style={{ fontWeight: 500 }}>{ formatMessage({ id: 'test.common.copy' })}</span>
+        <span style={{ fontWeight: 500 }}>{formatMessage({ id: 'test.common.copy' })}</span>
       </div>
       <div id="template_move" style={{ display: 'none' }}>
         当前状态：
-        <span style={{ fontWeight: 500 }}>{ formatMessage({ id: 'test.common.move' })}</span>
+        <span style={{ fontWeight: 500 }}>{formatMessage({ id: 'test.common.move' })}</span>
       </div>
       <section
         style={{
@@ -450,7 +451,7 @@ export default observer((props) => {
             pageSize={IssueStore.pagination.pageSize}
             showSizeChanger
             total={IssueStore.pagination.total}
-            onChange={handlePaginationChange.bind(this)}
+            onChange={handlePaginationChange}
             onShowSizeChange={handlePaginationShowSizeChange.bind(this)}
           />
         </div>
