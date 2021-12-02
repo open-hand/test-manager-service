@@ -1,6 +1,6 @@
 /*
- * @Author: LainCarl 
- * @Date: 2019-01-25 11:36:37 
+ * @Author: LainCarl
+ * @Date: 2019-01-25 11:36:37
  * @Last Modified by: LainCarl
  * @Last Modified time: 2019-01-25 13:54:51
  * @Feature: 用户自定状态容器组件
@@ -15,6 +15,7 @@ import {
 import CustomStatusHome from './CustomStatusHome';
 
 class CustomStatusHomeContainer extends Component {
+  // eslint-disable-next-line react/state-in-constructor
   state = {
     loading: false,
     statusType: 'CYCLE_CASE',
@@ -38,7 +39,7 @@ class CustomStatusHomeContainer extends Component {
   }
 
   loadStatusList = (statusType = this.state.statusType) => {
-    this.setState({ loading: true });    
+    this.setState({ loading: true });
     getStatusList(statusType).then((statusList) => {
       this.setState({
         loading: false,
@@ -55,7 +56,7 @@ class CustomStatusHomeContainer extends Component {
   /**
    * 切换创建状态侧边栏的显示状态
    *
-   * 
+   *
    */
   ToggleCreateStatusVisible = (visible) => {
     this.setState({
@@ -66,7 +67,7 @@ class CustomStatusHomeContainer extends Component {
   /**
    * 切换编辑状态侧边栏的显示状态
    *
-   * 
+   *
    */
   ToggleEditStatusVisible = (visible, data = {}) => {
     this.setState({
@@ -78,7 +79,7 @@ class CustomStatusHomeContainer extends Component {
   /**
    * tab切换时更改当前状态类型
    *
-   * 
+   *
    */
   handleTabChange = (key) => {
     this.setState({
@@ -90,7 +91,7 @@ class CustomStatusHomeContainer extends Component {
   /**
    * 刷新状态列表
    *
-   * 
+   *
    */
   handleRefreshClick = () => {
     this.loadStatusList();
@@ -99,7 +100,7 @@ class CustomStatusHomeContainer extends Component {
   /**
    * 点击删除状态按钮的处理
    *
-   * 
+   *
    */
   handleDeleteOk = (data) => {
     this.setState({
@@ -132,7 +133,7 @@ class CustomStatusHomeContainer extends Component {
   /**
    * 点击显示状态创建侧边
    *
-   * 
+   *
    */
   handleShowCreateClick = () => {
     this.ToggleCreateStatusVisible(true);
@@ -141,7 +142,7 @@ class CustomStatusHomeContainer extends Component {
   /**
    * 创建状态侧边点击取消
    *
-   * 
+   *
    */
   handleCreateStatusCancel = () => {
     this.ToggleCreateStatusVisible(false);
@@ -150,7 +151,7 @@ class CustomStatusHomeContainer extends Component {
   /**
    * 编辑状态侧边点击取消
    *
-   * 
+   *
    */
   handleEditStatusCancel = () => {
     this.ToggleEditStatusVisible(false);
@@ -159,29 +160,29 @@ class CustomStatusHomeContainer extends Component {
   /**
    * 校验状态是否重复
    *
-   * 
+   *
    */
-  handleCheckStatusRepeat = status => (rule, value, callback) => {
+  handleCheckStatusRepeat = (status) => (rule, value, callback) => {
     const {
-      statusName, statusColor, statusType, statusId, 
+      statusName, statusColor, statusType, statusId,
     } = status;
     getStatusList(statusType).then((statusList) => {
-      if (_.find(statusList, o => o.statusName === statusName.trim() && o.statusId !== statusId)) {
+      if (_.find(statusList, (o) => o.statusName === statusName.trim() && o.statusId !== statusId)) {
         callback('状态名称已存在');
-      } else if (_.find(statusList, o => o.statusColor === statusColor && o.statusId !== statusId)) {
+      } else if (_.find(statusList, (o) => o.statusColor === statusColor && o.statusId !== statusId)) {
         callback('状态颜色已存在');
       } else {
         callback();
       }
     }).catch(() => {
-      callback();      
+      callback();
     });
   };
 
   /**
    * 创建状态侧边点击确定
    *
-   * 
+   *
    */
   handleCreateStatusSubmit = (newStatus) => {
     this.setState({ CreateStatusLoading: true });
@@ -200,7 +201,7 @@ class CustomStatusHomeContainer extends Component {
   /**
    * 编辑状态侧边点击确定
    *
-   * 
+   *
    */
   handleEditStatusSubmit = (modifyedStatus) => {
     this.setState({ EditStatusLoading: true });
@@ -213,7 +214,6 @@ class CustomStatusHomeContainer extends Component {
       }
       this.setState({ EditStatusLoading: false });
     }).catch(() => {
-      Choerodon.prompt('网络异常');
       this.setState({ EditStatusLoading: false });
     });
   }
@@ -236,6 +236,5 @@ class CustomStatusHomeContainer extends Component {
     );
   }
 }
-
 
 export default CustomStatusHomeContainer;
