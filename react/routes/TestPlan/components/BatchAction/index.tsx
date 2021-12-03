@@ -2,6 +2,7 @@
 import React, { useCallback } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Button } from 'choerodon-ui/pro';
+import { C7NLocaleProvider } from '@choerodon/master';
 import Modal from '@choerodon/agile/lib/routes/Issue/components/Modal';
 import openBatchDeleteModal from './BatchDeleteConfirm';
 import BatchModal from './BatchModal';
@@ -49,7 +50,7 @@ const Header: React.FC<Props> = ({
             onClick={handleClickAssign}
             className={styles.batch_btn}
           >
-            {formatMessage({ id: 'batch.assign' })}
+            {formatMessage({ id: 'test.plan.batch.assign' })}
           </Button>
           <Button
             icon="delete_forever"
@@ -73,6 +74,7 @@ const Header: React.FC<Props> = ({
 const ObserverHeader = observer(Header);
 
 export const OpenBatchModal = ({ testPlanStore }: Props) => {
+  const handleImport = (language) => import(/* webpackInclude: /\index.(ts|js)$/ */`../../../../locale/${language}`);
   const close = () => {
     testPlanStore.checkIdMap.clear();
     testPlanStore.setBatchAction(undefined);
@@ -83,29 +85,37 @@ export const OpenBatchModal = ({ testPlanStore }: Props) => {
     key: 'batchModal',
     className: styles.batchModal,
     zIndex: 999,
-    header: <ObserverHeader
-      close={() => {
+    header: (
+      <C7NLocaleProvider importer={handleImport}>
+        <ObserverHeader
+          close={() => {
+          modal?.close();
+          close();
+          }}
+          testPlanStore={testPlanStore}
+          onClickDelete={() => {
+          modal?.close();
+          testPlanStore.setBatchAction('delete');
+          openBatchDeleteModal({ testPlanStore, close });
+          }}
+        />
+      </C7NLocaleProvider>
+    ),
+    content: (
+      <C7NLocaleProvider importer={handleImport}>
+        <BatchModal
+          testPlanStore={testPlanStore}
+          onCancel={() => {
         modal?.close();
         close();
-      }}
-      testPlanStore={testPlanStore}
-      onClickDelete={() => {
-        modal?.close();
-        testPlanStore.setBatchAction('delete');
-        openBatchDeleteModal({ testPlanStore, close });
-      }}
-    />,
-    content: <BatchModal
-      testPlanStore={testPlanStore}
-      onCancel={() => {
+          }}
+          onAssign={() => {
         modal?.close();
         close();
-      }}
-      onAssign={() => {
-        modal?.close();
-        close();
-      }}
-    />,
+          }}
+        />
+      </C7NLocaleProvider>
+    ),
   });
 };
 

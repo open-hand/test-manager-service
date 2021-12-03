@@ -31,13 +31,13 @@ class TestManagerIndex extends React.Component {
 
   render() {
     const { match, AppState } = this.props;
-    const langauge = AppState.currentLanguage;
+    const language = AppState.currentLanguage;
     // const langauge = 'en_US';
-    if (langauge === 'zh_CN') {
+    if (language === 'zh_CN') {
       moment.locale('zh-cn');
     }
 
-    const IntlProviderAsync = asyncLocaleProvider(langauge, () => import(/* webpackInclude: /\index.(ts|js)$/ */`./locale/${langauge}`));
+    const IntlProviderAsync = asyncLocaleProvider(language, () => import(/* webpackInclude: /\index.(ts|js)$/ */`./locale/${language}`));
     return (
       <div className="testManager">
         <IntlProviderAsync>
