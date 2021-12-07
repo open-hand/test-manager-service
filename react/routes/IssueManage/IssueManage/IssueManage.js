@@ -317,7 +317,7 @@ class IssueManage extends Component {
                       <Empty
                         // loading={loading}
                         pic={empty}
-                        title={intl.formatMessage({ id: 'test.common.empty.data' })}
+                        title={intl.formatMessage({ id: 'test.common.empty.dir' })}
                         description={intl.formatMessage({ id: 'test.caseLibrary.empty.dir.description' })}
                         extra={<Button type="primary" funcType="raised" onClick={this.handleAddFolderClick}>{intl.formatMessage({ id: 'test.caseLibrary.create.root.dir' })}</Button>}
                       />

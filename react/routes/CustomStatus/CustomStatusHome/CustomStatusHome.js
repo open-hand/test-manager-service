@@ -100,7 +100,7 @@ const CustomStatusHome = ({
 
         <Content style={{ paddingTop: 0 }}>
           <Tabs activeKey={statusType} onChange={onTabChange} className="test-manager-custom-status-home">
-            <TabPane tab={<FormattedMessage id="status_executeStatus" />} key="CYCLE_CASE">
+            <TabPane tab={<FormattedMessage id="test.status.execute" />} key="CYCLE_CASE">
               <Spin spinning={loading}>
                 <StatusTable
                   dataSource={statusList}
@@ -109,7 +109,7 @@ const CustomStatusHome = ({
                 />
               </Spin>
             </TabPane>
-            <TabPane tab={<FormattedMessage id="status_steptatus" />} key="CASE_STEP">
+            <TabPane tab={<FormattedMessage id="test.status.step" />} key="CASE_STEP">
               <Spin spinning={loading}>
                 <StatusTable
                   dataSource={statusList}
