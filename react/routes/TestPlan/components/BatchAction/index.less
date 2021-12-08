@@ -3,12 +3,19 @@
 }
 
 .batch_btn {
+  color: #fff !important;
+    margin-right: 6px;
   box-shadow: none !important;
 }
-.batch_btn:hover {
+.batch_btn:not(.currentBatch_btn):hover {
   background-color: rgba(255, 255, 255, 0.2) !important;
 }
 
 .batch_btn.c7n-pro-btn-focused {
   background-color: none !important;
+}
+
+.currentBatch_btn {
+  background-color: #fff !important;
+  color: var(--primary-color) !important;
 }
