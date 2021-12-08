@@ -4,6 +4,7 @@ import { observer } from 'mobx-react-lite';
 import { Button } from 'choerodon-ui/pro';
 import { C7NLocaleProvider } from '@choerodon/master';
 import Modal from '@choerodon/agile/lib/routes/Issue/components/Modal';
+import classNames from 'classnames';
 import openBatchDeleteModal from './BatchDeleteConfirm';
 import BatchModal from './BatchModal';
 import { TestPlanStore } from '../../stores/TestPlanStore';
@@ -46,17 +47,19 @@ const Header: React.FC<Props> = ({
         >
           <Button
             icon="edit-o"
-            style={{ color: 'white', marginRight: 6 }}
             onClick={handleClickAssign}
-            className={styles.batch_btn}
+            className={classNames(styles.batch_btn, {
+              [styles.currentBatch_btn]: testPlanStore.batchAction === 'assign',
+            })}
           >
             {formatMessage({ id: 'test.plan.batch.assign' })}
           </Button>
           <Button
             icon="delete_forever"
-            style={{ color: 'white', marginRight: 18 }}
             onClick={onClickDelete}
-            className={styles.batch_btn}
+            className={classNames(styles.batch_btn, {
+              [styles.currentBatch_btn]: testPlanStore.batchAction === 'delete',
+            })}
           >
             批量移除
           </Button>
