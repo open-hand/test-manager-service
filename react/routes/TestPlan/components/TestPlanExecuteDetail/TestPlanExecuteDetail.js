@@ -374,7 +374,7 @@ function TestPlanExecuteDetail(props) {
         <Breadcrumb title={detailData ? renderBreadcrumbTitle(summary) : null} />
         <Content style={{ padding: visible ? '0 437px 0 0' : 0 }}>
 
-          <LoadingProvider>
+          <LoadingProvider style={{ zIndex: 'auto' }}>
             <Loading loadId="detail" loading={ExecuteDetailStore.loading} />
             <div style={{ display: 'flex', width: '100%', height: '100%' }}>
               {/* 左边内容区域 */}

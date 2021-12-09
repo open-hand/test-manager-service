@@ -30,10 +30,10 @@
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
-    "@choerodon/agile": "1.2.0",
-    "@choerodon/boot": "1.2.0",
+    "@choerodon/agile": "1.2.0-alpha.1",
+    "@choerodon/boot": "1.2.0-alpha.1",
     "@choerodon/compiler": "^0.0.1",
-    "@choerodon/master": "1.2.0",
+    "@choerodon/master": "1.2.0-alpha.1",
     "@types/echarts": "^4.6.5",
     "@types/file-saver": "^2.0.2",
     "@types/lodash": "^4.14.165",
