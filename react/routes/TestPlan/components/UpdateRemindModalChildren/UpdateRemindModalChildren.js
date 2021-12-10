@@ -22,7 +22,7 @@ const prefix = 'c7ntest-testPlan-updateRemind';
 
 const UpdateRemindModalChildren = (props) => {
   const { testPlanStore, executeId, cycleName } = props;
-  const formatMessage = useFormatMessage('test.plan');
+  const formatMessage = useFormatMessage();
 
   const newStepTableDataSet = useMemo(() => new DataSet(UpdateStepTableDataSet({ stepData: (testPlanStore.comparedInfo.testCase && testPlanStore.comparedInfo.testCase.testCaseStepS) || [] })), [testPlanStore.comparedInfo.testCase]);
   const oldStepTableDataSet = useMemo(() => new DataSet(UpdateStepTableDataSet({ stepData: (testPlanStore.comparedInfo.testCycleCase && testPlanStore.comparedInfo.testCycleCase.cycleCaseStep) || [] })), [testPlanStore.comparedInfo.testCycleCase]);
