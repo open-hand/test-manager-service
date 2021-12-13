@@ -73,7 +73,7 @@ eureka:
     leaseRenewalIntervalInSeconds: 3
     leaseExpirationDurationInSeconds: 9
     metadata-map:
-      VERSION: 1.2.0-alpha.1.RELEASE
+      VERSION: 1.2.0.RELEASE
   client:
     serviceUrl:
       defaultZone: http://localhost:8000/eureka/
