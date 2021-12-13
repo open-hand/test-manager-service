@@ -66,8 +66,7 @@ export default observer(() => {
           <span
             className="c7ntest-testPlan-detailCard-content-item-field"
             style={{
-              alignSelf: 'flex-start',
-              marginTop: 1,
+              alignSelf: 'center',
             }}
           >
             {formatMessage({ id: 'description' })}

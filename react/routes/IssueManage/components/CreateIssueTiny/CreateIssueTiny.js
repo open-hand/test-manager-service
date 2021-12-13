@@ -116,7 +116,7 @@ export default observer(() => {
       }}
     >
       <Icon type="playlist_add icon" style={{ marginRight: 2, marginTop: -1 }} />
-      <span><FormattedMessage id="issue_issueCreate" /></span>
+      <span><FormattedMessage id="test.caseLibrary.create" /></span>
     </Button>
   );
 }
