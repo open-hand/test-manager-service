@@ -2,10 +2,10 @@ package io.choerodon.test.manager.app.service.impl;
 
 import io.choerodon.mybatis.helper.snowflake.SnowflakeHelper;
 import io.choerodon.test.manager.infra.util.*;
-import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -110,6 +110,7 @@ public class TestCaseServiceImpl implements TestCaseService {
     private TestPriorityMapper testPriorityMapper;
 
     @Autowired
+    @Lazy
     private SnowflakeHelper snowflakeHelper;
 
     @Value("${services.attachment.url}")
