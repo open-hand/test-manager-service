@@ -12,14 +12,13 @@ spring:
       connection-timeout: ${SPRING_DATASOURCE_CONNECTION_TIMEOUT:30000}
   aop:
     auto: true
-  http:
-    encoding:
-      charset: UTF-8
-      force: true
-      enabled: true
   redis:
     host: localhost
     port: 6379
+    # Redis连接超时时间
+    connect-timeout: ${SPRING_REDIS_CONNECT_TIMEOUT:2000}
+    # Redis读取超时时间
+    timeout: ${SPRING_REDIS_READ_TIMEOUT:5000}
   servlet:
     multipart:
       max-file-size: 30MB
@@ -85,42 +84,97 @@ mybatis:
     mapUnderscoreToCamelCase: true
     key-generator: snowflake
     snowflake:
+      start-timestamp: 1577808000000
+      meta-provider: redis
       meta-provider-redis-db: ${SPRING_REDIS_DATABASE:1}
+      meta-provider-redis-refresh-interval: 540000
+      meta-provider-redis-expire: 600000
+
+server:
+  undertow:
+    threads:
+      # 设置IO线程数, 它主要执行非阻塞的任务,它们会负责多个连接
+      # 默认值为8，建议设置每个CPU核心一个线程
+      io: ${SERVER_UNDERTOW_IO_THREADS:4}
+      # 阻塞任务线程池, 当执行类似servlet请求阻塞操作, undertow会从这个线程池中取得线程
+      # 默认等于 io-threads*8，它的值设置取决于系统的负载，可适当调大该值
+      worker: ${SERVER_UNDERTOW_WORKER_THREADS:128}
+    # 每块buffer的空间大小，越小空间被利用越充分
+    # 不要设置太大，以免影响其他应用，合适即可
+    buffer-size: ${SERVER_UNDERTOW_BUFFER_SIZE:1024}
+    # 是否分配的直接内存(NIO直接分配的堆外内存)。默认false
+    direct-buffers: true
+    # HTTP POST请求最大的大小。默认0，无限制，可设置10M
+    max-http-post-size: 10485760
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
+      enabled: true
 
 feign:
-  hystrix:
-    enabled: true
+  circuitbreaker:
+    # 启用断路器
+    enabled: ${FEIGN_CIRCUITBREAKER_ENABLED:true}
+  # 请求压缩配置
+  compression:
+    request:
+      # 配置请求GZIP压缩
+      enabled: ${FEIGN_COMPRESSION_REQUEST_ENABLED:true}
+      # 配置压缩数据大小的下限
+      min-request-size: ${FEIGN_COMPRESSION_REQUEST_MIN_REQUEST_SIZE:2048}
+  # Feign客户端配置
+  client:
+    config:
+      # Feign客户端默认配置
+      default:
+        # 连接超时
+        connectTimeout: ${FEIGN_CLIENT_CONFIG_DEFAULT_CONNECT_TIMEOUT:2000}
+        # 读取超时
+        readTimeout: ${FEIGN_CLIENT_CONFIG_DEFAULT_READ_TIMEOUT:5000}
+        # Feign日志级别：NONE/BASIC/HEADERS/FULL
+        loggerLevel: ${FEIGN_CLIENT_CONFIG_DEFAULT_LOGGER_LEVEL:FULL}
 
-hystrix:
-  threadpool:
-    default:
-      # 执行命令线程池的核心线程数，也是命令执行的最大并发量
-      # 默认10
-      coreSize: 1000
-      # 最大执行线程数
-      maximumSize: 1000
-  command:
-    default:
-      execution:
-        isolation:
-          thread:
-            # HystrixCommand 执行的超时时间，超时后进入降级处理逻辑。一个接口，理论的最佳响应速度应该在200ms以内，或者慢点的接口就几百毫秒。
-            # 默认 1000 毫秒，最高设置 2000足矣。如果超时，首先看能不能优化接口相关业务、SQL查询等，不要盲目加大超时时间，否则会导致线程堆积过多，hystrix 线程池卡死，最终服务不可用。
-            timeoutInMilliseconds: ${HYSTRIX_COMMAND_TIMEOUT_IN_MILLISECONDS:40000}
+#feign:
+#  hystrix:
+#    enabled: true
+#
+#hystrix:
+#  threadpool:
+#    default:
+#      # 执行命令线程池的核心线程数，也是命令执行的最大并发量
+#      # 默认10
+#      coreSize: 1000
+#      # 最大执行线程数
+#      maximumSize: 1000
+#  command:
+#    default:
+#      execution:
+#        isolation:
+#          thread:
+#            # HystrixCommand 执行的超时时间，超时后进入降级处理逻辑。一个接口，理论的最佳响应速度应该在200ms以内，或者慢点的接口就几百毫秒。
+#            # 默认 1000 毫秒，最高设置 2000足矣。如果超时，首先看能不能优化接口相关业务、SQL查询等，不要盲目加大超时时间，否则会导致线程堆积过多，hystrix 线程池卡死，最终服务不可用。
+#            timeoutInMilliseconds: ${HYSTRIX_COMMAND_TIMEOUT_IN_MILLISECONDS:40000}
+#
+#ribbon:
+#  # 客户端读取超时时间，超时时间要小于Hystrix的超时时间，否则重试机制就无意义了
+#  ReadTimeout: ${RIBBON_READ_TIMEOUT:30000}
+#  # 客户端连接超时时间
+#  ConnectTimeout: ${RIBBON_CONNECT_TIMEOUT:3000}
+#  # 访问实例失败(超时)，允许自动重试，设置重试次数，失败后会更换实例访问，请一定确保接口的幂等性，否则重试可能导致数据异常。
+#  OkToRetryOnAllOperations: true
+#  MaxAutoRetries: 1
+#  MaxAutoRetriesNextServer: 1
 
-ribbon:
-  # 客户端读取超时时间，超时时间要小于Hystrix的超时时间，否则重试机制就无意义了
-  ReadTimeout: ${RIBBON_READ_TIMEOUT:30000}
-  # 客户端连接超时时间
-  ConnectTimeout: ${RIBBON_CONNECT_TIMEOUT:3000}
-  # 访问实例失败(超时)，允许自动重试，设置重试次数，失败后会更换实例访问，请一定确保接口的幂等性，否则重试可能导致数据异常。
-  OkToRetryOnAllOperations: true
-  MaxAutoRetries: 1
-  MaxAutoRetriesNextServer: 1
-
-#logging:
-#  level:
-#    io.choerodon.test.manager: info
+logging:
+  level:
+    org.springframework.cloud: info
+    io.github.resilience4j: info
+    com.netflix.discovery: warn
+    org.hzero.boot.platform.lov: info
+    org.apache.ibatis: ${LOG_LEVEL:info}
+    io.choerodon: ${LOG_LEVEL:info}
+    org.hzero: ${LOG_LEVEL:info}
 
 services:
   attachment:
