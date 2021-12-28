@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-bind */
 import React, { useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import ReactDOMServer from 'react-dom/server';
@@ -9,10 +10,10 @@ import { Button } from 'choerodon-ui/pro';
 import html2canvas from 'html2canvas';
 // @ts-ignore
 import queryString from 'query-string';
-import { getProjectName } from '@/common/utils';
 import { useHistory } from 'react-router-dom';
 
 import fileSaver from 'file-saver';
+import { getProjectName } from '@/common/utils';
 import TestReportContext, { BaseInfoRef } from './context';
 import TestReportStore from './store';
 import DetailCard from './components/detail-card';
@@ -156,7 +157,7 @@ const ReportPage: React.FC<Props> = ({ preview: forcePreview, planId }) => {
     >
       <Page>
         <Header>
-          <Button icon="unarchive" onClick={handleExportReport}>导出报告</Button>
+          <Button icon="unarchive-o" onClick={handleExportReport}>导出报告</Button>
           {/* <Button icon="send">发送报告</Button> */}
         </Header>
         <Breadcrumb title="报告" />
