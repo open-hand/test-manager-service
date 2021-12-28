@@ -75,7 +75,7 @@ public class TestCycleCaseController {
     @ApiOperation("查询测试执行详情")
     @PostMapping("/{executeId}/info")
     public ResponseEntity<TestCycleCaseInfoVO> queryCaseInfo(@PathVariable("project_id") Long projectId,
-                                                             @RequestParam(name = "cycle_id")
+                                                             @RequestParam(name = "cycle_id", required = false)
                                                              @Encrypt Long cycleId,
                                                              @RequestParam(name = "plan_id")
                                                              @Encrypt Long planId,
@@ -93,7 +93,7 @@ public class TestCycleCaseController {
                                                                   @RequestParam(name = "plan_id")
                                                                   @Encrypt Long planId,
                                                                   @ApiParam(value = "cycle_id", required = false)
-                                                                  @RequestParam(name = "cycle_id")
+                                                                  @RequestParam(name = "cycle_id", required = false)
                                                                   @Encrypt Long cycleId) {
         return Optional.ofNullable(testCycleCaseService.queryExecuteStatus(projectId, planId, cycleId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
@@ -126,7 +126,7 @@ public class TestCycleCaseController {
     @ApiOperation("查询当前文件夹下面所有子文件夹中用例")
     @PostMapping("/query/caseList")
     public ResponseEntity<Page<TestFolderCycleCaseVO>> listCaseByCycleId(@PathVariable("project_id") Long projectId,
-                                                                         @RequestParam(name = "cycle_id")
+                                                                         @RequestParam(name = "cycle_id", required = false)
                                                                          @Encrypt Long cycleId,
                                                                          @RequestParam(name = "plan_id")
                                                                          @Encrypt Long planId,
@@ -214,7 +214,7 @@ public class TestCycleCaseController {
     @PutMapping("/assign")
     public ResponseEntity<Void> assignCycleCase(
             @PathVariable("project_id") Long projectId,
-            @RequestParam(name = "cycle_id")
+            @RequestParam(name = "cycle_id", required = false)
             @Encrypt Long cycleId,
             @RequestParam(name = "assign_user_id")
             @Encrypt Long assignUserId,
@@ -229,7 +229,7 @@ public class TestCycleCaseController {
     @DeleteMapping("/assign")
     public ResponseEntity<Void> deleteFolderAssignCase(
             @PathVariable("project_id") Long projectId,
-            @RequestParam(name = "cycle_id")
+            @RequestParam(name = "cycle_id", required = false)
             @Encrypt Long cycleId,
             @RequestParam(name = "plan_id")
             @Encrypt Long planId) {
