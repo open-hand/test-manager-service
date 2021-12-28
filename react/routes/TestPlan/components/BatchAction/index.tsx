@@ -55,13 +55,13 @@ const Header: React.FC<Props> = ({
             {formatMessage({ id: 'test.plan.batch.assign' })}
           </Button>
           <Button
-            icon="delete_forever"
+            icon="delete_sweep-o"
             onClick={onClickDelete}
             className={classNames(styles.batch_btn, {
               [styles.currentBatch_btn]: testPlanStore.batchAction === 'delete',
             })}
           >
-            批量移除
+            批量删除
           </Button>
         </div>
         <Button

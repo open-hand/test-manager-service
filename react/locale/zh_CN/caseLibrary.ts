@@ -4,7 +4,7 @@ const locale = {
   route: '用例库',
   function: '功能测试',
   api: 'API测试',
-  'batch.remove': '批量移除用例',
+  'batch.remove': '批量删除用例',
   import: '导入用例',
   export: '导出用例',
   'create.root.dir': '创建一级目录',

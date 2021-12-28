@@ -73,7 +73,7 @@ const BatchDeleteModal: React.FC<Props> = (props) => {
   return (
     <div>
       <div style={{ marginBottom: 20 }}>
-        {`确定要移除选中的${checkIdMap.size}个执行用例吗？`}
+        {`确定要删除选中的${checkIdMap.size}个执行用例吗？`}
         <span style={{ color: '#F44336' }}>
           请谨慎操作！
         </span>
@@ -83,7 +83,7 @@ const BatchDeleteModal: React.FC<Props> = (props) => {
         >
           { loading && (
           <div style={{ textAlign: 'center', marginTop: 16 }}>
-            {loading === 'success' ? '移除成功' : ['正在移除，请稍等片刻', <span className={styles.dot}>…</span>]}
+            {loading === 'success' ? '删除成功' : ['正在删除，请稍等片刻', <span className={styles.dot}>…</span>]}
             <Progress strokeColor={STATUS_COLOR.done} value={Math.round(progress * 100)} />
           </div>
           )}
@@ -122,7 +122,7 @@ const ObserverBatchDeleteModal = observer(BatchDeleteModal);
 const openBatchDeleteModal = (props: Props) => {
   Modal.open({
     key: 'BatchRemoveModal',
-    title: '移除执行用例',
+    title: '删除执行用例',
     style: {
       width: 520,
     },

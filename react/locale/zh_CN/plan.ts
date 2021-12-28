@@ -30,7 +30,7 @@ const locale = {
   'actual.executor': '实际执行人',
   'update.date': '更新时间',
   'execute.status': '状态',
-  remove: '移除',
+  remove: '删除',
   report: '计划报告',
   completed: '完成计划',
 } as const;
