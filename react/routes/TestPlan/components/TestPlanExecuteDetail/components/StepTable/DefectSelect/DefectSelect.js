@@ -152,6 +152,12 @@ function DefectSelect(props) {
         filterOption={false}
         showArrow={false}
         loading={selectLoading}
+        dropdownAlign={{
+          overflow: {
+            adjustX: 1,
+            adjustY: 1,
+          },
+        }}
         defaultValue={defects.map((defect) => defect.issueId.toString())}
         footer={(
           <Button
