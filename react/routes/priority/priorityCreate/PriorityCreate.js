@@ -91,6 +91,10 @@ class PriorityCreate extends Component {
     // 名称检查
     const { intl } = this.props;
     const res = await priorityApi.checkName(value);
+    if (!value) {
+      callback();
+      return;
+    }
     if (res) {
       callback(intl.formatMessage({ id: 'priority.create.name.error' }));
     } else {
