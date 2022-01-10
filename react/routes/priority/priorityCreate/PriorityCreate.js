@@ -90,11 +90,15 @@ class PriorityCreate extends Component {
   checkName = _.debounce(async (rule, value, callback) => {
     // 名称检查
     const { intl } = this.props;
-    const res = await priorityApi.checkName(value);
-    if (res) {
-      callback(intl.formatMessage({ id: 'priority.create.name.error' }));
-    } else {
+    if (!value) {
       callback();
+    } else {
+      const res = await priorityApi.checkName(value);
+      if (res) {
+        callback(intl.formatMessage({ id: 'priority.create.name.error' }));
+      } else {
+        callback();
+      }
     }
   }, 460);
 

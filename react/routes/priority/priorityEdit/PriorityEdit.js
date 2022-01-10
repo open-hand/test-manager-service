@@ -106,7 +106,7 @@ class PriorityEdit extends Component {
   checkName = _.debounce(async (rule, value, callback) => {
     const { PriorityStore, intl } = this.props;
     const { editingPriority } = PriorityStore;
-    if (editingPriority.name === value) {
+    if (!value || editingPriority.name === value) {
       callback();
     } else {
       const res = await priorityApi.checkName(value);
@@ -147,7 +147,7 @@ class PriorityEdit extends Component {
                   rules: [
                     {
                       required: true,
-                      message: intl.formatMessage({ id: 'required' }),
+                      message: intl.formatMessage({ id: 'priority.name.required.error' }),
                     },
                     {
                       validator: this.checkName,

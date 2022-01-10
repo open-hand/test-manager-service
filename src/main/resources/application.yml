@@ -15,7 +15,7 @@ spring:
   redis:
     host: ${SPRING_REDIS_HOST:localhost}
     port: ${SPRING_REDIS_PORT:6379}
-    database: ${SPRING_REDIS_DATABASE:15}
+    database: ${SPRING_REDIS_DATABASE:13}
     # Redis连接超时时间
     connect-timeout: ${SPRING_REDIS_CONNECT_TIMEOUT:2000}
     # Redis读取超时时间
@@ -83,7 +83,7 @@ eureka:
     leaseRenewalIntervalInSeconds: 3
     leaseExpirationDurationInSeconds: 9
     metadata-map:
-      VERSION: 1.2.0.RELEASE
+      VERSION: 1.2.0-alpha.1.RELEASE
   client:
     serviceUrl:
       defaultZone: http://localhost:8000/eureka/
