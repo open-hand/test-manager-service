@@ -234,5 +234,20 @@ public interface TestCaseService {
      */
     void batchImportTestCase(List<IssueCreateDTO> issueCreateDTOList, TestProjectInfoDTO testProjectInfo);
 
+    /**
+     * 批量更新导入的case
+     * @param issueUpdateDTOList 要更新的列表
+     * @param testProjectInfo 测试项目信息
+     */
+    void batchUpdateTestCase(List<IssueCreateDTO> issueUpdateDTOList, TestProjectInfoDTO testProjectInfo);
+
+    /**
+     * 更新导入的case并生成日志
+     * @param update
+     * @param testCaseRepVO
+     * @param fieldList
+     */
+    void updateTestCaseWithDatalog(TestCaseDTO update, TestCaseRepVO testCaseRepVO, String[] fieldList);
+
     void autoAsyncCase(List<TestCycleCaseDTO> testCycleCaseDTOS, Boolean changeCase, Boolean changeStep, Boolean changeAttach);
 }

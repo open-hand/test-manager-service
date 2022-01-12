@@ -74,6 +74,12 @@ public class IssueCreateDTO {
 
     private Date estimatedEndTime;
 
+    private Long objectVersionNumber;
+
+    private Long versionNum;
+
+    private String caseNum;
+
     public List<IssueLinkCreateVO> getIssueLinkCreateVOList() {
         return issueLinkCreateVOList;
     }
@@ -309,5 +315,29 @@ public class IssueCreateDTO {
 
     public void setEstimatedEndTime(Date estimatedEndTime) {
         this.estimatedEndTime = estimatedEndTime;
+    }
+
+    public Long getObjectVersionNumber() {
+        return objectVersionNumber;
+    }
+
+    public void setObjectVersionNumber(Long objectVersionNumber) {
+        this.objectVersionNumber = objectVersionNumber;
+    }
+
+    public Long getVersionNum() {
+        return versionNum;
+    }
+
+    public void setVersionNum(Long versionNum) {
+        this.versionNum = versionNum;
+    }
+
+    public String getCaseNum() {
+        return caseNum;
+    }
+
+    public void setCaseNum(String caseNum) {
+        this.caseNum = caseNum;
     }
 }
