@@ -48,4 +48,6 @@ public interface TestCaseLinkService {
     void createByIssue(Long projectId, Long issueId, List<Long> caseIds);
 
     List<TestCaseLinkVO> queryLinkCases(Long projectId, Long issueId);
+
+    void batchDeleteByCaseId(Long project,Long caseId);
 }

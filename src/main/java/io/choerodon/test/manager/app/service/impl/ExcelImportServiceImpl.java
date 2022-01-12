@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
 
 import io.choerodon.core.client.MessageClientC7n;
-import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.api.vo.TestFileLoadHistoryWebsocketVO;
 import io.choerodon.test.manager.api.vo.agile.*;
@@ -21,10 +20,7 @@ import io.choerodon.test.manager.infra.enums.TestAttachmentCode;
 import io.choerodon.test.manager.infra.enums.TestFileLoadHistoryEnums;
 import io.choerodon.test.manager.infra.feign.BaseFeignClient;
 import io.choerodon.test.manager.infra.feign.operator.AgileClientOperator;
-import io.choerodon.test.manager.infra.mapper.TestFileLoadHistoryMapper;
-import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
-import io.choerodon.test.manager.infra.mapper.TestPriorityMapper;
-import io.choerodon.test.manager.infra.mapper.TestProjectInfoMapper;
+import io.choerodon.test.manager.infra.mapper.*;
 import io.choerodon.test.manager.infra.util.*;
 
 import org.apache.commons.lang3.StringUtils;
@@ -33,6 +29,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hzero.boot.file.FileClient;
+import org.hzero.core.base.BaseConstants;
 import org.hzero.starter.keyencrypt.core.EncryptContext;
 import org.hzero.starter.keyencrypt.core.EncryptType;
 import org.modelmapper.ModelMapper;
@@ -75,11 +72,13 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     private static final String REDIS_STATUS_KEY = "test:fileStatus:";
     protected static final String[] EXCEL_HEADERS = new String[]
             {
+                    ExcelTitleName.FOLDER_PATH,
+                    ExcelTitleName.CASE_NUM,
                     ExcelTitleName.CUSTOM_NUM,
                     ExcelTitleName.CASE_SUMMARY,
                     ExcelTitleName.PRIORITY,
-                    ExcelTitleName.CASE_DESCRIPTION,
                     ExcelTitleName.LINK_ISSUE,
+                    ExcelTitleName.CASE_DESCRIPTION,
                     ExcelTitleName.TEST_STEP,
                     ExcelTitleName.TEST_DATA,
                     ExcelTitleName.EXPECT_RESULT
@@ -160,6 +159,10 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     private TestProjectInfoMapper testProjectInfoMapper;
     @Autowired
     private RedisUtil redisUtil;
+    @Autowired
+    private TestCaseMapper testCaseMapper;
+    @Autowired
+    private TestCaseLinkService testCaseLinkService;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -177,9 +180,9 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
     @Async
     @Override
-    public void importIssueByExcel(Long projectId, Long folderId, Long userId, InputStream inputStream,
+    public void importIssueByExcel(Long projectId, Long userId, InputStream inputStream,
                                    EncryptType encryptType, RequestAttributes requestAttributes) {
-        TestFileLoadHistoryDTO testFileLoadHistoryDTO = initLoadHistory(projectId, folderId, userId);
+        TestFileLoadHistoryDTO testFileLoadHistoryDTO = initLoadHistory(projectId, 0L, userId);
         Workbook issuesWorkbook;
         try {
             issuesWorkbook = new XSSFWorkbook(inputStream);
@@ -196,7 +199,6 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         // 默认是导入到导入文件夹，不存在则创建
         Sheet testCasesSheet = issuesWorkbook.getSheet("测试用例");
         TestFileLoadHistoryEnums.Status status = TestFileLoadHistoryEnums.Status.SUCCESS;
-        List<Long> issueIds = new ArrayList<>();
         TestPriorityDTO priorityDTO = new TestPriorityDTO();
         priorityDTO.setOrganizationId(ConvertUtils.getOrganizationId(projectId));
         Map<String, Long> priorityMap = testPriorityMapper.select(priorityDTO)
@@ -232,51 +234,48 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         logger.info("开始导入");
         //更新文件和用例的关联表
         List<IssueCreateDTO> issueCreateDTOList = new ArrayList<>();
+        List<IssueCreateDTO> issueUpdateDTOList = new ArrayList<>();
         while (rowIterator.hasNext()) {
             currentRow = rowIterator.next();
             if (isSkip(currentRow, EXCEL_HEADERS.length)) {
                 // 如果当前行全部为空，则跳过
                 continue;
             }
-            if (Objects.equals(TestFileLoadHistoryEnums.Status.valueOf(getStatus(testFileLoadHistoryDTO.getId())), TestFileLoadHistoryEnums.Status.CANCEL)) {
-                status = TestFileLoadHistoryEnums.Status.CANCEL;
-                logger.info("已取消");
-                if (!issueIds.isEmpty()) {
-                    testCaseService.batchDeleteIssues(projectId, issueIds);
-                }
-                break;
-            }
 
             if (isIssueHeaderRow(currentRow, excelTitleUtil)) {
-                //插入用例
-                issueCreateDTO = processIssueHeaderRow(currentRow, projectId, folderId, excelTitleUtil, priorityMap);
+                boolean isUpdate = !ExcelUtil.isBlank(excelTitleUtil.getCell(ExcelTitleName.CASE_NUM, currentRow));
+                //处理用例
+                issueCreateDTO = processIssueHeaderRow(currentRow, projectId, excelTitleUtil, priorityMap, isUpdate, testProjectInfo);
+
                 if (issueCreateDTO == null) {
                     failedCount++;
                 } else {
                     successfulCount++;
-                    issueCreateDTOList.add(issueCreateDTO);
-                    lastRate = updateProgress(testFileLoadHistoryDTO, userId, progress / nonBlankRowCount * 100, lastRate);
+                    addIssueList(issueCreateDTO, issueCreateDTOList, issueUpdateDTOList, isUpdate);
                 }
+                lastRate = updateProgress(testFileLoadHistoryDTO, userId, progress / nonBlankRowCount * 100, lastRate);
             }
-            //processRow(issueDTO, currentRow, errorRowIndexes, excelTitleUtil);
             // 插入循环步骤
             processRow(issueCreateDTO, currentRow, errorRowIndexes, excelTitleUtil);
             if (issueCreateDTOList.size() >= 100) {
-                List<Long> addIssueIds = insertCase(issueCreateDTOList, testProjectInfo);
-                issueIds.addAll(addIssueIds);
-                issueCreateDTOList.clear();
+               insertCase(issueCreateDTOList, testProjectInfo);
+            }
+            if (issueUpdateDTOList.size() >= 100) {
+                updateCase(projectId, issueUpdateDTOList, testProjectInfo);
             }
             ++progress;
         }
-        if (!CollectionUtils.isEmpty(issueCreateDTOList) && status != TestFileLoadHistoryEnums.Status.CANCEL) {
+        if (!CollectionUtils.isEmpty(issueCreateDTOList)) {
             insertCase(issueCreateDTOList, testProjectInfo);
-            issueCreateDTOList.clear();
+        }
+        if (!CollectionUtils.isEmpty(issueUpdateDTOList)) {
+            updateCase(projectId, issueUpdateDTOList, testProjectInfo);
         }
         testProjectInfoMapper.updateByPrimaryKeySelective(testProjectInfo);
         testFileLoadHistoryDTO.setSuccessfulCount(successfulCount);
         testFileLoadHistoryDTO.setFailedCount(failedCount);
 
-        if (!errorRowIndexes.isEmpty() && status != TestFileLoadHistoryEnums.Status.CANCEL) {
+        if (!errorRowIndexes.isEmpty()) {
             logger.info("导入数据有误，上传 error workbook");
             shiftErrorRowsToTop(testCasesSheet, errorRowIndexes);
             status = checkoutStatus(uploadErrorWorkbook(projectDTO.getOrganizationId(), issuesWorkbook, testFileLoadHistoryDTO), status);
@@ -285,29 +284,31 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         finishImport(testFileLoadHistoryDTO, userId, status);
     }
 
-    private List<Long> insertCase(List<IssueCreateDTO> issueCreateDTOList, TestProjectInfoDTO testProjectInfo) {
-        Long userId = DetailsHelper.getUserDetails().getUserId();
-        List<Long> result = new ArrayList<>();
-        List<TestCaseStepProDTO> addStepList = new ArrayList<>();
-        testCaseService.batchImportTestCase(issueCreateDTOList, testProjectInfo);
-        issueCreateDTOList.forEach(issueCreateDTO -> {
-            result.add(issueCreateDTO.getCaseId());
-            if (!CollectionUtils.isEmpty(issueCreateDTO.getTestCaseStepProList())) {
-                String rank = null;
-                for (TestCaseStepProDTO addStep : issueCreateDTO.getTestCaseStepProList()) {
-                    rank = RankUtil.genNext(RankUtil.Operation.INSERT.getRank(rank, null));
-                    addStep.setRank(rank);
-                    addStep.setIssueId(issueCreateDTO.getCaseId());
-                    addStep.setCreatedBy(userId);
-                    addStep.setLastUpdatedBy(userId);
-                    addStepList.add(addStep);
-                }
-            }
-        });
-        if (!CollectionUtils.isEmpty(addStepList)) {
-            testCaseStepService.batchCreateOneStep(addStepList);
+    private void addIssueList(IssueCreateDTO issueCreateDTO,
+                              List<IssueCreateDTO> issueCreateDTOList,
+                              List<IssueCreateDTO> issueUpdateDTOList,
+                              boolean isUpdate) {
+        if (Boolean.TRUE.equals(isUpdate)) {
+            issueUpdateDTOList.add(issueCreateDTO);
+        } else {
+            issueCreateDTOList.add(issueCreateDTO);
         }
-        return result;
+    }
+
+    private void insertCase(List<IssueCreateDTO> issueCreateDTOList, TestProjectInfoDTO testProjectInfo) {
+        testCaseService.batchImportTestCase(issueCreateDTOList, testProjectInfo);
+        issueCreateDTOList.clear();
+    }
+
+    private void updateCase(Long projectId, List<IssueCreateDTO> issueUpdateDTOList, TestProjectInfoDTO testProjectInfo) {
+        issueUpdateDTOList.forEach(updateCase -> {
+            // 删除测试步骤
+            testCaseStepService.removeStepByIssueId(projectId, updateCase.getCaseId());
+            // 删除关联工作项
+            testCaseLinkService.batchDeleteByCaseId(projectId, updateCase.getCaseId());
+        });
+        testCaseService.batchUpdateTestCase(issueUpdateDTOList, testProjectInfo);
+        issueUpdateDTOList.clear();
     }
 
     /**
@@ -613,8 +614,8 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         Iterator<Row> rowIterator = sheet.rowIterator();
         Row headerRow = rowIterator.next();
         int x = 0;
-        while (!ExcelUtil.getStringValue(headerRow.getCell(0)).equals(ExcelTitleName.FOLDER)
-                && !ExcelUtil.getStringValue(headerRow.getCell(1)).equals(ExcelTitleName.CASE_SUMMARY)) {
+        while (!ExcelUtil.getStringValue(headerRow.getCell(0)).equals(ExcelTitleName.FOLDER_PATH)
+                && !ExcelUtil.getStringValue(headerRow.getCell(1)).equals(ExcelTitleName.CASE_NUM)) {
             if (rowIterator.hasNext()) {
                 headerRow = rowIterator.next();
             }
@@ -658,8 +659,12 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                 || StringUtils.isNotBlank(user) || StringUtils.isNotBlank(issueLink);
     }
 
-    private IssueCreateDTO processIssueHeaderRow(Row row, Long projectId, Long folderId,
-                                              ExcelTitleUtil excelTitleUtil, Map<String, Long> priorityMap) {
+    private IssueCreateDTO processIssueHeaderRow(Row row,
+                                                 Long projectId,
+                                                 ExcelTitleUtil excelTitleUtil,
+                                                 Map<String, Long> priorityMap,
+                                                 boolean isUpdate,
+                                                 TestProjectInfoDTO testProjectInfo) {
         if (ExcelUtil.isBlank(excelTitleUtil.getCell(ExcelTitleName.CASE_SUMMARY, row))) {
             markAsError(row, "用例概要不能为空");
             return null;
@@ -669,24 +674,35 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             markAsError(row, "优先级不能为空");
             return null;
         }
+        if (ExcelUtil.isBlank(excelTitleUtil.getCell(ExcelTitleName.FOLDER_PATH, row))) {
+            markAsError(row, "目录不能为空");
+            return null;
+        }
 
         String description = ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.CASE_DESCRIPTION, row));
         String summary = ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.CASE_SUMMARY, row)).trim();
         String priority = ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.PRIORITY, row));
         String customNum = ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.CUSTOM_NUM, row));
+        String folderPath = ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.FOLDER_PATH, row));
         if(summary.length() > SUMMARY_MAX_SIZE){
             markAsError(row, "概要长度不能超过44个字符");
             return null;
         }
-        if (Objects.isNull(priorityMap.get(priority))) {
-            markAsError(row, "优先级不存在");
+        // 递归查询用例所属目录
+        Long folderId = getFolderIdByPath(projectId, folderPath, 0L);
+        if (Objects.isNull(folderId)) {
+            markAsError(row, "目录不存在");
             return null;
         }
-
+        if (!CollectionUtils.isEmpty(queryFolderByNameAndParentId(projectId, null, folderId))) {
+            markAsError(row, "父级目录下无法创建用例");
+            return null;
+        }
         IssueCreateDTO issueCreateDTO = new IssueCreateDTO();
         issueCreateDTO.setProjectId(projectId);
         issueCreateDTO.setSummary(summary);
-        issueCreateDTO.setDescription(description);
+        // 设置前置条件
+        issueCreateDTO.setDescription("<p>" + description+ "</p>");
         issueCreateDTO.setFolderId(folderId);
         issueCreateDTO.setPriorityId(priorityMap.get(priority));
         issueCreateDTO.setCustomNum(customNum);
@@ -734,7 +750,77 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             }
 
         }
+        // 处理更新用例
+        handleUpdateCaseByCaseNum(isUpdate, row, testProjectInfo, issueCreateDTO, excelTitleUtil);
+        if (Boolean.TRUE.equals(isUpdate) && Objects.isNull(issueCreateDTO.getCaseId())) {
+            // 用例编号不存在
+            return null;
+        }
         return issueCreateDTO;
+    }
+
+    private void handleUpdateCaseByCaseNum(boolean isUpdate,
+                                           Row row,
+                                           TestProjectInfoDTO testProjectInfo,
+                                           IssueCreateDTO issueCreateDTO,
+                                           ExcelTitleUtil excelTitleUtil) {
+        if (Boolean.TRUE.equals(isUpdate)) {
+            String caseNumStr = ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.CASE_NUM, row));
+
+            String prefix = testProjectInfo.getProjectCode() + BaseConstants.Symbol.MIDDLE_LINE;
+            if (!StringUtils.startsWith(caseNumStr, prefix)){
+                markAsError(row, "用例编号不存在");
+                return;
+            }
+            String caseNum = caseNumStr.substring(prefix.length());
+            TestCaseDTO select = new TestCaseDTO();
+            select.setProjectId(testProjectInfo.getProjectId());
+            select.setCaseNum(caseNum);
+            select = testCaseMapper.selectOne(select);
+            if (Objects.isNull(select)) {
+                markAsError(row, "用例编号不存在");
+                return;
+            }
+            issueCreateDTO.setCaseId(select.getCaseId());
+            issueCreateDTO.setCaseNum(caseNum);
+        }
+    }
+
+    private Long getFolderIdByPath(Long projectId, String folderPath, Long parentId) {
+        Long folderId = null;
+        String folderName = folderPath;
+        if (folderPath.contains("/")) {
+            List<String> folderNamse = Arrays.asList(folderPath.split("/"));
+            if (!CollectionUtils.isEmpty(folderNamse)) {
+                folderName = Arrays.asList(folderPath.split("/")).get(0);
+            }
+        }
+        // 可能存在重名
+        List<TestIssueFolderDTO> folderList = queryFolderByNameAndParentId(projectId, folderName, parentId);
+        if (CollectionUtils.isEmpty(folderList)) {
+            return null;
+        }
+        for (TestIssueFolderDTO testIssueFolderDTO : folderList) {
+            folderId = testIssueFolderDTO.getFolderId();
+            // 父级目录可能重名，但根据parentId可获取唯一父级路径
+            if (folderPath.contains("/")) {
+                String currentFolderPath = folderPath.substring(folderPath.indexOf('/') + 1);
+                folderId = getFolderIdByPath(projectId, currentFolderPath, folderId);
+            }
+            // 子级目录可能重名，默认取第一个
+            if (!Objects.isNull(folderId)) {
+                break;
+            }
+        }
+        return folderId;
+    }
+
+    private List<TestIssueFolderDTO> queryFolderByNameAndParentId(Long projectId, String folderName, Long parentId) {
+        TestIssueFolderDTO folder = new TestIssueFolderDTO();
+        folder.setProjectId(projectId);
+        folder.setName(folderName);
+        folder.setParentId(parentId);
+        return testIssueFolderMapper.select(folder);
     }
 
     private List<String> splitByRegex(String value) {

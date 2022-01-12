@@ -168,9 +168,7 @@ public class TestCaseController {
     @ApiOperation("从excel导入模板导入issue以及测试步骤")
     @PostMapping("/import/testCase")
     public ResponseEntity importIssues(@PathVariable("project_id") Long projectId,
-                                       @RequestParam("file") MultipartFile excelFile,
-                                       @RequestParam("folder_id")
-                                       @Encrypt Long folderId) {
+                                       @RequestParam("file") MultipartFile excelFile) {
         excelImportService.validateFileSize(excelFile);
         InputStream inputStream;
         try {
@@ -178,7 +176,7 @@ public class TestCaseController {
         } catch (IOException e) {
             throw new CommonException("error.io.new.workbook", e);
         }
-        excelImportService.importIssueByExcel(projectId, folderId,
+        excelImportService.importIssueByExcel(projectId,
                 DetailsHelper.getUserDetails().getUserId(),
                 inputStream, EncryptContext.encryptType(), RequestContextHolder.currentRequestAttributes());
         return new ResponseEntity(HttpStatus.NO_CONTENT);

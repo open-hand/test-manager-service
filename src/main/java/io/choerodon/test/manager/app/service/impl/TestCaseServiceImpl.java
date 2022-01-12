@@ -110,6 +110,9 @@ public class TestCaseServiceImpl implements TestCaseService {
     private TestPriorityMapper testPriorityMapper;
 
     @Autowired
+    private TestCaseService testCaseService;
+
+    @Autowired
     @Lazy
     private SnowflakeHelper snowflakeHelper;
 
@@ -669,9 +672,8 @@ public class TestCaseServiceImpl implements TestCaseService {
         if (CollectionUtils.isEmpty(issueCreateDTOList)) {
             return;
         }
-        Map<String, IssueCreateDTO> issueCreateMap = new HashMap<>(issueCreateDTOList.size());
+        Map<Object, IssueCreateDTO> issueCreateMap = new HashMap<>(issueCreateDTOList.size());
         List<TestCaseDTO> testCaseList = new ArrayList<>();
-        List<TestCaseLinkDTO> testCaseLinkDTOList = new ArrayList<>();
         for (IssueCreateDTO issueCreateDTO : issueCreateDTOList) {
             Long caseNum = CaseNumUtil.getNewCaseNum(testProjectInfo.getProjectId());
             testProjectInfo.setCaseMaxNum(caseNum);
@@ -687,6 +689,51 @@ public class TestCaseServiceImpl implements TestCaseService {
         }
         // 插入测试用例
         testCaseMapper.batchInsert(testCaseList);
+        // 插入测试工作项关联
+        batchInsertTestCaseLink(testProjectInfo.getProjectId(), userId, testCaseList, issueCreateMap);
+        // 插入测试步骤
+        batchInsertTestCaseStep(issueCreateDTOList);
+        testProjectInfoMapper.updateMaxCaseNum(testProjectInfo.getProjectId(), testProjectInfo.getCaseMaxNum());
+    }
+
+    @Override
+    public void batchUpdateTestCase(List<IssueCreateDTO> issueUpdateDTOList, TestProjectInfoDTO testProjectInfo) {
+        Long userId = DetailsHelper.getUserDetails().getUserId();
+        if (ObjectUtils.isEmpty(testProjectInfo)) {
+            throw new CommonException("error.query.project.info.null");
+        }
+        if (CollectionUtils.isEmpty(issueUpdateDTOList)) {
+            return;
+        }
+        Map<Object, IssueCreateDTO> issueUpdateMap = new HashMap<>(issueUpdateDTOList.size());
+        List<TestCaseDTO> testCaseList = new ArrayList<>();
+        for (IssueCreateDTO issueUpdateDTO : issueUpdateDTOList) {
+            issueUpdateMap.put(issueUpdateDTO.getCaseNum(), issueUpdateDTO);
+            TestCaseDTO update = ConvertUtils.convertObject(issueUpdateDTO, TestCaseDTO.class);
+            TestCaseDTO testCaseDTO = testCaseMapper.selectByPrimaryKey(update.getCaseId());
+            update.setVersionNum(testCaseDTO.getVersionNum() + 1);
+            update.setObjectVersionNumber(testCaseDTO.getObjectVersionNumber());
+            testCaseList.add(update);
+        }
+        // 更新测试用例并生成日志
+        for (TestCaseDTO update : testCaseList) {
+            TestCaseRepVO testCaseRepVO = modelMapper.map(update, TestCaseRepVO.class);
+            testCaseService.updateTestCaseWithDatalog(update, testCaseRepVO, new String[]{"summary", "description", "Folder Link"});
+        }
+        // 插入关联工作项
+        batchInsertTestCaseLink(testProjectInfo.getProjectId(), userId, testCaseList, issueUpdateMap);
+        // 插入测试步骤
+        batchInsertTestCaseStep(issueUpdateDTOList);
+    }
+
+    @Override
+    @DataLog(type = DataLogConstants.CASE_UPDATE)
+    public void updateTestCaseWithDatalog(TestCaseDTO update, TestCaseRepVO testCaseRepVO, String[] fieldList) {
+        testCaseMapper.updateByPrimaryKeySelective(update);
+    }
+
+    private void batchInsertTestCaseLink(Long projectId, Long userId, List<TestCaseDTO> testCaseList, Map<Object, IssueCreateDTO> issueCreateMap) {
+        List<TestCaseLinkDTO> testCaseLinkDTOList = new ArrayList<>();
         testCaseList.forEach(testCase -> {
             IssueCreateDTO issueCreateDTO = issueCreateMap.get(testCase.getCaseNum());
             if(issueCreateDTO == null){
@@ -695,7 +742,7 @@ public class TestCaseServiceImpl implements TestCaseService {
             issueCreateDTO.setCaseId(testCase.getCaseId());
             if(!CollectionUtils.isEmpty(issueCreateDTO.getTestCaseLinkDTOList())){
                 issueCreateDTO.getTestCaseLinkDTOList().forEach(testCaseLinkDTO -> {
-                    testCaseLinkDTO.setProjectId(testProjectInfo.getProjectId());
+                    testCaseLinkDTO.setProjectId(projectId);
                     testCaseLinkDTO.setLinkCaseId(testCase.getCaseId());
                     testCaseLinkDTO.setCreatedBy(userId);
                     testCaseLinkDTO.setLastUpdatedBy(userId);
@@ -709,7 +756,27 @@ public class TestCaseServiceImpl implements TestCaseService {
         if (!CollectionUtils.isEmpty(testCaseLinkDTOList)) {
             testCaseLinkMapper.batchInsert(testCaseLinkDTOList);
         }
-        testProjectInfoMapper.updateMaxCaseNum(testProjectInfo.getProjectId(), testProjectInfo.getCaseMaxNum());
+    }
+
+    private void batchInsertTestCaseStep(List<IssueCreateDTO> issueUpdateDTOList) {
+        Long userId = DetailsHelper.getUserDetails().getUserId();
+        List<TestCaseStepProDTO> addStepList = new ArrayList<>();
+        issueUpdateDTOList.forEach(issueUpdateDTO -> {
+            if (!CollectionUtils.isEmpty(issueUpdateDTO.getTestCaseStepProList())) {
+                String rank = null;
+                for (TestCaseStepProDTO addStep : issueUpdateDTO.getTestCaseStepProList()) {
+                    rank = RankUtil.genNext(RankUtil.Operation.INSERT.getRank(rank, null));
+                    addStep.setRank(rank);
+                    addStep.setIssueId(issueUpdateDTO.getCaseId());
+                    addStep.setCreatedBy(userId);
+                    addStep.setLastUpdatedBy(userId);
+                    addStepList.add(addStep);
+                }
+            }
+        });
+        if (!CollectionUtils.isEmpty(addStepList)) {
+            testCaseStepService.batchCreateOneStep(addStepList);
+        }
     }
 
     @Override
