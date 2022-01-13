@@ -80,6 +80,8 @@ public class IssueCreateDTO {
 
     private String caseNum;
 
+    private String folderPath;
+
     public List<IssueLinkCreateVO> getIssueLinkCreateVOList() {
         return issueLinkCreateVOList;
     }
@@ -339,5 +341,13 @@ public class IssueCreateDTO {
 
     public void setCaseNum(String caseNum) {
         this.caseNum = caseNum;
+    }
+
+    public String getFolderPath() {
+        return folderPath;
+    }
+
+    public void setFolderPath(String folderPath) {
+        this.folderPath = folderPath;
     }
 }
