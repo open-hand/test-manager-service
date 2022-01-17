@@ -52,7 +52,7 @@
   }
 
   &-record-normal-text {
-    margin-top: 0.16rem;
+    margin-top: 0.2rem;
   }
 
   &-fileName {
@@ -99,6 +99,7 @@
   &-icon {
     vertical-align: sub;
     margin-right: 0.05rem;
+    font-size: 18px;
   }
 
   &-version {
@@ -115,6 +116,15 @@
       font-size: 13px;
       display: inline-block;
       margin-bottom: .24rem;
+
+      & >* {
+        vertical-align: bottom;
+      }
+
+      &-icon {
+        color: #ffb100;
+        padding-right: .04rem;
+      }
     }
 
     .c7n-pro-form {
