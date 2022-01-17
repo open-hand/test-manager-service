@@ -27,6 +27,8 @@ public class ExcelCaseVO {
     private List<TestCaseStepVO> caseSteps;
     private String priorityName;
     private String customNum;
+    private String releatedIssues;
+    private List<Long> releatedIssueIds;
 
     public String getPriorityName() {
         return priorityName;
@@ -154,5 +156,21 @@ public class ExcelCaseVO {
 
     public void setCustomNum(String customNum) {
         this.customNum = customNum;
+    }
+
+    public String getReleatedIssues() {
+        return releatedIssues;
+    }
+
+    public void setReleatedIssues(String releatedIssues) {
+        this.releatedIssues = releatedIssues;
+    }
+
+    public List<Long> getReleatedIssueIds() {
+        return releatedIssueIds;
+    }
+
+    public void setReleatedIssueIds(List<Long> releatedIssueIds) {
+        this.releatedIssueIds = releatedIssueIds;
     }
 }

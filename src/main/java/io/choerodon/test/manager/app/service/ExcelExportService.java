@@ -16,7 +16,7 @@ public interface ExcelExportService<T, R> {
 
     int populateHeader(Sheet sheet, int rowNum, T cycle, CellStyle rowStyle);
 
-    void populateCellStyle(CellStyle headerRowStyle, CellStyle caseStyle1, CellStyle caseStyle2);
+    void populateCellStyle(CellStyle headerRowStyle, CellStyle caseStyle1, CellStyle caseStyle2, Workbook workbook);
 
     void populateSheetStyle(Sheet sheet);
 

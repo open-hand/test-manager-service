@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -14,7 +15,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import io.choerodon.core.client.MessageClientC7n;
 import io.choerodon.test.manager.api.vo.agile.ProjectDTO;
+import io.choerodon.test.manager.infra.enums.TestCycleType;
 import io.choerodon.test.manager.infra.feign.BaseFeignClient;
+import io.choerodon.test.manager.infra.feign.operator.AgileClientOperator;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -72,12 +75,6 @@ public class ExcelServiceImpl implements ExcelService {
     @Autowired
     private ObjectMapper objectMapper;
 
-//    @Autowired
-//    private FileService fileService;
-
-//    @Autowired
-//    private NotifyService notifyService;
-
     @Autowired
     private TestFileLoadHistoryMapper testFileLoadHistoryMapper;
 
@@ -110,6 +107,9 @@ public class ExcelServiceImpl implements ExcelService {
 
     @Autowired
     private MessageClientC7n messageClientC7n;
+
+    @Autowired
+    private AgileClientOperator agileClientOperator;
     /**
      * 失败导出重试
      *
@@ -229,11 +229,7 @@ public class ExcelServiceImpl implements ExcelService {
         Workbook workbook = ExcelUtil.getWorkBook(ExcelUtil.Mode.XSSF);
         printDebug(EXPORTSUCCESSINFO + ExcelUtil.Mode.XSSF);
         ExcelExportService service = new <TestIssueFolderVO, TestIssueFolderRelVO>TestCaseExcelExportServiceImpl();
-
-        //表格头部生成当前项目名称所属文件夹目录
-        service.exportWorkBookWithOneSheet(new HashMap<>(), projectName, modelMapper.map(testIssueFolderDTO, TestIssueFolderVO.class), workbook);
         testFileLoadHistoryWithRateVO.setRate(5.0);
-        //notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
         messageClientC7n.sendByUserId(userId,websocketKey,objToString(testFileLoadHistoryWithRateVO));
         List<ExcelCaseVO> excelCaseVOS = handleCase(projectId,folderId);
         if(CollectionUtils.isEmpty(excelCaseVOS)){
@@ -243,7 +239,6 @@ public class ExcelServiceImpl implements ExcelService {
             testFileLoadHistoryWithRateVO.setCode(EXPORT_ERROR_NOCASE_IN_FOLDER);
             TestFileLoadHistoryDTO testIssueFolderRelDO = modelMapper.map(testFileLoadHistoryWithRateVO, TestFileLoadHistoryDTO.class);
             testFileLoadHistoryMapper.updateByPrimaryKey(testIssueFolderRelDO);
-            //notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
             messageClientC7n.sendByUserId(userId,websocketKey,objToString(testFileLoadHistoryWithRateVO));
             throw new CommonException("error.folder.no.has.case");
         }
@@ -251,18 +246,11 @@ public class ExcelServiceImpl implements ExcelService {
         Map<Long, List<ExcelCaseVO>> map = new HashMap<>();
         map.put(1L, excelCaseVOS);
         testFileLoadHistoryWithRateVO.setRate(15.0);
-        //notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
         messageClientC7n.sendByUserId(userId,websocketKey,objToString(testFileLoadHistoryWithRateVO));
         //表格生成相关的文件内容
         service.exportWorkBookWithOneSheet(map, projectName, modelMapper.map(testIssueFolderDTO, TestIssueFolderVO.class), workbook);
         testFileLoadHistoryWithRateVO.setRate(80.0);
-        //notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
         messageClientC7n.sendByUserId(userId,websocketKey,objToString(testFileLoadHistoryWithRateVO));
-//        workbook.setSheetHidden(0, true);
-        workbook.setActiveSheet(1);
-//        workbook.setSheetName(0, LOOKUPSHEETNAME);
-//        workbook.setSheetOrder(LOOKUPSHEETNAME, workbook.getNumberOfSheets() - 1);
-        workbook.removeSheetAt(0);
         String fileName = projectName + "-" + workbook.getSheetName(0).substring(2) + "-" + folderName + FILESUFFIX;
         // 将workbook上载到对象存储服务中
         downloadWorkBook(projectDTO.getOrganizationId(),workbook, fileName, testFileLoadHistoryWithRateVO, userId, sum, websocketKey);
@@ -410,19 +398,57 @@ public class ExcelServiceImpl implements ExcelService {
             return excelCaseVOS;
         }
         excelCaseVOS = testCaseMapper.excelCaseList(projectId, caseIdList);
-        List<Long> userIdList = excelCaseVOS.stream().map(ExcelCaseVO::getLastUpdatedBy).collect(Collectors.toList());
-        Map<Long, UserMessageDTO> userMessageDTOMap = userService.queryUsersMap(userIdList);
-        if (!MapUtils.isEmpty(userMessageDTOMap)) {
-            excelCaseVOS.forEach(e -> {
-                e.setCaseNum(e.getProjectCode() +"-"+ e.getCaseNum());
-                if (!ObjectUtils.isEmpty(e.getLastUpdatedBy()) && !e.getLastUpdatedBy().equals(0L)) {
-                    e.setExecutor(userMessageDTOMap.get(e.getLastUpdatedBy()).getRealName());
-                }
-            });
-        }
+
+        TestIssueFolderDTO testIssueFolder = new TestIssueFolderDTO();
+        testIssueFolder.setProjectId(projectId);
+        testIssueFolder.setType(TestCycleType.CYCLE);
+        Map<Long, TestIssueFolderDTO> folderMap = testIssueFolderMapper.select(testIssueFolder).stream().collect(Collectors.toMap(TestIssueFolderDTO::getFolderId, Function.identity()));
+
+        List<Long> issueIds = new ArrayList<>();
+        excelCaseVOS.forEach(excelCaseVO -> issueIds.addAll(excelCaseVO.getReleatedIssueIds()));
+        List<IssueLinkVO> issueLinkVOS = Optional.ofNullable(agileClientOperator.queryIssues(projectId, issueIds)).orElse(new ArrayList<>());
+        Map<Long, IssueLinkVO> issueMap = issueLinkVOS.stream().collect(Collectors.toMap(IssueLinkVO::getIssueId, Function.identity()));
+
+        excelCaseVOS.forEach(excelCase -> {
+            excelCase.setCaseNum(excelCase.getProjectCode() +"-"+ excelCase.getCaseNum());
+            if (!MapUtils.isEmpty(folderMap)) {
+                // 设置路径
+                setFolderName(excelCase, folderMap);
+            }
+            List<Long> relatedIssueIds = excelCase.getReleatedIssueIds();
+            if ( !CollectionUtils.isEmpty(relatedIssueIds) && !MapUtils.isEmpty(issueMap)) {
+                // 设置关联工作项
+                setRelatedIssues(excelCase, relatedIssueIds, issueMap);
+            }
+        });
         return excelCaseVOS;
     }
 
+    private void setFolderName(ExcelCaseVO excelCase, Map<Long, TestIssueFolderDTO> folderMap) {
+        Long currentFolderId = excelCase.getFolderId();
+        excelCase.setFolderName("");
+        while (currentFolderId != 0L) {
+            TestIssueFolderDTO testIssueFolderDTO = folderMap.get(currentFolderId);
+            if (!Objects.isNull(testIssueFolderDTO)) {
+                String currentFolderName = testIssueFolderDTO.getName();
+                currentFolderId = testIssueFolderDTO.getParentId();
+                excelCase.setFolderName(currentFolderName + "/" + excelCase.getFolderName());
+            } else {
+                break;
+            }
+        }
+        excelCase.setFolderName(excelCase.getFolderName().substring(0, excelCase.getFolderName().length() - 1));
+    }
+
+    private void setRelatedIssues(ExcelCaseVO excelCase, List<Long> relatedIssueIds, Map<Long, IssueLinkVO> issueMap) {
+        excelCase.setReleatedIssues("");
+        relatedIssueIds.forEach(issueId -> {
+            IssueLinkVO issueLinkVO = issueMap.get(issueId);
+            if (!Objects.isNull(issueLinkVO)) {
+                excelCase.setReleatedIssues(excelCase.getReleatedIssues() + issueLinkVO.getIssueNum() + "：" + issueLinkVO.getSummary() + "；\n");
+            }
+        });
+    }
 
     /**
      * 傻瓜式装载read

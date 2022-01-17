@@ -4,10 +4,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.alibaba.fastjson.JSON;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Name;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.xssf.usermodel.XSSFDataValidation;
 import org.apache.poi.xssf.usermodel.XSSFDataValidationConstraint;
@@ -19,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
-import io.choerodon.core.exception.CommonException;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.test.manager.api.vo.ExcelCaseVO;
@@ -79,9 +76,8 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
     private static final String UI = "ui";
 
     private enum CaseHeader {
-        COLUMN1("文件夹*"), COLUMN12("自定义编号"),COLUMN2("用例概要*"), COLUMN11("用例优先级*"), COLUMN3("用例编号"),
-        COLUMN5("前置条件"), COLUMN6("执行人"), COLUMN8("测试步骤"), COLUMN9("测试数据"),
-        COLUMN10("预期结果");
+        COLUMN1("目录*"), COLUMN2("用例编号"), COLUMN3("自定义编号"), COLUMN4("用例概要*"), COLUMN5("优先级*"),
+        COLUMN6("关联工作项"), COLUMN7("前置条件"), COLUMN8("测试步骤*"), COLUMN9("测试数据"), COLUMN10("预期结果*");
         private String chinese;
 
         CaseHeader(String chinese) {
@@ -113,89 +109,59 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
 
     @Override
     public int populateVersionHeader(Sheet sheet, String projectName, TestIssueFolderVO folder, CellStyle rowStyle) {
-        if (sheet.getWorkbook().getNumberOfSheets() == 1) {
-//            versionInfo = testCaseService.getVersionInfo(folder.getProjectId());
-            return 0;
-        }
-        StringBuilder stringBuilder = new StringBuilder(folder.getName());
-        // 生成文件的目录结构
-        Long parentId = folder.getParentId();
-        TestIssueFolderDTO testIssueFolderDTO;
-        while (parentId != 0) {
-            testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(parentId);
-            if (testIssueFolderDTO == null) {
-                throw new CommonException("error.folder.not.exists");
-            }
-            parentId = testIssueFolderDTO.getParentId();
-            stringBuilder.append("-").append(testIssueFolderDTO.getName());
-        }
-        StringBuffer sb = new StringBuffer();
-        String fileName = stringBuilder.toString();
-        String[] split = fileName.split("-");
-        for (int i = split.length - 1; i >= 0; i--) {
-            if (i == 0) {
-                sb.append(split[i]);
-            } else {
-                sb.append(split[i] + "-");
-            }
-
-        }
-
-        Row row1 = ExcelUtil.createRow(sheet, 0, rowStyle);
-        // 生成Excel头部项目名称
-        ExcelUtil.createCell(row1, 0, ExcelUtil.CellType.TEXT, "项目：" + projectName);
-        ExcelUtil.createCell(row1, 1, ExcelUtil.CellType.TEXT, sb.toString());
-        return 2;
+        return 0;
     }
 
     @Override
-    public int populateHeader(Sheet sheet, int rowNum, TestIssueFolderVO folder, CellStyle rowStyle) {
+    public int populateHeader(Sheet sheet, int rowNum, TestIssueFolderVO folder, CellStyle headerStyle) {
         Assert.notNull(folder, "error.cycle.are.not.exist");
         Assert.notNull(sheet, "error.sheet.are.be.null");
-        Row row = ExcelUtil.createRow(sheet, rowNum, rowStyle);
+        Row row = ExcelUtil.getOrCreateRow(sheet, rowNum);
         int i = 0;
-        //准备mapping范围
-        if (sheet.getWorkbook().getNumberOfSheets() == 1) {
-            log.debug("开始准备lookup sheet页数据...");
-            prepareLookupData(folder);
-            setLookupData(sheet, rowNum, rowStyle);
-        } else {
-            setAllNameMapping(sheet, folder);
-            //迭代生成列名
-            for (CaseHeader value : CaseHeader.values()) {
-                ExcelUtil.createCell(row, i++, ExcelUtil.CellType.TEXT, value.getValue());
-            }
+        headerStyle.setWrapText(true);
+        headerStyle.setAlignment(HorizontalAlignment.LEFT);
+        headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        headerStyle.setFillForegroundColor(HSSFColor.HSSFColorPredefined.PALE_BLUE.getIndex());
+        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        row.setHeight((short) 300);
+        for (CaseHeader value : CaseHeader.values()) {
+            ExcelUtil.createCell(row, i, ExcelUtil.CellType.TEXT, value.getValue());
+            row.getCell(i++).setCellStyle(headerStyle);
         }
+        // 设置列宽度
+        sheet.setColumnWidth(0, ExcelImportServiceImpl.EXCEL_WIDTH_PX * 25);
+        sheet.setColumnWidth(1, ExcelImportServiceImpl.EXCEL_WIDTH_PX * 13);
+        sheet.setColumnWidth(2, ExcelImportServiceImpl.EXCEL_WIDTH_PX * 13);
+        sheet.setColumnWidth(3, ExcelImportServiceImpl.EXCEL_WIDTH_PX * 50);
+        sheet.setColumnWidth(4, ExcelImportServiceImpl.EXCEL_WIDTH_PX * 10);
+        sheet.setColumnWidth(5, ExcelImportServiceImpl.EXCEL_WIDTH_PX * 30);
+        sheet.setColumnWidth(6, ExcelImportServiceImpl.EXCEL_WIDTH_PX * 30);
+        sheet.setColumnWidth(7, ExcelImportServiceImpl.EXCEL_WIDTH_PX * 45);
+        sheet.setColumnWidth(8, ExcelImportServiceImpl.EXCEL_WIDTH_PX * 20);
+        sheet.setColumnWidth(9, ExcelImportServiceImpl.EXCEL_WIDTH_PX * 45);
         return rowNum + 1;
     }
 
     @Override
-    public int populateBody(Sheet sheet, int column, List<ExcelCaseVO> cycleCases, Queue<CellStyle> rowStyles) {
-        if (sheet.getWorkbook().getNumberOfSheets() != 1) {
-            //设置下拉框的值
-            // setDataValidationByFormula(sheet, PRIORITIES, 3, 3);
-//            setDataValidationByFormula(sheet, STATUS, 5, 5);
-//            setDataValidationByFormula(sheet, USERS, 6, 6);
+    public int populateBody(Sheet sheet, int column, List<ExcelCaseVO> cycleCases, Queue<CellStyle> cellStyles) {
 
-            for (ExcelCaseVO caseVO : cycleCases) {
-                CellStyle style;
-                if (ObjectUtils.isEmpty(rowStyles)) {
-                    style = null;
-                } else {
-                    style = rowStyles.poll();
-                    rowStyles.offer(style);
-                }
-                column = populateCase(sheet, column, caseVO, style);
+        for (ExcelCaseVO caseVO : cycleCases) {
+            CellStyle style;
+            if (ObjectUtils.isEmpty(cellStyles)) {
+                style = null;
+            } else {
+                style = cellStyles.poll();
+                cellStyles.offer(style);
             }
+            column = populateCase(sheet, column, caseVO, style);
         }
         sheet.setColumnHidden(14, true);
         //如果是模板默认加四百行lookup公式
         if (cycleCases.size() == 1 && cycleCases.get(0).getCaseId() == null) {
             sheet.setColumnHidden(2, true);
             sheet.setColumnHidden(6, true);
-            column += addLookupFormula(sheet, column, rowStyles);
+            column += addLookupFormula(sheet, column, cellStyles);
         }
-//        setDataValidationByFormula(sheet, sheet.getSheetName() + FOLDERS, 0, 0);
         return column;
     }
 
@@ -225,32 +191,27 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
         return column;
     }
 
-    private int populateCase(Sheet sheet, int columnNum, ExcelCaseVO excelCaseVO, CellStyle rowStyles) {
-        Row row = ExcelUtil.createRow(sheet, columnNum, rowStyles);
+    private int populateCase(Sheet sheet, int columnNum, ExcelCaseVO excelCaseVO, CellStyle cellStyle) {
+        Row row = ExcelUtil.getOrCreateRow(sheet, columnNum);
         if (!ObjectUtils.isEmpty(excelCaseVO)) {
             Optional.ofNullable(excelCaseVO.getFolderName()).ifPresent(v -> ExcelUtil.createCell(row, 0, ExcelUtil.CellType.TEXT, v));
-            Optional.ofNullable(excelCaseVO.getCustomNum()).ifPresent(v -> ExcelUtil.createCell(row, 1, ExcelUtil.CellType.TEXT, v));
-            Optional.ofNullable(excelCaseVO.getSummary()).ifPresent(v -> ExcelUtil.createCell(row, 2, ExcelUtil.CellType.TEXT, v));
-            Optional.ofNullable(excelCaseVO.getPriorityName()).ifPresent(v -> ExcelUtil.createCell(row, 3, ExcelUtil.CellType.TEXT, v));
-            Optional.ofNullable(excelCaseVO.getCaseNum()).ifPresent(v -> ExcelUtil.createCell(row, 4, ExcelUtil.CellType.TEXT, v));
+            Optional.ofNullable(excelCaseVO.getCaseNum()).ifPresent(v -> ExcelUtil.createCell(row, 1, ExcelUtil.CellType.TEXT, v));
+            Optional.ofNullable(excelCaseVO.getCustomNum()).ifPresent(v -> ExcelUtil.createCell(row, 2, ExcelUtil.CellType.TEXT, v));
+            Optional.ofNullable(excelCaseVO.getSummary()).ifPresent(v -> ExcelUtil.createCell(row, 3, ExcelUtil.CellType.TEXT, v));
+            Optional.ofNullable(excelCaseVO.getPriorityName()).ifPresent(v -> ExcelUtil.createCell(row, 4, ExcelUtil.CellType.TEXT, v));
+            Optional.ofNullable(excelCaseVO.getReleatedIssues()).ifPresent(v -> ExcelUtil.createCell(row, 5, ExcelUtil.CellType.TEXT, v));
             //接口修改后，改成描述
-            Optional.ofNullable(ExcelUtil.getColumnWithoutRichText(excelCaseVO.getDescription())).ifPresent(v -> ExcelUtil.createCell(row, 5, ExcelUtil.CellType.TEXT, v));
-            Optional.ofNullable(excelCaseVO.getExecutor()).ifPresent(v -> ExcelUtil.createCell(row, 6, ExcelUtil.CellType.TEXT, v));
+            Optional.ofNullable(ExcelUtil.getColumnWithoutRichText(excelCaseVO.getDescription())).ifPresent(v -> ExcelUtil.createCell(row, 6, ExcelUtil.CellType.TEXT, v));
         }
-//        ExcelUtil.createCell(row, 9, ExcelUtil.CellType.TEXT, "").setCellFormula(
-//                getLookupString("A" + (row.getRowNum() + 1), statusEnd + 2, folderEnd, 2));
-//
-//        ExcelUtil.createCell(row, 10, ExcelUtil.CellType.TEXT, "").setCellFormula(
-//                getLookupString("D" + (row.getRowNum() + 1), 2, lookEnd, 2));
-//
-//        ExcelUtil.createCell(row, 11, ExcelUtil.CellType.TEXT, "").setCellFormula(
-//                getLookupString("F" + (row.getRowNum() + 1), folderEnd + 2, userEnd, 2));
 
 
-        return columnNum + populateCycleCaseStep(sheet, columnNum, excelCaseVO.getCaseSteps(), rowStyles) + 1;
+        for (int i=0; i<10; i++) {
+            ExcelUtil.getOrCreateCell(row, i, CellType.STRING).setCellStyle(cellStyle);
+        }
+        return columnNum + populateCycleCaseStep(sheet, columnNum, excelCaseVO.getCaseSteps(), cellStyle) + 1;
     }
 
-    private int populateCycleCaseStep(Sheet sheet, int column, List<TestCaseStepVO> caseSteps, CellStyle rowStyles) {
+    private int populateCycleCaseStep(Sheet sheet, int column, List<TestCaseStepVO> caseSteps, CellStyle cellStyle) {
         if (caseSteps == null || caseSteps.isEmpty()) {
             return 0;
         }
@@ -259,19 +220,22 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
             if (i == 0) {
                 row = sheet.getRow(column);
             } else {
-                row = ExcelUtil.createRow(sheet, column, rowStyles);
+                row = ExcelUtil.getOrCreateRow(sheet, column);
             }
-            doPopulateCaseStep(row, caseSteps.get(i));
+            doPopulateCaseStep(row, caseSteps.get(i), cellStyle);
             column++;
         }
 
         return caseSteps.size() - 1;
     }
 
-    private void doPopulateCaseStep(Row row, TestCaseStepVO caseStep) {
+    private void doPopulateCaseStep(Row row, TestCaseStepVO caseStep, CellStyle cellStyle) {
         Optional.ofNullable(caseStep.getTestStep()).ifPresent(v -> ExcelUtil.createCell(row, 7, ExcelUtil.CellType.TEXT, v));
         Optional.ofNullable(caseStep.getTestData()).ifPresent(v -> ExcelUtil.createCell(row, 8, ExcelUtil.CellType.TEXT, v));
         Optional.ofNullable(caseStep.getExpectedResult()).ifPresent(v -> ExcelUtil.createCell(row, 9, ExcelUtil.CellType.TEXT, v));
+        for (int i=0; i<10; i++) {
+            ExcelUtil.getOrCreateCell(row, i, CellType.STRING).setCellStyle(cellStyle);
+        }
     }
 
     private void prepareLookupData(TestIssueFolderVO folder) {
