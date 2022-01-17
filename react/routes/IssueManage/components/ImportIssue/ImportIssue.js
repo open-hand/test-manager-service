@@ -8,7 +8,7 @@ import {
 
 import { Progress, Divider } from 'choerodon-ui';
 import {
-  DataSet, Form, Button, message,
+  DataSet, Form, Button, message, Icon,
 } from 'choerodon-ui/pro';
 import moment from 'moment';
 import _, { find } from 'lodash';
@@ -350,7 +350,11 @@ function ImportIssue(props) {
     <div className="c7ntest-ImportIssue-form">
       {/* {renderOneForm('下载模板', ,
       )} */}
-      <span className="c7ntest-ImportIssue-form-tip">导入测试用例支持导入新增用例和导入更新用例</span>
+      <span className="c7ntest-ImportIssue-form-tip">
+        <Icon type="info" className="c7ntest-ImportIssue-form-tip-icon" />
+        导入测试用例支持导入新增用例和导入更新用例
+
+      </span>
       <ImportIssueForm
         title="下载模板"
         bottom={(
