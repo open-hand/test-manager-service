@@ -409,13 +409,17 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         workbook.setSheetOrder("README", 0);
 
         fillReadMeSheet(readMeSheet, workbook);
-        setReadMeSheetColumnWidth(readMeSheet);
+        setReadMeSheetColumnWidthAndRowHeight(readMeSheet);
     }
 
-    private void setReadMeSheetColumnWidth(Sheet sheet) {
+    private void setReadMeSheetColumnWidthAndRowHeight(Sheet sheet) {
         for (int i=0; i<README_SHEET_COLUMN_WIDTH.length; i++) {
             sheet.setColumnWidth(i, README_SHEET_COLUMN_WIDTH[i]);
         }
+        for (int i=0; i<20; i++) {
+            ExcelUtil.getOrCreateRow(sheet, i).setHeight((short) 320);
+        }
+        ExcelUtil.getOrCreateRow(sheet, 6).setHeight((short) 600);
     }
 
     private void addTestCaseSheet(Workbook workbook, List<String> priorityNameList) {
@@ -431,7 +435,9 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     // 填充测试用例页内容
     private void fillTestCaseSheet(Workbook workbook, Sheet testCaseSheet) {
         Row header = ExcelUtil.getOrCreateRow(testCaseSheet, 0);
+        header.setHeight((short) 320);
         CellStyle cellStyle = workbook.createCellStyle();
+        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
         cellStyle.setWrapText(true);
         Font boldFont = workbook.createFont();
         boldFont.setFontName("宋体");
@@ -547,6 +553,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     private void writeExampleHeader(Workbook workbook, Sheet readMeSheet) {
         Row row = ExcelUtil.getOrCreateRow(readMeSheet, 13);
         CellStyle cellStyle = workbook.createCellStyle();
+        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
         Font boldFont = workbook.createFont();
         boldFont.setFontName("宋体");
         boldFont.setBold(true);
@@ -562,6 +569,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     private void writeExample(Workbook workbook, Sheet sheet, int rowNum, String type, IssueCreateDTO issueCreateDTO, TestCaseStepDTO... steps) {
         // 红色字体
         CellStyle redFontStyle = workbook.createCellStyle();
+        redFontStyle.setVerticalAlignment(VerticalAlignment.CENTER);
         Font redFont = workbook.createFont();
         redFont.setFontName("宋体");
         redFont.setColor(Font.COLOR_RED);

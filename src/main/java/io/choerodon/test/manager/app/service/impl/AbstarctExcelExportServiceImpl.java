@@ -69,18 +69,20 @@ public abstract class AbstarctExcelExportServiceImpl<T, R> implements ExcelExpor
         caseStyle1.setBorderRight(BorderStyle.THIN);//右边框
         caseStyle1.setAlignment(HorizontalAlignment.LEFT);
         caseStyle1.setVerticalAlignment(VerticalAlignment.TOP);
+        caseStyle1.setWrapText(true);
         caseStyle2.setBorderLeft(BorderStyle.THIN);
         caseStyle2.setBorderRight(BorderStyle.THIN);
         caseStyle2.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         caseStyle2.setFillForegroundColor(HSSFColor.HSSFColorPredefined.WHITE.getIndex());
         caseStyle2.setAlignment(HorizontalAlignment.LEFT);
         caseStyle2.setVerticalAlignment(VerticalAlignment.TOP);
+        caseStyle2.setWrapText(true);
     }
 
     @Override
     public void populateSheetStyle(Sheet sheet) {
         //初始化SheetStyle
         sheet.setDefaultColumnWidth(20);
-        sheet.setDefaultRowHeight((short) 500);
+        sheet.setDefaultRowHeight((short) 320);
     }
 }

@@ -123,7 +123,7 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
         headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
         headerStyle.setFillForegroundColor(HSSFColor.HSSFColorPredefined.PALE_BLUE.getIndex());
         headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        row.setHeight((short) 300);
+        row.setHeight((short) 320);
         for (CaseHeader value : CaseHeader.values()) {
             ExcelUtil.createCell(row, i, ExcelUtil.CellType.TEXT, value.getValue());
             row.getCell(i++).setCellStyle(headerStyle);
@@ -193,6 +193,7 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
 
     private int populateCase(Sheet sheet, int columnNum, ExcelCaseVO excelCaseVO, CellStyle cellStyle) {
         Row row = ExcelUtil.getOrCreateRow(sheet, columnNum);
+        row.setHeight((short) 320);
         if (!ObjectUtils.isEmpty(excelCaseVO)) {
             Optional.ofNullable(excelCaseVO.getFolderName()).ifPresent(v -> ExcelUtil.createCell(row, 0, ExcelUtil.CellType.TEXT, v));
             Optional.ofNullable(excelCaseVO.getCaseNum()).ifPresent(v -> ExcelUtil.createCell(row, 1, ExcelUtil.CellType.TEXT, v));
@@ -222,6 +223,7 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
             } else {
                 row = ExcelUtil.getOrCreateRow(sheet, column);
             }
+            row.setHeight((short) 320);
             doPopulateCaseStep(row, caseSteps.get(i), cellStyle);
             column++;
         }
