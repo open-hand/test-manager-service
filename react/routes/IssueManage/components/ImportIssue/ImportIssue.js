@@ -343,8 +343,7 @@ function ImportIssue(props) {
       )} */}
       <span className="c7ntest-ImportIssue-form-tip">
         <Icon type="info" className="c7ntest-ImportIssue-form-tip-icon" />
-        导入测试用例支持导入新增用例和导入更新用例
-
+        <span>导入测试用例支持导入新增用例和导入更新用例</span>
       </span>
       <ImportIssueForm
         title="下载模板"
