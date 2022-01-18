@@ -89,7 +89,6 @@ function ImportIssue(props) {
   }), []);
   const [lastRecord, setLastRecord] = useState({});
   const [importRecord, setImportRecord] = useState({});
-  const [folder, setFolder] = useState(null);
   const uploadInput = useRef(null);
   const wsRef = useRef();
   const autoDownRef = useRef();
@@ -146,10 +145,6 @@ function ImportIssue(props) {
   const { visibleImportBtn, visibleCancelBtn } = importBtn;
 
   const upload = (file) => {
-    if (!folder) {
-      Choerodon.prompt('请选择目录');
-      return;
-    }
     const formData = new FormData();
     formData.append('file', file);
     dispatch({ type: 'import' });
@@ -292,11 +287,7 @@ function ImportIssue(props) {
   };
 
   const importExcel = () => {
-    dataSet.validate().then((res) => {
-      if (res) {
-        uploadInput.current.click();
-      }
-    });
+    uploadInput.current.click();
   };
   const renderProgress = () => {
     const {
