@@ -790,7 +790,8 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             String issueNumString = ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.LINK_ISSUE, row));
             String regex = "([0-9]+(，|,))*([0-9]+)";
             if (Pattern.matches(regex, issueNumString)) {
-                List<String> relatedIssueNums = splitByRegex(issueNumString);
+                // 去重
+                Set<String> relatedIssueNums = splitByRegex(issueNumString);
                 List<TestCaseLinkDTO> testCaseLinkDTOList = new ArrayList<>();
                 for (String issueNum : relatedIssueNums) {
                     IssueNumDTO issueNumDTO;
@@ -888,10 +889,10 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         return testIssueFolderMapper.select(folder);
     }
 
-    private List<String> splitByRegex(String value) {
+    private Set<String> splitByRegex(String value) {
         String regex1 = ",";
         String regex2 = "，";
-        List<String> result = new ArrayList<>();
+        Set<String> result = new HashSet<>();
         String[] array = value.split(regex1);
         for (String str : array) {
             result.addAll(Arrays.asList(str.split(regex2)));
