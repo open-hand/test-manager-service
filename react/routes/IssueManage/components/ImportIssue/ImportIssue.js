@@ -353,7 +353,7 @@ function ImportIssue(props) {
           </Button>
         )}
       >
-        您必须使用模板文件，录入用例信息
+        您可以下载模板文件并按照模板录入用例后再导入
       </ImportIssueForm>
       <ImportIssueForm
         title="导入测试用例"
