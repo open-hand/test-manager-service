@@ -103,7 +103,7 @@ function UploadInTable(props) {
               return false;
             }}
           >
-            <Button icon="backup-o">
+            <Button icon="file_upload_black-o">
               <span><FormattedMessage id="upload_attachment" /></span>
             </Button>
           </Upload>

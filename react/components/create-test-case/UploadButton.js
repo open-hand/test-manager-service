@@ -23,7 +23,7 @@ const UploadButton = ({ ...props }) => {
       {...props}
       className={`c7nagile-upload-button ${className}`}
     >
-      <Button funcType="raised" icon="backup-o">上传附件</Button>
+      <Button funcType="raised" icon="file_upload_black-o">上传附件</Button>
     </Upload>
   );
 };
