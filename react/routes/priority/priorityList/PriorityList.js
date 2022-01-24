@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import {
-  Table, Modal, Select, Icon, message, Menu,
+  Table, Select, Icon, message, Menu,
 } from 'choerodon-ui';
+import { Modal } from 'choerodon-ui/pro';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import {
   Content, Header, TabPage as Page, stores, Breadcrumb,
@@ -22,7 +23,6 @@ import './PriorityList.less';
 
 const { Option } = Select;
 const { AppState } = stores;
-const { confirm } = Modal;
 
 const ColorBlock = ({ color }) => (
   <div
@@ -181,10 +181,10 @@ class PriorityList extends Component {
     const that = this;
     const count = await priorityApi.checkBeforeDel(priority.id);
     const priorityList = PriorityStore.getPriorityList.filter((item) => item.id !== priority.id);
-    confirm({
+    Modal.open({
       className: 'c7n-deletePriority-confirm',
       title: intl.formatMessage({ id: 'priority.delete.title' }),
-      content: (
+      children: (
         <div>
           <div style={{ marginBottom: 10 }}>
             {`${intl.formatMessage({ id: 'priority.delete.title' })}：${priority.name}`}
@@ -226,9 +226,11 @@ class PriorityList extends Component {
               </div>
             )}
         </div>),
-      width: 520,
-      onOk() {
-        that.deletePriority(priority.id, priorityList[0].id);
+      style: {
+        width: 520,
+      },
+      onOk: async () => {
+        await that.deletePriority(priority.id, priorityList[0].id);
         that.setState({
           priorityId: false,
         });
@@ -258,9 +260,9 @@ class PriorityList extends Component {
     const { intl } = this.props;
     if (priority.enableFlag) {
       const that = this;
-      confirm({
+      Modal.open({
         title: intl.formatMessage({ id: 'priority.disable.title' }),
-        content: (
+        children: (
           <div>
             <div style={{ marginBottom: 10 }}>
               {intl.formatMessage({ id: 'priority.disable.title' })}
@@ -271,9 +273,8 @@ class PriorityList extends Component {
             <div>{intl.formatMessage({ id: 'priority.disable.notice' })}</div>
           </div>),
         onOk() {
-          that.enablePriority(priority);
+          return that.enablePriority(priority);
         },
-        onCancel() { },
         okText: '确认',
         cancelText: '取消',
       });
