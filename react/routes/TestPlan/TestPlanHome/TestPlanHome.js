@@ -283,8 +283,7 @@ function TestPlanHome({ history }) {
     testPlanStore.setExecutePagination({ current: 1, pageSize: 20 });
     testPlanStore.loadExecutes();
   };
-  const handleOnlyMeCheckedChange = (e) => {
-    const { checked } = e.target;
+  const handleOnlyMeCheckedChange = (checked) => {
     const { filter } = testPlanStore;
     if (checked) {
       filter.assignUser = AppState.userInfo.id;

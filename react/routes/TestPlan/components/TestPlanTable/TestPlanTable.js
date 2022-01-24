@@ -6,8 +6,9 @@ import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 import { observer } from 'mobx-react-lite';
 import {
-  Tooltip, Button, Icon, Checkbox,
+  Button,
 } from 'choerodon-ui';
+import { Tooltip, Icon, CheckBox } from 'choerodon-ui/pro';
 import { Action, stores } from '@choerodon/boot';
 import _, { isString } from 'lodash';
 import { useLoading } from '@choerodon/agile/lib/components/Loading';
@@ -421,12 +422,9 @@ const TestPlanTable = observer(({
               top: '-9px',
             }}
             >
-              <div>
-                <span style={{ color: 'var(--text-color)' }}>
-                  {formatMessage({ id: 'test.plan.only.me' })}
-                </span>
-                <Checkbox style={{ marginLeft: 4 }} checked={isSelf} onChange={onOnlyMeCheckedChange} />
-              </div>
+              <CheckBox style={{ marginLeft: 4, flexFlow: 'row-reverse' }} checked={isSelf} onChange={onOnlyMeCheckedChange}>
+                {formatMessage({ id: 'test.plan.only.me' })}
+              </CheckBox>
               <SelectUser
                 clearButton
                 placeholder={formatMessage({ id: 'test.plan.plan.executor' })}
