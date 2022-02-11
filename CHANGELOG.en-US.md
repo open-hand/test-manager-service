@@ -2,6 +2,21 @@
 
 All notable changes to choerodon-front-agile will be documented in this file.
 
+## [1.2.0] - 2022-02-11
+
+### Added
+
+- Test cases can be imported and updated in batches, combining the convenience of locally written cases and online management cases, so as to improve the efficiency of designing test schemes.
+
+### Changed
+
+- Optimize the import and export use case template so that the exported use cases can be directly imported into the system.
+
+### Fixed
+
+- Fixed the problem of horizontal scroll bar style when adding defects to the test plan.
+
+
 ## [1.1.0] - 2021-11-05
 
 ### Added
