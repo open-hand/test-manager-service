@@ -366,15 +366,16 @@ function ImportIssue(props) {
         <div className="c7ntest-ImportIssue-import-btn">
           {visibleCancelBtn
             ? (
-              <Button
-                disabled={!visibleCancelBtn}
-                hidden={!visibleCancelBtn}
-                funcType="raised"
-                color="primary"
-                onClick={handleCancelImport}
-              >
-                取消导入
-              </Button>
+              null
+              // <Button
+              //   disabled={!visibleCancelBtn}
+              //   hidden={!visibleCancelBtn}
+              //   funcType="raised"
+              //   color="primary"
+              //   onClick={handleCancelImport}
+              // >
+              //   取消导入
+              // </Button>
             )
             : (
               <Button
