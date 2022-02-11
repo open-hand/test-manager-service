@@ -17,6 +17,7 @@ import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.enums.ExcelTitleName;
 import io.choerodon.test.manager.infra.enums.TestAttachmentCode;
+import io.choerodon.test.manager.infra.enums.TestCycleType;
 import io.choerodon.test.manager.infra.enums.TestFileLoadHistoryEnums;
 import io.choerodon.test.manager.infra.feign.BaseFeignClient;
 import io.choerodon.test.manager.infra.feign.operator.AgileClientOperator;
@@ -894,6 +895,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         folder.setProjectId(projectId);
         folder.setName(folderName);
         folder.setParentId(parentId);
+        folder.setType(TestCycleType.CYCLE);
         return testIssueFolderMapper.select(folder);
     }
 
