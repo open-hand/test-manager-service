@@ -1,6 +1,8 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect } from 'react';
-import { Upload, Button } from 'choerodon-ui';
+import { Upload } from 'choerodon-ui';
+import { Button } from 'choerodon-ui/pro';
+
 import { randomWord } from '@/common/utils';
 import './UploadButton.less';
 
