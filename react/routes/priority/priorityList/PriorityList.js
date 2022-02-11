@@ -340,6 +340,7 @@ class PriorityList extends Component {
         <Breadcrumb />
         <Content>
           <Table
+            className="c7ntest-priority-table"
             filterBarPlaceholder={intl.formatMessage({ id: 'test.common.filter' })}
             columns={this.getColumns()}
             dataSource={getPriorityList}
