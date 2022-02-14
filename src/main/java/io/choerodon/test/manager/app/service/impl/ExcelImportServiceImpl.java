@@ -17,6 +17,7 @@ import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.enums.ExcelTitleName;
 import io.choerodon.test.manager.infra.enums.TestAttachmentCode;
+import io.choerodon.test.manager.infra.enums.TestCycleType;
 import io.choerodon.test.manager.infra.enums.TestFileLoadHistoryEnums;
 import io.choerodon.test.manager.infra.feign.BaseFeignClient;
 import io.choerodon.test.manager.infra.feign.operator.AgileClientOperator;
@@ -238,6 +239,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         //更新文件和用例的关联表
         List<IssueCreateDTO> issueCreateDTOList = new ArrayList<>();
         List<IssueCreateDTO> issueUpdateDTOList = new ArrayList<>();
+        List<Long> issueUpdateIds = new ArrayList<>();
         while (rowIterator.hasNext()) {
             currentRow = rowIterator.next();
             if (isSkip(currentRow, EXCEL_HEADERS.length)) {
@@ -254,7 +256,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                     failedCount++;
                 } else {
                     successfulCount++;
-                    addIssueList(issueCreateDTO, issueCreateDTOList, issueUpdateDTOList, isUpdate);
+                    addIssueList(issueCreateDTO, issueCreateDTOList, issueUpdateDTOList, isUpdate, issueUpdateIds);
                 }
                 lastRate = updateProgress(testFileLoadHistoryDTO, userId, progress / nonBlankRowCount * 100, lastRate);
             }
@@ -264,7 +266,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                insertCase(issueCreateDTOList, testProjectInfo);
             }
             if (issueUpdateDTOList.size() >= 100) {
-                updateCase(projectId, issueUpdateDTOList, testProjectInfo);
+                updateCase(projectId, issueUpdateDTOList, testProjectInfo, issueUpdateIds);
             }
             ++progress;
         }
@@ -272,7 +274,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             insertCase(issueCreateDTOList, testProjectInfo);
         }
         if (!CollectionUtils.isEmpty(issueUpdateDTOList)) {
-            updateCase(projectId, issueUpdateDTOList, testProjectInfo);
+            updateCase(projectId, issueUpdateDTOList, testProjectInfo, issueUpdateIds);
         }
         testProjectInfoMapper.updateByPrimaryKeySelective(testProjectInfo);
         testFileLoadHistoryDTO.setSuccessfulCount(successfulCount);
@@ -290,8 +292,14 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     private void addIssueList(IssueCreateDTO issueCreateDTO,
                               List<IssueCreateDTO> issueCreateDTOList,
                               List<IssueCreateDTO> issueUpdateDTOList,
-                              boolean isUpdate) {
+                              boolean isUpdate,
+                              List<Long> issueUpdateIds) {
         if (Boolean.TRUE.equals(isUpdate)) {
+            if (issueUpdateIds.contains(issueCreateDTO.getCaseId())) {
+                issueUpdateDTOList.removeIf(v -> Objects.equals(issueCreateDTO.getCaseId(), v.getCaseId()));
+                issueUpdateIds.remove(issueCreateDTO.getCaseId());
+            }
+            issueUpdateIds.add(issueCreateDTO.getCaseId());
             issueUpdateDTOList.add(issueCreateDTO);
         } else {
             issueCreateDTOList.add(issueCreateDTO);
@@ -303,7 +311,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         issueCreateDTOList.clear();
     }
 
-    private void updateCase(Long projectId, List<IssueCreateDTO> issueUpdateDTOList, TestProjectInfoDTO testProjectInfo) {
+    private void updateCase(Long projectId, List<IssueCreateDTO> issueUpdateDTOList, TestProjectInfoDTO testProjectInfo, List<Long> issueUpdateIds) {
         issueUpdateDTOList.forEach(updateCase -> {
             // 删除测试步骤
             testCaseStepService.removeStepByIssueId(projectId, updateCase.getCaseId());
@@ -312,6 +320,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         });
         testCaseService.batchUpdateTestCase(issueUpdateDTOList, testProjectInfo);
         issueUpdateDTOList.clear();
+        issueUpdateIds.clear();
     }
 
     /**
@@ -886,6 +895,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         folder.setProjectId(projectId);
         folder.setName(folderName);
         folder.setParentId(parentId);
+        folder.setType(TestCycleType.CYCLE);
         return testIssueFolderMapper.select(folder);
     }
 
