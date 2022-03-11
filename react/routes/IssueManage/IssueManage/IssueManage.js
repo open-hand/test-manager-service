@@ -71,6 +71,9 @@ class IssueManage extends Component {
     const { contents, searchArgs } = filter;
     IssueStore.setBarFilters(barFilters || contents || []);
     IssueStore.setFilter(searchArgs ? { searchArgs } : { searchArgs: {} });
+    if (folderId) {
+      IssueTreeStore.setCurrentFolder({});
+    }
     this.getTestCase(folderId || defaultTreeIdValue, current, pageSize);
   }
 
