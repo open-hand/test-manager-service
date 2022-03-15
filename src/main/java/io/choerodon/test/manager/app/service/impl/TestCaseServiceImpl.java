@@ -116,8 +116,8 @@ public class TestCaseServiceImpl implements TestCaseService {
     @Lazy
     private SnowflakeHelper snowflakeHelper;
 
-    @Value("${services.attachment.url}")
-    private String attachmentUrl;
+//    @Value("${services.attachment.url}")
+//    private String attachmentUrl;
 
     @Override
     public Page<IssueListTestVO> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId) {
