@@ -94,6 +94,8 @@ env:
     # 清理permission表中的旧接口和role_permission表中角色和权限层级不匹配的脏数据
     CHOERODON_CLEANPERMISSION: false
     SERVICES_ATTACHMENT_URL: http://minio.example.com
+    # bucket前缀
+    SERVICES_BUCKET_PREFIX: prefix
 
     ## Skywalking 配置参数
     # SKYWALKING_OPTS: >-

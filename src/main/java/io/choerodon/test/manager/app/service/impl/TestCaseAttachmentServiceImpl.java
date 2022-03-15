@@ -1,11 +1,12 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import io.choerodon.test.manager.app.service.FilePathService;
+import io.choerodon.test.manager.infra.enums.FileUploadBucket;
 import org.hzero.boot.file.FileClient;
 import org.hzero.core.util.ResponseUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -13,8 +14,6 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.URLDecoder;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -42,8 +41,6 @@ import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseAttachmentRelMapper;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper;
 
-//import io.choerodon.test.manager.infra.feign.FileFeignClient;
-
 /**
  * @author zhaotianxin
  * @since 2019/11/21
@@ -54,7 +51,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseAttachmentServiceImpl.class);
 
-    private static final String BACKETNAME = "test";
+//    private static final String BACKETNAME = "test";
 
     @Autowired
     private  FileFeignClient fileFeignClient;
@@ -79,8 +76,10 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
     @Autowired
     private TestCycleCaseAttachmentRelMapper testCycleCaseAttachmentRelMapper;
 
-    @Value("${services.attachment.url}")
-    private String attachmentUrl;
+//    @Value("${services.attachment.url}")
+//    private String attachmentUrl;
+    @Autowired
+    private FilePathService filePathService;
     @Autowired
     private FileClient fileClient;
 
@@ -115,16 +114,16 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
 //        return true;
 //    }
 
-    private String dealUrl(String url) {
-        String dealUrl = null;
-        try {
-            URL netUrl = new URL(url);
-            dealUrl = netUrl.getFile();
-        } catch (MalformedURLException e) {
-            throw new CommonException(e.getMessage());
-        }
-        return dealUrl;
-    }
+//    private String dealUrl(String url) {
+//        String dealUrl = null;
+//        try {
+//            URL netUrl = new URL(url);
+//            dealUrl = netUrl.getFile();
+//        } catch (MalformedURLException e) {
+//            throw new CommonException(e.getMessage());
+//        }
+//        return dealUrl;
+//    }
 
     @Override
     public List<TestCaseAttachmentDTO> create(Long projectId, Long issueId, HttpServletRequest request) {
@@ -133,15 +132,17 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
         if (files != null && !files.isEmpty()) {
             for (MultipartFile multipartFile : files) {
                 String fileName = multipartFile.getOriginalFilename();
-                String path = fileClient.uploadFile(projectDTO.getOrganizationId(),BACKETNAME,null, fileName, multipartFile);
-                dealIssue(projectId, issueId, fileName, dealUrl(path));
+                String path = fileClient.uploadFile(projectDTO.getOrganizationId(), FileUploadBucket.TEST_BUCKET.bucket(),null, fileName, multipartFile);
+                String relativePath = filePathService.generateRelativePath(path);
+                dealIssue(projectId, issueId, fileName, relativePath);
             }
         }
         TestCaseAttachmentDTO issueAttachmentDTO = new TestCaseAttachmentDTO();
         issueAttachmentDTO.setCaseId(issueId);
         List<TestCaseAttachmentDTO> issueAttachmentDTOList = testAttachmentMapper.select(issueAttachmentDTO);
         if (issueAttachmentDTOList != null && !issueAttachmentDTOList.isEmpty()) {
-            issueAttachmentDTOList.forEach(attachment -> attachment.setUrl(attachmentUrl + attachment.getUrl()));
+            issueAttachmentDTOList.forEach(attachment -> attachment.setUrl(
+                    filePathService.generateFullPath(FileUploadBucket.TEST_BUCKET.bucket(), attachment.getUrl())));
         }
         testCaseService.updateVersionNum(issueId);
         List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(projectId,issueId);
@@ -160,7 +161,8 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
         Boolean result = iIssueAttachmentService.deleteBase(issueAttachmentDTO.getAttachmentId());
 
         TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO = new TestCycleCaseAttachmentRelDTO();
-        testCycleCaseAttachmentRelDTO.setUrl(attachmentUrl+issueAttachmentDTO.getUrl());
+        testCycleCaseAttachmentRelDTO.setUrl(
+                filePathService.generateFullPath(FileUploadBucket.TEST_BUCKET.bucket(), issueAttachmentDTO.getUrl()));
         List<TestCycleCaseAttachmentRelDTO> testCycleCaseAttachmentRelDTOS = testCycleCaseAttachmentRelMapper.select(testCycleCaseAttachmentRelDTO);
 
         if(CollectionUtils.isEmpty(testCycleCaseAttachmentRelDTOS)){
@@ -168,7 +170,8 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
             try {
                 ProjectDTO projectDTO = baseFeignClient.queryProject(projectId).getBody();
                 url = URLDecoder.decode(issueAttachmentDTO.getUrl(), "UTF-8");
-                fileFeignClient.deleteFileByUrl(projectDTO.getOrganizationId(),BACKETNAME, Arrays.asList(attachmentUrl + url));
+                String fullPath = filePathService.generateFullPath(FileUploadBucket.TEST_BUCKET.bucket(), url);
+                fileFeignClient.deleteFileByUrl(projectDTO.getOrganizationId(), FileUploadBucket.TEST_BUCKET.bucket(), Arrays.asList(fullPath));
             } catch (Exception e) {
                 LOGGER.error("error.attachment.delete", e);
             }
@@ -191,7 +194,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
         List<String> result = new ArrayList<>();
         for (MultipartFile multipartFile : files) {
             String fileName = multipartFile.getOriginalFilename();
-            String path = fileClient.uploadFile(projectDTO.getOrganizationId(),BACKETNAME, null,fileName, multipartFile);
+            String path = fileClient.uploadFile(projectDTO.getOrganizationId(), FileUploadBucket.TEST_BUCKET.bucket(), null,fileName, multipartFile);
             result.add(path);
         }
         return result;
@@ -249,7 +252,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
         String fileName = testCaseAttachmentCombineVO.getFileName();
 
         Map<String, String> args = new HashMap<>(1);
-        args.put("bucketName", BACKETNAME);
+        args.put("bucketName", FileUploadBucket.TEST_BUCKET.bucket());
         String path = ResponseUtils.getResponse(fileFeignClient.fragmentCombineBlock(
                 projectDTO.getOrganizationId(),
                 testCaseAttachmentCombineVO.getGuid(),
@@ -264,8 +267,10 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
         if (path == null) {
             throw new CommonException("error.attachment.combine.failed");
         }
-        TestCaseAttachmentDTO attachment = dealIssue(projectId, caseId, fileName, dealUrl(path));
-        attachment.setUrl(attachmentUrl + attachment.getUrl());
+        String relativePath = filePathService.generateRelativePath(path);
+        TestCaseAttachmentDTO attachment = dealIssue(projectId, caseId, fileName, relativePath);
+        String fullPath = filePathService.generateFullPath(FileUploadBucket.TEST_BUCKET.bucket(), attachment.getUrl());
+        attachment.setUrl(fullPath);
         testCaseService.updateVersionNumNotObjectVersion(caseId, DetailsHelper.getUserDetails().getUserId());
 
         List<TestCycleCaseDTO> testCycleCases = testCycleCaseMapper.listAsyncCycleCase(projectId, caseId);
