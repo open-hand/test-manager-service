@@ -22,7 +22,7 @@ function LinkList(props) {
     const { issue, i, deleteLink } = props;
     const {
       priorityVO, issueTypeVO, issueNum, summary, issueId, assigneeId, assigneeName, imageUrl,
-      linkId, ward, statusVO,
+      linkId, ward, statusVO, applyType,
     } = issue;
     const { colour: priorityColor, name: priorityName } = priorityVO || {};
     const { colour: typeColor, name: typeName, typeCode } = issueTypeVO || {};
@@ -53,7 +53,7 @@ function LinkList(props) {
               }}
               role="none"
             >
-              <Link to={issueLink(issueId, typeCode, issueNum)}>
+              <Link to={issueLink(issueId, typeCode, issueNum, false, applyType)}>
                 {`${issueNum} ${summary}`}
               </Link>
             </p>
