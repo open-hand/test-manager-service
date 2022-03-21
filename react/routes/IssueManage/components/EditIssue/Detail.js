@@ -10,6 +10,7 @@ import {
   getProjectId,
 } from '@/common/utils';
 import useHasAgile from '@/hooks/useHasAgile';
+import useIsWaterfall from '@/hooks/useIsWaterfall';
 import UserHead from '@/components/UserHead';
 import ChunkUploader from '@/components/chunk-uploader';
 import openLinkIssueModal from '../CreateLinkTask';
@@ -38,6 +39,7 @@ function Detail({
     store, caseId, prefixCls,
   } = useContext(EditIssueContext);
   const hasAgile = useHasAgile();
+  const { isWaterfall } = useIsWaterfall();
   const { issueInfo, linkIssues } = store;
   const {
     folder, attachment, createUser, priorityVO,
@@ -156,7 +158,7 @@ function Detail({
         </section>
         <div className="c7nTest-detail-divider" />
         {/** 工作项链接 */}
-        {hasAgile && (
+        {(hasAgile || isWaterfall) && (
           <section id="link_task" style={{ marginBottom: 20 }}>
             <TitleWrap title="工作项链接">
               <div style={{ marginLeft: '14px' }}>

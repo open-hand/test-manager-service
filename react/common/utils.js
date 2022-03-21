@@ -160,6 +160,15 @@ export function getParams(url) {
   }
   return theRequest;
 }
+
+export function commonLinkSearch() {
+  const menu = AppState.currentMenuType;
+  const {
+    type, id: projectId, name, organizationId,
+  } = menu;
+  return `type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&orgId=${organizationId}`;
+}
+
 export function commonLink(link) {
   const menu = AppState.currentMenuType;
   const {
@@ -168,17 +177,20 @@ export function commonLink(link) {
 
   return encodeURI(`/testManager${link}?type=${type}&id=${projectId}&organizationId=${organizationId}&orgId=${organizationId}&name=${name}`);
 }
-export function issueLink(issueId, typeCode, issueName, folderId) {
+export function issueLink(issueId, typeCode, issueName, folderId, applyType) {
   const menu = AppState.currentMenuType;
   const {
     type, id: projectId, name, organizationId,
   } = menu;
-  if (typeCode === 'issue_test' || typeCode === 'issue_auto_test') {
-    return encodeURI(`/testManager/IssueManage?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&orgId=${organizationId}&paramIssueId=${issueId}&paramName=${issueName}&folderId=${folderId}`);
-  } if (issueName) {
-    return encodeURI(`/agile/work-list/issue?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&orgId=${organizationId}&paramIssueId=${issueId}&paramName=${issueName}`);
+  if (applyType === 'waterfall') {
+    return encodeURI(`/waterfall/wbs?${commonLinkSearch()}&paramIssueId=${issueId}${issueName ? `&paramName=${issueName}` : ''}`);
   }
-  return encodeURI(`/agile/work-list/issue?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&orgId=${organizationId}&paramIssueId=${issueId}`);
+  if (typeCode === 'issue_test' || typeCode === 'issue_auto_test') {
+    return encodeURI(`/testManager/IssueManage?${commonLinkSearch()}&paramIssueId=${issueId}&paramName=${issueName}&folderId=${folderId}`);
+  } if (issueName) {
+    return encodeURI(`/agile/work-list/issue?${commonLinkSearch()}&paramIssueId=${issueId}&paramName=${issueName}`);
+  }
+  return encodeURI(`/agile/work-list/issue?${commonLinkSearch()}&paramIssueId=${issueId}`);
 }
 export function createIssueLink() {
   const menu = AppState.currentMenuType;
