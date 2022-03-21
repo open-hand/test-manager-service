@@ -15,10 +15,7 @@ import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.vo.ExcelReadMeOptionVO;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.infra.dto.*;
-import io.choerodon.test.manager.infra.enums.ExcelTitleName;
-import io.choerodon.test.manager.infra.enums.TestAttachmentCode;
-import io.choerodon.test.manager.infra.enums.TestCycleType;
-import io.choerodon.test.manager.infra.enums.TestFileLoadHistoryEnums;
+import io.choerodon.test.manager.infra.enums.*;
 import io.choerodon.test.manager.infra.feign.BaseFeignClient;
 import io.choerodon.test.manager.infra.feign.operator.AgileClientOperator;
 import io.choerodon.test.manager.infra.mapper.*;
@@ -955,7 +952,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     }
 
     private String uploadErrorWorkbook(Long organizationId, Workbook errorWorkbook, TestFileLoadHistoryDTO testFileLoadHistoryDTO) {
-        String url = fileClient.uploadFile(organizationId, TestAttachmentCode.ATTACHMENT_BUCKET, null,
+        String url = fileClient.uploadFile(organizationId, FileUploadBucket.TEST_BUCKET.bucket(), null,
                 new MultipartExcel("file", ".xlsx", errorWorkbook));
 
         boolean failed = false;

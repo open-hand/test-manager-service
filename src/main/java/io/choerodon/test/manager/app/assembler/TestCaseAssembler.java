@@ -8,9 +8,11 @@ import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.oauth.CustomUserDetails;
 import io.choerodon.mybatis.domain.AuditDomain;
 import io.choerodon.test.manager.api.vo.*;
+import io.choerodon.test.manager.app.service.FilePathService;
 import io.choerodon.test.manager.app.service.TestCaseLinkService;
 import io.choerodon.test.manager.app.service.UserService;
 import io.choerodon.test.manager.infra.dto.*;
+import io.choerodon.test.manager.infra.enums.FileUploadBucket;
 import io.choerodon.test.manager.infra.mapper.*;
 import org.apache.commons.lang3.StringUtils;
 import org.hzero.core.base.BaseConstants;
@@ -19,7 +21,6 @@ import org.modelmapper.TypeToken;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -58,9 +59,11 @@ public class TestCaseAssembler {
 
     @Autowired
     private TestPriorityMapper testPriorityMapper;
+    @Autowired
+    private FilePathService filePathService;
 
-    @Value("${services.attachment.url}")
-    private String attachmentUrl;
+//    @Value("${services.attachment.url}")
+//    private String attachmentUrl;
 
     private static final String TYPE = "CYCLE_CASE";
     private ModelMapper modelMapper = new ModelMapper();
@@ -163,7 +166,8 @@ public class TestCaseAssembler {
         testCaseAttachmentDTO.setCaseId(testCaseDTO.getCaseId());
         List<TestCaseAttachmentDTO> attachment = testAttachmentMapper.select(testCaseAttachmentDTO);
         if (!CollectionUtils.isEmpty(attachment)) {
-            attachment.forEach(v -> v.setUrl(attachmentUrl + v.getUrl()));
+            attachment.forEach(v -> v.setUrl(
+                    filePathService.generateFullPath(FileUploadBucket.TEST_BUCKET.bucket(), v.getUrl())));
             testCaseInfoVO.setAttachment(attachment);
         }
         // 查询测试用例所属的文件夹

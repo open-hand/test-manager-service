@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import io.choerodon.core.client.MessageClientC7n;
 import io.choerodon.test.manager.api.vo.agile.ProjectDTO;
+import io.choerodon.test.manager.infra.enums.FileUploadBucket;
 import io.choerodon.test.manager.infra.enums.TestCycleType;
 import io.choerodon.test.manager.infra.feign.BaseFeignClient;
 import io.choerodon.test.manager.infra.feign.operator.AgileClientOperator;
@@ -346,7 +347,7 @@ public class ExcelServiceImpl implements ExcelService {
             testFileLoadHistoryWithRateVO.setFileStream(Arrays.toString(content));
 
             //返回上载结果
-            String path = fileClient.uploadFile(organizationId,TestAttachmentCode.ATTACHMENT_BUCKET,null, fileName, file);
+            String path = fileClient.uploadFile(organizationId, FileUploadBucket.TEST_BUCKET.bucket(), null, fileName, file);
 
             testFileLoadHistoryWithRateVO.setFileStream(null);
             testFileLoadHistoryWithRateVO.setSuccessfulCount(Integer.toUnsignedLong(sum));

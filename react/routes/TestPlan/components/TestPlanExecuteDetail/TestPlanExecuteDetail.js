@@ -372,7 +372,7 @@ function TestPlanExecuteDetail(props) {
         </Header>
 
         <Breadcrumb title={detailData ? renderBreadcrumbTitle(summary) : null} />
-        <Content style={{ padding: visible ? '0 437px 0 0' : 0 }}>
+        <Content style={{ padding: visible ? '0 437px 0 0' : ' 0 0 20px 0' }}>
 
           <LoadingProvider style={{ zIndex: 'auto' }}>
             <Loading loadId="detail" loading={ExecuteDetailStore.loading} />
