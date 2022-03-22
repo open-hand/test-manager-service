@@ -20,6 +20,7 @@ import renderSprint from '@choerodon/agile/lib/components/column-renderer/sprint
 import Record from 'choerodon-ui/pro/lib/data-set/Record';
 import { find } from 'lodash';
 import { getProjectId } from '@/common/utils';
+import { loadStatusByProject } from '@/api/agileApi';
 
 interface Props {
   modal?: IModalProps,
@@ -124,7 +125,7 @@ const LinkIssueModal: React.FC<Props> = (props) => {
         queryBar={() => (
           <Form dataSet={queryDataSet} columns={6}>
             <TextField colSpan={2} name="content" prefix={<Icon type="search" />} />
-            <SelectStatus name="status" request={() => statusApi.loadByProject('agile')} />
+            <SelectStatus name="status" request={() => loadStatusByProject('')} />
             <SelectPriority name="priority" />
             <SelectUser name="assignee" />
             <SelectSprint name="sprint" />
