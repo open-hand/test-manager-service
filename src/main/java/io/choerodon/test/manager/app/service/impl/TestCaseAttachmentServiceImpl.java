@@ -132,7 +132,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
         if (files != null && !files.isEmpty()) {
             for (MultipartFile multipartFile : files) {
                 String fileName = multipartFile.getOriginalFilename();
-                String path = fileClient.uploadFile(projectDTO.getOrganizationId(), FileUploadBucket.TEST_BUCKET.bucket(),null, fileName, multipartFile);
+                String path = fileClient.uploadFile(projectDTO.getOrganizationId(), filePathService.bucketName(),null, fileName, multipartFile);
                 String relativePath = filePathService.generateRelativePath(path);
                 dealIssue(projectId, issueId, fileName, relativePath);
             }
@@ -142,7 +142,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
         List<TestCaseAttachmentDTO> issueAttachmentDTOList = testAttachmentMapper.select(issueAttachmentDTO);
         if (issueAttachmentDTOList != null && !issueAttachmentDTOList.isEmpty()) {
             issueAttachmentDTOList.forEach(attachment -> attachment.setUrl(
-                    filePathService.generateFullPath(FileUploadBucket.TEST_BUCKET.bucket(), attachment.getUrl())));
+                    filePathService.generateFullPath(attachment.getUrl())));
         }
         testCaseService.updateVersionNum(issueId);
         List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(projectId,issueId);
@@ -162,7 +162,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
 
         TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO = new TestCycleCaseAttachmentRelDTO();
         testCycleCaseAttachmentRelDTO.setUrl(
-                filePathService.generateFullPath(FileUploadBucket.TEST_BUCKET.bucket(), issueAttachmentDTO.getUrl()));
+                filePathService.generateFullPath(issueAttachmentDTO.getUrl()));
         List<TestCycleCaseAttachmentRelDTO> testCycleCaseAttachmentRelDTOS = testCycleCaseAttachmentRelMapper.select(testCycleCaseAttachmentRelDTO);
 
         if(CollectionUtils.isEmpty(testCycleCaseAttachmentRelDTOS)){
@@ -170,8 +170,8 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
             try {
                 ProjectDTO projectDTO = baseFeignClient.queryProject(projectId).getBody();
                 url = URLDecoder.decode(issueAttachmentDTO.getUrl(), "UTF-8");
-                String fullPath = filePathService.generateFullPath(FileUploadBucket.TEST_BUCKET.bucket(), url);
-                fileFeignClient.deleteFileByUrl(projectDTO.getOrganizationId(), FileUploadBucket.TEST_BUCKET.bucket(), Arrays.asList(fullPath));
+                String fullPath = filePathService.generateFullPath(url);
+                fileFeignClient.deleteFileByUrl(projectDTO.getOrganizationId(), filePathService.bucketName(), Arrays.asList(fullPath));
             } catch (Exception e) {
                 LOGGER.error("error.attachment.delete", e);
             }
@@ -194,7 +194,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
         List<String> result = new ArrayList<>();
         for (MultipartFile multipartFile : files) {
             String fileName = multipartFile.getOriginalFilename();
-            String path = fileClient.uploadFile(projectDTO.getOrganizationId(), FileUploadBucket.TEST_BUCKET.bucket(), null,fileName, multipartFile);
+            String path = fileClient.uploadFile(projectDTO.getOrganizationId(), filePathService.bucketName(), null,fileName, multipartFile);
             result.add(path);
         }
         return result;
@@ -252,7 +252,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
         String fileName = testCaseAttachmentCombineVO.getFileName();
 
         Map<String, String> args = new HashMap<>(1);
-        args.put("bucketName", FileUploadBucket.TEST_BUCKET.bucket());
+        args.put("bucketName", filePathService.bucketName());
         String path = ResponseUtils.getResponse(fileFeignClient.fragmentCombineBlock(
                 projectDTO.getOrganizationId(),
                 testCaseAttachmentCombineVO.getGuid(),
@@ -269,7 +269,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
         }
         String relativePath = filePathService.generateRelativePath(path);
         TestCaseAttachmentDTO attachment = dealIssue(projectId, caseId, fileName, relativePath);
-        String fullPath = filePathService.generateFullPath(FileUploadBucket.TEST_BUCKET.bucket(), attachment.getUrl());
+        String fullPath = filePathService.generateFullPath(attachment.getUrl());
         attachment.setUrl(fullPath);
         testCaseService.updateVersionNumNotObjectVersion(caseId, DetailsHelper.getUserDetails().getUserId());
 

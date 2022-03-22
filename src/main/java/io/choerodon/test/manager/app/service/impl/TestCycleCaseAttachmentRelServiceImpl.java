@@ -75,7 +75,7 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
     @Override
     public void deleteAttachmentRel(Long projectId,Long attachId) {
         ProjectDTO projectDTO = baseFeignClient.queryProject(projectId).getBody();
-        baseDelete(projectDTO.getOrganizationId(), FileUploadBucket.TEST_BUCKET.bucket(), attachId);
+        baseDelete(projectDTO.getOrganizationId(), filePathService.bucketName(), attachId);
     }
 
     @Override
@@ -92,7 +92,7 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
         testCycleCaseAttachmentRelDTO.setAttachmentType(type);
         ProjectDTO projectDTO= baseFeignClient.queryProject(projectId).getBody();
         Optional.ofNullable(testCycleCaseAttachmentRelMapper.select(testCycleCaseAttachmentRelDTO)).ifPresent(m ->
-                m.forEach(v -> baseDelete(projectDTO.getOrganizationId(), FileUploadBucket.TEST_BUCKET.bucket(), v.getId()))
+                m.forEach(v -> baseDelete(projectDTO.getOrganizationId(), filePathService.bucketName(), v.getId()))
         );
     }
 
@@ -106,7 +106,7 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
         ProjectDTO projectDTO = baseFeignClient.queryProject(projectId).getBody();
         for (MultipartFile multipartFile : files) {
             String fileName = multipartFile.getOriginalFilename();
-            upload(projectDTO.getOrganizationId(), FileUploadBucket.TEST_BUCKET.bucket(), fileName, multipartFile, attachmentLinkId, attachmentType, comment);
+            upload(projectDTO.getOrganizationId(), filePathService.bucketName(), fileName, multipartFile, attachmentLinkId, attachmentType, comment);
         }
         TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO = new TestCycleCaseAttachmentRelDTO();
         testCycleCaseAttachmentRelDTO.setAttachmentType(attachmentType);
@@ -133,7 +133,7 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
                 testCycleCaseAttachmentRelDTO.setAttachmentName(attachmentDTO.getFileName());
                 testCycleCaseAttachmentRelDTO.setAttachmentLinkId(v.getExecuteId());
                 testCycleCaseAttachmentRelDTO.setAttachmentType(TestAttachmentCode.ATTACHMENT_CYCLE_CASE);
-                String fullPath = filePathService.generateFullPath(FileUploadBucket.TEST_BUCKET.bucket(), attachmentDTO.getUrl());
+                String fullPath = filePathService.generateFullPath(attachmentDTO.getUrl());
                 testCycleCaseAttachmentRelDTO.setUrl(fullPath);
                 testCycleCaseAttachmentRelDTO.setCreatedBy(attachmentDTO.getCreatedBy());
                 testCycleCaseAttachmentRelDTO.setLastUpdatedBy(attachmentDTO.getLastUpdatedBy());
