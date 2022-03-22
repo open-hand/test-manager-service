@@ -164,6 +164,8 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     private TestCaseMapper testCaseMapper;
     @Autowired
     private TestCaseLinkService testCaseLinkService;
+    @Autowired
+    private FilePathService filePathService;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -952,7 +954,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     }
 
     private String uploadErrorWorkbook(Long organizationId, Workbook errorWorkbook, TestFileLoadHistoryDTO testFileLoadHistoryDTO) {
-        String url = fileClient.uploadFile(organizationId, FileUploadBucket.TEST_BUCKET.bucket(), null,
+        String url = fileClient.uploadFile(organizationId, filePathService.bucketName(), null,
                 new MultipartExcel("file", ".xlsx", errorWorkbook));
 
         boolean failed = false;

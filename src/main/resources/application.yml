@@ -160,4 +160,4 @@ services:
   attachment:
     url: ${SERVICES_ATTACHMENT_URL:example.com}
   bucket:
-    prefix: ${SERVICES_BUCKET_PREFIX:prefix}
+    merged: ${SERVICES_BUCKET_NAME:false}

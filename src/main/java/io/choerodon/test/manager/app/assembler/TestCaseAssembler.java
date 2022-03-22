@@ -167,7 +167,7 @@ public class TestCaseAssembler {
         List<TestCaseAttachmentDTO> attachment = testAttachmentMapper.select(testCaseAttachmentDTO);
         if (!CollectionUtils.isEmpty(attachment)) {
             attachment.forEach(v -> v.setUrl(
-                    filePathService.generateFullPath(FileUploadBucket.TEST_BUCKET.bucket(), v.getUrl())));
+                    filePathService.generateFullPath(v.getUrl())));
             testCaseInfoVO.setAttachment(attachment);
         }
         // 查询测试用例所属的文件夹
