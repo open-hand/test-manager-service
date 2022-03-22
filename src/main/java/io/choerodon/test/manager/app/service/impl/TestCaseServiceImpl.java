@@ -501,7 +501,25 @@ public class TestCaseServiceImpl implements TestCaseService {
         List<String> excludeTypeCodes = new ArrayList<>();
         excludeTypeCodes.add("issue_epic");
         otherArgs.put("excludeTypeCodes", excludeTypeCodes);
+
+        ProjectDTO projectDTO = baseFeignClient.queryProject(projectId).getBody();
+        List<String> applyTypes = new ArrayList<>();
+        if (Boolean.TRUE.equals(checkContainProjectCategory(projectDTO.getCategories(), "N_WATERFALL_AGILE"))) {
+            applyTypes.add("waterfall");
+            applyTypes.add("agile");
+        } else if (Boolean.TRUE.equals(checkContainProjectCategory(projectDTO.getCategories(), "N_WATERFALL"))) {
+            applyTypes.add("waterfall");
+        }
+        searchDTO.setApplyTypes(applyTypes);
         return agileClientOperator.queryListIssueWithSub(projectId, searchDTO, pageRequest, organizationId);
+    }
+
+    private Boolean checkContainProjectCategory(List<ProjectCategoryDTO> categories, String category){
+        if (CollectionUtils.isEmpty(categories)) {
+            return false;
+        }
+        Set<String> codes = categories.stream().map(ProjectCategoryDTO::getCode).collect(Collectors.toSet());
+        return codes.contains(category);
     }
 
     @Override
