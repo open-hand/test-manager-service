@@ -1,3 +1,4 @@
+import { axios } from '@choerodon/boot';
 import { getProjectId, request, getOrganizationId } from '../common/utils';
 
 /**
@@ -179,4 +180,16 @@ export function autoTransform(data) {
 
 export function getTransform(issueTypeId, statusId) {
   return request.get(`/test/v1/projects/${getProjectId()}/execution_status_change_setting/query_option?issueTypeId=${issueTypeId}&statusId=${statusId}`);
+}
+
+/**
+ * 加载当前项目下所有状态
+ * @param applyType
+ */
+export function loadStatusByProject(applyType) {
+  return axios({
+    method: 'get',
+    url: `/agile/v1/projects/${getProjectId()}/schemes/query_status_by_project_id`,
+    params: { apply_type: applyType },
+  });
 }
