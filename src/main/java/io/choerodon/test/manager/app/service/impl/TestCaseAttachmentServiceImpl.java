@@ -253,6 +253,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
 
         Map<String, String> args = new HashMap<>(1);
         args.put("bucketName", filePathService.bucketName());
+        args.put("directory", filePathService.dirName());
         String path = ResponseUtils.getResponse(fileFeignClient.fragmentCombineBlock(
                 projectDTO.getOrganizationId(),
                 testCaseAttachmentCombineVO.getGuid(),
