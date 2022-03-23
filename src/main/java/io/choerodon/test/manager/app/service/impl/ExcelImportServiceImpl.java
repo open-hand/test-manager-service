@@ -954,7 +954,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     }
 
     private String uploadErrorWorkbook(Long organizationId, Workbook errorWorkbook, TestFileLoadHistoryDTO testFileLoadHistoryDTO) {
-        String url = fileClient.uploadFile(organizationId, filePathService.bucketName(), null,
+        String url = fileClient.uploadFile(organizationId, filePathService.bucketName(), filePathService.dirName(),
                 new MultipartExcel("file", ".xlsx", errorWorkbook));
 
         boolean failed = false;
