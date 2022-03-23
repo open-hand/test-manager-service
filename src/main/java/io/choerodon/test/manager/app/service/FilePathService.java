@@ -11,4 +11,6 @@ public interface FilePathService {
     String generateFullPath(String relativePath);
 
     String bucketName();
+
+    String dirName();
 }

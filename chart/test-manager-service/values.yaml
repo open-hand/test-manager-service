@@ -93,8 +93,8 @@ env:
 
     # 清理permission表中的旧接口和role_permission表中角色和权限层级不匹配的脏数据
     CHOERODON_CLEANPERMISSION: false
-    # 文件服务域名+bucket
-    SERVICES_ATTACHMENT_URL: http://minio.example.com/test
+    # 文件服务域名
+    SERVICES_ATTACHMENT_URL: http://minio.example.com
     # 是否迁移minio服务并合并bucket,true bucket为test-service,false bucket为原来的默认test
     SERVICES_BUCKET_MERGED: false
 

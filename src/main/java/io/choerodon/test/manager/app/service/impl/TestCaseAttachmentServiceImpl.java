@@ -132,7 +132,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
         if (files != null && !files.isEmpty()) {
             for (MultipartFile multipartFile : files) {
                 String fileName = multipartFile.getOriginalFilename();
-                String path = fileClient.uploadFile(projectDTO.getOrganizationId(), filePathService.bucketName(),null, fileName, multipartFile);
+                String path = fileClient.uploadFile(projectDTO.getOrganizationId(), filePathService.bucketName(),filePathService.dirName(), fileName, multipartFile);
                 String relativePath = filePathService.generateRelativePath(path);
                 dealIssue(projectId, issueId, fileName, relativePath);
             }
@@ -194,7 +194,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
         List<String> result = new ArrayList<>();
         for (MultipartFile multipartFile : files) {
             String fileName = multipartFile.getOriginalFilename();
-            String path = fileClient.uploadFile(projectDTO.getOrganizationId(), filePathService.bucketName(), null,fileName, multipartFile);
+            String path = fileClient.uploadFile(projectDTO.getOrganizationId(), filePathService.bucketName(), filePathService.dirName(),fileName, multipartFile);
             result.add(path);
         }
         return result;

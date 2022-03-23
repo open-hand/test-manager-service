@@ -349,7 +349,7 @@ public class ExcelServiceImpl implements ExcelService {
             testFileLoadHistoryWithRateVO.setFileStream(Arrays.toString(content));
 
             //返回上载结果
-            String path = fileClient.uploadFile(organizationId, filePathService.bucketName(), null, fileName, file);
+            String path = fileClient.uploadFile(organizationId, filePathService.bucketName(), filePathService.dirName(), fileName, file);
 
             testFileLoadHistoryWithRateVO.setFileStream(null);
             testFileLoadHistoryWithRateVO.setSuccessfulCount(Integer.toUnsignedLong(sum));

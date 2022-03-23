@@ -25,6 +25,8 @@ public class FilePathServiceImpl implements FilePathService {
 
     private static final String DIVIDING_LINE = "/";
 
+    private static final String DIR_TEST = "test";
+
     @Override
     public String generateRelativePath(String fullPath) {
         if (ObjectUtils.isEmpty(fullPath)) {
@@ -55,6 +57,15 @@ public class FilePathServiceImpl implements FilePathService {
             return FileUploadBucket.TEST_BUCKET.bucket();
         } else {
             return TestAttachmentCode.ATTACHMENT_BUCKET;
+        }
+    }
+
+    @Override
+    public String dirName() {
+        if (bucketMerged) {
+            return DIR_TEST;
+        } else {
+            return null;
         }
     }
 }
