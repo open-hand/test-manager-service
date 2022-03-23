@@ -82,7 +82,8 @@ public class TestCaseAssembler {
         testCaseRepVO.setCaseNum(getIssueNum(testCaseDTO.getProjectId(), testCaseDTO.getCaseNum()));
         testCaseRepVO.setCreateUser(map.get(testCaseDTO.getCreatedBy()));
         testCaseRepVO.setLastUpdateUser(map.get(testCaseDTO.getLastUpdatedBy()));
-        testCaseRepVO.setFolderName(folderMap.get(testCaseDTO.getFolderId()).getName());
+        String folderName = Optional.ofNullable(folderMap.get(testCaseDTO.getFolderId())).map(TestIssueFolderDTO::getName).orElse(null);
+        testCaseRepVO.setFolderName(folderName);
         testCaseRepVO.setPriorityVO(new PriorityVO(testCaseDTO.getPriorityId(), testCaseDTO.getPriorityName(), testCaseDTO.getPriorityColour(), testCaseDTO.getSequence()));
         return testCaseRepVO;
     }
@@ -99,7 +100,8 @@ public class TestCaseAssembler {
                 testCaseRepVO.setCaseNum(getIssueNum(testCaseDTO.getProjectId(), testCaseDTO.getCaseNum()));
                 testCaseRepVO.setCreateUser(map.get(testCaseDTO.getCreatedBy()));
                 testCaseRepVO.setLastUpdateUser(map.get(testCaseDTO.getLastUpdatedBy()));
-                testCaseRepVO.setFolderName(folderMap.get(testCaseDTO.getFolderId()).getName());
+                String folderName = Optional.ofNullable(folderMap.get(testCaseDTO.getFolderId())).map(TestIssueFolderDTO::getName).orElse(null);
+                testCaseRepVO.setFolderName(folderName);
                 testCaseRepVO.setPriorityVO(new PriorityVO(testCaseDTO.getPriorityId(), testCaseDTO.getPriorityName(), testCaseDTO.getPriorityColour(), testCaseDTO.getSequence()));
                 if (!CollectionUtils.isEmpty(caseIds)) {
                     if (caseIds.contains(testCaseDTO.getCaseId())) {
