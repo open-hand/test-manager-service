@@ -12,8 +12,10 @@ export type ICategoryCode =
   'N_AGILE' |
   // 子项目
   'N_PROGRAM_PROJECT' |
-  // 瀑布项目
+  // 瀑布管理
   'N_WATERFALL' |
+  // 瀑布管理开启冲刺
+  'N_WATERFALL_AGILE' |
   // 项目群
   'N_PROGRAM' |
   // 运维项目

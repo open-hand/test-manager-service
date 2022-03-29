@@ -127,9 +127,6 @@ public class ExecutionCaseStatusChangeSettingServiceImpl implements ExecutionCas
         }
         TestPlanDTO testPlanDTO = testPlanMapper.selectByPrimaryKey(testCycleDTO.getPlanId());
         Long sprintId = testPlanDTO.getSprintId();
-        if (ObjectUtils.isEmpty(sprintId)) {
-            return;
-        }
         // 用例关联的issue
         Long caseId = cycleCaseDTO.getCaseId();
         TestCaseLinkDTO testCaseLinkDTO = new TestCaseLinkDTO();
@@ -153,9 +150,9 @@ public class ExecutionCaseStatusChangeSettingServiceImpl implements ExecutionCas
         ExecutionUpdateIssueVO executionUpdateIssueVO = new ExecutionUpdateIssueVO();
         executionUpdateIssueVO.setIssueTypeStatusMap(map);
         executionUpdateIssueVO.setSprintId(sprintId);
-        issueIds.forEach(v -> {
-            if (executionStatusCheck(projectId, v, sprintId, testStatusId)) {
-                agileClientOperator.executionUpdateStatus(projectId, v, executionUpdateIssueVO);
+        issueIds.forEach(issueId -> {
+            if (executionStatusCheck(projectId, issueId, sprintId, testStatusId)) {
+                agileClientOperator.executionUpdateStatus(projectId, issueId, executionUpdateIssueVO);
             }
         });
     }
