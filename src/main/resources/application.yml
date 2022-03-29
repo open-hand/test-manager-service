@@ -158,6 +158,6 @@ logging:
 
 services:
   attachment:
-    url: ${SERVICES_ATTACHMENT_URL:example.com}
+    url: ${SERVICES_ATTACHMENT_URL:http://minio.example.com}
   bucket:
-    prefix: ${SERVICES_BUCKET_PREFIX:prefix}
+    merged: ${SERVICES_BUCKET_MERGED:false}

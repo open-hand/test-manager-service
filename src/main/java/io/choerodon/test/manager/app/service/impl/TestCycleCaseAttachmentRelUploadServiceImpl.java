@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import io.choerodon.test.manager.app.service.FilePathService;
 import org.hzero.boot.file.FileClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,8 @@ public class TestCycleCaseAttachmentRelUploadServiceImpl implements TestCycleCas
 //    private FileService fileService;
     @Autowired
     private FileClient fileClient;
+    @Autowired
+    private FilePathService filePathService;
     @Override
     public TestCycleCaseAttachmentRelDTO baseUpload(String bucketName, String fileName, MultipartFile file, Long attachmentLinkId, String attachmentType, String comment,Long organizationId) {
         TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO = new TestCycleCaseAttachmentRelDTO();
@@ -35,7 +38,7 @@ public class TestCycleCaseAttachmentRelUploadServiceImpl implements TestCycleCas
         testCycleCaseAttachmentRelDTO.setAttachmentName(fileName);
         testCycleCaseAttachmentRelDTO.setComment(comment);
 
-        String path= fileClient.uploadFile(organizationId,bucketName, fileName, file);
+        String path= fileClient.uploadFile(organizationId,bucketName, filePathService.dirName(), fileName, file);
         testCycleCaseAttachmentRelDTO.setUrl(path);
         testCycleCaseAttachmentRelDTO.setAttachmentType(attachmentType);
         DBValidateUtil.executeAndvalidateUpdateNum(testCycleCaseAttachmentRelMapper::insert, testCycleCaseAttachmentRelDTO, 1, "error.attachment.insert");
