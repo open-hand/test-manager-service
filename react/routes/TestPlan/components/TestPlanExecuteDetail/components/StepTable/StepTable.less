@@ -82,6 +82,12 @@
       background-color: transparent !important;
     }
   }
+  //临时修复 UI 表格退出编辑状态后 文字行高会变化
+  &-description {
+    &-text {
+      line-height: 13px;
+    }
+  }
   .c7n-pro-table .c7n-pro-table-content .c7n-pro-table-row .c7n-pro-table-cell.c7n-pro-table-cell-editable .c7n-pro-table-cell-inner {
     border: none;
     background-color: unset;
