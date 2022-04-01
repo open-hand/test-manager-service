@@ -159,7 +159,7 @@ const LinkIssueModal: React.FC<Props> = (props) => {
         <Column name="summary" renderer={({ record }) => renderSummary({ record, clickable: false })} />
         <Column name="issueNum" sortable width={135} />
         <Column name="statusId" sortable width={135} renderer={renderStatus} />
-        <Column name="priorityId" sortable width={82} renderer={renderPriority} />
+        <Column name="priorityId" sortable width={100} renderer={renderPriority} />
         <Column name="sprintId" width={135} renderer={renderSprint} />
       </Table>
     </div>
