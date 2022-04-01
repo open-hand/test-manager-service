@@ -39,26 +39,26 @@ function LinkList(props) {
           borderTop: !i ? '1px solid var(--divider)' : '',
         }}
       >
-        <Tooltip mouseEnterDelay={0.5} title={`任务类型： ${typeName}`}>
-          <div>
-            <TypeTag data={issueTypeVO} />
-          </div>
-        </Tooltip>
-        <Tooltip title={`编号概要： ${issueNum} ${summary}`}>
-          <div style={{ marginLeft: 8, flex: 1, overflow: 'hidden' }}>
-            <p
+        <div style={{ display: 'flex', alignContent: 'center', flex: 1, overflow: 'hidden' }}>
+          <Tooltip mouseEnterDelay={0.5} title={`任务类型： ${typeName}`}>
+            <TypeTag data={issueTypeVO} style={{ flexShrink: 0 }} />
+          </Tooltip>
+          <Tooltip title={`编号概要： ${issueNum} ${summary}`}>
+            <div
               className="primary"
               style={{
-                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0,
+                display: 'inline-block',
+                marginLeft: 8,
+                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1,
               }}
               role="none"
             >
-              <Link to={issueLink(issueId, typeCode, issueNum, false, applyType)}>
+              <Link to={issueLink(issueId, typeCode, issueNum, false, applyType)} style={{ lineHeight: '27px' }}>
                 {`${issueNum} ${summary}`}
               </Link>
-            </p>
-          </div>
-        </Tooltip>
+            </div>
+          </Tooltip>
+        </div>
         <UserHead
           user={{
             id: assigneeId,
@@ -71,21 +71,17 @@ function LinkList(props) {
         />
         <div style={{ marginRight: '15px', overflow: 'hidden' }}>
           <Tooltip mouseEnterDelay={0.5} title={`优先级： ${priorityName}`}>
-            <div style={{ marginRight: 12 }}>
-              <PriorityTag priority={priorityVO} />
-            </div>
+            <PriorityTag priority={priorityVO} />
           </Tooltip>
         </div>
         <div style={{
-          width: '48px', marginRight: '15px', display: 'flex', justifyContent: 'flex-end',
+          width: '48px', marginLeft: 12, marginRight: '15px', display: 'flex', justifyContent: 'flex-end',
         }}
         >
           <Tooltip mouseEnterDelay={0.5} title={`任务状态： ${statusName}`}>
-            <div>
-              <StatusTag
-                status={statusVO}
-              />
-            </div>
+            <StatusTag
+              status={statusVO}
+            />
           </Tooltip>
         </div>
         <div
@@ -93,7 +89,6 @@ function LinkList(props) {
             display: 'flex',
             alignItems: 'center',
             fontSize: '16px',
-            marginBottom: '5px',
           }}
         >
           {

@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useCallback, useMemo, useRef,
+  useEffect, useCallback, useMemo, useRef, isValidElement,
 } from 'react';
 import {
   DataSet, Modal, Table, Form,
@@ -20,6 +20,7 @@ import renderSprint from '@choerodon/agile/lib/components/column-renderer/sprint
 import { getProjectId } from '@/common/utils';
 import { createLink } from '@/api/IssueManageApi';
 import { loadStatusByProject } from '@/api/agileApi';
+import styles from './index.less';
 
 interface Props {
   modal?: IModalProps,
@@ -27,6 +28,36 @@ interface Props {
   onSubmit: () => void
 }
 const { Column } = Table;
+interface FormSimpleProps {
+  itemInterval?: React.CSSProperties['marginRight']
+  dataSet: DataSet
+  flat?: boolean
+}
+const FormSimple: React.FC<FormSimpleProps> = ({
+  children, itemInterval, dataSet, flat,
+}) => {
+  const childrenCount = React.Children.count(children);
+  const renderFormItemWithAssignProps = useCallback((ch: React.ReactElement, index: number) => React.cloneElement(ch, {
+    style: childrenCount ? { marginRight: childrenCount !== (index + 1) ? itemInterval : 0, marginTop: 8 } : undefined,
+    dataSet,
+    flat,
+    className: styles.formSimple_item,
+    placeholder: ch.props.placeholder ?? (ch.props.name ? dataSet.getField(ch.props.name)?.getProps().label : ''),
+  }), [childrenCount, dataSet, flat, itemInterval]);
+  const newChildren = React.Children.map(children, (ch: React.ReactElement, index) => (isValidElement(ch) ? renderFormItemWithAssignProps(ch, index) : ch));
+  return (
+    <div className={styles.formSimple}>
+      {newChildren && newChildren[0]}
+      <div className={styles.formSimple_right}>
+        {newChildren?.slice(1)}
+      </div>
+    </div>
+  );
+};
+FormSimple.defaultProps = {
+  itemInterval: 10,
+  flat: true,
+};
 const LinkIssueModal: React.FC<Props> = (props) => {
   const { modal, issueId, onSubmit } = props;
   const dataSetRef = useRef<DataSet>();
@@ -59,6 +90,8 @@ const LinkIssueModal: React.FC<Props> = (props) => {
   }), []);
   const dataSet = useMemo(() => new DataSet({
     autoQuery: true,
+    primaryKey: 'issueId',
+    cacheSelection: true,
     fields: [{
       name: 'summary',
       label: '概要',
@@ -114,19 +147,19 @@ const LinkIssueModal: React.FC<Props> = (props) => {
       <Table
         dataSet={dataSet}
         queryBar={() => (
-          <Form dataSet={queryDataSet} columns={6}>
+          <FormSimple dataSet={queryDataSet} itemInterval={10}>
             <TextField name="content" prefix={<Icon type="search" />} colSpan={2} />
             <SelectStatus name="status" request={() => loadStatusByProject('')} dropdownMatchSelectWidth={false} />
             <SelectPriority name="priority" dropdownMatchSelectWidth={false} />
             <SelectUser name="assignee" dropdownMatchSelectWidth={false} />
             <SelectSprint name="sprint" dropdownMatchSelectWidth={false} />
-          </Form>
+          </FormSimple>
         )}
       >
         <Column name="summary" renderer={({ record }) => renderSummary({ record, clickable: false })} />
         <Column name="issueNum" sortable width={135} />
         <Column name="statusId" sortable width={135} renderer={renderStatus} />
-        <Column name="priorityId" sortable width={80} renderer={renderPriority} />
+        <Column name="priorityId" sortable width={82} renderer={renderPriority} />
         <Column name="sprintId" width={135} renderer={renderSprint} />
       </Table>
     </div>
