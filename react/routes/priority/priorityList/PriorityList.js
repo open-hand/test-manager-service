@@ -105,7 +105,7 @@ class PriorityList extends Component {
       <Menu onClick={(item) => this.handleChooseMenu(item.key, record)}>
         <Menu.Item key="edit">
           <span>
-            编辑
+            修改
           </span>
         </Menu.Item>
         {record.enableFlag && enableList && enableList.length === 1

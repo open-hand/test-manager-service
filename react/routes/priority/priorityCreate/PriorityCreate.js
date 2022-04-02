@@ -124,7 +124,7 @@ class PriorityCreate extends Component {
         title={<FormattedMessage id="priority.create" />}
         visible={onCreatingPriority}
         className="c7ntest-priority-create"
-        okText={<FormattedMessage id="save" />}
+        okText={<FormattedMessage id="create" />}
         cancelText={<FormattedMessage id="cancel" />}
         onOk={this.handleCreatingOk}
         onCancel={this.handleCreatingCancel}

@@ -55,7 +55,7 @@ const StatusTable = ({
     const menu = (
       <Menu onClick={handleMenuClick}>
         <Menu.Item key="edit">
-          <FormattedMessage id="boot.edit" />
+          <FormattedMessage id="boot.modify" />
         </Menu.Item>
         <Menu.Item key="delete">
           <FormattedMessage id="boot.delete" />
