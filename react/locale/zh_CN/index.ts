@@ -148,7 +148,7 @@ const zhCN = {
   status_color: '颜色',
   // 自定义状态侧边栏
   status_side_content_title: '在项目“{name}”中创建状态',
-  status_side_edit_content_title: '编辑项目“{name}”中的状态',
+  status_side_edit_content_title: '修改项目“{name}”中的状态',
   status_side_content_description: '您可以创建自定义状态，包括执行状态和步骤状态。',
   status_side_edit_content_description: '您可以自定义状态，包括执行状态和步骤状态。',
   // 报表
@@ -187,8 +187,8 @@ const zhCN = {
   testPlan_createStage: '添加测试阶段',
   testPlan_linkFolder: '关联目录',
   testPlan_createStageIn: '在测试循环“{cycleName}”中添加测试阶段',
-  testPlan_EditStage_title: '编辑测试阶段',
-  testPlan_EditStage: '编辑测试阶段“{cycleName}”',
+  testPlan_EditStage_title: '修改测试阶段',
+  testPlan_EditStage: '修改测试阶段“{cycleName}”',
   testPlan_creatCycle: '创建循环',
   testPlan_export: '导出执行',
 
@@ -222,10 +222,10 @@ const zhCN = {
   cycle_assignedTo: '被指定人',
   // 循环树
   cycle_addFolder: '增加阶段',
-  cycle_editCycle: '编辑循环',
+  cycle_editCycle: '修改循环',
   cycle_deleteCycle: '删除循环',
   cycle_cloneCycle: '克隆循环',
-  cycle_editFolder: '编辑阶段',
+  cycle_editFolder: '修改阶段',
   cycle_deleteFolder: '删除阶段',
   cycle_cloneStage: '克隆阶段',
   cycle_exportCycle: '导出循环',
@@ -370,8 +370,8 @@ const zhCN = {
   issue_worklog_workDescription: '工作说明',
   // 编辑测试步骤
   issue_edit_step_title: '测试详细信息',
-  issue_edit_step_content_title: '编辑步骤“{testStep}”的详细信息',
-  issue_edit_step_content_description: '您可以编辑测试步骤的详细信息。',
+  issue_edit_step_content_title: '修改步骤“{testStep}”的详细信息',
+  issue_edit_step_content_description: '您可以修改测试步骤的详细信息。',
   //
   issue_create_bug: '新建缺陷',
   // issue树
@@ -535,7 +535,7 @@ const zhCN = {
   enable: '启用',
   'priority.title': '优先级',
   'priority.create': '创建优先级',
-  'priority.edit': '编辑优先级',
+  'priority.edit': '修改优先级',
   'priority.name': '名称',
   'priority.des': '描述',
   'priority.color': '颜色',
