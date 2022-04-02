@@ -273,7 +273,7 @@ function StepTable(props) {
    */
   function renderText({ value }) {
     if (value) {
-      return <span className="c7n-test-execute-detail-step-table--text">{value}</span>;
+      return <span className="c7n-test-execute-detail-step-table-description-text">{value}</span>;
     }
     return '-';
   }
