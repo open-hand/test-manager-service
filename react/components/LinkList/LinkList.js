@@ -59,7 +59,14 @@ function LinkList(props) {
             </div>
           </Tooltip>
         </div>
+       
+        <div style={{ marginRight: '8px', marginBottom:2, overflow: 'hidden' }}>
+          <Tooltip mouseEnterDelay={0.5} title={`优先级： ${priorityName}`}>
+            <PriorityTag priority={priorityVO} />
+          </Tooltip>
+        </div>
         <UserHead
+          hiddenText={true}
           user={{
             id: assigneeId,
             name: assigneeName,
@@ -69,13 +76,8 @@ function LinkList(props) {
             maxWidth: 128,
           }}
         />
-        <div style={{ marginRight: '15px', overflow: 'hidden' }}>
-          <Tooltip mouseEnterDelay={0.5} title={`优先级： ${priorityName}`}>
-            <PriorityTag priority={priorityVO} />
-          </Tooltip>
-        </div>
         <div style={{
-          width: '48px', marginLeft: 12, marginRight: '15px', display: 'flex', justifyContent: 'flex-end',
+          width: '48px', marginLeft: 5, marginRight: '15px', display: 'flex', justifyContent: 'flex-end',
         }}
         >
           <Tooltip mouseEnterDelay={0.5} title={`任务状态： ${statusName}`}>
