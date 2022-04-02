@@ -17,6 +17,7 @@ import renderStatus from '@choerodon/agile/lib/components/column-renderer/status
 import renderSummary from '@choerodon/agile/lib/components/column-renderer/summary';
 import renderPriority from '@choerodon/agile/lib/components/column-renderer/priority';
 import renderSprint from '@choerodon/agile/lib/components/column-renderer/sprint';
+import renderUser from '@choerodon/agile/lib/components/column-renderer/user';
 import { getProjectId } from '@/common/utils';
 import { createLink } from '@/api/IssueManageApi';
 import { loadStatusByProject } from '@/api/agileApi';
@@ -102,6 +103,10 @@ const LinkIssueModal: React.FC<Props> = (props) => {
       name: 'statusId',
       label: '状态',
     }, {
+      name: 'assignee',
+      label: '经办人',
+    },
+    {
       name: 'priorityId',
       label: '优先级',
     }, {
@@ -159,6 +164,7 @@ const LinkIssueModal: React.FC<Props> = (props) => {
         <Column name="summary" renderer={({ record }) => renderSummary({ record, clickable: false })} />
         <Column name="issueNum" sortable width={135} />
         <Column name="statusId" sortable width={135} renderer={renderStatus} />
+        <Column name="assignee" width={120} renderer={renderUser} />
         <Column name="priorityId" sortable width={100} renderer={renderPriority} />
         <Column name="sprintId" width={135} renderer={renderSprint} />
       </Table>
