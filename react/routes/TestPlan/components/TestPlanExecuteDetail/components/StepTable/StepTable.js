@@ -282,7 +282,7 @@ function StepTable(props) {
     const status = testStatusDataSet.toData().length === 0 ? {} : testStatusDataSet.toData().find((item) => item.statusId === value);
     const { statusName = '', statusColor = false } = status || {};
 
-    return <StatusTags name={statusName} color={statusColor} style={{ lineHeight: '.16rem' }} />;
+    return <StatusTags name={statusName} color={statusColor} style={{ lineHeight: '.16rem', display: 'inline-flex' }} />;
   }
   function renderIndex({ record }) {
     return record.index + 1;
