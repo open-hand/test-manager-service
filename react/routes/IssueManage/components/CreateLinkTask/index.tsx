@@ -6,6 +6,7 @@ import {
   TextField,
   Icon,
 } from 'choerodon-ui/pro';
+import type { TableColumnTooltip } from 'choerodon-ui/pro/lib/table/enum';
 import { IModalProps } from '@choerodon/agile/lib/common/types';
 import MODAL_WIDTH from '@choerodon/agile/lib/constants/MODAL_WIDTH';
 import SelectStatus from '@choerodon/agile/lib/components/select/select-status';
@@ -161,10 +162,10 @@ const LinkIssueModal: React.FC<Props> = (props) => {
         )}
       >
         <Column name="summary" renderer={({ record }) => renderSummary({ record, clickable: false })} />
-        <Column name="issueNum" sortable width={135} />
-        <Column name="statusId" sortable width={135} renderer={renderStatus} />
-        <Column name="assignee" width={120} renderer={renderUser} />
-        <Column name="priorityId" sortable width={100} renderer={renderPriority} />
+        <Column name="issueNum" headerClassName={styles.table_header} sortable width={100} tooltip={'overflow' as TableColumnTooltip} />
+        <Column name="statusId" sortable width={100} renderer={renderStatus} />
+        <Column name="assignee" width={110} renderer={renderUser} />
+        <Column name="priorityId" headerClassName={styles.table_header} sortable width={70} renderer={renderPriority} />
         <Column name="sprint" width={135} renderer={renderSprint} />
       </Table>
     </div>

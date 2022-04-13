@@ -34,6 +34,7 @@ function LinkList(props) {
           display: 'flex',
           alignItems: 'center',
           padding: '8px 10px',
+          paddingLeft:0,
           cursor: 'pointer',
           borderBottom: '1px solid var(--divider)',
           borderTop: !i ? '1px solid var(--divider)' : '',
@@ -48,7 +49,7 @@ function LinkList(props) {
               className="primary"
               style={{
                 display: 'inline-block',
-                marginLeft: 8,
+                marginLeft: 2,
                 overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1,
               }}
               role="none"
