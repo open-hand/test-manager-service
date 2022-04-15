@@ -72,7 +72,7 @@ class EditStatus extends Component {
       <div>
         <Sidebar
           className="c7ntest-editStatus-modal"
-          title={`编辑${initValue.statusType === 'CYCLE_CASE' ? '执行' : '步骤'}状态`}
+          title={`修改${initValue.statusType === 'CYCLE_CASE' ? '执行' : '步骤'}状态`}
           visible={visible}
           maskClosable={false}
           onOk={this.handleOk}

@@ -25,6 +25,7 @@ import SelectIssueStore from './SelectIssueStore';
 import Context from './context';
 import styles from './index.less';
 import useFormatMessage from '@/hooks/useFormatMessage';
+import useIsWaterfall from '@/hooks/useIsWaterfall';
 
 const key = Modal.key();
 
@@ -40,6 +41,8 @@ function TestPlanModal({
 }) {
   const [, setUpdateCount] = useState(0);
   const hasAgile = useHasAgile();
+  const { isWaterfallAgile } = useIsWaterfall();
+  const showAgile = hasAgile || isWaterfallAgile;
   const { caseSelected: initCaseSelected } = initValue;
   const init = useMemo(() => {
     const {
@@ -114,13 +117,13 @@ function TestPlanModal({
           name="managerId"
           selected={initValue.managerId}
         />
-        {hasAgile && mount('agile:SelectSprint', {
+        {showAgile && mount('agile:SelectSprint', {
           name: 'sprintId',
           style: {
             display: 'block',
           },
         })}
-        {hasAgile && mount('agile:SelectVersion', {
+        {showAgile && mount('agile:SelectVersion', {
           name: 'productVersionId',
           valueField: 'versionId',
           multiple: false,
@@ -144,7 +147,7 @@ function TestPlanModal({
               </div>
               <div style={{ display: 'flex', alignItems: 'center', marginTop: 15 }}>
                 <Radio name="custom" value className={styles.radio}>自选用例</Radio>
-                {hasAgile && dataSet.toData() && dataSet.toData()[0]?.custom && <CheckBox style={{ marginTop: -8, marginLeft: -10 }} name="sprintLink">选择当前测试计划所属迭代中工作项关联的所有用例</CheckBox>}
+                {showAgile && dataSet.toData() && dataSet.toData()[0]?.custom && <CheckBox style={{ marginTop: -8, marginLeft: -10 }} name="sprintLink">选择当前测试计划所属迭代中工作项关联的所有用例</CheckBox>}
               </div>
             </div>
           </div>

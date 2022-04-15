@@ -21,6 +21,7 @@ import {
   TextEditToggle, UploadInTable, StatusTags,
 } from '../../../../../../components';
 import DefectSelect from './DefectSelect';
+import useIsWaterfall from '@/hooks/useIsWaterfall';
 
 const { Text, Edit } = TextEditToggle;
 const { Column } = Table;
@@ -273,7 +274,7 @@ function StepTable(props) {
    */
   function renderText({ value }) {
     if (value) {
-      return value;
+      return <span className="c7n-test-execute-detail-step-table-description-text">{value}</span>;
     }
     return '-';
   }
@@ -281,7 +282,7 @@ function StepTable(props) {
     const status = testStatusDataSet.toData().length === 0 ? {} : testStatusDataSet.toData().find((item) => item.statusId === value);
     const { statusName = '', statusColor = false } = status || {};
 
-    return <StatusTags name={statusName} color={statusColor} style={{ lineHeight: '.16rem' }} />;
+    return <StatusTags name={statusName} color={statusColor} style={{ lineHeight: '.16rem', display: 'inline-flex' }} />;
   }
   function renderIndex({ record }) {
     return record.index + 1;
@@ -290,6 +291,8 @@ function StepTable(props) {
     dataSet.setEditStatus = setEditing;
   }, [dataSet]);
   const hasAgile = useHasAgile();
+  const { isWaterfallAgile } = useIsWaterfall();
+  const showAgile = hasAgile || isWaterfallAgile;
   return (
     <Loading loadId="stepTable" loading={dataSet.status === 'loading'}>
       <Table dataSet={dataSet} spin={{ spinning: false }} queryBar="none" className="c7n-test-execute-detail-step-table" rowHeight="auto">
@@ -299,8 +302,8 @@ function StepTable(props) {
         <Column name="expectedResult" align="left" minWidth={150} tooltip="overflow" renderer={renderText} />
         <Column name="stepStatus" align="left" width={85} className="c7n-test-execute-detail-step-table-status" renderer={renderStatus} editor={!editing && operateStatus && <Select optionRenderer={renderStatus} />} />
         <Column name="stepAttachment" renderer={renderAttachment} align="left" width={200} />
-        <Column name="description" editor={!editing && !readOnly ? <TextArea autoSize={{ maxRows: 12 }} /> : false} align="left" tooltip="overflow" renderer={renderText} />
-        {hasAgile && <Column name="defects" renderer={renderDefects} width={260} />}
+        <Column name="description" className="c7n-test-execute-detail-step-table-description" editor={!editing && !readOnly ? <TextArea autoSize={{ maxRows: 12 }} /> : false} align="left" tooltip="overflow" renderer={renderText} />
+        {showAgile && <Column name="defects" renderer={renderDefects} width={260} />}
         <Column name="action" width={110} lock={lock} renderer={renderAction} hidden={getActionHidden()} />
       </Table>
     </Loading>

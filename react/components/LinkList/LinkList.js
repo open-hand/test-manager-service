@@ -22,7 +22,7 @@ function LinkList(props) {
     const { issue, i, deleteLink } = props;
     const {
       priorityVO, issueTypeVO, issueNum, summary, issueId, assigneeId, assigneeName, imageUrl,
-      linkId, ward, statusVO,
+      linkId, ward, statusVO, applyType,
     } = issue;
     const { colour: priorityColor, name: priorityName } = priorityVO || {};
     const { colour: typeColor, name: typeName, typeCode } = issueTypeVO || {};
@@ -34,32 +34,40 @@ function LinkList(props) {
           display: 'flex',
           alignItems: 'center',
           padding: '8px 10px',
+          paddingLeft:0,
           cursor: 'pointer',
           borderBottom: '1px solid var(--divider)',
           borderTop: !i ? '1px solid var(--divider)' : '',
         }}
       >
-        <Tooltip mouseEnterDelay={0.5} title={`任务类型： ${typeName}`}>
-          <div>
-            <TypeTag data={issueTypeVO} />
-          </div>
-        </Tooltip>
-        <Tooltip title={`编号概要： ${issueNum} ${summary}`}>
-          <div style={{ marginLeft: 8, flex: 1, overflow: 'hidden' }}>
-            <p
+        <div style={{ display: 'flex', alignContent: 'center', flex: 1, overflow: 'hidden' }}>
+          <Tooltip mouseEnterDelay={0.5} title={`任务类型： ${typeName}`}>
+            <TypeTag data={issueTypeVO} style={{ flexShrink: 0 }} />
+          </Tooltip>
+          <Tooltip title={`编号概要： ${issueNum} ${summary}`}>
+            <div
               className="primary"
               style={{
-                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0,
+                display: 'inline-block',
+                marginLeft: 2,
+                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1,
               }}
               role="none"
             >
-              <Link to={issueLink(issueId, typeCode, issueNum)}>
+              <Link to={issueLink(issueId, typeCode, issueNum, false, applyType)} style={{ lineHeight: '27px' }}>
                 {`${issueNum} ${summary}`}
               </Link>
-            </p>
-          </div>
-        </Tooltip>
+            </div>
+          </Tooltip>
+        </div>
+       
+        <div style={{ marginRight: '8px', marginBottom:2, overflow: 'hidden' }}>
+          <Tooltip mouseEnterDelay={0.5} title={`优先级： ${priorityName}`}>
+            <PriorityTag priority={priorityVO} />
+          </Tooltip>
+        </div>
         <UserHead
+          hiddenText={true}
           user={{
             id: assigneeId,
             name: assigneeName,
@@ -69,23 +77,14 @@ function LinkList(props) {
             maxWidth: 128,
           }}
         />
-        <div style={{ marginRight: '15px', overflow: 'hidden' }}>
-          <Tooltip mouseEnterDelay={0.5} title={`优先级： ${priorityName}`}>
-            <div style={{ marginRight: 12 }}>
-              <PriorityTag priority={priorityVO} />
-            </div>
-          </Tooltip>
-        </div>
         <div style={{
-          width: '48px', marginRight: '15px', display: 'flex', justifyContent: 'flex-end',
+          width: '48px', marginLeft: 5, marginRight: '15px', display: 'flex', justifyContent: 'flex-end',
         }}
         >
           <Tooltip mouseEnterDelay={0.5} title={`任务状态： ${statusName}`}>
-            <div>
-              <StatusTag
-                status={statusVO}
-              />
-            </div>
+            <StatusTag
+              status={statusVO}
+            />
           </Tooltip>
         </div>
         <div
@@ -93,7 +92,6 @@ function LinkList(props) {
             display: 'flex',
             alignItems: 'center',
             fontSize: '16px',
-            marginBottom: '5px',
           }}
         >
           {

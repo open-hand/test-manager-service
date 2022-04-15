@@ -41,6 +41,8 @@ public class SearchDTO {
     private int size;
     private Sort sort;
 
+    private List<String> applyTypes;
+
     public int getPage() {
         return page;
     }
@@ -124,6 +126,14 @@ public class SearchDTO {
 
     public void setDefectStatus(String[] defectStatus) {
         this.defectStatus = defectStatus;
+    }
+
+    public List<String> getApplyTypes() {
+        return applyTypes;
+    }
+
+    public void setApplyTypes(List<String> applyTypes) {
+        this.applyTypes = applyTypes;
     }
 
     @Override
