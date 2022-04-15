@@ -161,7 +161,7 @@ const LinkIssueModal: React.FC<Props> = (props) => {
           </FormSimple>
         )}
       >
-        <Column name="summary" renderer={({ record }) => renderSummary({ record, clickable: false })} />
+        <Column name="summary" headerClassName={styles.summaryHeader} header={<span>概要</span>} className={styles.summary} renderer={({ record }) => renderSummary({ record, clickable: false })} />
         <Column name="issueNum" headerClassName={styles.table_header} sortable width={100} tooltip={'overflow' as TableColumnTooltip} />
         <Column name="statusId" sortable width={100} renderer={renderStatus} />
         <Column name="assignee" width={110} renderer={renderUser} />
