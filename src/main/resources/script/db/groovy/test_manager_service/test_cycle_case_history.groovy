@@ -34,4 +34,19 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             createSequence(sequenceName: 'test_cycle_case_history_s', startValue: "1")
         }
     }
+
+    changeSet(author: 'kaiwen.li@hang-china.com', id: '2022-04-15-test-cycle-case-history-add-index') {
+        createIndex(tableName: "test_cycle_case_history", indexName: "idx_execute_id") {
+            column(name: "execute_id")
+        }
+        createIndex(tableName: "test_cycle_case_history", indexName: "idx_field") {
+            column(name: "field")
+        }
+        createIndex(tableName: "test_cycle_case_history", indexName: "idx_old_value") {
+            column(name: "old_value(10)")
+        }
+        createIndex(tableName: "test_cycle_case_history", indexName: "idx_new_value") {
+            column(name: "new_value(10)")
+        }
+    }
 }
