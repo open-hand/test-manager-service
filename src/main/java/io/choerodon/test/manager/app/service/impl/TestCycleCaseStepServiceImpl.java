@@ -84,7 +84,7 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
                if(result && !Objects.equals(testCycleCaseDTO.getExecutionStatus(), caseStatus.getStatusId())){
                    TestCycleCaseVO testCycleCaseVO = new TestCycleCaseVO();
                    testCycleCaseVO.setExecuteId(testCycleCaseStepVO.getExecuteId());
-                   testCycleCaseVO.setObjectVersionNumber(testCycleCaseStepVO.getObjectVersionNumber());
+                   testCycleCaseVO.setObjectVersionNumber(testCycleCaseDTO.getObjectVersionNumber());
                    testCycleCaseVO.setExecutionStatus(caseStatus.getStatusId());
                    testCycleCaseVO.setExecutionStatusName(caseStatus.getStatusName());
                    testCycleCaseService.update(testCycleCaseVO);
