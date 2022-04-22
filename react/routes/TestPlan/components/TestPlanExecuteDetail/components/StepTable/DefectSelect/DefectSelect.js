@@ -1,7 +1,8 @@
 import React, {
-  useState, useEffect, useReducer, useCallback, useRef,
+  useState, useEffect, useReducer, useCallback, useRef, useMemo,
 } from 'react';
 import { Select, Button } from 'choerodon-ui';
+import { Tooltip } from 'choerodon-ui/pro';
 import { axios } from '@choerodon/boot';
 import _ from 'lodash';
 import { observer } from 'mobx-react-lite';
@@ -124,7 +125,7 @@ function DefectSelect(props) {
       dispatch({ type: 'filterLoaded', issueData, searchValue: value });
     });
   };
-
+  const getPopupContainer = useMemo(() => () => document.getElementsByClassName('page-body')[0] || document.body, []);
   const DebounceLoadFilterData = _.debounce(loadFilterData, 400);
   const line = (str) => `<p>${str}</p>`;
   function render() {
@@ -136,7 +137,9 @@ function DefectSelect(props) {
       <Option key={item.issueId} value={item.issueId.toString()}>
         {item.issueNum}
         {' '}
-        {item.summary}
+        <Tooltip title={item.summary} placement="topLeft">
+          {item.summary}
+        </Tooltip>
       </Option>
     ));
     return (
@@ -148,6 +151,7 @@ function DefectSelect(props) {
         filter
         mode="multiple"
         ref={selectRef}
+        getPopupContainer={getPopupContainer}
         dropdownMatchSelectWidth={false}
         filterOption={false}
         showArrow={false}
