@@ -2,7 +2,7 @@ import { Choerodon } from '@choerodon/boot';
 import { editCycleStep, removeDefect } from '@/api/ExecuteDetailApi';
 import { deleteFile } from '@/api/FileApi';
 
-function updateRecordData(data, dataSet, executeHistoryDataSet, record, name, oldValue) {
+function updateRecordData(data, dataSet, executeHistoryDataSet, executeDetailStore, record, name, oldValue) {
   // eslint-disable-next-line no-param-reassign
   delete data.defects;
   // eslint-disable-next-line no-param-reassign
@@ -10,7 +10,11 @@ function updateRecordData(data, dataSet, executeHistoryDataSet, record, name, ol
   dataSet.setEditStatus && dataSet.setEditStatus(true);
   editCycleStep(data).then(() => {
     dataSet.query(dataSet.currentPage);
-    executeHistoryDataSet.query();
+    const currentHomePageHistoryCount = executeHistoryDataSet.length;
+    executeHistoryDataSet.query().then((res) => {
+      // 当有历史记录时去查询
+      !currentHomePageHistoryCount && res.total && executeDetailStore.getInfo();
+    });
     dataSet.setEditStatus && dataSet.setEditStatus(false);
   }).catch((error) => {
     window.console.log(error);
@@ -19,7 +23,7 @@ function updateRecordData(data, dataSet, executeHistoryDataSet, record, name, ol
     Choerodon.prompt('网络错误');
   });
 }
-function StepTableDataSet(projectId, orgId, intl, caseId, testStatusDataSet, executeHistoryDataSet) {
+function StepTableDataSet(projectId, orgId, intl, caseId, testStatusDataSet, executeHistoryDataSet, executeDetailStore) {
   const testStep = intl.formatMessage({ id: 'execute_testStep' });
   const testData = intl.formatMessage({ id: 'execute_testData' });
   const expectedResult = intl.formatMessage({ id: 'execute_expectedOutcome' });
@@ -105,12 +109,12 @@ function StepTableDataSet(projectId, orgId, intl, caseId, testStatusDataSet, exe
             data.stepStatus = value;
             const statusItem = testStatusDataSet.find((item) => item.get('statusId') === value);
             data.statusName = statusItem.get('statusName');
-            updateRecordData(data, dataSet, executeHistoryDataSet, record, name, oldValue);
+            updateRecordData(data, dataSet, executeHistoryDataSet, executeDetailStore, record, name, oldValue);
             break;
           }
           case 'description': {
             data.description = value || '';
-            updateRecordData(data, dataSet, executeHistoryDataSet, record, name, oldValue);
+            updateRecordData(data, dataSet, executeHistoryDataSet, executeDetailStore, record, name, oldValue);
             break;
           }
           case 'stepAttachment': {
