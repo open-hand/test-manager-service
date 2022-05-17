@@ -7,16 +7,20 @@ import java.util.Map;
 import io.choerodon.test.manager.api.vo.agile.IssueLinkDTO;
 import io.choerodon.test.manager.api.vo.agile.IssueListTestVO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDefectRelDTO;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * Created by 842767365@qq.com on 7/16/18.
  */
 public class DefectReporterFormVO {
 
+    @ApiModelProperty(value = "缺陷信息")
     private IssueInfosVO issueInfosVO;
 
+    @ApiModelProperty(value = "循环用例")
     List<TestCycleCaseVO> testCycleCaseES = new ArrayList<>();
 
+    @ApiModelProperty(value = "循环用例步骤")
     List<TestCycleCaseStepVO> testCycleCaseStepES = new ArrayList<>();
 
 

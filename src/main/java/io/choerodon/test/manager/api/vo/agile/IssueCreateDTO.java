@@ -3,6 +3,7 @@ package io.choerodon.test.manager.api.vo.agile;
 import io.choerodon.test.manager.infra.dto.TestCaseStepProDTO;
 import io.choerodon.test.manager.infra.util.StringUtil;
 import io.choerodon.test.manager.infra.dto.TestCaseLinkDTO;
+import io.swagger.annotations.ApiModelProperty;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 
 import java.math.BigDecimal;
@@ -13,73 +14,108 @@ import java.util.List;
  * @author dinghuang123@gmail.com
  */
 public class IssueCreateDTO {
+    @ApiModelProperty(value = "用例id")
     @Encrypt
     private Long caseId;
 
+    @ApiModelProperty(value = "类型编码")
     private String typeCode;
 
+    @ApiModelProperty(value = "概要")
     private String summary;
 
+    @ApiModelProperty(value = "优先级编码")
     private String priorityCode;
 
+    @ApiModelProperty(value = "描述")
     private String description;
+
+    @ApiModelProperty(value = "经办人id")
     @Encrypt
     private Long assigneeId;
+
+    @ApiModelProperty(value = "报告人id")
     @Encrypt
     private Long reporterId;
 
+    @ApiModelProperty(value = "项目id")
     private Long projectId;
+    @ApiModelProperty(value = "所属史诗id")
     @Encrypt(ignoreValue = "0")
     private Long epicId;
+    @ApiModelProperty(value = "冲刺id")
     @Encrypt(ignoreValue = "0")
     private Long sprintId;
+    @ApiModelProperty(value = "优先级id")
     @Encrypt
     private Long priorityId;
+    @ApiModelProperty(value = "工作项类型id")
     @Encrypt
     private Long issueTypeId;
+    @ApiModelProperty(value = "文件夹id")
     @Encrypt
     private Long folderId;
 
+    @ApiModelProperty(value = "关联工作项编号")
     private String relateIssueNums;
 
+    @ApiModelProperty(value = "自定义编号")
     private String customNum;
 
+    @ApiModelProperty(value = "关联版本列表")
     private List<VersionIssueRelVO> versionIssueRelVOList;
 
+    @ApiModelProperty(value = "关联标签列表")
     private List<LabelIssueRelVO> labelIssueRelVOList;
 
+    @ApiModelProperty(value = "关联模块列表")
     private List<ComponentIssueRelVO> componentIssueRelVOList;
 
+    @ApiModelProperty(value = "关联测试用例列表")
     private List<TestCaseLinkDTO> testCaseLinkDTOList;
 
+    @ApiModelProperty(value = "原始预估时间")
     private BigDecimal remainingTime;
 
+    @ApiModelProperty(value = "剩余预估时间")
     private BigDecimal estimateTime;
 
+    @ApiModelProperty(value = "所属史诗名称")
     private String epicName;
 
+    @ApiModelProperty(value = "测试步骤列表")
     private List<TestCaseStepProDTO> testCaseStepProList;
 
+    @ApiModelProperty(value = "工作项关联列表")
     private List<IssueLinkCreateVO> issueLinkCreateVOList;
 
+    @ApiModelProperty(value = "关联工作项id")
     @Encrypt(ignoreValue = "0")
     private Long relateIssueId;
 
+    @ApiModelProperty(value = "主要负责人id")
     @Encrypt
     private Long mainResponsibleId;
 
+    @ApiModelProperty(value = "环境")
     private String environment;
 
+    @ApiModelProperty(value = "预计开始时间")
     private Date estimatedStartTime;
 
+    @ApiModelProperty(value = "预计结束时间")
     private Date estimatedEndTime;
 
+    @ApiModelProperty(value = "乐观锁")
     private Long objectVersionNumber;
 
+    @ApiModelProperty(value = "版本编号")
     private Long versionNum;
 
+    @ApiModelProperty(value = "用例编号")
     private String caseNum;
 
+    @ApiModelProperty(value = "文件夹路径")
     private String folderPath;
 
     public List<IssueLinkCreateVO> getIssueLinkCreateVOList() {

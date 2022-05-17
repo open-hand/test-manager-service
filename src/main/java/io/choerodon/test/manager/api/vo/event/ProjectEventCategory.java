@@ -1,23 +1,33 @@
 package io.choerodon.test.manager.api.vo.event;
 
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * @author superlee
  * @since 2021-01-08
  */
 public class ProjectEventCategory {
 
+    @ApiModelProperty(value = "项目id")
     private Long id;
+    @ApiModelProperty(value = "项目名称")
     private String name;
+    @ApiModelProperty(value = "描述")
     private String description;
+    @ApiModelProperty(value = "项目编码")
     private String code;
 
+    @ApiModelProperty(value = "组织id")
     private Long organizationId;
 
+    @ApiModelProperty(value = "是否展示")
     private Boolean displayFlag;
 
+    @ApiModelProperty(value = "builtInFlag")
     private Boolean builtInFlag;
 
+    @ApiModelProperty(value = "标签编码")
     private String labelCode;
 
     public Long getId() {

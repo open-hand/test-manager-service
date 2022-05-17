@@ -123,8 +123,10 @@ public class IssueListFieldKVVO {
     @ApiModelProperty(value = "自定义字段kv")
     private Map<String, Object> foundationFieldValue;
 
+    @ApiModelProperty(value = "预计开始时间")
     private Date estimatedStartTime;
 
+    @ApiModelProperty(value = "预计结束时间")
     private Date estimatedEndTime;
 
     @ApiModelProperty("项目名")
@@ -133,9 +135,11 @@ public class IssueListFieldKVVO {
     @ApiModelProperty("星标")
     private Boolean starBeacon;
 
+    @ApiModelProperty(value = "主要负责人id")
     @Encrypt
     private Long mainResponsibleId;
 
+    @ApiModelProperty(value = "环境")
     private String environment;
 
     @ApiModelProperty(value = "冲刺列表")

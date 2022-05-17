@@ -8,6 +8,7 @@ import javax.persistence.Table;
 import io.choerodon.mybatis.annotation.ModifyAudit;
 import io.choerodon.mybatis.annotation.VersionAudit;
 import io.choerodon.mybatis.domain.AuditDomain;
+import io.swagger.annotations.ApiModelProperty;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
@@ -21,13 +22,18 @@ public class TestCaseLinkDTO extends AuditDomain {
     @Id
     @GeneratedValue
     @Encrypt
+    @ApiModelProperty(value = "关联id")
     private Long linkId;
     @Encrypt
+    @ApiModelProperty(value = "关联的用例id")
     private Long linkCaseId;
     @Encrypt
+    @ApiModelProperty(value = "关联的工作项id")
     private Long issueId;
     @Encrypt
+    @ApiModelProperty(value = "关联类型id")
     private Long linkTypeId;
+    @ApiModelProperty(value = "项目id")
     private Long projectId;
 
     public Long getLinkId() {

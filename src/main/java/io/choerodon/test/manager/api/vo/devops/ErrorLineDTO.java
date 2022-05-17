@@ -1,8 +1,11 @@
 package io.choerodon.test.manager.api.vo.devops;
 
-public class ErrorLineDTO {
+import io.swagger.annotations.ApiModelProperty;
 
+public class ErrorLineDTO {
+    @ApiModelProperty(value = "行编号")
     private Long lineNumber;
+    @ApiModelProperty(value = "错误信息")
     private String errorMsg;
 
     public Long getLineNumber() {

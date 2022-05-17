@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.api.vo.agile;
 
 import io.choerodon.test.manager.api.vo.TestCycleVO;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.Transient;
 import java.util.Date;
@@ -11,15 +12,25 @@ import java.util.List;
  */
 
 public class ProductVersionPageDTO {
+    @ApiModelProperty(value = "版本id")
     private Long versionId;
+    @ApiModelProperty(value = "版本名称")
     private String name;
+    @ApiModelProperty(value = "版本描述")
     private String description;
+    @ApiModelProperty(value = "开始日期")
     private Date startDate;
+    @ApiModelProperty(value = "发布日期")
     private Date releaseDate;
+    @ApiModelProperty(value = "状态编码")
     private String statusCode;
+    @ApiModelProperty(value = "状态")
     private String status;
+    @ApiModelProperty(value = "项目id")
     private Long projectId;
+    @ApiModelProperty(value = "乐观锁")
     private Long objectVersionNumber;
+    @ApiModelProperty(value = "计划文件夹列表")
     @Transient
     private List<TestCycleVO> testCycleVOS;
 

@@ -1,7 +1,11 @@
 package io.choerodon.test.manager.api.vo.devops;
 
+import io.swagger.annotations.ApiModelProperty;
+
 public class EndPointPortVO {
+    @ApiModelProperty(value = "名称")
     private String name;
+    @ApiModelProperty(value = "端口")
     private int port;
 
     public String getName() {

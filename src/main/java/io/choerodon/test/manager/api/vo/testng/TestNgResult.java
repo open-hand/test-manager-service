@@ -1,5 +1,7 @@
 package io.choerodon.test.manager.api.vo.testng;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import java.util.List;
 
 /*
@@ -7,11 +9,17 @@ import java.util.List;
  * @since 2019/1/21
  */
 public class TestNgResult {
+    @ApiModelProperty(value = "跳过个数")
     private Long skipped;
+    @ApiModelProperty(value = "失败个数")
     private Long failed;
+    @ApiModelProperty(value = "忽略个数")
     private Long ignored;
+    @ApiModelProperty(value = "总数")
     private Long total;
+    @ApiModelProperty(value = "通过个数")
     private Long passed;
+    @ApiModelProperty(value = "suites")
     private List<TestNgSuite> suites;
 
     public Long getSkipped() {

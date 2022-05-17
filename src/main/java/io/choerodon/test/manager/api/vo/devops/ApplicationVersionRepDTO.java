@@ -1,17 +1,27 @@
 package io.choerodon.test.manager.api.vo.devops;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import java.io.Serializable;
 import java.util.Date;
 
 public class ApplicationVersionRepDTO implements Serializable {
 
+    @ApiModelProperty(value = "应用仓库id")
     private Long id;
+    @ApiModelProperty(value = "版本")
     private String version;
+    @ApiModelProperty(value = "提交")
     private String commit;
+    @ApiModelProperty(value = "应用名称")
     private String appName;
+    @ApiModelProperty(value = "应用编码")
     private String appCode;
+    @ApiModelProperty(value = "应用id")
     private Long appId;
+    @ApiModelProperty(value = "应用状态")
     private Boolean appStatus;
+    @ApiModelProperty(value = "创建时间")
     private Date creationDate;
 
     public Long getId() {

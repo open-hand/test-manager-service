@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.api.vo;
 
+import io.swagger.annotations.ApiModelProperty;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 
 import java.util.List;
@@ -10,18 +11,28 @@ import java.util.List;
  * @description:
  */
 public class TestTreeFolderVO {
+    @ApiModelProperty(value = "测试文件夹id")
     @Encrypt
     private Long id;
     @Encrypt
+    @ApiModelProperty(value = "子文件夹id集合")
     private List<Long> children;
+    @ApiModelProperty(value = "是否有子文件夹")
     private Boolean hasChildren;
+    @ApiModelProperty(value = "是否扩展")
     private Boolean isExpanded;
+    @ApiModelProperty(value = "子文件夹是否加载中")
     private Boolean isChildrenLoading;
+    @ApiModelProperty(value = "文件夹信息")
     private TestIssueFolderVO issueFolderVO;
+    @ApiModelProperty(value = "是否有用例")
     private Boolean hasCase;
+    @ApiModelProperty(value = "是否是第一层级")
     private Boolean topLevel;
+    @ApiModelProperty(value = "用例数量")
     private Long caseCount;
     @Encrypt
+    @ApiModelProperty(value = "计划id")
     private Long  planId;
 
     public Long getId() {

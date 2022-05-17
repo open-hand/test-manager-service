@@ -1,20 +1,34 @@
 package io.choerodon.test.manager.api.vo.agile;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * @author wuguokai
  */
 public class PermissionDTO {
+	@ApiModelProperty(value = "id")
 	private Long id;
+	@ApiModelProperty(value = "编码")
 	private String code;
+	@ApiModelProperty(value = "路径")
 	private String path;
+	@ApiModelProperty(value = "方法")
 	private String method;
+	@ApiModelProperty(value = "等级")
 	private String level;
+	@ApiModelProperty(value = "描述")
 	private String description;
+	@ApiModelProperty(value = "动作")
 	private String action;
+	@ApiModelProperty(value = "来源")
 	private String resource;
+	@ApiModelProperty(value = "publicAccess")
 	private Boolean publicAccess;
+	@ApiModelProperty(value = "loginAccess")
 	private Boolean loginAccess;
+	@ApiModelProperty(value = "服务名称")
 	private String serviceName;
+	@ApiModelProperty(value = "乐观锁")
 	private Long objectVersionNumber;
 
 	public Long getId() {

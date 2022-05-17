@@ -1,5 +1,7 @@
 package io.choerodon.test.manager.api.vo.devops;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import java.util.Objects;
 
 /**
@@ -9,10 +11,15 @@ import java.util.Objects;
  * Description:
  */
 public class PortMapVO implements Comparable<PortMapVO> {
+    @ApiModelProperty(value = "名称")
     private String name;
+    @ApiModelProperty(value = "端口")
     private Long port;
+    @ApiModelProperty(value = "节点端口")
     private Long nodePort;
+    @ApiModelProperty(value = "协议")
     private String protocol;
+    @ApiModelProperty(value = "目标端口")
     private String targetPort;
 
     public String getName() {
