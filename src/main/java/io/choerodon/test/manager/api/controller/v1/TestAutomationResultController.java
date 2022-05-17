@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import io.choerodon.core.iam.ResourceLevel;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,7 +34,9 @@ public class TestAutomationResultController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("查询")
     @GetMapping("/query/{id}")
-    public ResponseEntity<Map<String, Object>> query(@PathVariable("project_id") Long projectId,
+    public ResponseEntity<Map<String, Object>> query(@ApiParam(value = "项目id", required = true)
+                                                     @PathVariable("project_id") Long projectId,
+                                                     @ApiParam(value = "测试报告id", required = true)
                                                      @PathVariable("id")
                                                      @Encrypt Long id) {
         Map<String, Object> result = new HashMap<>(2);
@@ -52,7 +55,9 @@ public class TestAutomationResultController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("变动一个测试报告(增加|修改)")
     @PutMapping("/change")
-    public ResponseEntity<TestAutomationResultVO> changeOneAutomationResult(@PathVariable("project_id") Long projectId,
+    public ResponseEntity<TestAutomationResultVO> changeOneAutomationResult(@ApiParam(value = "项目id", required = true)
+                                                                            @PathVariable("project_id") Long projectId,
+                                                                            @ApiParam(value = "更新vo", required = true)
                                                                             @RequestBody TestAutomationResultVO testAutomationResultVO) {
         return Optional.ofNullable(testAutomationResultService.changeAutomationResult(testAutomationResultVO, projectId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
@@ -62,7 +67,9 @@ public class TestAutomationResultController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("删除一个测试报告")
     @DeleteMapping("/remove")
-    public ResponseEntity removeAutomationResult(@PathVariable("project_id") Long projectId,
+    public ResponseEntity removeAutomationResult(@ApiParam(value = "项目id", required = true)
+                                                 @PathVariable("project_id") Long projectId,
+                                                 @ApiParam(value = "测试报告vo", required = true)
                                                  @RequestBody TestAutomationResultVO testAutomationResultVO) {
         testAutomationResultService.removeAutomationResult(testAutomationResultVO);
         return new ResponseEntity(HttpStatus.CREATED);

@@ -21,21 +21,27 @@ public class ProjectDTO {
     private static final String CODE_REGULAR_EXPRESSION =
             "[a-zA-Z0-9_\\.][a-zA-Z0-9_\\-\\.]*[a-zA-Z0-9_\\-]|[a-zA-Z0-9_]";
 
+    @ApiModelProperty(value = "项目id")
     private Long id;
 
+    @ApiModelProperty(value = "项目名称")
     @NotEmpty(message = "error.project.name.empty")
     @Size(min = 1, max = 32, message = "error.project.code.size")
     private String name;
 
+    @ApiModelProperty(value = "组织id")
     private Long organizationId;
 
+    @ApiModelProperty(value = "项目编码")
     @NotEmpty(message = "error.project.code.empty")
     @Size(min = 1, max = 14, message = "error.project.code.size")
     @Pattern(regexp = CODE_REGULAR_EXPRESSION, message = "error.project.code.illegal")
     private String code;
 
+    @ApiModelProperty(value = "是否启用")
     private Boolean enabled;
 
+    @ApiModelProperty(value = "乐观锁")
     private Long objectVersionNumber;
 
     @ApiModelProperty(value = "项目类型(非开源，一对多)")

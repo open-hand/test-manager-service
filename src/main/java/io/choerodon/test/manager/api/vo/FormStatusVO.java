@@ -8,9 +8,13 @@ import io.swagger.annotations.ApiModelProperty;
  * @description:
  */
 public class FormStatusVO {
+    @ApiModelProperty(value = "状态id")
     private Long statusId;
+    @ApiModelProperty(value = "状态名称")
     private String statusName;
+    @ApiModelProperty(value = "状态颜色")
     private String statusColor;
+    @ApiModelProperty(value = "总数")
     private Long counts;
 
     public Long getStatusId() {

@@ -4,6 +4,7 @@ import java.util.List;
 
 import io.choerodon.test.manager.infra.dto.TestCaseDTO;
 import io.choerodon.test.manager.infra.dto.TestCaseStepDTO;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * @author: 25499
@@ -11,23 +12,41 @@ import io.choerodon.test.manager.infra.dto.TestCaseStepDTO;
  * @description:
  */
 public class ExcelCaseVO {
+    @ApiModelProperty(value = "项目编码")
     private String projectCode;
+    @ApiModelProperty(value = "文件夹名称")
     private String folderName;
+    @ApiModelProperty(value = "用例id")
     private Long caseId;
+    @ApiModelProperty(value = "用例编号")
     private String caseNum;
+    @ApiModelProperty(value = "概要")
     private String summary;
+    @ApiModelProperty(value = "描述")
     private String description;
+    @ApiModelProperty(value = "rank")
     private String rank;
+    @ApiModelProperty(value = "文件夹id")
     private Long folderId;
+    @ApiModelProperty(value = "版本编号")
     private Long versionNum;
+    @ApiModelProperty(value = "项目id")
     private Long projectId;
+    @ApiModelProperty(value = "更新人")
     private Long lastUpdatedBy;
+    @ApiModelProperty(value = "创建人")
     private Long createdBy;
+    @ApiModelProperty(value = "执行")
     private String executor;
+    @ApiModelProperty(value = "用例步骤")
     private List<TestCaseStepVO> caseSteps;
+    @ApiModelProperty(value = "优先级名称")
     private String priorityName;
+    @ApiModelProperty(value = "自定义编号")
     private String customNum;
+    @ApiModelProperty(value = "关联工作项")
     private String releatedIssues;
+    @ApiModelProperty(value = "关联工作项id集合")
     private List<Long> releatedIssueIds;
 
     public String getPriorityName() {

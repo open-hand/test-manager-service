@@ -1,13 +1,18 @@
 package io.choerodon.test.manager.api.vo.agile;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import javax.validation.constraints.NotEmpty;
 
 /**
  * @author wuguokai
  */
 public class RolePermissionDTO {
+    @ApiModelProperty(value = "角色权限id")
     private Long id;
+    @ApiModelProperty(value = "角色id")
     private Long roleId;
+    @ApiModelProperty(value = "权限id")
     @NotEmpty(message = "errpr.rolePermission.permissionId.empty")
     private Long permissionId;
 

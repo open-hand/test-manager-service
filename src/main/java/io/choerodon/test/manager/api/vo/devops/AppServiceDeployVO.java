@@ -1,18 +1,33 @@
 package io.choerodon.test.manager.api.vo.devops;
 
+import io.swagger.annotations.ApiModelProperty;
+
 public class AppServiceDeployVO {
+    @ApiModelProperty(value = "应用服务版本id")
     private Long appServiceVersionId;
+    @ApiModelProperty(value = "环境id")
     private Long environmentId;
+    @ApiModelProperty(value = "值集")
     private String values;
+    @ApiModelProperty(value = "应用服务id")
     private Long appServiceId;
+    @ApiModelProperty(value = "应用类型")
     private String type;
+    @ApiModelProperty(value = "实例id")
     private Long instanceId;
+    @ApiModelProperty(value = "命令id")
     private Long commandId;
+    @ApiModelProperty(value = "实例名称")
     private String instanceName;
+    @ApiModelProperty(value = "是否未变化")
     private boolean isNotChange;
+    @ApiModelProperty(value = "记录id")
     private Long recordId;
+    @ApiModelProperty(value = "value id")
     private Long valueId;
+    @ApiModelProperty(value = "仓库")
     private DevopsServiceReqVO devopsServiceReqVO;
+    @ApiModelProperty(value = "入口")
     private DevopsIngressVO devopsIngressVO;
 
     public AppServiceDeployVO() {

@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.api.vo.agile;
 
 import io.choerodon.test.manager.infra.util.StringUtil;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * @author dinghuang123@gmail.com
@@ -8,32 +9,46 @@ import io.choerodon.test.manager.infra.util.StringUtil;
  */
 public class IssueSubListDTO {
 
+    @ApiModelProperty(value = "issue id")
     private Long issueId;
 
+    @ApiModelProperty(value = "工作项编码")
     private String issueNum;
 
+    @ApiModelProperty(value = "状态id")
     private Long statusId;
 
+    @ApiModelProperty(value = "优先级编码")
     private String priorityCode;
 
+    @ApiModelProperty(value = "状态编码")
     private String statusCode;
 
+    @ApiModelProperty(value = "经办人id")
     private Long assigneeId;
 
+    @ApiModelProperty(value = "项目id")
     private Long projectId;
 
+    @ApiModelProperty(value = "报告人名称")
     private String reporterName;
 
+    @ApiModelProperty(value = "经办人名称")
     private String assigneeName;
 
+    @ApiModelProperty(value = "优先级名称")
     private String priorityName;
 
+    @ApiModelProperty(value = "状态名称")
     private String statusName;
 
+    @ApiModelProperty(value = "概要")
     private String summary;
 
+    @ApiModelProperty(value = "头像")
     private String imageUrl;
 
+    @ApiModelProperty(value = "状态颜色")
     private String statusColor;
 
     public Long getIssueId() {

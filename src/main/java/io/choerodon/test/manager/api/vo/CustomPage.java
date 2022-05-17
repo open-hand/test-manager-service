@@ -3,8 +3,10 @@ package io.choerodon.test.manager.api.vo;
 import java.util.List;
 
 import io.choerodon.core.domain.Page;
+import io.swagger.annotations.ApiModelProperty;
 
 public class CustomPage<E> extends Page<E> {
+    @ApiModelProperty(value = "allIdValues")
     private Long[] allIdValues;
 
     public CustomPage(List<E> content, Long[] allNumber) {

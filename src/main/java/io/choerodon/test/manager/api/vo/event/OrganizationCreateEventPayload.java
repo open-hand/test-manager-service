@@ -1,14 +1,20 @@
 package io.choerodon.test.manager.api.vo.event;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * @author dinghuang123@gmail.com
  * @since 2018/10/18
  */
 public class OrganizationCreateEventPayload {
 
+    @ApiModelProperty(value = "组织id")
     private Long id;
+    @ApiModelProperty(value = "组织名称")
     private String name;
+    @ApiModelProperty(value = "组织编码")
     private String code;
+    @ApiModelProperty(value = "用户id")
     private Long userId;
 
     public Long getId() {

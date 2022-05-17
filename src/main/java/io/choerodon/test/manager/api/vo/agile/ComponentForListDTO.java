@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.api.vo.agile;
 
 import io.choerodon.test.manager.infra.util.StringUtil;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * Created by HuangFuqiang@choerodon.io on 2018/5/31.
@@ -10,22 +11,31 @@ import io.choerodon.test.manager.infra.util.StringUtil;
  */
 public class ComponentForListDTO {
 
+    @ApiModelProperty(value = "模块id")
     private Long componentId;
 
+    @ApiModelProperty(value = "项目id")
     private Long projectId;
 
+    @ApiModelProperty(value = "名称")
     private String name;
 
+    @ApiModelProperty(value = "描述")
     private String description;
 
+    @ApiModelProperty(value = "负责人id")
     private Long managerId;
 
+    @ApiModelProperty(value = "默认经办人角色")
     private String defaultAssigneeRole;
 
+    @ApiModelProperty(value = "工作项计数")
     private Integer issueCount;
 
+    @ApiModelProperty(value = "管理员名称")
     private String managerName;
 
+    @ApiModelProperty(value = "头像")
     private String imageUrl;
 
     public Long getComponentId() {

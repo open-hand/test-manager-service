@@ -6,43 +6,59 @@ import java.util.Date;
 import io.choerodon.mybatis.annotation.ModifyAudit;
 import io.choerodon.mybatis.annotation.VersionAudit;
 import io.choerodon.mybatis.domain.AuditDomain;
+import io.swagger.annotations.ApiModelProperty;
 
 @VersionAudit
 @ModifyAudit
 @Table(name = "ASGARD_QUARTZ_TASK")
 public class QuartzTask extends AuditDomain {
 
+    @ApiModelProperty(value = "主键id")
     @Id
     @GeneratedValue
     private Long id;
 
+    @ApiModelProperty(value = "定时任务名称")
     private String name;
 
+    @ApiModelProperty(value = "定时任务描述")
     private String description;
 
+    @ApiModelProperty(value = "定时任务开始时间")
     private Date startTime;
 
+    @ApiModelProperty(value = "定时任务结束时间")
     private Date endTime;
 
+    @ApiModelProperty(value = "执行参数")
     private String executeParams;
 
+    @ApiModelProperty(value = "执行方法")
     private String executeMethod;
 
+    @ApiModelProperty(value = "触发类型")
     private String triggerType;
 
+    @ApiModelProperty(value = "重复次数")
     private Integer simpleRepeatCount;
 
+    @ApiModelProperty(value = "重复间隔")
     private Long simpleRepeatInterval;
 
+    @ApiModelProperty(value = "重复间隔单位")
     private String simpleRepeatIntervalUnit;
 
+    @ApiModelProperty(value = "cron Expression")
     private String cronExpression;
 
+    @ApiModelProperty(value = "状态")
     private String status;
 
+    @ApiModelProperty(value = "层级")
     @Column(name = "FD_LEVEL")
     private String level;
 
+    @ApiModelProperty(value = "来源id")
     private Long sourceId;
 
     public Long getId() {
