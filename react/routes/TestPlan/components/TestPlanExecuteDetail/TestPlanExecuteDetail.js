@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-no-bind */
 import React, {
-  useEffect, useContext, useState,
+  useEffect, useContext, useState, useRef,
 } from 'react';
 import {
   Card, Spin,
@@ -19,7 +19,7 @@ import {
   Modal, Button, message, Tooltip,
 } from 'choerodon-ui/pro';
 import queryString from 'query-string';
-import Loading, { LoadingProvider } from '@choerodon/agile/lib/components/Loading';
+import Loading from '@choerodon/agile/lib/components/Loading';
 import { uploadFile, deleteFile } from '@/api/FileApi';
 import { StatusTags } from '../../../../components';
 import {
@@ -372,38 +372,37 @@ function TestPlanExecuteDetail(props) {
         </Header>
 
         <Breadcrumb title={detailData ? renderBreadcrumbTitle(summary) : null} />
-        <Content style={{ padding: visible ? '0 437px 0 0' : ' 0 0 20px 0' }}>
+        <Content style={{ padding: visible ? '0 437px 0 0' : ' 0 0 20px 0', overflow: 'hidden' }}>
 
-          <LoadingProvider style={{ zIndex: 'auto' }}>
-            <Loading loadId="detail" loading={ExecuteDetailStore.loading} />
-            <div style={{ display: 'flex', width: '100%', height: '100%' }}>
-              {/* 左边内容区域 */}
-              <div
-                style={{
-                  flex: 1,
-                  overflow: 'hidden',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  height: '100%',
+          <Loading loadId="detail" loading={ExecuteDetailStore.loading} />
+          <div style={{ display: 'flex', width: '100%', height: '100%' }}>
+            {/* 左边内容区域 */}
+            <div
+              style={{
+                flex: 1,
+                overflow: 'hidden',
+                display: 'flex',
+                flexDirection: 'column',
+                height: '100%',
+              }}
+            >
+              <div className="c7n-test-execute-detail-header">
+                {detailData && (
+                <div style={{
+                  display: 'flex', alignItems: 'center', maxWidth: 'calc(100% - 4rem)', paddingRight: '.2rem',
                 }}
-              >
-                <div className="c7n-test-execute-detail-header">
-                  {detailData && (
-                    <div style={{
-                      display: 'flex', alignItems: 'center', maxWidth: 'calc(100% - 4rem)', paddingRight: '.2rem',
+                >
+                  <span className="c7n-test-execute-detail-summary" style={{ fontSize: '20px', overflow: 'hidden' }}>{renderBreadcrumbTitle(summary)}</span>
+                  <StatusTags
+                    style={{
+                      height: 20, lineHeight: '20px', marginLeft: 10, flexShrink: 0,
                     }}
-                    >
-                      <span className="c7n-test-execute-detail-summary" style={{ fontSize: '20px', overflow: 'hidden' }}>{renderBreadcrumbTitle(summary)}</span>
-                      <StatusTags
-                        style={{
-                          height: 20, lineHeight: '20px', marginLeft: 10, flexShrink: 0,
-                        }}
-                        color={statusColor}
-                        name={statusName}
-                      />
-                    </div>
-                  )}
-                  {planStatus === 'doing'
+                    color={statusColor}
+                    name={statusName}
+                  />
+                </div>
+                )}
+                {planStatus === 'doing'
                     && (
                       <QuickOperate
                         readOnly={planStatus !== 'doing'}
@@ -412,55 +411,55 @@ function TestPlanExecuteDetail(props) {
                         onSubmit={handleSubmit}
                       />
                     )}
-                </div>
-                <div style={{
+              </div>
+              <div
+                style={{
                   flex: 1,
                   overflow: 'auto',
                   // marginTop: -12,
                 }}
-                >
-                  <CardWrapper
-                    title={(
-                      <div className="c7n-test-execute-detail-card-title-description" style={{ marginTop: -12 }}>
-                        <AutoHeightPrecondition data={detailData.description} />
-                        {[
-                          <FormattedMessage id="execute_testDetail" />,
-                          <span style={{ marginLeft: 5 }}>{`（${stepTableDataSet.totalCount}）`}</span>,
-                        ]}
-                      </div>
+              >
+                <CardWrapper
+                  title={(
+                    <div className="c7n-test-execute-detail-card-title-description" style={{ marginTop: -12 }}>
+                      <AutoHeightPrecondition data={detailData.description} />
+                      {[
+                        <FormattedMessage id="execute_testDetail" />,
+                        <span style={{ marginLeft: 5 }}>{`（${stepTableDataSet.totalCount}）`}</span>,
+                      ]}
+                    </div>
                     )}
-                  >
-                    <StepTable
-                      dataSet={stepTableDataSet}
-                      updateHistory={() => executeHistoryDataSet.query()} // 更新执行历史
-                      testStatusDataSet={testStatusDataSet}
-                      readOnly={planStatus === 'done'} // 数据是否只读
-                      operateStatus={planStatus === 'doing'} // 数据是否可以进行状态更改/缺陷更改
-                      ExecuteDetailStore={ExecuteDetailStore}
-                      executeId={executeId}
-                      openIssue={handleOpenIssue}
-                      onCreateBug={handleBugCreate}
-                    />
-                  </CardWrapper>
-                  <CardWrapper title={<FormattedMessage id="execute_executeHistory" />}>
-                    <ExecuteHistoryTable
-                      dataSet={executeHistoryDataSet}
-                    />
-                  </CardWrapper>
-                </div>
+                >
+                  <StepTable
+                    dataSet={stepTableDataSet}
+                    updateHistory={() => executeHistoryDataSet.query()} // 更新执行历史
+                    testStatusDataSet={testStatusDataSet}
+                    readOnly={planStatus === 'done'} // 数据是否只读
+                    operateStatus={planStatus === 'doing'} // 数据是否可以进行状态更改/缺陷更改
+                    ExecuteDetailStore={ExecuteDetailStore}
+                    executeId={executeId}
+                    openIssue={handleOpenIssue}
+                    onCreateBug={handleBugCreate}
+                  />
+                </CardWrapper>
+                <CardWrapper title={<FormattedMessage id="execute_executeHistory" />}>
+                  <ExecuteHistoryTable
+                    dataSet={executeHistoryDataSet}
+                  />
+                </CardWrapper>
               </div>
-              {/* 右侧侧边栏 */}
-              {visible && (
-                <ExecuteDetailSide
-                  disabled={disabled}
-                  detailData={detailData}
-                  fileList={detailData.attachment}
-                  status={{ statusColor, statusName }}
-                  onClose={handleToggleExecuteDetailSide}
-                />
-              )}
             </div>
-          </LoadingProvider>
+            {/* 右侧侧边栏 */}
+            {visible && (
+            <ExecuteDetailSide
+              disabled={disabled}
+              detailData={detailData}
+              fileList={detailData.attachment}
+              status={{ statusColor, statusName }}
+              onClose={handleToggleExecuteDetailSide}
+            />
+            )}
+          </div>
           <DetailContainer {...detailProps} />
         </Content>
 
