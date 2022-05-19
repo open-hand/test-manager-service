@@ -358,7 +358,7 @@ public class TestCaseServiceImpl implements TestCaseService {
     private void checkPageRequest(PageRequest pageRequest) {
         Sort sort = pageRequest.getSort();
         if (Objects.isNull(sort)){
-            pageRequest.setSort(new Sort(new Sort.Order(Sort.Direction.DESC, TestCaseDTO.FIELD_CASE_ID)));
+            pageRequest.setSort(new Sort(new Sort.Order(Sort.Direction.ASC, TestCaseDTO.FIELD_CASE_ID)));
             return;
         }
     }
