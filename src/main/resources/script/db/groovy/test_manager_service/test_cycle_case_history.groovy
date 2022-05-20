@@ -10,7 +10,7 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             column(name: 'execute_id', type: "BIGINT UNSIGNED") {
                 constraints(primaryKey: true)
             }
-            column(name: 'field', type: "VARCHAR(50)", remarks: "field") {
+            column(name: 'field', type: "VARCHAR(50)", remarks: "字段") {
                 constraints(nullable: false)
             }
             column(name: 'old_value', type: 'text', remarks: '旧值') {
