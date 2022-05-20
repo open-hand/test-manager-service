@@ -6,18 +6,18 @@ package script.db.groovy.test_manager_service
 databaseChangeLog(logicalFilePath: "script/db/test_data_log.groovy") {
     changeSet(author: 'zhaotianxin', id: '2019-11-14-init_table_test_data_log') {
         createTable(tableName: "test_data_log", remarks: "日志记录") {
-            column(name: 'log_id', type: 'BIGINT UNSIGNED', autoIncrement: true, remarks: 'log id') {
+            column(name: 'log_id', type: 'BIGINT UNSIGNED', autoIncrement: true, remarks: '日志id') {
                 constraints(primaryKey: true)
             }
-            column(name: 'project_id', type: 'BIGINT UNSIGNED', remarks: 'project id') {
+            column(name: 'project_id', type: 'BIGINT UNSIGNED', remarks: '项目id') {
                 constraints(nullable: false)
             }
-            column(name: 'field', type: 'VARCHAR(255)', remarks: 'field')
-            column(name: 'old_value', type: 'text', remarks: 'old value')
-            column(name: 'old_string', type: 'text', remarks: 'old string')
-            column(name: 'new_value', type: 'text', remarks: 'new value')
-            column(name: 'new_string', type: 'text', remarks: 'new string')
-            column(name: 'case_id', type: 'BIGINT UNSIGNED', remarks: 'case id')
+            column(name: 'field', type: 'VARCHAR(255)', remarks: '字段')
+            column(name: 'old_value', type: 'text', remarks: '旧值id')
+            column(name: 'old_string', type: 'text', remarks: '旧值')
+            column(name: 'new_value', type: 'text', remarks: '新值id')
+            column(name: 'new_string', type: 'text', remarks: '新值')
+            column(name: 'case_id', type: 'BIGINT UNSIGNED', remarks: '用例id')
 
             column(name: "object_version_number", type: "BIGINT UNSIGNED", defaultValue: "1")
             column(name: "created_by", type: "BIGINT UNSIGNED", defaultValue: "0")
