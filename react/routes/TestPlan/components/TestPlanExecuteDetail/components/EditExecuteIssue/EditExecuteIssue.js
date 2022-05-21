@@ -6,9 +6,9 @@ import {
   Form, TextField, Icon, Spin, message, Select,
 } from 'choerodon-ui/pro';
 import { observer } from 'mobx-react-lite';
+import UploadButton from '@choerodon/agile/lib/components/CommonComponent/UploadButton';
 import CKEditor from '@/components/CKEditor';
 import { PromptInput } from '@/components';
-import UploadButton from './UploadButton';
 import EditTestStepTable from './EditTestStepTable';
 import './EditExecuteIssue.less';
 

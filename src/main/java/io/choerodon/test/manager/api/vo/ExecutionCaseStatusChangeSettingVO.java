@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.api.vo;
 
+import io.swagger.annotations.ApiModelProperty;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
@@ -7,24 +8,33 @@ import org.hzero.starter.keyencrypt.core.Encrypt;
  * @date 2021-05-10 16:53
  */
 public class ExecutionCaseStatusChangeSettingVO {
+
+    @ApiModelProperty(value = "id")
     @Encrypt
     private Long id;
 
+    @ApiModelProperty(value = "敏捷工作项状态id")
     @Encrypt
     private Long agileIssueTypeId;
 
+    @ApiModelProperty(value = "工作项状态id")
     @Encrypt
     private Long agileStatusId;
 
+    @ApiModelProperty(value = "测试用例状态id")
     @Encrypt
     private Long testStatusId;
 
+    @ApiModelProperty(value = "测试状态")
     private TestStatusVO testStatusVO;
 
+    @ApiModelProperty(value = "项目id")
     private Long projectId;
 
+    @ApiModelProperty(value = "组织id")
     private Long organizationId;
 
+    @ApiModelProperty(value = "乐观锁")
     private Long objectVersionNumber;
 
     public Long getId() {

@@ -12,23 +12,31 @@ import java.util.Map;
  */
 public class DevopsServiceReqVO {
 
+    @ApiModelProperty(value = "环境id")
     @NotNull
     private Long envId;
+    @ApiModelProperty(value = "应用服务id")
     private Long appServiceId;
     @NotNull
     @Size(min = 1, max = 64, message = "error.name.size")
+    @ApiModelProperty(value = "仓库名称")
     private String name;
+    @ApiModelProperty(value = "外部ip")
     private String externalIp;
     @NotNull
+    @ApiModelProperty(value = "类型")
     private String type;
     @NotNull
+    @ApiModelProperty(value = "端口")
     private List<PortMapVO> ports;
 
+    @ApiModelProperty(value = "结束节点")
     private Map<String, List<EndPointPortVO>> endPoints;
 
     @ApiModelProperty("实例code")
     private List<String> instances;
 
+    @ApiModelProperty(value = "标签")
     private Map<String, String> label;
 
     public Long getEnvId() {

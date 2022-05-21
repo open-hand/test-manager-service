@@ -8,6 +8,7 @@ import java.util.Map;
 import io.choerodon.mybatis.annotation.ModifyAudit;
 import io.choerodon.mybatis.annotation.VersionAudit;
 import io.choerodon.mybatis.domain.AuditDomain;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -18,43 +19,62 @@ import io.choerodon.mybatis.domain.AuditDomain;
 public class TestCycleDTO extends AuditDomain {
     @Id
     @GeneratedValue
+    @ApiModelProperty(value = "计划文件夹id")
     private Long cycleId;
 
+    @ApiModelProperty(value = "父文件夹id")
     private Long parentCycleId;
 
+    @ApiModelProperty(value = "文件夹id")
     private String cycleName;
 
+    @ApiModelProperty(value = "版本id")
     private Long versionId;
 
+    @ApiModelProperty(value = "描述id")
     private String description;
 
+    @ApiModelProperty(value = "build")
     private String build;
 
+    @ApiModelProperty(value = "环境")
     private String environment;
 
+    @ApiModelProperty(value = "开始时间")
     private Date fromDate;
 
+    @ApiModelProperty(value = "结束时间")
     private Date toDate;
 
+    @ApiModelProperty(value = "类型")
     private String type;
 
+    @ApiModelProperty(value = "文件夹id")
     private Long folderId;
 
+    @ApiModelProperty(value = "创建人")
     private Long createdBy;
 
+    @ApiModelProperty(value = "更新人")
     private Long lastUpdatedBy;
 
+    @ApiModelProperty(value = "rank")
     private String rank;
 
+    @ApiModelProperty(value = "项目id")
     private Long projectId;
 
+    @ApiModelProperty(value = "计划id")
     private Long planId;
 
+    @ApiModelProperty(value = "循环用例")
     @Transient
     private List<Map<Long, Object>> cycleCaseList;
 
+    @ApiModelProperty(value = "用例计数")
     @Transient
     private Long caseCount;
+    @ApiModelProperty(value = "原计划文件夹id")
     @Transient
     private Long oldCycleId;
 

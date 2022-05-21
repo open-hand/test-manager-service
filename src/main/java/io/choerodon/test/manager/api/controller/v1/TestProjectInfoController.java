@@ -38,7 +38,7 @@ public class TestProjectInfoController {
     @ApiOperation("查询projectinfo")
     @GetMapping
     public ResponseEntity<ProjectInfoVO> queryProjectInfo(@ApiParam(value = "项目id", required = true)
-                                                           @PathVariable(name = "project_id") Long projectId) {
+                                                          @PathVariable(name = "project_id") Long projectId) {
         return new ResponseEntity<>(testProjectInfoService.queryProjectInfo(projectId),HttpStatus.OK);
     }
 
