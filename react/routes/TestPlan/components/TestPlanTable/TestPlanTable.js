@@ -234,6 +234,7 @@ const TestPlanTable = observer(({
     flex: 1.6,
     style: {
       overflow: 'hidden',
+      minWidth: 80,
     },
     render: (text, record) => renderMenu(record.summary, record),
   }, {
