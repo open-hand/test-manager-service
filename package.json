@@ -1,7 +1,7 @@
 {
   "name": "@choerodon/testmanager",
   "routeName": "testManager",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": " ",
   "main": "./lib/index.js",
   "install": "./lib/install.js",
@@ -30,10 +30,10 @@
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
-    "@choerodon/agile": "2.0.0",
+    "@choerodon/agile": "2.0.2",
     "@choerodon/boot": "1.2.0",
     "@choerodon/compiler": "^0.0.1",
-    "@choerodon/master": "1.4.0",
+    "@choerodon/master": "2.0.0",
     "@types/echarts": "^4.6.5",
     "@types/file-saver": "^2.0.2",
     "@types/lodash": "^4.14.165",

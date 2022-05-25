@@ -19,7 +19,7 @@ import TableDraggleItem from './TableDraggleItem';
 import IssueTreeStore from '../../stores/IssueTreeStore';
 import { getTask } from '../IssueTree/TreeNode';
 import {
-  renderIssueNum, renderSummary, renderAction,
+  renderIssueNum, renderSummary,
 } from './tags';
 import './IssueTable.less';
 import PriorityTag from '../../../../components/PriorityTag';
@@ -98,7 +98,7 @@ export default observer((props) => {
       <th
         className={IssueStore.order.orderField === column.key && `c7ntest-issuetable-sorter-${IssueStore.order.orderType}`}
         key={column.key}
-        style={{ width: column.width, flex: column.width ? 'unset' : (column.flex || 1) }}
+        style={{ ...column.style, width: column.width, flex: column.width ? 'unset' : (column.flex || 1) }}
         onClick={column.sorter && handleSortByField.bind(this, column.key)}
       >
         {column.key === CHECKBOX_KEY && !column.title ? (
@@ -167,7 +167,7 @@ export default observer((props) => {
       }
       return (
         // <td style={{ flex: flex || 1 }} >
-        <td key={column.key} style={{ width: column.width, flex: column.width ? 'unset' : (column.flex || 1) }}>
+        <td key={column.key} style={{ ...column.style, width: column.width, flex: column.width ? 'unset' : (column.flex || 1) }}>
           {renderedItem}
         </td>
       );
@@ -335,13 +335,10 @@ export default observer((props) => {
       title: formatMessage({ id: 'test.caseLibrary.name' }),
       dataIndex: 'summary',
       key: 'summary',
+      flex: 2,
+      style: { minWidth: 80 },
       filters: [],
-      render: (summary, record) => renderSummary(summary, record, onClick, history),
-    },
-    {
-      key: 'action',
-      render: (text, record) => renderAction(record, history, reLoadTable),
-      width: '0.6rem',
+      render: (summary, record) => renderSummary(summary, record, onClick, reLoadTable),
     },
 
     {
