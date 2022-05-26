@@ -129,11 +129,16 @@ class DragTable extends Component {
     }
   }
 
+  get columns() {
+    const { columns } = this.props;
+    return columns.map((column) => ({ ...column, hidden: !this.shouldColumnShow(column) }));
+  }
+
   renderThead = () => {
     const {
-      columns, checkedMap, dataSource, checkField, onChangeCallBack,
+      checkedMap, dataSource, checkField, onChangeCallBack,
     } = this.props;
-    const Columns = columns.filter((column) => this.shouldColumnShow(column));
+    const Columns = this.columns.filter((column) => !column.hidden);
     const ths = Columns.map((column) => (
       <th style={{ ...column.style, flex: column.width ? 'unset' : (column.flex || 1), width: column.width }}>
         {(column.key !== 'checkbox' || dataSource.length === 0) ? column.title : (
@@ -146,10 +151,10 @@ class DragTable extends Component {
 
   renderTbody(data) {
     const {
-      columns, dragKey, disabled, customDragHandle, onRow,
+      dragKey, disabled, customDragHandle, onRow,
     } = this.props;
     const judgeProps = (props) => (customDragHandle ? {} : props);
-    const Columns = columns.filter((column) => this.shouldColumnShow(column));
+    const Columns = this.columns.filter((column) => !column.hidden);
     const rows = data && data.length > 0 && data.map((item, index) => (
       disabled
         ? (
@@ -224,6 +229,7 @@ class DragTable extends Component {
         <Loading loadId="DragTable">
           <Table
             {...omit(this.props, 'loading')}
+            columns={this.columns}
             dataSource={data}
             components={this.components}
             onColumnFilterChange={this.handleColumnFilterChange}

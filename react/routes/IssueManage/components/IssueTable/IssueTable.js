@@ -33,7 +33,7 @@ export default observer((props) => {
   const formatMessage = useFormatMessage();
 
   const [firstIndex, setFirstIndex] = useState(null);
-  const [filteredColumns, setFilteredColumns] = useState([]);
+  const [filteredColumns, setFilteredColumns] = useState(props.defaultFilteredColumns || []);
   const instance = useRef();
   const { updateColumnCache } = useSimpleUpdateColumnCache('testManger', ['summary', 'caseNum', 'customNum', 'sequence', 'createUser', 'creationDate', 'lastUpdateUser', 'lastUpdateDate']);
   const handleColumnFilterChange = ({ selectedKeys }) => {
@@ -338,6 +338,7 @@ export default observer((props) => {
       dataIndex: 'summary',
       key: 'summary',
       flex: 2,
+      disableClick: true,
       style: { minWidth: 80 },
       filters: [],
       render: (summary, record) => renderSummary(summary, record, onClick, reLoadTable),

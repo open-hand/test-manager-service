@@ -232,6 +232,7 @@ const TestPlanTable = observer(({
     dataIndex: 'summary',
     key: 'summary',
     filters: [],
+    disableClick: true,
     filteredValue: getSummaryFilterValue(),
     flex: 1.6,
     style: {
