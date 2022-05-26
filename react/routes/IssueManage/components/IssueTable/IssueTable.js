@@ -25,6 +25,7 @@ import './IssueTable.less';
 import PriorityTag from '../../../../components/PriorityTag';
 import CustomCheckBox from '@/components/CustomCheckBox';
 import useFormatMessage from '@/hooks/useFormatMessage';
+import { useSimpleUpdateColumnCache } from '@/hooks/data/useTableColumns';
 
 const CHECKBOX_KEY = 'checkbox';
 
@@ -34,9 +35,10 @@ export default observer((props) => {
   const [firstIndex, setFirstIndex] = useState(null);
   const [filteredColumns, setFilteredColumns] = useState([]);
   const instance = useRef();
-  const tableRef = useRef();
+  const { updateColumnCache } = useSimpleUpdateColumnCache('testManger', ['summary', 'caseNum', 'customNum', 'sequence', 'createUser', 'creationDate', 'lastUpdateUser', 'lastUpdateDate']);
   const handleColumnFilterChange = ({ selectedKeys }) => {
     setFilteredColumns(selectedKeys);
+    updateColumnCache(selectedKeys);
   };
   const transformFilters = (filters, reverse = false) => {
     const transformedFilters = Object.entries(filters).filter((item) => item[1].length > 0);

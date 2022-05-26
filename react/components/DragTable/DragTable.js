@@ -5,7 +5,7 @@ import { C7NFormat } from '@choerodon/master';
 import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
 import { Table } from 'choerodon-ui';
 import './DragTable.less';
-import { omit } from 'lodash';
+import { isEqual, omit } from 'lodash';
 import Loading from '@choerodon/agile/lib/components/Loading';
 import CustomCheckBox from '../CustomCheckBox';
 
@@ -34,12 +34,17 @@ class DragTable extends Component {
     if (!(this.props.loading === false && nextProps.loading === true)) {
       this.setState({ data: nextProps.dataSource });
     }
+    if (isEqual(this.props.selectedKeys, nextProps.selectedKeys)) {
+      this.setState({ filteredColumns: nextProps.selectedKeys || [] });
+    }
   }
 
   handleColumnFilterChange = ({ selectedKeys }) => {
+    const { onColumnFilterChange } = this.props;
     this.setState({
       filteredColumns: selectedKeys,
     });
+    onColumnFilterChange && onColumnFilterChange(selectedKeys);
   }
 
   shouldColumnShow = (column) => {

@@ -42,7 +42,7 @@ let updateModal;
 
 function TestPlanHome({ history }) {
   const {
-    prefixCls, createAutoTestStore, testPlanStore,
+    prefixCls, createAutoTestStore, testPlanStore, cached,
   } = useContext(Store);
   const formatMessage = useFormatMessage();
 
@@ -410,6 +410,7 @@ function TestPlanHome({ history }) {
                           hasCheckBox={mainActiveTab === 'testPlanTable'}
                           isMine={mainActiveTab === 'mineTestPlanTable'}
                           key={mainActiveTab}
+                          cached={cached}
                         />
                       )
                     }
