@@ -19,24 +19,26 @@ import TableDraggleItem from './TableDraggleItem';
 import IssueTreeStore from '../../stores/IssueTreeStore';
 import { getTask } from '../IssueTree/TreeNode';
 import {
-  renderIssueNum, renderSummary, renderAction,
+  renderIssueNum, renderSummary,
 } from './tags';
 import './IssueTable.less';
 import PriorityTag from '../../../../components/PriorityTag';
 import CustomCheckBox from '@/components/CustomCheckBox';
 import useFormatMessage from '@/hooks/useFormatMessage';
+import { useSimpleUpdateColumnCache } from '@/hooks/data/useTableColumns';
 
 const CHECKBOX_KEY = 'checkbox';
-
+const defaultShowColumns = ['summary', 'caseId', 'sequence', 'createUser', 'creationDate', 'lastUpdateUser', 'lastUpdateDate'];
 export default observer((props) => {
   const formatMessage = useFormatMessage();
 
   const [firstIndex, setFirstIndex] = useState(null);
-  const [filteredColumns, setFilteredColumns] = useState([]);
+  const [filteredColumns, setFilteredColumns] = useState(props.defaultFilteredColumns || defaultShowColumns);
   const instance = useRef();
-  const tableRef = useRef();
+  const { updateColumnCache } = useSimpleUpdateColumnCache('testManger', ['summary', 'caseId', 'customNum', 'sequence', 'createUser', 'creationDate', 'lastUpdateUser', 'lastUpdateDate']);
   const handleColumnFilterChange = ({ selectedKeys }) => {
     setFilteredColumns(selectedKeys);
+    updateColumnCache(selectedKeys);
   };
   const transformFilters = (filters, reverse = false) => {
     const transformedFilters = Object.entries(filters).filter((item) => item[1].length > 0);
@@ -98,7 +100,7 @@ export default observer((props) => {
       <th
         className={IssueStore.order.orderField === column.key && `c7ntest-issuetable-sorter-${IssueStore.order.orderType}`}
         key={column.key}
-        style={{ width: column.width, flex: column.width ? 'unset' : (column.flex || 1) }}
+        style={{ ...column.style, width: column.width, flex: column.width ? 'unset' : (column.flex || 1) }}
         onClick={column.sorter && handleSortByField.bind(this, column.key)}
       >
         {column.key === CHECKBOX_KEY && !column.title ? (
@@ -167,7 +169,7 @@ export default observer((props) => {
       }
       return (
         // <td style={{ flex: flex || 1 }} >
-        <td key={column.key} style={{ width: column.width, flex: column.width ? 'unset' : (column.flex || 1) }}>
+        <td key={column.key} style={{ ...column.style, width: column.width, flex: column.width ? 'unset' : (column.flex || 1) }}>
           {renderedItem}
         </td>
       );
@@ -335,13 +337,11 @@ export default observer((props) => {
       title: formatMessage({ id: 'test.caseLibrary.name' }),
       dataIndex: 'summary',
       key: 'summary',
+      flex: 2,
+      disableClick: true,
+      style: { minWidth: 80 },
       filters: [],
-      render: (summary, record) => renderSummary(summary, record, onClick, history),
-    },
-    {
-      key: 'action',
-      render: (text, record) => renderAction(record, history, reLoadTable),
-      width: '0.6rem',
+      render: (summary, record) => renderSummary(summary, record, onClick, reLoadTable),
     },
 
     {
