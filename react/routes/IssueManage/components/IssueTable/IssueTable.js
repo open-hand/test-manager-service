@@ -28,14 +28,14 @@ import useFormatMessage from '@/hooks/useFormatMessage';
 import { useSimpleUpdateColumnCache } from '@/hooks/data/useTableColumns';
 
 const CHECKBOX_KEY = 'checkbox';
-
+const defaultShowColumns = ['summary', 'caseId', 'sequence', 'createUser', 'creationDate', 'lastUpdateUser', 'lastUpdateDate'];
 export default observer((props) => {
   const formatMessage = useFormatMessage();
 
   const [firstIndex, setFirstIndex] = useState(null);
-  const [filteredColumns, setFilteredColumns] = useState(props.defaultFilteredColumns || []);
+  const [filteredColumns, setFilteredColumns] = useState(props.defaultFilteredColumns || defaultShowColumns);
   const instance = useRef();
-  const { updateColumnCache } = useSimpleUpdateColumnCache('testManger', ['summary', 'caseNum', 'customNum', 'sequence', 'createUser', 'creationDate', 'lastUpdateUser', 'lastUpdateDate']);
+  const { updateColumnCache } = useSimpleUpdateColumnCache('testManger', ['summary', 'caseId', 'customNum', 'sequence', 'createUser', 'creationDate', 'lastUpdateUser', 'lastUpdateDate']);
   const handleColumnFilterChange = ({ selectedKeys }) => {
     setFilteredColumns(selectedKeys);
     updateColumnCache(selectedKeys);

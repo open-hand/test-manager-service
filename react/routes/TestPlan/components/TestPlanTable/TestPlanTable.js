@@ -28,7 +28,7 @@ import { OpenBatchModal, closeBatchModal } from '../BatchAction';
 import useFormatMessage from '@/hooks/useFormatMessage';
 
 const { AppState } = stores;
-const DragTable = wrapDragTableCache(OriginDragTable, 'testPlan');
+const DragTable = wrapDragTableCache(OriginDragTable, 'testPlan', ['summary', 'priorityId', 'assignedUser', 'lastUpdateUser', 'lastUpdateDate', 'executionStatus']);
 const propTypes = {
   onDragEnd: PropTypes.func.isRequired,
   onTableChange: PropTypes.func.isRequired,

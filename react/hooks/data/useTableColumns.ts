@@ -52,7 +52,6 @@ export function useSimpleUpdateColumnCache(type: string, columnCodes: string[], 
   const columnCodesRef = useRef<string[]>();
   columnCodesRef.current = columnCodes;
   const updateColumnCache = useCallback((visibleColumns?: string[]) => {
-    console.log('columnCodesRef', columnCodesRef);
     if (!columnCodesRef.current?.length) {
       return;
     }
