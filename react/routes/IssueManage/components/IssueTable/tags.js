@@ -26,6 +26,7 @@ export function renderSummary(summary, record, onClick, reLoadTable) {
     <TableDropMenu
       text={summary}
       style={{ minWidth: 60 }}
+      tooltip
       onTextClick={() => onClick(record)}
       menuData={[
         {
