@@ -761,6 +761,10 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             markAsError(row, "概要长度不能超过44个字符");
             return null;
         }
+        if (Objects.isNull(priorityMap.get(priority))) {
+            markAsError(row, "优先级不存在");
+            return null;
+        }
         // 递归查询用例所属目录
         Long folderId = getFolderIdByPath(projectId, folderPath, 0L);
         if (Objects.isNull(folderId)) {
