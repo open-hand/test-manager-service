@@ -25,7 +25,7 @@ public class TestCaseStatisticController {
     private TestCaseStatisticService testCaseStatisticService;
 
 
-    @Permission(level = ResourceLevel.ORGANIZATION)
+    @Permission(permissionLogin = true)
     @ApiOperation("每日测试用例数")
     @PostMapping(value = "/daily")
     public ResponseEntity<Map<String, Map<String, Integer>>> dailyStatistic(@ApiParam(value = "项目id", required = true)
