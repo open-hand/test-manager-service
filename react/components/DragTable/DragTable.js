@@ -5,7 +5,7 @@ import { C7NFormat } from '@choerodon/master';
 import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
 import { Table } from 'choerodon-ui';
 import './DragTable.less';
-import { omit } from 'lodash';
+import { isEqual, omit } from 'lodash';
 import Loading from '@choerodon/agile/lib/components/Loading';
 import CustomCheckBox from '../CustomCheckBox';
 
@@ -34,12 +34,17 @@ class DragTable extends Component {
     if (!(this.props.loading === false && nextProps.loading === true)) {
       this.setState({ data: nextProps.dataSource });
     }
+    if (isEqual(this.props.selectedKeys, nextProps.selectedKeys)) {
+      this.setState({ filteredColumns: nextProps.selectedKeys || [] });
+    }
   }
 
   handleColumnFilterChange = ({ selectedKeys }) => {
+    const { onColumnFilterChange } = this.props;
     this.setState({
       filteredColumns: selectedKeys,
     });
+    onColumnFilterChange && onColumnFilterChange(selectedKeys);
   }
 
   shouldColumnShow = (column) => {
@@ -124,11 +129,16 @@ class DragTable extends Component {
     }
   }
 
+  get columns() {
+    const { columns } = this.props;
+    return columns.map((column) => ({ ...column, hidden: !this.shouldColumnShow(column) }));
+  }
+
   renderThead = () => {
     const {
-      columns, checkedMap, dataSource, checkField, onChangeCallBack,
+      checkedMap, dataSource, checkField, onChangeCallBack,
     } = this.props;
-    const Columns = columns.filter((column) => this.shouldColumnShow(column));
+    const Columns = this.columns.filter((column) => !column.hidden);
     const ths = Columns.map((column) => (
       <th style={{ ...column.style, flex: column.width ? 'unset' : (column.flex || 1), width: column.width }}>
         {(column.key !== 'checkbox' || dataSource.length === 0) ? column.title : (
@@ -141,10 +151,10 @@ class DragTable extends Component {
 
   renderTbody(data) {
     const {
-      columns, dragKey, disabled, customDragHandle, onRow,
+      dragKey, disabled, customDragHandle, onRow,
     } = this.props;
     const judgeProps = (props) => (customDragHandle ? {} : props);
-    const Columns = columns.filter((column) => this.shouldColumnShow(column));
+    const Columns = this.columns.filter((column) => !column.hidden);
     const rows = data && data.length > 0 && data.map((item, index) => (
       disabled
         ? (
@@ -219,6 +229,7 @@ class DragTable extends Component {
         <Loading loadId="DragTable">
           <Table
             {...omit(this.props, 'loading')}
+            columns={this.columns}
             dataSource={data}
             components={this.components}
             onColumnFilterChange={this.handleColumnFilterChange}

@@ -25,18 +25,20 @@ import './IssueTable.less';
 import PriorityTag from '../../../../components/PriorityTag';
 import CustomCheckBox from '@/components/CustomCheckBox';
 import useFormatMessage from '@/hooks/useFormatMessage';
+import { useSimpleUpdateColumnCache } from '@/hooks/data/useTableColumns';
 
 const CHECKBOX_KEY = 'checkbox';
-
+const defaultShowColumns = ['summary', 'caseId', 'sequence', 'createUser', 'creationDate', 'lastUpdateUser', 'lastUpdateDate'];
 export default observer((props) => {
   const formatMessage = useFormatMessage();
 
   const [firstIndex, setFirstIndex] = useState(null);
-  const [filteredColumns, setFilteredColumns] = useState([]);
+  const [filteredColumns, setFilteredColumns] = useState(props.defaultFilteredColumns || defaultShowColumns);
   const instance = useRef();
-  const tableRef = useRef();
+  const { updateColumnCache } = useSimpleUpdateColumnCache('testManger', ['summary', 'caseId', 'customNum', 'sequence', 'createUser', 'creationDate', 'lastUpdateUser', 'lastUpdateDate']);
   const handleColumnFilterChange = ({ selectedKeys }) => {
     setFilteredColumns(selectedKeys);
+    updateColumnCache(selectedKeys);
   };
   const transformFilters = (filters, reverse = false) => {
     const transformedFilters = Object.entries(filters).filter((item) => item[1].length > 0);
@@ -336,6 +338,7 @@ export default observer((props) => {
       dataIndex: 'summary',
       key: 'summary',
       flex: 2,
+      disableClick: true,
       style: { minWidth: 80 },
       filters: [],
       render: (summary, record) => renderSummary(summary, record, onClick, reLoadTable),

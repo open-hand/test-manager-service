@@ -53,7 +53,7 @@ public interface BaseFeignClient {
                                               @RequestParam("size") int size,
                                               @RequestParam("sort") String sort);
 
-    @GetMapping(value = "/choerodon/v1/projects/ids")
+    @PostMapping(value = "/choerodon/v1/projects/ids")
     ResponseEntity<List<ProjectDTO>> queryProjects(Set<Long> ids);
 
     @GetMapping("/choerodon/v1/organizations/{organization_id}/users/{user_id}/projects")

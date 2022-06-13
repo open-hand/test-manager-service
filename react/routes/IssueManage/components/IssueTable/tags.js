@@ -26,6 +26,7 @@ export function renderSummary(summary, record, onClick, reLoadTable) {
     <TableDropMenu
       text={summary}
       style={{ minWidth: 60 }}
+      tooltip
       onTextClick={() => onClick(record)}
       menuData={[
         {
@@ -38,7 +39,6 @@ export function renderSummary(summary, record, onClick, reLoadTable) {
               caseId: record.caseId,
               folderId: record.folderId,
             }], record.folderId).then(() => {
-              console.log('reLoadTable', reLoadTable);
               reLoadTable();
               Choerodon.prompt('复制成功');
             }).catch(() => {

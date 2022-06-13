@@ -15,8 +15,9 @@ import { useLoading } from '@choerodon/agile/lib/components/Loading';
 import SelectUser from '@choerodon/agile/lib/components/select/select-user';
 import { renderIssueNum } from '@/routes/IssueManage/components/IssueTable/tags';
 import {
-  StatusTags, DragTable,
+  StatusTags, DragTable as OriginDragTable,
 } from '../../../../components';
+import wrapDragTableCache from '@/components/DragTable/wrapCache';
 import CustomCheckBox from '../../../../components/CustomCheckBox';
 import User from '../../../../components/User';
 import './TestPlanTable.less';
@@ -27,7 +28,7 @@ import { OpenBatchModal, closeBatchModal } from '../BatchAction';
 import useFormatMessage from '@/hooks/useFormatMessage';
 
 const { AppState } = stores;
-
+const DragTable = wrapDragTableCache(OriginDragTable, 'testPlan', ['summary', 'priorityId', 'assignedUser', 'lastUpdateUser', 'lastUpdateDate', 'executionStatus']);
 const propTypes = {
   onDragEnd: PropTypes.func.isRequired,
   onTableChange: PropTypes.func.isRequired,
@@ -51,6 +52,7 @@ const TestPlanTable = observer(({
   onOnlyMeCheckedChange,
   hasCheckBox,
   isMine,
+  cached,
 }) => {
   const {
     testPlanStore,
@@ -230,6 +232,7 @@ const TestPlanTable = observer(({
     dataIndex: 'summary',
     key: 'summary',
     filters: [],
+    disableClick: true,
     filteredValue: getSummaryFilterValue(),
     flex: 1.6,
     style: {
@@ -450,6 +453,7 @@ const TestPlanTable = observer(({
         checkField="executeId"
         key={testPlanStore.currentCycle.id}
         onChangeCallBack={handleCheckBoxChange}
+        cached={cached}
       />
     </div>
   );
