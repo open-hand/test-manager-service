@@ -50,4 +50,6 @@ public interface TestCaseLinkService {
     List<TestCaseLinkVO> queryLinkCases(Long projectId, Long issueId);
 
     void batchDeleteByCaseId(Long project,Long caseId);
+
+    Boolean checkExist(Long projectId, Long issueId);
 }

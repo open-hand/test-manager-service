@@ -100,4 +100,15 @@ public class TestCaseLinkController {
                                                                @Encrypt Long issueId) {
         return new ResponseEntity<>(testCaseLinkService.queryLinkCases(projectId, issueId), HttpStatus.OK);
     }
+
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @ApiOperation("敏捷调用，查询issue是否关联用例")
+    @GetMapping("/check_exist")
+    public ResponseEntity<Boolean> checkExist(@ApiParam(value = "项目id", required = true)
+                                              @PathVariable(name = "project_id") Long projectId,
+                                              @ApiParam(value = "issueId", required = true)
+                                              @RequestParam(name = "issue_id")
+                                              @Encrypt Long issueId) {
+        return new ResponseEntity<>(testCaseLinkService.checkExist(projectId, issueId), HttpStatus.OK);
+    }
 }
