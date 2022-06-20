@@ -234,4 +234,19 @@ public class TestCaseLinkServiceImpl implements TestCaseLinkService {
         delete.setLinkCaseId(caseId);
         testCaseLinkMapper.delete(delete);
     }
+
+    @Override
+    public Boolean checkExist(Long projectId, Long issueId) {
+        if (ObjectUtils.isEmpty(projectId) || ObjectUtils.isEmpty(issueId)) {
+            return false;
+        }
+        TestCaseLinkDTO testCaseLinkDTO = new TestCaseLinkDTO();
+        testCaseLinkDTO.setIssueId(issueId);
+        testCaseLinkDTO.setProjectId(projectId);
+        List<TestCaseLinkDTO> caseLinkList = testCaseLinkMapper.select(testCaseLinkDTO);
+        if (!ObjectUtils.isEmpty(caseLinkList)) {
+            return true;
+        }
+        return false;
+    }
 }
