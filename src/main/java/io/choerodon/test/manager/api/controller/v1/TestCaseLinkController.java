@@ -111,4 +111,17 @@ public class TestCaseLinkController {
                                               @Encrypt Long issueId) {
         return new ResponseEntity<>(testCaseLinkService.checkExist(projectId, issueId), HttpStatus.OK);
     }
+
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @ApiOperation("敏捷调用，复制")
+    @GetMapping("/copy_by_issue_id")
+    public ResponseEntity<Void> copyIssueRelatedTestCases(@ApiParam(value = "项目id", required = true)
+                                                          @PathVariable(name = "project_id") Long projectId,
+                                                          @ApiParam(value = "issueId", required = true)
+                                                          @RequestParam @Encrypt Long issueId,
+                                                          @ApiParam(value = "newIssueId", required = true)
+                                                          @RequestParam @Encrypt Long newIssueId) {
+        testCaseLinkService.copyIssueRelatedTestCases(projectId, issueId, newIssueId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
