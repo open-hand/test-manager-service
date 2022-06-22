@@ -9,9 +9,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.choerodon.test.manager.api.vo.TestPlanVO;
-import io.choerodon.test.manager.api.vo.event.OrganizationCreateEventPayload;
-import io.choerodon.test.manager.api.vo.event.ProjectEvent;
-import io.choerodon.test.manager.api.vo.event.ProjectEventCategory;
+import io.choerodon.test.manager.api.vo.event.*;
 import io.choerodon.test.manager.infra.constant.SagaTaskCodeConstants;
 import io.choerodon.test.manager.infra.constant.SagaTopicCodeConstants;
 import io.choerodon.test.manager.infra.dto.*;
@@ -19,6 +17,8 @@ import io.choerodon.test.manager.infra.enums.TestPlanInitStatus;
 import io.choerodon.test.manager.infra.mapper.TestPlanMapper;
 import io.choerodon.test.manager.infra.mapper.TestProjectInfoMapper;
 import org.hzero.core.base.BaseConstants;
+import org.hzero.starter.keyencrypt.core.EncryptContext;
+import org.hzero.starter.keyencrypt.core.EncryptType;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,6 @@ import org.springframework.stereotype.Component;
 
 import io.choerodon.asgard.saga.annotation.SagaTask;
 import io.choerodon.test.manager.app.service.*;
-import io.choerodon.test.manager.api.vo.event.InstancePayload;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -74,6 +73,9 @@ public class TestManagerEventHandler {
 
     @Autowired
     private TestProjectInfoMapper testProjectInfoMapper;
+
+    @Autowired
+    private TestCaseLinkService testCaseLinkService;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -205,6 +207,27 @@ public class TestManagerEventHandler {
             LOGGER.info("项目{}已初始化，跳过项目初始化", projectEvent.getProjectCode());
         }
         return message;
+    }
+
+    @SagaTask(code = SagaTaskCodeConstants.TASK_CLONE_ISSUE,
+            description = "复制工作项关联测试用例",
+            sagaCode = SagaTaskCodeConstants.CLONE_ISSUE,
+            seq = 1,
+            maxRetryCount = 3)
+    public String handleCloneIssueEvent(String data) {
+        CloneIssueEvent cloneIssueEvent = JSON.parseObject(data, CloneIssueEvent.class);
+        LOGGER.info("工作项复制关联测试用例，{}", data);
+        Long projectId = cloneIssueEvent.getProjectId();
+        List<String> linkContents = cloneIssueEvent.getLinkContents();
+        Map<Long, Long> newIssueIdMap = cloneIssueEvent.getNewIssueIdMap();
+        EncryptContext.setEncryptType(EncryptType.TO_STRING.name());
+        if (!ObjectUtils.isEmpty(newIssueIdMap) && !ObjectUtils.isEmpty(linkContents) && linkContents.contains("relatedTestCases")) {
+            newIssueIdMap.keySet().forEach(newIssueId -> {
+                Long oldIssueId = newIssueIdMap.get(newIssueId);
+                testCaseLinkService.copyIssueRelatedTestCases(projectId, oldIssueId, newIssueId);
+            });
+        }
+        return data;
     }
 
 }

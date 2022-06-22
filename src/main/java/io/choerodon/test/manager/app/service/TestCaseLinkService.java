@@ -52,4 +52,6 @@ public interface TestCaseLinkService {
     void batchDeleteByCaseId(Long project,Long caseId);
 
     Boolean checkExist(Long projectId, Long issueId);
+
+    void copyIssueRelatedTestCases(Long projectId, Long oldIssueId, Long newIssueId);
 }

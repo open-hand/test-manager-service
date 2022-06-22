@@ -40,4 +40,14 @@ public class SagaTaskCodeConstants {
      */
     public static final String TASK_PROJECT_UPDATE = "test-update-project";
 
+    /**
+     * 复制工作项SagaCode
+     */
+    public static final String CLONE_ISSUE = "agile-clone-issue";
+
+    /**
+     * 复制工作项SagaTaskCode
+     */
+    public static final String TASK_CLONE_ISSUE = "test-clone-issue";
+
 }
