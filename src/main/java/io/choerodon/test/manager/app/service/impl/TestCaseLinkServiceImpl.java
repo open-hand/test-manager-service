@@ -249,4 +249,20 @@ public class TestCaseLinkServiceImpl implements TestCaseLinkService {
         }
         return false;
     }
+
+    @Override
+    public void copyIssueRelatedTestCases(Long projectId, Long oldIssueId, Long newIssueId) {
+        if (ObjectUtils.isEmpty(projectId) || ObjectUtils.isEmpty(oldIssueId)) {
+            return;
+        }
+        TestCaseLinkDTO select = new TestCaseLinkDTO();
+        select.setIssueId(oldIssueId);
+        select.setProjectId(projectId);
+        List<TestCaseLinkDTO> caseLinkList = testCaseLinkMapper.select(select);
+        if (ObjectUtils.isEmpty(caseLinkList)) {
+            return;
+        }
+        List<Long> caseIds = caseLinkList.stream().map(TestCaseLinkDTO::getLinkCaseId).collect(Collectors.toList());
+        createByIssue(projectId, newIssueId, caseIds);
+    }
 }
