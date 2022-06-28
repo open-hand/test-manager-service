@@ -188,7 +188,7 @@ public class TestCycleServiceImpl implements TestCycleService {
                 testCycleDTO.setFolderId(v.getFolderId());
                 testCycleDTO.setType(TestCycleType.FOLDER);
                 testCycleDTO.setCreatedBy(testPlanDTO.getCreatedBy());
-                testCycleDTO.setLastUpdatedBy(testPlanDTO.getLastUpdatedBy());
+                testCycleDTO.setLastUpdatedBy(0L);
                 testCycleDTOS.add(testCycleDTO);
             });
             Map<Long, List<TestCycleDTO>> listMap = testCycleDTOS.stream().collect(groupingBy(TestCycleDTO::getPlanId));
