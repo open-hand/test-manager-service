@@ -133,7 +133,7 @@ public class TestCaseAssembler {
             }
         }
         UserMessageDTO updateUser = userMap.get(testCycleCaseDTO.getLastUpdatedBy());
-        if(!ObjectUtils.isEmpty(updateUser) && !Objects.equals(0L, testCycleCaseDTO.getLastUpdatedBy())){
+        if(!ObjectUtils.isEmpty(updateUser) && !Objects.equals(testCycleCaseDTO.getCreationDate(), testCycleCaseDTO.getLastUpdateDate())){
             testFolderCycleCaseVO.setLastUpdateUser(updateUser);
         }
         return testFolderCycleCaseVO;
