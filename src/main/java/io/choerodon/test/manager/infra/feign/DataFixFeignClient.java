@@ -2,6 +2,13 @@ package io.choerodon.test.manager.infra.feign;
 
 import java.util.List;
 
+import io.choerodon.test.manager.api.vo.IssueLinkFixVO;
+import io.choerodon.test.manager.api.vo.TestCaseMigrateDTO;
+import io.choerodon.test.manager.api.vo.agile.DataLogFixVO;
+import io.choerodon.test.manager.api.vo.agile.ProductVersionDTO;
+import io.choerodon.test.manager.api.vo.agile.ProjectInfoFixVO;
+import io.choerodon.test.manager.api.vo.agile.TestVersionFixVO;
+import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
 import io.choerodon.test.manager.infra.feign.callback.DataFixFeignClientFallback;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -10,19 +17,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import io.choerodon.test.manager.api.vo.agile.DataLogFixVO;
-import io.choerodon.test.manager.api.vo.agile.ProductVersionDTO;
-import io.choerodon.test.manager.api.vo.agile.ProjectInfoFixVO;
-import io.choerodon.test.manager.api.vo.agile.TestVersionFixVO;
-import io.choerodon.test.manager.api.vo.IssueLinkFixVO;
-import io.choerodon.test.manager.api.vo.TestCaseMigrateDTO;
-import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
-
 /**
  * Created by 842767365@qq.com on 6/13/18.
  */
 @Component
-@FeignClient(value = "agile-service", fallback = DataFixFeignClientFallback.class)
+@FeignClient(value = "agile-service", fallbackFactory = DataFixFeignClientFallback.class)
 public interface DataFixFeignClient {
 
     /**
