@@ -1,61 +1,19 @@
 package io.choerodon.test.manager.infra.feign.callback;
 
-import java.util.List;
-import java.util.Set;
-
-import io.choerodon.core.domain.Page;
-import io.choerodon.test.manager.api.vo.TenantVO;
-import io.choerodon.test.manager.api.vo.agile.ProjectDTO;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-
-import io.choerodon.test.manager.api.vo.agile.UserDO;
-import io.choerodon.test.manager.api.vo.agile.UserDTO;
-import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.infra.feign.BaseFeignClient;
+import io.choerodon.test.manager.infra.util.FeignFallbackUtil;
+import org.springframework.cloud.openfeign.FallbackFactory;
+import org.springframework.stereotype.Component;
 
 /**
  * @author dinghuang123@gmail.com
  * @since 2018/5/24
  */
 @Component
-public class BaseFeignClientFallback implements BaseFeignClient {
-
-    private static final String QUERY_ERROR = "error.baseFeign.query";
-    private static final String BATCH_QUERY_ERROR = "error.baseFeign.queryList";
+public class BaseFeignClientFallback implements FallbackFactory<BaseFeignClient> {
 
     @Override
-    public ResponseEntity<List<UserDO>> listUsersByIds(Long[] ids, Boolean onlyEnabled) {
-        throw new CommonException(BATCH_QUERY_ERROR);
-    }
-
-    @Override
-    public ResponseEntity<Page<UserDTO>> list(Long id, int page, int size) {
-        throw new CommonException(QUERY_ERROR);
-    }
-
-    @Override
-    public ResponseEntity<ProjectDTO> queryProject(Long id) {
-        throw new CommonException(QUERY_ERROR);
-    }
-
-    @Override
-    public ResponseEntity<List<ProjectDTO>> listProjectsByOrgId(Long organizationId) {
-        throw new CommonException("error.iamServiceFeignFallback.listProjectsByOrgId");
-    }
-
-    @Override
-    public ResponseEntity<Page<TenantVO>> getAllOrgs(int page, int size, String sort) {
-        throw new CommonException(QUERY_ERROR);
-    }
-
-    @Override
-    public ResponseEntity<List<ProjectDTO>> queryProjects(Set<Long> ids) {
-        throw new CommonException(QUERY_ERROR);
-    }
-
-    @Override
-    public ResponseEntity<List<ProjectDTO>> queryOrgProjects(Long organizationId, Long userId) {
-        throw new CommonException(QUERY_ERROR);
+    public BaseFeignClient create(Throwable cause) {
+        return FeignFallbackUtil.get(cause, BaseFeignClient.class);
     }
 }

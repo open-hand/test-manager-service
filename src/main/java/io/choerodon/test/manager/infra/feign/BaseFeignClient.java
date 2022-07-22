@@ -1,25 +1,26 @@
 package io.choerodon.test.manager.infra.feign;
 
+import java.util.List;
+import java.util.Set;
+
 import io.choerodon.core.domain.Page;
 import io.choerodon.test.manager.api.vo.TenantVO;
 import io.choerodon.test.manager.api.vo.agile.ProjectDTO;
 import io.choerodon.test.manager.api.vo.agile.UserDO;
 import io.choerodon.test.manager.api.vo.agile.UserDTO;
 import io.choerodon.test.manager.infra.feign.callback.BaseFeignClientFallback;
+import org.hzero.common.HZeroService;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Set;
 
 /**
  * @author dinghuang123@gmail.com
  * @since 2018/5/24
  */
 @Component
-@FeignClient(value = "choerodon-iam", fallback = BaseFeignClientFallback.class)
+@FeignClient(value = HZeroService.Iam.NAME, fallbackFactory = BaseFeignClientFallback.class)
 public interface BaseFeignClient {
 
     @PostMapping(value = "/choerodon/v1/users/ids")
