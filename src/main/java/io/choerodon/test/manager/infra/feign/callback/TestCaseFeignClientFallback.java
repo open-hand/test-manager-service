@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.infra.feign.callback;
 
+import io.choerodon.core.utils.FeignFallbackUtil;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.stereotype.Component;
@@ -9,6 +10,6 @@ public class TestCaseFeignClientFallback implements FallbackFactory<TestCaseFeig
 
     @Override
     public TestCaseFeignClient create(Throwable cause) {
-        return null;
+        return FeignFallbackUtil.get(cause, TestCaseFeignClient.class);
     }
 }
