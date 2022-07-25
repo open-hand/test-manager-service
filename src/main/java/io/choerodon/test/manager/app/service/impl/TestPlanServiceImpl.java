@@ -5,16 +5,29 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import io.choerodon.asgard.saga.annotation.Saga;
+import io.choerodon.asgard.saga.producer.StartSagaBuilder;
+import io.choerodon.asgard.saga.producer.TransactionalProducer;
 import io.choerodon.core.domain.Page;
+import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.exception.ServiceUnavailableException;
+import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.core.utils.PageUtils;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.api.vo.agile.*;
 import io.choerodon.test.manager.app.assembler.TestCycleAssembler;
+import io.choerodon.test.manager.app.service.*;
+import io.choerodon.test.manager.infra.constant.SagaTopicCodeConstants;
+import io.choerodon.test.manager.infra.dto.*;
+import io.choerodon.test.manager.infra.enums.TestPlanInitStatus;
+import io.choerodon.test.manager.infra.enums.TestPlanStatus;
 import io.choerodon.test.manager.infra.feign.operator.AgileClientOperator;
 import io.choerodon.test.manager.infra.mapper.*;
+import io.choerodon.test.manager.infra.util.DBValidateUtil;
 import io.choerodon.test.manager.infra.util.PageUtil;
 import io.choerodon.test.manager.infra.util.RankUtil;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -24,21 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.util.ObjectUtils;
-
-import io.choerodon.asgard.saga.annotation.Saga;
-import io.choerodon.asgard.saga.producer.StartSagaBuilder;
-import io.choerodon.asgard.saga.producer.TransactionalProducer;
-import io.choerodon.core.exception.CommonException;
-import io.choerodon.core.iam.ResourceLevel;
-import io.choerodon.test.manager.api.vo.*;
-import io.choerodon.test.manager.app.service.*;
-import io.choerodon.test.manager.infra.constant.SagaTopicCodeConstants;
-import io.choerodon.test.manager.infra.dto.*;
-import io.choerodon.test.manager.infra.enums.TestPlanInitStatus;
-import io.choerodon.test.manager.infra.enums.TestPlanStatus;
-import io.choerodon.test.manager.infra.util.DBValidateUtil;
 
 /**
  * @author: 25499
@@ -100,7 +99,7 @@ public class TestPlanServiceImpl implements TestPlanService {
 
     @Override
     public TestPlanVO update(Long projectId, TestPlanVO testPlanVO) {
-        if (!ObjectUtils.isEmpty(testPlanVO.getName()) &&  Boolean.TRUE.equals(checkNameUpdate(projectId, testPlanVO.getName(), testPlanVO.getPlanId()))) {
+        if (!ObjectUtils.isEmpty(testPlanVO.getName()) && Boolean.TRUE.equals(checkNameUpdate(projectId, testPlanVO.getName(), testPlanVO.getPlanId()))) {
             throw new CommonException("error.update.plan.name.exist");
         }
         TestPlanDTO testPlan = testPlanMapper.selectByPrimaryKey(testPlanVO.getPlanId());
@@ -112,7 +111,7 @@ public class TestPlanServiceImpl implements TestPlanService {
         if (testPlanMapper.updateByPrimaryKeySelective(testPlanDTO) != 1) {
             throw new CommonException("error.update.plan");
         }
-        testCycleAssembler.updatePlanTime(projectId,testPlanVO);
+        testCycleAssembler.updatePlanTime(projectId, testPlanVO);
         return modelMapper.map(testPlanMapper.selectByPrimaryKey(testPlanDTO.getPlanId()), TestPlanVO.class);
     }
 
@@ -126,23 +125,22 @@ public class TestPlanServiceImpl implements TestPlanService {
 
     @Override
     public void operatePlanCalendar(Long projectId, TestCycleVO testCycleVO, Boolean isCycle) {
-        if(Boolean.TRUE.equals(isCycle)){
-            testCycleService.update(projectId,testCycleVO);
-        }
-        else {
+        if (Boolean.TRUE.equals(isCycle)) {
+            testCycleService.update(projectId, testCycleVO);
+        } else {
             TestPlanVO testPlanVO = new TestPlanVO();
             testPlanVO.setPlanId(testCycleVO.getCycleId());
             testPlanVO.setStartDate(testCycleVO.getFromDate());
             testPlanVO.setEndDate(testCycleVO.getToDate());
             testPlanVO.setObjectVersionNumber(testCycleVO.getObjectVersionNumber());
-            update(projectId,testPlanVO);
+            update(projectId, testPlanVO);
         }
     }
 
     @Override
     public void orderByFromDate(Long projectId, Long planId) {
-        List<TestCycleDTO> testCycleList = testCycleService.listByPlanIds(Collections.singletonList(planId),projectId);
-        if (CollectionUtils.isEmpty(testCycleList)){
+        List<TestCycleDTO> testCycleList = testCycleService.listByPlanIds(Collections.singletonList(planId), projectId);
+        if (CollectionUtils.isEmpty(testCycleList)) {
             return;
         }
         final String[] rank = {RankUtil.mid()};
@@ -155,7 +153,7 @@ public class TestPlanServiceImpl implements TestPlanService {
     @Async
     public void delete(Long projectId, Long planId) {
         baseDelete(planId);
-        List<TestCycleDTO> testCycleDTOS = testCycleService.listByPlanIds(Arrays.asList(planId),projectId);
+        List<TestCycleDTO> testCycleDTOS = testCycleService.listByPlanIds(Arrays.asList(planId), projectId);
         List<Long> collect = testCycleDTOS.stream().map(TestCycleDTO::getCycleId).collect(Collectors.toList());
         testCycleService.batchDelete(collect);
     }
@@ -188,7 +186,7 @@ public class TestPlanServiceImpl implements TestPlanService {
         return testPlanDTO;
     }
 
-    private void checkPlan(TestPlanVO testPlanVO){
+    private void checkPlan(TestPlanVO testPlanVO) {
         if (ObjectUtils.isEmpty(testPlanVO.getManagerId())) {
             throw new CommonException("error.create.plan.manager.null");
         }
@@ -200,6 +198,7 @@ public class TestPlanServiceImpl implements TestPlanService {
             throw new CommonException("error.create.plan.name.exist");
         }
     }
+
     @Override
     public TestTreeIssueFolderVO buildPlanTree(Long projectId, String statusCode) {
         TestPlanDTO testPlanDTO = new TestPlanDTO();
@@ -210,7 +209,7 @@ public class TestPlanServiceImpl implements TestPlanService {
             return new TestTreeIssueFolderVO();
         }
         List<Long> planIds = testPlanDTOS.stream().map(TestPlanDTO::getPlanId).collect(Collectors.toList());
-        List<TestCycleDTO> testCycle = testCycleService.listByPlanIds(planIds,projectId);
+        List<TestCycleDTO> testCycle = testCycleService.listByPlanIds(planIds, projectId);
         Map<Long, List<TestCycleDTO>> cycleMap = testCycle.stream().collect(Collectors.groupingBy(TestCycleDTO::getPlanId));
         TestTreeIssueFolderVO testTreeIssueFolderVO = new TestTreeIssueFolderVO();
         List<Long> root = new ArrayList<>();
@@ -236,14 +235,14 @@ public class TestPlanServiceImpl implements TestPlanService {
                     planTreeVO.setHasCase(false);
 
                     List<TestCycleDTO> testCycleDTOS = cycleMap.get(v.getPlanId());
-                    if(CollectionUtils.isEmpty(testCycleDTOS)){
+                    if (CollectionUtils.isEmpty(testCycleDTOS)) {
                         planTreeVO.setHasChildren(false);
                         treeList.add(planTreeVO);
                         return;
                     }
                     treeList.add(planTreeVO);
                     Map<Long, List<Long>> cycleIdMap = testCycleDTOS.stream().map(testCycleDTO -> {
-                        if(testCycleDTO.getParentCycleId() == null){
+                        if (testCycleDTO.getParentCycleId() == null) {
                             testCycleDTO.setParentCycleId(0L);
                         }
                         return testCycleDTO;
@@ -314,7 +313,7 @@ public class TestPlanServiceImpl implements TestPlanService {
         }
         // 创建测试循环用例
         Map<Long, TestCycleDTO> testCycleMap = testCycleDTOS.stream().collect(Collectors.toMap(TestCycleDTO::getFolderId, Function.identity()));
-        testCycleCaseService.batchInsertByTestCase(testCycleMap,caseIds,testPlanVO.getProjectId(),testPlanVO.getPlanId());
+        testCycleCaseService.batchInsertByTestCase(testCycleMap, caseIds, testPlanVO.getProjectId(), testPlanVO.getPlanId());
         TestPlanDTO testPlan = new TestPlanDTO();
         testPlan.setPlanId(testPlanVO.getPlanId());
         testPlan.setInitStatus(TestPlanInitStatus.SUCCESS);
@@ -518,7 +517,7 @@ public class TestPlanServiceImpl implements TestPlanService {
                     return;
                 }
                 r.setSummary(issue.getSummary());
-                Long assigneeId= issue.getAssigneeId();
+                Long assigneeId = issue.getAssigneeId();
                 if (assigneeId != null) {
                     r.setAssignee(userMap.get(assigneeId));
                 }
@@ -536,8 +535,7 @@ public class TestPlanServiceImpl implements TestPlanService {
                 result.add(r);
             });
             return PageUtils.copyPropertiesAndResetContent(page, result);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("feign exception: {}", e);
             return PageUtil.empty(pageRequest);
         }
@@ -582,7 +580,7 @@ public class TestPlanServiceImpl implements TestPlanService {
         dto.setProjectId(projectId);
         dto.setStatusType("CYCLE_CASE");
         dto.setStatusName(name);
-        List<TestStatusDTO> result =testStatusMapper.queryAllUnderProject(dto);
+        List<TestStatusDTO> result = testStatusMapper.queryAllUnderProject(dto);
         if (result.isEmpty()) {
             return null;
         } else {
@@ -636,7 +634,7 @@ public class TestPlanServiceImpl implements TestPlanService {
         Long copyPlanId = map.get("older");
         Long newPlanId = map.get("new");
         TestPlanDTO testPlanDTO = testPlanMapper.selectByPrimaryKey(newPlanId);
-        testCycleService.cloneCycleByPlanId(copyPlanId, newPlanId,testPlanDTO.getProjectId());
+        testCycleService.cloneCycleByPlanId(copyPlanId, newPlanId, testPlanDTO.getProjectId());
         testPlanDTO.setInitStatus(TestPlanInitStatus.SUCCESS);
         baseUpdate(testPlanDTO);
     }
@@ -650,10 +648,10 @@ public class TestPlanServiceImpl implements TestPlanService {
         List<FormStatusVO> formStatusVOS = testCycleCaseMapper.selectPlanStatus(planId);
         List<Long> collect = formStatusVOS.stream().map(FormStatusVO::getStatusId).collect(Collectors.toList());
         List<TestStatusDTO> testStatusDTOList = testStatusMapper.queryAllUnderProject(testStatusDTO)
-                .stream().filter(e->!collect.contains(e.getStatusId())).collect(Collectors.toList());
+                .stream().filter(e -> !collect.contains(e.getStatusId())).collect(Collectors.toList());
         List<FormStatusVO> formStatusVOList = modelMapper.map(testStatusDTOList, new TypeToken<List<FormStatusVO>>() {
         }.getType());
-        formStatusVOList.stream().forEach(e->e.setCounts(0L));
+        formStatusVOList.stream().forEach(e -> e.setCounts(0L));
         formStatusVOS.addAll(formStatusVOList);
         return formStatusVOS;
     }
@@ -705,13 +703,14 @@ public class TestPlanServiceImpl implements TestPlanService {
                 agileClientOperator.querySprintNameById(projectId, testPlanVO.getSprintId()));
         return testPlanVO;
     }
+
     @Override
-    public  TestPlanDTO baseCreate(TestPlanDTO testPlanDTO) {
+    public TestPlanDTO baseCreate(TestPlanDTO testPlanDTO) {
         if (ObjectUtils.isEmpty(testPlanDTO)) {
             throw new CommonException("error.test.plan.is.not.null");
         }
-        if(testPlanMapper.insertSelective(testPlanDTO) != 1){
-           throw  new CommonException("error.insert.test.plan");
+        if (testPlanMapper.insertSelective(testPlanDTO) != 1) {
+            throw new CommonException("error.insert.test.plan");
         }
         return testPlanMapper.selectByPrimaryKey(testPlanDTO.getPlanId());
     }
@@ -721,7 +720,6 @@ public class TestPlanServiceImpl implements TestPlanService {
             throw new CommonException("error.delete.test.plan");
         }
     }
-
 
 
     private void buildTree(List<Long> root, Long cycleId, Map<Long, TestCycleDTO> allFolderMap, Map<Long, TestTreeFolderVO> map, Map<Long, List<TestCycleDTO>> parentMap, Long planId) {
@@ -757,7 +755,7 @@ public class TestPlanServiceImpl implements TestPlanService {
         } else {
             testTreeFolderVO.setHasChildren(true);
         }
-        testTreeFolderVO.setHasCase(testCycleDTO.getCaseCount()==0);
+        testTreeFolderVO.setHasCase(testCycleDTO.getCaseCount() == 0);
         testTreeFolderVO.setIssueFolderVO(testCycleService.cycleToIssueFolderVO(testCycleDTO));
         testTreeFolderVO.setExpanded(false);
         testTreeFolderVO.setChildrenLoading(false);
@@ -808,16 +806,17 @@ public class TestPlanServiceImpl implements TestPlanService {
 
     /**
      * 创建计划自选用例时，对用例的逻辑处理
+     *
      * @param testPlanVO
      * @param testIssueFolderDTOS
      * @param caseIds
      */
-    private void createPlanCustomCase(TestPlanVO testPlanVO, List<TestIssueFolderDTO> testIssueFolderDTOS,List<Long> caseIds) {
+    private void createPlanCustomCase(TestPlanVO testPlanVO, List<TestIssueFolderDTO> testIssueFolderDTOS, List<Long> caseIds) {
         Map<Long, CaseSelectVO> maps = testPlanVO.getCaseSelected();
         List<Long> folderIds = maps.keySet().stream().collect(Collectors.toList());
-        testIssueFolderDTOS.addAll(testIssueFolderService.listFolderByFolderIds(testPlanVO.getProjectId(),folderIds));
+        testIssueFolderDTOS.addAll(testIssueFolderService.listFolderByFolderIds(testPlanVO.getProjectId(), folderIds));
         Set<Long> unSelectFolderIds = new HashSet<>();
-        List<Long> unSelectCaseIds= new ArrayList<>();
+        List<Long> unSelectCaseIds = new ArrayList<>();
         Set<Long> allSelectFolderIds = new HashSet<>();
         for (Map.Entry<Long, CaseSelectVO> entry : maps.entrySet()) {
             CaseSelectVO caseSelectVO = entry.getValue();
@@ -834,11 +833,11 @@ public class TestPlanServiceImpl implements TestPlanService {
                 }
             }
         }
-        if(!CollectionUtils.isEmpty(unSelectCaseIds) && !CollectionUtils.isEmpty(unSelectFolderIds)){
-            caseIds.addAll(testCaseMapper.listUnSelectCaseId(testPlanVO.getProjectId(),unSelectCaseIds,unSelectFolderIds));
+        if (!CollectionUtils.isEmpty(unSelectCaseIds) && !CollectionUtils.isEmpty(unSelectFolderIds)) {
+            caseIds.addAll(testCaseMapper.listUnSelectCaseId(testPlanVO.getProjectId(), unSelectCaseIds, unSelectFolderIds));
         }
-        if(!CollectionUtils.isEmpty(allSelectFolderIds)){
-            caseIds.addAll(testCaseMapper.listCaseIds(testPlanVO.getProjectId(),allSelectFolderIds,null));
+        if (!CollectionUtils.isEmpty(allSelectFolderIds)) {
+            caseIds.addAll(testCaseMapper.listCaseIds(testPlanVO.getProjectId(), allSelectFolderIds, null));
         }
     }
 
