@@ -22,8 +22,10 @@ public interface ExcelExportService<T, R> {
 
     int populateBody(Sheet sheet, int column, List<R> cycleCases, Queue<CellStyle> rowStyles);
 
-    Workbook exportWorkBookWithOneSheet(Map<Long, List<R>> cycleCaseMap, String projectName, T cycle, Workbook workbook);
+    Workbook exportWorkBookWithOneSheet(Map<Long, List<R>> cycleCaseMap, String projectName, T cycle, Workbook workbook, String sheetName);
 
-
+    default Workbook exportWorkBookWithOneSheet(Map<Long, List<R>> cycleCaseMap, String projectName, T cycle, Workbook workbook) {
+        return exportWorkBookWithOneSheet(cycleCaseMap, projectName, cycle, workbook, null);
+    }
 
 }

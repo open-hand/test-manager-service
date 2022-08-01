@@ -14,11 +14,20 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import io.choerodon.core.client.MessageClientC7n;
+import io.choerodon.core.exception.CommonException;
+import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.api.vo.agile.ProjectDTO;
-import io.choerodon.test.manager.infra.enums.FileUploadBucket;
+import io.choerodon.test.manager.app.service.*;
+import io.choerodon.test.manager.infra.dto.TestCycleDTO;
+import io.choerodon.test.manager.infra.dto.TestFileLoadHistoryDTO;
+import io.choerodon.test.manager.infra.dto.TestIssueFolderDTO;
 import io.choerodon.test.manager.infra.enums.TestCycleType;
+import io.choerodon.test.manager.infra.enums.TestFileLoadHistoryEnums;
 import io.choerodon.test.manager.infra.feign.BaseFeignClient;
 import io.choerodon.test.manager.infra.feign.operator.AgileClientOperator;
+import io.choerodon.test.manager.infra.mapper.*;
+import io.choerodon.test.manager.infra.util.ExcelUtil;
+import io.choerodon.test.manager.infra.util.MultipartExcel;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,16 +42,6 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
-
-import io.choerodon.core.exception.CommonException;
-import io.choerodon.test.manager.api.vo.*;
-import io.choerodon.test.manager.app.service.*;
-import io.choerodon.test.manager.infra.dto.*;
-import io.choerodon.test.manager.infra.enums.TestAttachmentCode;
-import io.choerodon.test.manager.infra.enums.TestFileLoadHistoryEnums;
-import io.choerodon.test.manager.infra.mapper.*;
-import io.choerodon.test.manager.infra.util.ExcelUtil;
-import io.choerodon.test.manager.infra.util.MultipartExcel;
 
 /**
  * Created by zongw.lee@gmail.com on 15/10/2018
@@ -251,7 +250,7 @@ public class ExcelServiceImpl implements ExcelService {
         testFileLoadHistoryWithRateVO.setRate(15.0);
         messageClientC7n.sendByUserId(userId,websocketKey,objToString(testFileLoadHistoryWithRateVO));
         //表格生成相关的文件内容
-        service.exportWorkBookWithOneSheet(map, projectName, modelMapper.map(testIssueFolderDTO, TestIssueFolderVO.class), workbook);
+        service.exportWorkBookWithOneSheet(map, projectName, modelMapper.map(testIssueFolderDTO, TestIssueFolderVO.class), workbook, "测试用例");
         testFileLoadHistoryWithRateVO.setRate(80.0);
         messageClientC7n.sendByUserId(userId,websocketKey,objToString(testFileLoadHistoryWithRateVO));
         String fileName = projectName + "-" + workbook.getSheetName(0).substring(2) + "-" + folderName + FILESUFFIX;

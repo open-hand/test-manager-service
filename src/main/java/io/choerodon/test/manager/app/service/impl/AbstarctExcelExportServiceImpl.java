@@ -1,18 +1,14 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
+import io.choerodon.test.manager.app.service.ExcelExportService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
-
-import io.choerodon.test.manager.app.service.ExcelExportService;
 
 /**
  * Created by zongw.lee@gmail.com on 11/5/18
@@ -22,8 +18,10 @@ public abstract class AbstarctExcelExportServiceImpl<T, R> implements ExcelExpor
     Log log = LogFactory.getLog(this.getClass());
 
     @Override
-    public Workbook exportWorkBookWithOneSheet(Map<Long, List<R>> cycleCaseMap, String projectName, T cycle, Workbook workbook) {
-        Sheet sheet = workbook.createSheet();
+    public Workbook exportWorkBookWithOneSheet(Map<Long, List<R>> cycleCaseMap, String projectName, T cycle, Workbook workbook, String sheetName) {
+        Sheet sheet = Optional.ofNullable(sheetName)
+                .map(workbook::createSheet)
+                .orElseGet(workbook::createSheet);
         CellStyle headerRowStyle = workbook.createCellStyle();
         CellStyle caseStyle1 = workbook.createCellStyle();
         CellStyle caseStyle2 = workbook.createCellStyle();
