@@ -1,26 +1,35 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
-
 import io.choerodon.core.client.MessageClientC7n;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
-import io.choerodon.test.manager.api.vo.TestFileLoadHistoryWebsocketVO;
-import io.choerodon.test.manager.api.vo.agile.*;
-
-
 import io.choerodon.core.exception.CommonException;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.api.vo.ExcelReadMeOptionVO;
+import io.choerodon.test.manager.api.vo.TestFileLoadHistoryWebsocketVO;
+import io.choerodon.test.manager.api.vo.agile.IssueCreateDTO;
+import io.choerodon.test.manager.api.vo.agile.IssueNumDTO;
+import io.choerodon.test.manager.api.vo.agile.ProjectDTO;
+import io.choerodon.test.manager.api.vo.agile.UserDTO;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.infra.dto.*;
-import io.choerodon.test.manager.infra.enums.*;
+import io.choerodon.test.manager.infra.enums.ExcelTitleName;
+import io.choerodon.test.manager.infra.enums.TestCycleType;
+import io.choerodon.test.manager.infra.enums.TestFileLoadHistoryEnums;
 import io.choerodon.test.manager.infra.feign.BaseFeignClient;
 import io.choerodon.test.manager.infra.feign.operator.AgileClientOperator;
 import io.choerodon.test.manager.infra.mapper.*;
 import io.choerodon.test.manager.infra.util.*;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
@@ -44,14 +53,6 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @Service
 public class ExcelImportServiceImpl implements ExcelImportService {
@@ -83,7 +84,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             };
 
     static {
-        README_OPTIONS[0] = new ExcelReadMeOptionVO(ExcelTitleName.FOLDER_PATH, true, "必填项，“目录”请填写完整路径，用“/”分隔。");
+        README_OPTIONS[0] = new ExcelReadMeOptionVO(ExcelTitleName.FOLDER_PATH, true, "必填项，“目录”请填写完整路径，用“/”分隔。若您输入的目录在系统中不存在，则自动新增");
         README_OPTIONS[1] = new ExcelReadMeOptionVO(ExcelTitleName.CASE_NUM, false, "如果更新已有用例，编号必填；如果新增用例，则无需填写");
         README_OPTIONS[2] = new ExcelReadMeOptionVO(ExcelTitleName.CUSTOM_NUM, false, "非必填项");
         README_OPTIONS[3] = new ExcelReadMeOptionVO(ExcelTitleName.CASE_SUMMARY, true, "必填项，限制44个字符以内");
@@ -106,7 +107,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         EXAMPLE_ISSUES[0].setCustomNum("Scrum-245");
         EXAMPLE_ISSUES[0].setSummary("这里是用例C7N-100的概要");
         EXAMPLE_ISSUES[0].setPriorityCode("高");
-        EXAMPLE_ISSUES[0].setRelateIssueNums("1,3，4");
+        EXAMPLE_ISSUES[0].setRelateIssueNums("1,3,4");
         EXAMPLE_ISSUES[0].setDescription("请填写前置条件信息-导入更新");
 
         EXAMPLE_ISSUES[1] = new IssueCreateDTO();
@@ -114,7 +115,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         EXAMPLE_ISSUES[1].setCustomNum("Scrum-123");
         EXAMPLE_ISSUES[1].setSummary("这里是用例C7N-99的概要");
         EXAMPLE_ISSUES[1].setPriorityCode("中");
-        EXAMPLE_ISSUES[1].setRelateIssueNums("2,5，6");
+        EXAMPLE_ISSUES[1].setRelateIssueNums("2,5,6");
         EXAMPLE_ISSUES[1].setDescription("请填写前置条件信息-导入新增");
     }
 
@@ -262,7 +263,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             // 插入循环步骤
             processRow(issueCreateDTO, currentRow, errorRowIndexes, excelTitleUtil);
             if (issueCreateDTOList.size() >= 100) {
-               insertCase(issueCreateDTOList, testProjectInfo);
+                insertCase(issueCreateDTOList, testProjectInfo);
             }
             if (issueUpdateDTOList.size() >= 100) {
                 updateCase(projectId, issueUpdateDTOList, testProjectInfo, issueUpdateIds);
@@ -421,13 +422,17 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     }
 
     private void setReadMeSheetColumnWidthAndRowHeight(Sheet sheet) {
-        for (int i=0; i<README_SHEET_COLUMN_WIDTH.length; i++) {
+        for (int i = 0; i < README_SHEET_COLUMN_WIDTH.length; i++) {
             sheet.setColumnWidth(i, README_SHEET_COLUMN_WIDTH[i]);
         }
-        for (int i=0; i<20; i++) {
-            ExcelUtil.getOrCreateRow(sheet, i).setHeight((short) 320);
+        for (int i = 0; i < 20; i++) {
+            if (0 < i && i < README_OPTIONS.length + 1 && README_OPTIONS[i - 1].getDescription().length() > 30) {
+                // 字数超过长时设置高度
+                ExcelUtil.getOrCreateRow(sheet, i + 1).setHeight((short) 640);
+            } else {
+                ExcelUtil.getOrCreateRow(sheet, i).setHeight((short) 320);
+            }
         }
-        ExcelUtil.getOrCreateRow(sheet, 6).setHeight((short) 600);
     }
 
     private void addTestCaseSheet(Workbook workbook, List<String> priorityNameList) {
@@ -552,7 +557,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                 readMeSheet.getRow(i).getCell(1).setCellStyle(fontStyle);
             }
         }
-        XSSFRichTextString ts= new XSSFRichTextString(readMeSheet.getRow(2).getCell(1).getStringCellValue());
+        XSSFRichTextString ts = new XSSFRichTextString(readMeSheet.getRow(2).getCell(1).getStringCellValue());
         ts.applyFont(0, 14, redFont);
         ts.applyFont(14, ts.length(), font);
         readMeSheet.getRow(2).getCell(1).setCellValue(ts);
@@ -568,9 +573,9 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         cellStyle.setFont(boldFont);
         cellStyle.setFillForegroundColor(HSSFColor.HSSFColorPredefined.PALE_BLUE.getIndex());
         cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        for (int j=0; j < README_OPTIONS.length; j++) {
-            row.createCell(j+1).setCellValue(README_OPTIONS[j].getFiled());
-            row.getCell(j+1).setCellStyle(cellStyle);
+        for (int j = 0; j < README_OPTIONS.length; j++) {
+            row.createCell(j + 1).setCellValue(README_OPTIONS[j].getFiled());
+            row.getCell(j + 1).setCellStyle(cellStyle);
         }
     }
 
@@ -757,7 +762,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         String priority = ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.PRIORITY, row));
         String customNum = ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.CUSTOM_NUM, row));
         String folderPath = ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.FOLDER_PATH, row));
-        if(summary.length() > SUMMARY_MAX_SIZE){
+        if (summary.length() > SUMMARY_MAX_SIZE) {
             markAsError(row, "概要长度不能超过44个字符");
             return null;
         }
@@ -779,7 +784,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         issueCreateDTO.setProjectId(projectId);
         issueCreateDTO.setSummary(summary);
         // 设置前置条件
-        issueCreateDTO.setDescription("<p>" + description+ "</p>");
+        issueCreateDTO.setDescription("<p>" + description + "</p>");
         issueCreateDTO.setFolderId(folderId);
         issueCreateDTO.setPriorityId(priorityMap.get(priority));
         issueCreateDTO.setCustomNum(customNum);
@@ -846,7 +851,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             String caseNumStr = ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.CASE_NUM, row));
 
             String prefix = testProjectInfo.getProjectCode() + BaseConstants.Symbol.MIDDLE_LINE;
-            if (!StringUtils.startsWith(caseNumStr, prefix)){
+            if (!StringUtils.startsWith(caseNumStr, prefix)) {
                 markAsError(row, "用例编号不存在");
                 return;
             }
