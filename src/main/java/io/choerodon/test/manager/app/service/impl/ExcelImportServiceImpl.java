@@ -22,6 +22,7 @@ import io.choerodon.test.manager.api.vo.agile.IssueNumDTO;
 import io.choerodon.test.manager.api.vo.agile.ProjectDTO;
 import io.choerodon.test.manager.api.vo.agile.UserDTO;
 import io.choerodon.test.manager.app.service.*;
+import io.choerodon.test.manager.infra.constant.ExcelSheetConstants;
 import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.enums.ExcelTitleName;
 import io.choerodon.test.manager.infra.enums.TestCycleType;
@@ -201,7 +202,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         testProjectInfoDTO.setProjectId(projectId);
         TestProjectInfoDTO testProjectInfo = testProjectInfoMapper.selectOne(testProjectInfoDTO);
         // 默认是导入到导入文件夹，不存在则创建
-        Sheet testCasesSheet = issuesWorkbook.getSheet("测试用例");
+        Sheet testCasesSheet = issuesWorkbook.getSheet(ExcelSheetConstants.TEST_CASE_SHEET_NAME);
         TestFileLoadHistoryEnums.Status status = TestFileLoadHistoryEnums.Status.SUCCESS;
         TestPriorityDTO priorityDTO = new TestPriorityDTO();
         priorityDTO.setOrganizationId(ConvertUtils.getOrganizationId(projectId));
@@ -360,7 +361,14 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
     private boolean isOldExcel(Workbook workbook, String[] headers) {
         //判断是否为旧模版
-        Sheet sheet = workbook.getSheetAt(1);
+        Sheet sheet = workbook.getSheet(ExcelSheetConstants.TEST_CASE_SHEET_NAME);
+        if (sheet == null) {
+            int numberOfSheets = workbook.getNumberOfSheets();
+            sheet = workbook.getSheetAt(numberOfSheets > 1 ? 1 : 0);
+            if (sheet == null) {
+                return true;
+            }
+        }
         Row headerRow = sheet.getRow(0);
         if (headerRow == null) {
             return true;
@@ -436,8 +444,8 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     }
 
     private void addTestCaseSheet(Workbook workbook, List<String> priorityNameList) {
-        Sheet testCaseSheet = workbook.createSheet("测试用例");
-        workbook.setSheetOrder("测试用例", 1);
+        Sheet testCaseSheet = workbook.createSheet(ExcelSheetConstants.TEST_CASE_SHEET_NAME);
+        workbook.setSheetOrder(ExcelSheetConstants.TEST_CASE_SHEET_NAME, 1);
 
         fillTestCaseSheet(workbook, testCaseSheet);
         setTestCaseSheetStyle(testCaseSheet);
