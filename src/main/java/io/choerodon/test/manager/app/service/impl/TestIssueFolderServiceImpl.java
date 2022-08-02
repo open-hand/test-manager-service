@@ -2,7 +2,6 @@ package io.choerodon.test.manager.app.service.impl;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -12,20 +11,29 @@ import io.choerodon.asgard.saga.annotation.SagaTask;
 import io.choerodon.asgard.saga.producer.StartSagaBuilder;
 import io.choerodon.asgard.saga.producer.TransactionalProducer;
 import io.choerodon.core.client.MessageClientC7n;
+import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.test.manager.api.vo.TestCaseRepVO;
+import io.choerodon.test.manager.api.vo.TestIssueFolderVO;
+import io.choerodon.test.manager.api.vo.TestTreeFolderVO;
+import io.choerodon.test.manager.api.vo.TestTreeIssueFolderVO;
 import io.choerodon.test.manager.api.vo.event.ProjectEvent;
+import io.choerodon.test.manager.app.service.TestCaseService;
+import io.choerodon.test.manager.app.service.TestIssueFolderService;
 import io.choerodon.test.manager.infra.constant.SagaTaskCodeConstants;
 import io.choerodon.test.manager.infra.constant.SagaTopicCodeConstants;
-import io.choerodon.test.manager.infra.dto.TestProjectInfoDTO;
+import io.choerodon.test.manager.infra.dto.TestCaseDTO;
+import io.choerodon.test.manager.infra.dto.TestIssueFolderDTO;
 import io.choerodon.test.manager.infra.enums.TestPlanInitStatus;
+import io.choerodon.test.manager.infra.exception.IssueFolderException;
 import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
-
+import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
 import io.choerodon.test.manager.infra.mapper.TestProjectInfoMapper;
+import io.choerodon.test.manager.infra.util.RankUtil;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.hzero.boot.message.MessageClient;
 import org.hzero.core.base.AopProxy;
 import org.hzero.core.base.BaseConstants;
 import org.hzero.mybatis.domian.Condition;
@@ -37,21 +45,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
-
-import io.choerodon.test.manager.infra.util.RankUtil;
-import io.choerodon.core.exception.CommonException;
-import io.choerodon.test.manager.api.vo.TestIssueFolderVO;
-import io.choerodon.test.manager.api.vo.TestTreeFolderVO;
-import io.choerodon.test.manager.api.vo.TestTreeIssueFolderVO;
-import io.choerodon.test.manager.app.service.TestCaseService;
-import io.choerodon.test.manager.app.service.TestIssueFolderService;
-import io.choerodon.test.manager.infra.dto.TestCaseDTO;
-import io.choerodon.test.manager.infra.dto.TestIssueFolderDTO;
-import io.choerodon.test.manager.infra.exception.IssueFolderException;
-import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
 
 
 @Service
@@ -127,10 +122,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
         if (Boolean.TRUE.equals(isRootNode)) {
             testIssueFolderVO.setParentId(0L);
         }
-        List<TestCaseDTO> testCaseDTOS = testCaseService.listCaseByFolderId(testIssueFolderVO.getParentId());
-        if (!CollectionUtils.isEmpty(testCaseDTOS)) {
-            throw new CommonException("error.issueFolder.has.case");
-        }
+        Assert.isTrue(testCaseService.getCaseCountByFolderId(testIssueFolderVO.getParentId()) == 0, "error.issueFolder.has.case");
         if (testIssueFolderVO.getFolderId() != null) {
             throw new CommonException("error.issue.folder.insert.folderId.should.be.null");
         }
@@ -175,10 +167,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
         if (ObjectUtils.isEmpty(targetFolderId)) {
             targetFolderId = 0L;
         }
-        List<TestCaseDTO> testCaseDTOS = testCaseService.listCaseByFolderId(targetFolderId);
-        if (!CollectionUtils.isEmpty(testCaseDTOS)) {
-            throw new CommonException("error.issueFolder.has.case");
-        }
+        Assert.isTrue(testCaseService.getCaseCountByFolderId(targetFolderId) > 0, "error.issueFolder.has.case");
         TestIssueFolderDTO testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(issueFolderVO.getFolderId());
         testIssueFolderDTO.setParentId(targetFolderId);
         if (ObjectUtils.isEmpty(issueFolderVO.getLastRank()) && ObjectUtils.isEmpty(issueFolderVO.getNextRank())) {

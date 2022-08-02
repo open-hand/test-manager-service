@@ -122,7 +122,7 @@ public interface TestCaseService {
      * @param folderId
      * @return
      */
-    List<TestCaseDTO> listCaseByFolderId(Long folderId);
+    int getCaseCountByFolderId(Long folderId);
 
     /**
      * 修改测试用例的信息

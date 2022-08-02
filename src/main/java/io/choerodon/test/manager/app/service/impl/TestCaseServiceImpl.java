@@ -1,29 +1,16 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import io.choerodon.mybatis.helper.snowflake.SnowflakeHelper;
-import io.choerodon.test.manager.infra.util.*;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
-
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static io.choerodon.test.manager.infra.constant.DataLogConstants.BATCH_UPDATE_CASE_PRIORITY;
-
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.core.utils.PageableHelper;
+import io.choerodon.mybatis.helper.snowflake.SnowflakeHelper;
 import io.choerodon.mybatis.pagehelper.PageHelper;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.mybatis.pagehelper.domain.Sort;
@@ -43,6 +30,17 @@ import io.choerodon.test.manager.infra.feign.ApplicationFeignClient;
 import io.choerodon.test.manager.infra.feign.BaseFeignClient;
 import io.choerodon.test.manager.infra.feign.operator.AgileClientOperator;
 import io.choerodon.test.manager.infra.mapper.*;
+import io.choerodon.test.manager.infra.util.*;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
+
+import static io.choerodon.test.manager.infra.constant.DataLogConstants.BATCH_UPDATE_CASE_PRIORITY;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -364,10 +362,10 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
-    public List<TestCaseDTO> listCaseByFolderId(Long folderId) {
+    public int getCaseCountByFolderId(Long folderId) {
         TestCaseDTO testCaseDTO = new TestCaseDTO();
         testCaseDTO.setFolderId(folderId);
-        return testCaseMapper.select(testCaseDTO);
+        return testCaseMapper.selectCount(testCaseDTO);
     }
 
     @Override
