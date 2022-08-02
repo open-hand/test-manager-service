@@ -17,11 +17,13 @@ import io.choerodon.core.exception.CommonException;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.api.vo.ExcelReadMeOptionVO;
 import io.choerodon.test.manager.api.vo.TestFileLoadHistoryWebsocketVO;
+import io.choerodon.test.manager.api.vo.TestIssueFolderVO;
 import io.choerodon.test.manager.api.vo.agile.IssueCreateDTO;
 import io.choerodon.test.manager.api.vo.agile.IssueNumDTO;
 import io.choerodon.test.manager.api.vo.agile.ProjectDTO;
 import io.choerodon.test.manager.api.vo.agile.UserDTO;
 import io.choerodon.test.manager.app.service.*;
+import io.choerodon.test.manager.infra.constant.ExcelSheetConstants;
 import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.enums.ExcelTitleName;
 import io.choerodon.test.manager.infra.enums.TestCycleType;
@@ -42,6 +44,7 @@ import org.hzero.core.base.BaseConstants;
 import org.hzero.starter.keyencrypt.core.EncryptContext;
 import org.hzero.starter.keyencrypt.core.EncryptType;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,7 +67,6 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     private static final ExcelReadMeOptionVO[] README_OPTIONS = new ExcelReadMeOptionVO[10];
     private static final TestCaseStepDTO[] EXAMPLE_TEST_CASE_STEPS = new TestCaseStepDTO[3];
     private static final IssueCreateDTO[] EXAMPLE_ISSUES = new IssueCreateDTO[2];
-    private static final String TYPE_CYCLE = "cycle";
     public static final int EXCEL_WIDTH_PX = 256;
     private static final int SUMMARY_MAX_SIZE = 44;
     private static final String REDIS_STATUS_KEY = "test:fileStatus:";
@@ -135,6 +137,8 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     private TestFileLoadHistoryMapper testFileLoadHistoryMapper;
 
     @Autowired
+    private TestIssueFolderService testIssueFolderService;
+    @Autowired
     private TestIssueFolderMapper testIssueFolderMapper;
 
     @Autowired
@@ -201,7 +205,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         testProjectInfoDTO.setProjectId(projectId);
         TestProjectInfoDTO testProjectInfo = testProjectInfoMapper.selectOne(testProjectInfoDTO);
         // 默认是导入到导入文件夹，不存在则创建
-        Sheet testCasesSheet = issuesWorkbook.getSheet("测试用例");
+        Sheet testCasesSheet = issuesWorkbook.getSheet(ExcelSheetConstants.TEST_CASE_SHEET_NAME);
         TestFileLoadHistoryEnums.Status status = TestFileLoadHistoryEnums.Status.SUCCESS;
         TestPriorityDTO priorityDTO = new TestPriorityDTO();
         priorityDTO.setOrganizationId(ConvertUtils.getOrganizationId(projectId));
@@ -360,7 +364,14 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
     private boolean isOldExcel(Workbook workbook, String[] headers) {
         //判断是否为旧模版
-        Sheet sheet = workbook.getSheetAt(1);
+        Sheet sheet = workbook.getSheet(ExcelSheetConstants.TEST_CASE_SHEET_NAME);
+        if (sheet == null) {
+            int numberOfSheets = workbook.getNumberOfSheets();
+            sheet = workbook.getSheetAt(numberOfSheets > 1 ? 1 : 0);
+            if (sheet == null) {
+                return true;
+            }
+        }
         Row headerRow = sheet.getRow(0);
         if (headerRow == null) {
             return true;
@@ -436,8 +447,8 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     }
 
     private void addTestCaseSheet(Workbook workbook, List<String> priorityNameList) {
-        Sheet testCaseSheet = workbook.createSheet("测试用例");
-        workbook.setSheetOrder("测试用例", 1);
+        Sheet testCaseSheet = workbook.createSheet(ExcelSheetConstants.TEST_CASE_SHEET_NAME);
+        workbook.setSheetOrder(ExcelSheetConstants.TEST_CASE_SHEET_NAME, 1);
 
         fillTestCaseSheet(workbook, testCaseSheet);
         setTestCaseSheetStyle(testCaseSheet);
@@ -609,26 +620,20 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     }
 
     @Transactional
-    public TestIssueFolderDTO getFolder(Long projectId, Long versionId, String folderName) {
-        TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO();
-        testIssueFolderDTO.setProjectId(projectId);
-        testIssueFolderDTO.setName(folderName);
-
-        TestIssueFolderDTO targetTestIssueFolderDTO = testIssueFolderMapper.selectOne(testIssueFolderDTO);
-        if (targetTestIssueFolderDTO == null) {
-            testIssueFolderDTO.setType(TYPE_CYCLE);
-            logger.info("{} 文件夹不存在，创建", folderName);
-
-            if (testIssueFolderDTO.getFolderId() != null) {
-                throw new CommonException("error.issue.folder.insert.folderId.should.be.null");
-            }
-            testIssueFolderMapper.insert(testIssueFolderDTO);
-
-            return testIssueFolderDTO;
+    public TestIssueFolderVO createFolder(Long projectId, Long parentId, String folderName) {
+        TestIssueFolderVO testIssueFolder = new TestIssueFolderVO();
+        testIssueFolder.setProjectId(projectId);
+        testIssueFolder.setName(folderName);
+        testIssueFolder.setParentId(parentId);
+        testIssueFolder.setType(TestCycleType.CYCLE);
+        testIssueFolder.setVersionId((long) BaseConstants.Digital.ZERO);
+        try {
+            testIssueFolderService.create(projectId, testIssueFolder);
+        } catch (Exception e) {
+            // 创建失败返回null
+            return null;
         }
-
-        logger.info("{} 文件夹已存在", folderName);
-        return targetTestIssueFolderDTO;
+        return testIssueFolder;
     }
 
     private TestFileLoadHistoryDTO initLoadHistory(Long projectId, Long folderId, Long userId) {
@@ -773,11 +778,11 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         // 递归查询用例所属目录
         Long folderId = getFolderIdByPath(projectId, folderPath, 0L);
         if (Objects.isNull(folderId)) {
-            markAsError(row, "目录不存在");
+            markAsError(row, "请填写正确的目录结构，文件夹下已有测试用例，不允许插入文件夹");
             return null;
         }
         if (!CollectionUtils.isEmpty(queryFolderByNameAndParentId(projectId, null, folderId))) {
-            markAsError(row, "父级目录下无法创建用例");
+            markAsError(row, "请填写正确的目录结构，文件夹下已有文件夹，不允许插入测试用例");
             return null;
         }
         IssueCreateDTO issueCreateDTO = new IssueCreateDTO();
@@ -879,11 +884,16 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             }
         }
         // 可能存在重名
-        List<TestIssueFolderDTO> folderList = queryFolderByNameAndParentId(projectId, folderName, parentId);
+        List<TestIssueFolderVO> folderList = queryFolderByNameAndParentId(projectId, folderName, parentId);
         if (CollectionUtils.isEmpty(folderList)) {
-            return null;
+            logger.info("{} 文件夹不存在，创建", folderName);
+            TestIssueFolderVO folder = createFolder(projectId, parentId, folderName);
+            if (folder == null) {
+                return null;
+            }
+            folderList = Collections.singletonList(folder);
         }
-        for (TestIssueFolderDTO testIssueFolderDTO : folderList) {
+        for (TestIssueFolderVO testIssueFolderDTO : folderList) {
             folderId = testIssueFolderDTO.getFolderId();
             // 父级目录可能重名，但根据parentId可获取唯一父级路径
             if (folderPath.contains("/")) {
@@ -898,13 +908,13 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         return folderId;
     }
 
-    private List<TestIssueFolderDTO> queryFolderByNameAndParentId(Long projectId, String folderName, Long parentId) {
+    private List<TestIssueFolderVO> queryFolderByNameAndParentId(Long projectId, String folderName, Long parentId) {
         TestIssueFolderDTO folder = new TestIssueFolderDTO();
         folder.setProjectId(projectId);
         folder.setName(folderName);
         folder.setParentId(parentId);
         folder.setType(TestCycleType.CYCLE);
-        return testIssueFolderMapper.select(folder);
+        return modelMapper.map(testIssueFolderMapper.select(folder), new TypeToken<List<TestIssueFolderVO>>() {}.getType());
     }
 
     private Set<String> splitByRegex(String value) {

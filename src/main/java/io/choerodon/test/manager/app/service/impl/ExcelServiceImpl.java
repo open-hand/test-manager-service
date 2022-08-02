@@ -18,6 +18,7 @@ import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.api.vo.agile.ProjectDTO;
 import io.choerodon.test.manager.app.service.*;
+import io.choerodon.test.manager.infra.constant.ExcelSheetConstants;
 import io.choerodon.test.manager.infra.dto.TestCycleDTO;
 import io.choerodon.test.manager.infra.dto.TestFileLoadHistoryDTO;
 import io.choerodon.test.manager.infra.dto.TestIssueFolderDTO;
@@ -250,7 +251,8 @@ public class ExcelServiceImpl implements ExcelService {
         testFileLoadHistoryWithRateVO.setRate(15.0);
         messageClientC7n.sendByUserId(userId,websocketKey,objToString(testFileLoadHistoryWithRateVO));
         //表格生成相关的文件内容
-        service.exportWorkBookWithOneSheet(map, projectName, modelMapper.map(testIssueFolderDTO, TestIssueFolderVO.class), workbook, "测试用例");
+        service.exportWorkBookWithOneSheet(map, projectName, modelMapper.map(testIssueFolderDTO, TestIssueFolderVO.class),
+                workbook, ExcelSheetConstants.TEST_CASE_SHEET_NAME);
         testFileLoadHistoryWithRateVO.setRate(80.0);
         messageClientC7n.sendByUserId(userId,websocketKey,objToString(testFileLoadHistoryWithRateVO));
         String fileName = projectName + "-" + workbook.getSheetName(0).substring(2) + "-" + folderName + FILESUFFIX;
