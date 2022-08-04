@@ -771,6 +771,9 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             List<TestCaseLinkDTO> testCaseLinkDTOList = new ArrayList<>();
             String[] splitArr = issueNumString.split("\n");
             for (String issRelStr : splitArr) {
+                if (StringUtils.isBlank(issRelStr)) {
+                    continue;
+                }
                 Matcher matcher1 = compile.matcher(issRelStr);
                 if (!matcher1.find()) {
                     markAsError(row, "关联工作项编号格式错误！");
