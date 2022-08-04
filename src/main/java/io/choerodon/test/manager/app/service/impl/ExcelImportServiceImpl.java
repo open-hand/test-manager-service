@@ -771,26 +771,29 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             List<TestCaseLinkDTO> testCaseLinkDTOList = new ArrayList<>();
             String[] splitArr = issueNumString.split("\n");
             for (String issRelStr : splitArr) {
+                if (StringUtils.isBlank(issRelStr)) {
+                    continue;
+                }
                 Matcher matcher1 = compile.matcher(issRelStr);
-                if (matcher1.find()) {
-                    String issueNum = matcher1.group().substring(issueNumPrefix.length());
-                    IssueNumDTO issueNumDTO;
-                    try {
-                        issueNumDTO = agileClientOperator.queryIssueByIssueNum(projectId, issueNum);
-                        if (ObjectUtils.isEmpty(issueNumDTO)) {
-                            markAsError(row, "关联工作项编号有误，仅支持关联故事、任务、子任务、缺陷类型，请检查录入的关联问题编号。");
-                            return null;
-                        }
-                        TestCaseLinkDTO testCaseLinkDTO = new TestCaseLinkDTO();
-                        testCaseLinkDTO.setIssueId(issueNumDTO.getIssueId());
-                        testCaseLinkDTOList.add(testCaseLinkDTO);
-                    } catch (FeignException e) {
+                if (!matcher1.find()) {
+                    markAsError(row, "关联工作项编号格式错误！");
+                    return null;
+                }
+                String issueNum = matcher1.group().substring(issueNumPrefix.length());
+                IssueNumDTO issueNumDTO;
+                try {
+                    issueNumDTO = agileClientOperator.queryIssueByIssueNum(projectId, issueNum);
+                    if (ObjectUtils.isEmpty(issueNumDTO)) {
                         markAsError(row, "关联工作项编号有误，仅支持关联故事、任务、子任务、缺陷类型，请检查录入的关联问题编号。");
                         return null;
                     }
+                    TestCaseLinkDTO testCaseLinkDTO = new TestCaseLinkDTO();
+                    testCaseLinkDTO.setIssueId(issueNumDTO.getIssueId());
+                    testCaseLinkDTOList.add(testCaseLinkDTO);
+                } catch (FeignException e) {
+                    markAsError(row, "关联工作项编号有误，仅支持关联故事、任务、子任务、缺陷类型，请检查录入的关联问题编号。");
+                    return null;
                 }
-                markAsError(row, "关联工作项编号格式错误！");
-                return null;
             }
             issueCreateDTO.setTestCaseLinkDTOList(testCaseLinkDTOList);
         }
