@@ -1,7 +1,32 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import javax.servlet.http.HttpServletRequest;
+import java.net.URLDecoder;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import io.choerodon.core.exception.CommonException;
+import io.choerodon.core.oauth.CustomUserDetails;
+import io.choerodon.core.oauth.DetailsHelper;
+import io.choerodon.test.manager.api.vo.TestCaseAttachmentCombineVO;
+import io.choerodon.test.manager.api.vo.TestCycleCaseAttachmentRelVO;
+import io.choerodon.test.manager.api.vo.agile.ProjectDTO;
 import io.choerodon.test.manager.app.service.FilePathService;
-import io.choerodon.test.manager.infra.enums.FileUploadBucket;
+import io.choerodon.test.manager.app.service.IIssueAttachmentService;
+import io.choerodon.test.manager.app.service.TestCaseAttachmentService;
+import io.choerodon.test.manager.app.service.TestCaseService;
+import io.choerodon.test.manager.infra.annotation.DataLog;
+import io.choerodon.test.manager.infra.constant.DataLogConstants;
+import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
+import io.choerodon.test.manager.infra.dto.TestCaseDTO;
+import io.choerodon.test.manager.infra.dto.TestCycleCaseAttachmentRelDTO;
+import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
+import io.choerodon.test.manager.infra.feign.FileFeignClient;
+import io.choerodon.test.manager.infra.feign.operator.RemoteIamOperator;
+import io.choerodon.test.manager.infra.mapper.TestAttachmentMapper;
+import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
+import io.choerodon.test.manager.infra.mapper.TestCycleCaseAttachmentRelMapper;
+import io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper;
 import org.hzero.boot.file.FileClient;
 import org.hzero.core.util.ResponseUtils;
 import org.slf4j.Logger;
@@ -13,33 +38,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-
-import java.net.URLDecoder;
-import java.util.*;
-import java.util.stream.Collectors;
-import javax.servlet.http.HttpServletRequest;
-
-import io.choerodon.core.exception.CommonException;
-import io.choerodon.core.oauth.CustomUserDetails;
-import io.choerodon.core.oauth.DetailsHelper;
-import io.choerodon.test.manager.api.vo.TestCaseAttachmentCombineVO;
-import io.choerodon.test.manager.api.vo.TestCycleCaseAttachmentRelVO;
-import io.choerodon.test.manager.api.vo.agile.ProjectDTO;
-import io.choerodon.test.manager.app.service.IIssueAttachmentService;
-import io.choerodon.test.manager.app.service.TestCaseAttachmentService;
-import io.choerodon.test.manager.app.service.TestCaseService;
-import io.choerodon.test.manager.infra.annotation.DataLog;
-import io.choerodon.test.manager.infra.constant.DataLogConstants;
-import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
-import io.choerodon.test.manager.infra.dto.TestCaseDTO;
-import io.choerodon.test.manager.infra.dto.TestCycleCaseAttachmentRelDTO;
-import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
-import io.choerodon.test.manager.infra.feign.BaseFeignClient;
-import io.choerodon.test.manager.infra.feign.FileFeignClient;
-import io.choerodon.test.manager.infra.mapper.TestAttachmentMapper;
-import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
-import io.choerodon.test.manager.infra.mapper.TestCycleCaseAttachmentRelMapper;
-import io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper;
 
 /**
  * @author zhaotianxin
@@ -56,7 +54,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
     @Autowired
     private  FileFeignClient fileFeignClient;
     @Autowired
-    private BaseFeignClient baseFeignClient;
+    private RemoteIamOperator remoteIamOperator;
 
     @Autowired
     private TestAttachmentMapper testAttachmentMapper;
@@ -128,7 +126,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
     @Override
     public List<TestCaseAttachmentDTO> create(Long projectId, Long issueId, HttpServletRequest request) {
         List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
-        ProjectDTO projectDTO = baseFeignClient.queryProject(projectId).getBody();
+        ProjectDTO projectDTO = remoteIamOperator.getProjectById(projectId);
         if (files != null && !files.isEmpty()) {
             for (MultipartFile multipartFile : files) {
                 String fileName = multipartFile.getOriginalFilename();
@@ -168,7 +166,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
         if(CollectionUtils.isEmpty(testCycleCaseAttachmentRelDTOS)){
             String url = null;
             try {
-                ProjectDTO projectDTO = baseFeignClient.queryProject(projectId).getBody();
+                ProjectDTO projectDTO = remoteIamOperator.getProjectById(projectId);
                 url = URLDecoder.decode(issueAttachmentDTO.getUrl(), "UTF-8");
                 String fullPath = filePathService.generateFullPath(url);
                 fileFeignClient.deleteFileByUrl(projectDTO.getOrganizationId(), filePathService.bucketName(), Arrays.asList(fullPath));
@@ -190,7 +188,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
         if (!(files != null && !files.isEmpty())) {
             throw new CommonException("error.attachment.exits");
         }
-        ProjectDTO projectDTO = baseFeignClient.queryProject(projectId).getBody();
+        ProjectDTO projectDTO = remoteIamOperator.getProjectById(projectId);
         List<String> result = new ArrayList<>();
         for (MultipartFile multipartFile : files) {
             String fileName = multipartFile.getOriginalFilename();
@@ -245,7 +243,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
     @Override
     public TestCaseAttachmentDTO attachmentCombineUpload(Long projectId, TestCaseAttachmentCombineVO testCaseAttachmentCombineVO) {
         Long caseId = testCaseAttachmentCombineVO.getCaseId();
-        ProjectDTO projectDTO = baseFeignClient.queryProject(projectId).getBody();
+        ProjectDTO projectDTO = remoteIamOperator.getProjectById(projectId);
         if (ObjectUtils.isEmpty(projectDTO)) {
             throw new CommonException("error.attachmentRule.project");
         }

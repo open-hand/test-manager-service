@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -28,8 +29,8 @@ import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.enums.ExcelTitleName;
 import io.choerodon.test.manager.infra.enums.TestCycleType;
 import io.choerodon.test.manager.infra.enums.TestFileLoadHistoryEnums;
-import io.choerodon.test.manager.infra.feign.BaseFeignClient;
 import io.choerodon.test.manager.infra.feign.operator.AgileClientOperator;
+import io.choerodon.test.manager.infra.feign.operator.RemoteIamOperator;
 import io.choerodon.test.manager.infra.mapper.*;
 import io.choerodon.test.manager.infra.util.*;
 import org.apache.commons.lang3.StringUtils;
@@ -57,6 +58,8 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.multipart.MultipartFile;
 
+import static io.choerodon.test.manager.infra.enums.ExcelTitleName.EXCEL_HEADERS;
+
 @Service
 public class ExcelImportServiceImpl implements ExcelImportService {
 
@@ -70,20 +73,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     public static final int EXCEL_WIDTH_PX = 256;
     private static final int SUMMARY_MAX_SIZE = 44;
     private static final String REDIS_STATUS_KEY = "test:fileStatus:";
-    private static final int[] README_SHEET_COLUMN_WIDTH = {3500, 15000, 3500, 3500, 7000, 3500, 3500, 8000, 5000, 5000, 5000};
-    protected static final String[] EXCEL_HEADERS = new String[]
-            {
-                    ExcelTitleName.FOLDER_PATH,
-                    ExcelTitleName.CASE_NUM,
-                    ExcelTitleName.CUSTOM_NUM,
-                    ExcelTitleName.CASE_SUMMARY,
-                    ExcelTitleName.PRIORITY,
-                    ExcelTitleName.LINK_ISSUE,
-                    ExcelTitleName.CASE_DESCRIPTION,
-                    ExcelTitleName.TEST_STEP,
-                    ExcelTitleName.TEST_DATA,
-                    ExcelTitleName.EXPECT_RESULT
-            };
+    private static final int[] README_SHEET_COLUMN_WIDTH = {3000, 12000, 3500, 3500, 7000, 3500, 3500, 8000, 5000, 5000, 5000};
 
     static {
         README_OPTIONS[0] = new ExcelReadMeOptionVO(ExcelTitleName.FOLDER_PATH, true, "必填项，“目录”请填写完整路径，用“/”分隔。若您输入的目录在系统中不存在，则自动新增");
@@ -91,7 +81,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         README_OPTIONS[2] = new ExcelReadMeOptionVO(ExcelTitleName.CUSTOM_NUM, false, "非必填项");
         README_OPTIONS[3] = new ExcelReadMeOptionVO(ExcelTitleName.CASE_SUMMARY, true, "必填项，限制44个字符以内");
         README_OPTIONS[4] = new ExcelReadMeOptionVO(ExcelTitleName.PRIORITY, true, "必填项");
-        README_OPTIONS[5] = new ExcelReadMeOptionVO(ExcelTitleName.LINK_ISSUE, false, "直接输入工作项编号即可；可用逗号（支持中英文）连接多个，例如:1,2，3。");
+        README_OPTIONS[5] = new ExcelReadMeOptionVO(ExcelTitleName.LINK_ISSUE, false, "直接输入工作项编号即可；支持关联多个, 需要单元格内换行");
         README_OPTIONS[6] = new ExcelReadMeOptionVO(ExcelTitleName.CASE_DESCRIPTION, false, "非必填项");
         README_OPTIONS[7] = new ExcelReadMeOptionVO(ExcelTitleName.TEST_STEP, false, "非必填项");
         README_OPTIONS[8] = new ExcelReadMeOptionVO(ExcelTitleName.TEST_DATA, false, "非必填项");
@@ -109,7 +99,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         EXAMPLE_ISSUES[0].setCustomNum("Scrum-245");
         EXAMPLE_ISSUES[0].setSummary("这里是用例C7N-100的概要");
         EXAMPLE_ISSUES[0].setPriorityCode("高");
-        EXAMPLE_ISSUES[0].setRelateIssueNums("1,3,4");
+        EXAMPLE_ISSUES[0].setRelateIssueNums("issue-1;\nissue-2;");
         EXAMPLE_ISSUES[0].setDescription("请填写前置条件信息-导入更新");
 
         EXAMPLE_ISSUES[1] = new IssueCreateDTO();
@@ -117,7 +107,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         EXAMPLE_ISSUES[1].setCustomNum("Scrum-123");
         EXAMPLE_ISSUES[1].setSummary("这里是用例C7N-99的概要");
         EXAMPLE_ISSUES[1].setPriorityCode("中");
-        EXAMPLE_ISSUES[1].setRelateIssueNums("2,5,6");
+        EXAMPLE_ISSUES[1].setRelateIssueNums("issue-3;\nissue-4;");
         EXAMPLE_ISSUES[1].setDescription("请填写前置条件信息-导入新增");
     }
 
@@ -148,7 +138,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     private ModelMapper modelMapper;
 
     @Autowired
-    private BaseFeignClient baseFeignClient;
+    private RemoteIamOperator remoteIamOperator;
 
     @Autowired
     private FileClient fileClient;
@@ -200,7 +190,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         // 添加加密信息上下文
         EncryptContext.setEncryptType(encryptType.name());
         RequestContextHolder.setRequestAttributes(requestAttributes);
-        ProjectDTO projectDTO = baseFeignClient.queryProject(projectId).getBody();
+        ProjectDTO projectDTO = remoteIamOperator.getProjectById(projectId);
         TestProjectInfoDTO testProjectInfoDTO = new TestProjectInfoDTO();
         testProjectInfoDTO.setProjectId(projectId);
         TestProjectInfoDTO testProjectInfo = testProjectInfoMapper.selectOne(testProjectInfoDTO);
@@ -437,11 +427,9 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             sheet.setColumnWidth(i, README_SHEET_COLUMN_WIDTH[i]);
         }
         for (int i = 0; i < 20; i++) {
-            if (0 < i && i < README_OPTIONS.length + 1 && README_OPTIONS[i - 1].getDescription().length() > 30) {
+            if (0 < i && i < README_OPTIONS.length + 1 && README_OPTIONS[i - 1].getDescription().length() > 26) {
                 // 字数超过长时设置高度
                 ExcelUtil.getOrCreateRow(sheet, i + 1).setHeight((short) 640);
-            } else {
-                ExcelUtil.getOrCreateRow(sheet, i).setHeight((short) 320);
             }
         }
     }
@@ -460,13 +448,8 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     private void fillTestCaseSheet(Workbook workbook, Sheet testCaseSheet) {
         Row header = ExcelUtil.getOrCreateRow(testCaseSheet, 0);
         header.setHeight((short) 320);
-        CellStyle cellStyle = workbook.createCellStyle();
-        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-        cellStyle.setWrapText(true);
-        Font boldFont = workbook.createFont();
-        boldFont.setFontName("宋体");
-        boldFont.setBold(true);
-        cellStyle.setFont(boldFont);
+        CellStyle cellStyle = ExcelUtil.createCellStyle(workbook, null, VerticalAlignment.CENTER, true);
+        ExcelUtil.createFont(workbook.createFont(), cellStyle, "宋体", null, true);
         cellStyle.setFillForegroundColor(HSSFColor.HSSFColorPredefined.PALE_BLUE.getIndex());
         cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         for (int i = 0; i < README_OPTIONS.length; i++) {
@@ -489,44 +472,24 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         testCaseSheet.setColumnWidth(7, EXCEL_WIDTH_PX * 45);
         testCaseSheet.setColumnWidth(8, EXCEL_WIDTH_PX * 20);
         testCaseSheet.setColumnWidth(9, EXCEL_WIDTH_PX * 45);
-
-        CellStyle cellStyle = testCaseSheet.getWorkbook().createCellStyle();
-        cellStyle.setAlignment(HorizontalAlignment.CENTER);
-        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-
-        Font font = testCaseSheet.getWorkbook().createFont();
-        font.setColor(Font.COLOR_RED);
-        font.setBold(true);
-        cellStyle.setFont(font);
-
+        CellStyle cellStyle = ExcelUtil.createCellStyle(testCaseSheet.getWorkbook());
+        ExcelUtil.createFont(testCaseSheet.getWorkbook().createFont(), cellStyle, null, Font.COLOR_RED, true);
         testCaseSheet.setDefaultColumnStyle(README_OPTIONS.length, cellStyle);
     }
 
     // 填充 README 页内容
     private void fillReadMeSheet(Sheet readMeSheet, Workbook workbook) {
         // 加粗字体，蓝色填充样式
-        CellStyle boldFontStyle = workbook.createCellStyle();
-        boldFontStyle.setAlignment(HorizontalAlignment.CENTER);
-        boldFontStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-        Font boldFont = workbook.createFont();
-        boldFont.setFontName("宋体");
-        boldFont.setBold(true);
-        boldFontStyle.setFont(boldFont);
+        CellStyle boldFontStyle = ExcelUtil.createCellStyle(workbook);
+        ExcelUtil.createFont(workbook.createFont(), boldFontStyle, null, null, true);
         boldFontStyle.setFillForegroundColor(HSSFColor.HSSFColorPredefined.TAN.getIndex());
         boldFontStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-
-        // 红色字体
-        Font redFont = workbook.createFont();
-        redFont.setFontName("宋体");
-        redFont.setColor(Font.COLOR_RED);
 
         readMeSheet.createRow(0).createCell(0, CellType.STRING).setCellValue("导入用例支持导入新增和导入更新，导入更新需填写和系统一致的用例编号，否则无法更新成功");
         readMeSheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 3));
         readMeSheet.getRow(0).getCell(0).setCellStyle(boldFontStyle);
         // 红色字体，居中样式
-        CellStyle redCenterFontStyle = workbook.createCellStyle();
-        redCenterFontStyle.setAlignment(HorizontalAlignment.CENTER);
-        redCenterFontStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        CellStyle redCenterFontStyle = ExcelUtil.createCellStyle(workbook);
         readMeSheet.createRow(1).createCell(2, CellType.STRING).setCellValue("请至下一页，填写信息");
         readMeSheet.getRow(1).getCell(2).setCellStyle(redCenterFontStyle);
         readMeSheet.addMergedRegion(new CellRangeAddress(1, README_OPTIONS.length, 2, 3));
@@ -540,20 +503,13 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
     private void setReadMeSheetOptions(Sheet readMeSheet, Workbook workbook) {
         // 红色字体样式
-        CellStyle redFontStyle = workbook.createCellStyle();
-        redFontStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-        redFontStyle.setWrapText(true);
-        Font redFont = workbook.createFont();
-        redFont.setFontName("宋体");
-        redFont.setColor(Font.COLOR_RED);
-        redFontStyle.setFont(redFont);
-        // 自适应样式
-        CellStyle fontStyle = workbook.createCellStyle();
-        fontStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        CellStyle redFontStyle = ExcelUtil.createCellStyle(workbook, null, VerticalAlignment.CENTER, true);
         Font font = workbook.createFont();
-        font.setFontName("宋体");
-        fontStyle.setWrapText(true);
-        fontStyle.setFont(font);
+        ExcelUtil.createFont(font, redFontStyle, "宋体", Font.COLOR_RED, null);
+        // 自适应样式
+        CellStyle fontStyle = ExcelUtil.createCellStyle(workbook, null, VerticalAlignment.CENTER, true);
+        Font redFont = workbook.createFont();
+        ExcelUtil.createFont(redFont, fontStyle, "宋体", null, null);
 
         int i = 0;
         while (i < README_OPTIONS.length) {
@@ -576,12 +532,9 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
     private void writeExampleHeader(Workbook workbook, Sheet readMeSheet) {
         Row row = ExcelUtil.getOrCreateRow(readMeSheet, 13);
-        CellStyle cellStyle = workbook.createCellStyle();
-        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-        Font boldFont = workbook.createFont();
-        boldFont.setFontName("宋体");
-        boldFont.setBold(true);
-        cellStyle.setFont(boldFont);
+        CellStyle cellStyle = ExcelUtil.createCellStyle(workbook, null, VerticalAlignment.CENTER, true);
+        Font font = workbook.createFont();
+        ExcelUtil.createFont(font, cellStyle, "宋体", null, null);
         cellStyle.setFillForegroundColor(HSSFColor.HSSFColorPredefined.PALE_BLUE.getIndex());
         cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         for (int j = 0; j < README_OPTIONS.length; j++) {
@@ -591,15 +544,11 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     }
 
     private void writeExample(Workbook workbook, Sheet sheet, int rowNum, String type, IssueCreateDTO issueCreateDTO, TestCaseStepDTO... steps) {
-        // 红色字体
-        CellStyle redFontStyle = workbook.createCellStyle();
-        redFontStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-        Font redFont = workbook.createFont();
-        redFont.setFontName("宋体");
-        redFont.setColor(Font.COLOR_RED);
-        redFontStyle.setFont(redFont);
-
+        // 红色字体样式
+        CellStyle redFontStyle = ExcelUtil.createCellStyle(workbook, VerticalAlignment.CENTER);
+        ExcelUtil.createFont(workbook.createFont(), redFontStyle, "宋体", Font.COLOR_RED, null);
         Row row = ExcelUtil.getOrCreateRow(sheet, rowNum);
+        row.setHeight((short) 640);
         row.createCell(0).setCellValue(type);
         row.getCell(0).setCellStyle(redFontStyle);
 
@@ -609,6 +558,9 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         row.createCell(4, CellType.STRING).setCellValue(issueCreateDTO.getSummary());
         row.createCell(5, CellType.STRING).setCellValue(issueCreateDTO.getPriorityCode());
         row.createCell(6, CellType.STRING).setCellValue(issueCreateDTO.getRelateIssueNums());
+        // 用例需要换行
+        row.getCell(6).setCellStyle(ExcelUtil.createCellStyle(workbook, null, null, true));
+
         row.createCell(7, CellType.STRING).setCellValue(issueCreateDTO.getDescription());
 
         for (int i = 0; i < steps.length; i++) {
@@ -810,33 +762,37 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         if (!ExcelUtil.isBlank(excelTitleUtil.getCell(ExcelTitleName.LINK_ISSUE, row))) {
             //处理关联问题
             String issueNumString = ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.LINK_ISSUE, row));
-            String regex = "([0-9]+(，|,))*([0-9]+)";
-            if (Pattern.matches(regex, issueNumString)) {
-                // 去重
-                Set<String> relatedIssueNums = splitByRegex(issueNumString);
-                List<TestCaseLinkDTO> testCaseLinkDTOList = new ArrayList<>();
-                for (String issueNum : relatedIssueNums) {
+            ProjectDTO projectDTO = remoteIamOperator.getProjectById(projectId);
+            // 工作项前缀
+            String agileProjectCode = projectDTO.getAgileProjectCode();
+            String issueNumPrefix = agileProjectCode + BaseConstants.Symbol.MIDDLE_LINE;
+            // 如果匹配到了, 则关联对应工作项
+            Pattern compile = Pattern.compile(issueNumPrefix + "[0-9]+");
+            List<TestCaseLinkDTO> testCaseLinkDTOList = new ArrayList<>();
+            String[] splitArr = issueNumString.split("\n");
+            for (String issRelStr : splitArr) {
+                Matcher matcher1 = compile.matcher(issRelStr);
+                if (matcher1.find()) {
+                    String issueNum = matcher1.group().substring(issueNumPrefix.length());
                     IssueNumDTO issueNumDTO;
                     try {
                         issueNumDTO = agileClientOperator.queryIssueByIssueNum(projectId, issueNum);
                         if (ObjectUtils.isEmpty(issueNumDTO)) {
-                            markAsError(row, "关联问题编号有误，仅支持关联故事、任务、子任务、缺陷类型，请检查录入的关联问题编号。");
+                            markAsError(row, "关联工作项编号有误，仅支持关联故事、任务、子任务、缺陷类型，请检查录入的关联问题编号。");
                             return null;
                         }
                         TestCaseLinkDTO testCaseLinkDTO = new TestCaseLinkDTO();
                         testCaseLinkDTO.setIssueId(issueNumDTO.getIssueId());
                         testCaseLinkDTOList.add(testCaseLinkDTO);
                     } catch (FeignException e) {
-                        markAsError(row, "关联问题编号有误，仅支持关联故事、任务、子任务、缺陷类型，请检查录入的关联问题编号。");
+                        markAsError(row, "关联工作项编号有误，仅支持关联故事、任务、子任务、缺陷类型，请检查录入的关联问题编号。");
                         return null;
                     }
                 }
-                issueCreateDTO.setTestCaseLinkDTOList(testCaseLinkDTOList);
-            } else {
-                markAsError(row, "关联问题编号格式错误！");
+                markAsError(row, "关联工作项编号格式错误！");
                 return null;
             }
-
+            issueCreateDTO.setTestCaseLinkDTOList(testCaseLinkDTOList);
         }
         // 处理更新用例
         handleUpdateCaseByCaseNum(isUpdate, row, testProjectInfo, issueCreateDTO, excelTitleUtil);
@@ -914,7 +870,8 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         folder.setName(folderName);
         folder.setParentId(parentId);
         folder.setType(TestCycleType.CYCLE);
-        return modelMapper.map(testIssueFolderMapper.select(folder), new TypeToken<List<TestIssueFolderVO>>() {}.getType());
+        return modelMapper.map(testIssueFolderMapper.select(folder), new TypeToken<List<TestIssueFolderVO>>() {
+        }.getType());
     }
 
     private Set<String> splitByRegex(String value) {
@@ -993,7 +950,6 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
     private void markAsError(Row row, String errorMsg) {
         ExcelUtil.getOrCreateCell(row, README_OPTIONS.length, CellType.STRING).setCellValue(errorMsg);
-
         logger.info("行 {} 发生错误：{}", row.getRowNum() + 1, errorMsg);
     }
 
@@ -1025,9 +981,12 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                 toCell.setCellValue(ExcelUtil.getStringValue(fromCell));
             }
         }
+        // 将错误信息设置为红色
         toCell = toRow.getCell(README_OPTIONS.length);
         if (!ExcelUtil.isBlank(toCell)) {
-            toCell.setCellStyle(sheet.getColumnStyle(README_OPTIONS.length));
+            CellStyle cellStyle = ExcelUtil.createCellStyle(sheet.getWorkbook());
+            ExcelUtil.createFont(sheet.getWorkbook().createFont(), cellStyle, null, Font.COLOR_RED, false);
+            toCell.setCellStyle(cellStyle);
         }
     }
 

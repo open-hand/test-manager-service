@@ -8,6 +8,20 @@ public class ExcelTitleName {
     private ExcelTitleName() {
     }
 
+    public static final String[] EXCEL_HEADERS = new String[]
+            {
+                    ExcelTitleName.FOLDER_PATH,
+                    ExcelTitleName.CASE_NUM,
+                    ExcelTitleName.CUSTOM_NUM,
+                    ExcelTitleName.CASE_SUMMARY,
+                    ExcelTitleName.PRIORITY,
+                    ExcelTitleName.LINK_ISSUE,
+                    ExcelTitleName.CASE_DESCRIPTION,
+                    ExcelTitleName.TEST_STEP,
+                    ExcelTitleName.TEST_DATA,
+                    ExcelTitleName.EXPECT_RESULT
+            };
+
     public static final String CASE_SUMMARY = "用例概要*";
     public static final String CASE_DESCRIPTION = "前置条件";
     public static final String CASE_NUM = "用例编号";
