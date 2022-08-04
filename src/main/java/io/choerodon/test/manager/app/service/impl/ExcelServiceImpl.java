@@ -26,6 +26,7 @@ import io.choerodon.test.manager.infra.enums.TestCycleType;
 import io.choerodon.test.manager.infra.enums.TestFileLoadHistoryEnums;
 import io.choerodon.test.manager.infra.feign.BaseFeignClient;
 import io.choerodon.test.manager.infra.feign.operator.AgileClientOperator;
+import io.choerodon.test.manager.infra.feign.operator.RemoteIamOperator;
 import io.choerodon.test.manager.infra.mapper.*;
 import io.choerodon.test.manager.infra.util.ExcelUtil;
 import io.choerodon.test.manager.infra.util.MultipartExcel;
@@ -34,6 +35,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.hzero.boot.file.FileClient;
+import org.hzero.core.base.BaseConstants;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -105,6 +107,8 @@ public class ExcelServiceImpl implements ExcelService {
 
     @Autowired
     private BaseFeignClient baseFeignClient;
+    @Autowired
+    private RemoteIamOperator remoteIamOperator;
 
     @Autowired
     private MessageClientC7n messageClientC7n;
@@ -154,7 +158,7 @@ public class ExcelServiceImpl implements ExcelService {
         String websocketKey = NOTIFYCYCLECODE + "-" + projectId;
         TestFileLoadHistoryWithRateVO testFileLoadHistoryWithRateVO = insertHistory(projectId, cycleId,
                 TestFileLoadHistoryEnums.Source.CYCLE, TestFileLoadHistoryEnums.Action.DOWNLOAD_CYCLE);
-        ProjectDTO projectDTO = baseFeignClient.queryProject(projectId).getBody();
+        ProjectDTO projectDTO = remoteIamOperator.getProjectById(projectId);
         TestCycleDTO testCycleDTO = new TestCycleDTO();
         testCycleDTO.setCycleId(cycleId);
 
@@ -205,7 +209,7 @@ public class ExcelServiceImpl implements ExcelService {
     @Async
     public void exportCaseFolderByTransaction(Long projectId, Long folderId, HttpServletRequest request, HttpServletResponse response, Long userId,Boolean retry,Long fileHistoryId) {
         TestFileLoadHistoryWithRateVO testFileLoadHistoryWithRateVO = null;
-        ProjectDTO projectDTO = baseFeignClient.queryProject(projectId).getBody();
+        ProjectDTO projectDTO = remoteIamOperator.getProjectById(projectId);
         String websocketKey = NOTIFYISSUECODE + "-" + projectId;
         if (Boolean.TRUE.equals(retry)) {
             TestFileLoadHistoryDTO testFileLoadHistoryDTO = new TestFileLoadHistoryDTO();
@@ -445,13 +449,19 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     private void setRelatedIssues(ExcelCaseVO excelCase, List<Long> relatedIssueIds, Map<Long, IssueLinkVO> issueMap) {
-        excelCase.setReleatedIssues("");
+        StringBuilder builder = new StringBuilder();
         relatedIssueIds.forEach(issueId -> {
             IssueLinkVO issueLinkVO = issueMap.get(issueId);
-            if (!Objects.isNull(issueLinkVO)) {
-                excelCase.setReleatedIssues(excelCase.getReleatedIssues() + issueLinkVO.getIssueNum() + "：" + issueLinkVO.getSummary() + "；\n");
+            if (Objects.nonNull(issueLinkVO)) {
+                // 格内每行一条关联工作项
+                builder.append(issueLinkVO.getIssueNum())
+                        .append(BaseConstants.Symbol.COLON)
+                        .append(issueLinkVO.getSummary().replaceAll("[\r\n\t]", ""))
+                        .append(BaseConstants.Symbol.SEMICOLON)
+                        .append("\n");
             }
         });
+        excelCase.setReleatedIssues(builder.toString());
     }
 
     /**

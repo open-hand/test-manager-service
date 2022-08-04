@@ -34,7 +34,7 @@ public interface BaseFeignClient {
                                            @RequestParam(value = "size") int size);
 
     @GetMapping(value = "/choerodon/v1/projects/{project_id}")
-    ResponseEntity<ProjectDTO> queryProject(@PathVariable(name = "project_id") Long id);
+    ResponseEntity<String> queryProject(@PathVariable(name = "project_id") Long id);
     /**
      * 根据组织id查询所有项目
      *

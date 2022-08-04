@@ -27,8 +27,8 @@ import io.choerodon.test.manager.infra.constant.DataLogConstants;
 import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.enums.IssueTypeCode;
 import io.choerodon.test.manager.infra.feign.ApplicationFeignClient;
-import io.choerodon.test.manager.infra.feign.BaseFeignClient;
 import io.choerodon.test.manager.infra.feign.operator.AgileClientOperator;
+import io.choerodon.test.manager.infra.feign.operator.RemoteIamOperator;
 import io.choerodon.test.manager.infra.mapper.*;
 import io.choerodon.test.manager.infra.util.*;
 import org.modelmapper.ModelMapper;
@@ -54,7 +54,7 @@ public class TestCaseServiceImpl implements TestCaseService {
     private static final String UI="ui";
     public static  final String CUSTOM_NUM_PATTERN = "^([A-Za-z0-9]+(-[A-Za-z0-9]+)*)$";
     @Autowired
-    private BaseFeignClient baseFeignClient;
+    private RemoteIamOperator remoteIamOperator;
 
     @Autowired
     private ApplicationFeignClient applicationFeignClient;
@@ -500,7 +500,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         excludeTypeCodes.add("issue_epic");
         otherArgs.put("excludeTypeCodes", excludeTypeCodes);
 
-        ProjectDTO projectDTO = baseFeignClient.queryProject(projectId).getBody();
+        ProjectDTO projectDTO = remoteIamOperator.getProjectById(projectId);
         List<String> applyTypes = new ArrayList<>();
         if (Boolean.TRUE.equals(checkContainProjectCategory(projectDTO.getCategories(), "N_WATERFALL_AGILE"))) {
             applyTypes.add("waterfall");
@@ -557,7 +557,8 @@ public class TestCaseServiceImpl implements TestCaseService {
     @Override
     public ProjectDTO getProjectInfo(Long projectId) {
         Assert.notNull(projectId, "error.TestCaseService.getProjectInfo.param.projectId.not.be.null");
-        return baseFeignClient.queryProject(projectId).getBody();
+        return remoteIamOperator.getProjectById(projectId);
+
     }
 
     @Override

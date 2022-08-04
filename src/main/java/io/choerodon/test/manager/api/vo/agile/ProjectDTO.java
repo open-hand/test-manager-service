@@ -3,14 +3,12 @@ package io.choerodon.test.manager.api.vo.agile;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-
-import io.swagger.annotations.ApiModelProperty;
-import org.springframework.util.StringUtils;
-
-import io.choerodon.core.exception.CommonException;
-
 import java.util.Date;
 import java.util.List;
+
+import io.choerodon.core.exception.CommonException;
+import io.swagger.annotations.ApiModelProperty;
+import org.springframework.util.StringUtils;
 
 /**
  * @author flyleft
@@ -52,6 +50,9 @@ public class ProjectDTO {
 
     @ApiModelProperty(value = "创建时间")
     private Date creationDate;
+
+    @ApiModelProperty("敏捷项目问题前缀")
+    private String agileProjectCode;
 
     public Long getId() {
         return id;
@@ -135,5 +136,13 @@ public class ProjectDTO {
         if (this.objectVersionNumber == null) {
             throw new CommonException("error.objectVersionNumber.null");
         }
+    }
+
+    public String getAgileProjectCode() {
+        return agileProjectCode;
+    }
+
+    public void setAgileProjectCode(String agileProjectCode) {
+        this.agileProjectCode = agileProjectCode;
     }
 }

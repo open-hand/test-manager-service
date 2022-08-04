@@ -1,5 +1,9 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.vo.ExecutionCaseStatusChangeSettingVO;
 import io.choerodon.test.manager.api.vo.ExecutionUpdateIssueVO;
@@ -9,8 +13,8 @@ import io.choerodon.test.manager.api.vo.agile.ProjectDTO;
 import io.choerodon.test.manager.app.service.ExecutionCaseStatusChangeSettingService;
 import io.choerodon.test.manager.app.service.TestStatusService;
 import io.choerodon.test.manager.infra.dto.*;
-import io.choerodon.test.manager.infra.feign.BaseFeignClient;
 import io.choerodon.test.manager.infra.feign.operator.AgileClientOperator;
+import io.choerodon.test.manager.infra.feign.operator.RemoteIamOperator;
 import io.choerodon.test.manager.infra.mapper.*;
 import io.choerodon.test.manager.infra.util.ConvertUtils;
 import org.hzero.mybatis.domian.Condition;
@@ -22,10 +26,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
-
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * @author zhaotianxin
@@ -52,7 +52,7 @@ public class ExecutionCaseStatusChangeSettingServiceImpl implements ExecutionCas
     @Autowired
     private TestPlanMapper testPlanMapper;
     @Autowired
-    private BaseFeignClient baseFeignClient;
+    private RemoteIamOperator remoteIamOperator;
 
     @Override
     public void save(Long projectId, Long organizationId, ExecutionCaseStatusChangeSettingVO executionCaseStatusChangeSettingVO) {
@@ -172,7 +172,7 @@ public class ExecutionCaseStatusChangeSettingServiceImpl implements ExecutionCas
     }
 
     private Boolean checkAgileModule(Long projectId) {
-        ProjectDTO projectDTO = baseFeignClient.queryProject(projectId).getBody();
+        ProjectDTO projectDTO = remoteIamOperator.getProjectById(projectId);
         List<ProjectCategoryDTO> categories = projectDTO.getCategories();
         if(CollectionUtils.isEmpty(categories)){
             return false;
