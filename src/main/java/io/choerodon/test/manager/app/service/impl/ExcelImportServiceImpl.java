@@ -580,12 +580,13 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         testIssueFolder.setType(TestCycleType.CYCLE);
         testIssueFolder.setVersionId((long) BaseConstants.Digital.ZERO);
         try {
-            testIssueFolderService.create(projectId, testIssueFolder);
+            return testIssueFolderService.create(projectId, testIssueFolder);
         } catch (Exception e) {
             // 创建失败返回null
+            System.out.println("e.getMessage() = " + e.getMessage());
+            e.printStackTrace();
             return null;
         }
-        return testIssueFolder;
     }
 
     private TestFileLoadHistoryDTO initLoadHistory(Long projectId, Long folderId, Long userId) {
