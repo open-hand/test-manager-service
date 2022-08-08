@@ -728,22 +728,11 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             markAsError(row, "优先级不存在");
             return null;
         }
-        // 递归查询用例所属目录
-        Long folderId = getFolderIdByPath(projectId, folderPath, 0L);
-        if (Objects.isNull(folderId)) {
-            markAsError(row, "请填写正确的目录结构，文件夹下已有测试用例，不允许插入文件夹");
-            return null;
-        }
-        if (!CollectionUtils.isEmpty(queryFolderByNameAndParentId(projectId, null, folderId))) {
-            markAsError(row, "请填写正确的目录结构，文件夹下已有文件夹，不允许插入测试用例");
-            return null;
-        }
         IssueCreateDTO issueCreateDTO = new IssueCreateDTO();
         issueCreateDTO.setProjectId(projectId);
         issueCreateDTO.setSummary(summary);
         // 设置前置条件
         issueCreateDTO.setDescription("<p>" + description + "</p>");
-        issueCreateDTO.setFolderId(folderId);
         issueCreateDTO.setPriorityId(priorityMap.get(priority));
         issueCreateDTO.setCustomNum(customNum);
         issueCreateDTO.setTestCaseStepProList(new ArrayList<>());
@@ -798,6 +787,17 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             }
             issueCreateDTO.setTestCaseLinkDTOList(testCaseLinkDTOList);
         }
+        // 递归查询用例所属目录
+        Long folderId = getFolderIdByPath(projectId, folderPath, 0L);
+        if (Objects.isNull(folderId)) {
+            markAsError(row, "请填写正确的目录结构，文件夹下已有测试用例，不允许插入文件夹");
+            return null;
+        }
+        if (!CollectionUtils.isEmpty(queryFolderByNameAndParentId(projectId, null, folderId))) {
+            markAsError(row, "请填写正确的目录结构，文件夹下已有文件夹，不允许插入测试用例");
+            return null;
+        }
+        issueCreateDTO.setFolderId(folderId);
         // 处理更新用例
         handleUpdateCaseByCaseNum(isUpdate, row, testProjectInfo, issueCreateDTO, excelTitleUtil);
         if (Boolean.TRUE.equals(isUpdate) && Objects.isNull(issueCreateDTO.getCaseId())) {
