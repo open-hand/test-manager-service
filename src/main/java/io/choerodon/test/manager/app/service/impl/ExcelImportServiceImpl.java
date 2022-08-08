@@ -785,14 +785,14 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                 try {
                     issueNumDTO = agileClientOperator.queryIssueByIssueNum(projectId, issueNum);
                     if (ObjectUtils.isEmpty(issueNumDTO)) {
-                        markAsError(row, "关联工作项编号有误，仅支持关联故事、任务、子任务、缺陷类型，请检查录入的关联问题编号。");
+                        markAsError(row, "关联工作项编号有误，仅支持关联故事、任务、子任务、缺陷、阶段、活动、里程碑类型，请检查录入的关联问题编号。");
                         return null;
                     }
                     TestCaseLinkDTO testCaseLinkDTO = new TestCaseLinkDTO();
                     testCaseLinkDTO.setIssueId(issueNumDTO.getIssueId());
                     testCaseLinkDTOList.add(testCaseLinkDTO);
                 } catch (FeignException e) {
-                    markAsError(row, "关联工作项编号有误，仅支持关联故事、任务、子任务、缺陷类型，请检查录入的关联问题编号。");
+                    markAsError(row, "关联工作项编号有误，仅支持关联故事、任务、子任务、缺陷、阶段、活动、里程碑类型，请检查录入的关联问题编号。");
                     return null;
                 }
             }
