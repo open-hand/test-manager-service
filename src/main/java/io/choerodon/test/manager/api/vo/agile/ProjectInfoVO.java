@@ -1,7 +1,6 @@
 package io.choerodon.test.manager.api.vo.agile;
 
 import io.swagger.annotations.ApiModelProperty;
-import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
  * @author dinghuang123@gmail.com
@@ -10,7 +9,6 @@ import org.hzero.starter.keyencrypt.core.Encrypt;
 public class ProjectInfoVO {
 
     @ApiModelProperty(value = "主键id")
-    @Encrypt
     private Long infoId;
 
     @ApiModelProperty(value = "项目id")
