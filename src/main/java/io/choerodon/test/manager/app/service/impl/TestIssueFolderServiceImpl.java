@@ -6,6 +6,19 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
+
 import io.choerodon.asgard.saga.annotation.Saga;
 import io.choerodon.asgard.saga.annotation.SagaTask;
 import io.choerodon.asgard.saga.producer.StartSagaBuilder;
@@ -31,22 +44,11 @@ import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
 import io.choerodon.test.manager.infra.mapper.TestProjectInfoMapper;
 import io.choerodon.test.manager.infra.util.RankUtil;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.StringUtils;
+
 import org.hzero.core.base.AopProxy;
 import org.hzero.core.base.BaseConstants;
 import org.hzero.mybatis.domian.Condition;
 import org.hzero.mybatis.util.Sqls;
-import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
-import org.springframework.util.ObjectUtils;
 
 
 @Service
@@ -167,7 +169,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
         if (ObjectUtils.isEmpty(targetFolderId)) {
             targetFolderId = 0L;
         }
-        Assert.isTrue(testCaseService.getCaseCountByFolderId(targetFolderId) > 0, "error.issueFolder.has.case");
+        Assert.isTrue(testCaseService.getCaseCountByFolderId(targetFolderId) == 0, "error.issueFolder.has.case");
         TestIssueFolderDTO testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(issueFolderVO.getFolderId());
         testIssueFolderDTO.setParentId(targetFolderId);
         if (ObjectUtils.isEmpty(issueFolderVO.getLastRank()) && ObjectUtils.isEmpty(issueFolderVO.getNextRank())) {
