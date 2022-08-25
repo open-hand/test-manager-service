@@ -105,11 +105,11 @@ public class TestCaseLinkController {
 
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("查询问题关联的测试用例执行列表")
-    @GetMapping("/list_link_case_step")
+    @GetMapping("/list-link-case-step")
     public ResponseEntity<List<TestFolderCycleCaseVO>> queryLinkCaseStep(@ApiParam(value = "项目id", required = true)
                                                                          @PathVariable(name = "project_id") Long projectId,
                                                                          @ApiParam(value = "issueId", required = true)
-                                                                         @Encrypt Long issueId) {
+                                                                         @RequestParam @Encrypt Long issueId) {
         return Results.success(testCaseLinkService.queryLinkCaseStep(projectId, issueId));
     }
 
