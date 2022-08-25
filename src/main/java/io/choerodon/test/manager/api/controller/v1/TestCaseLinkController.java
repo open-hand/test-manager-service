@@ -13,6 +13,7 @@ import io.choerodon.test.manager.app.service.TestCaseLinkService;
 import io.choerodon.test.manager.infra.dto.TestCaseLinkDTO;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.hzero.core.util.Results;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -108,9 +109,8 @@ public class TestCaseLinkController {
     public ResponseEntity<List<TestFolderCycleCaseVO>> queryLinkCaseStep(@ApiParam(value = "项目id", required = true)
                                                                          @PathVariable(name = "project_id") Long projectId,
                                                                          @ApiParam(value = "issueId", required = true)
-                                                                         @RequestParam(name = "issue_id")
                                                                          @Encrypt Long issueId) {
-        return new ResponseEntity<>(testCaseLinkService.queryLinkCaseStep(projectId, issueId), HttpStatus.OK);
+        return Results.success(testCaseLinkService.queryLinkCaseStep(projectId, issueId));
     }
 
     @Permission(level = ResourceLevel.ORGANIZATION)

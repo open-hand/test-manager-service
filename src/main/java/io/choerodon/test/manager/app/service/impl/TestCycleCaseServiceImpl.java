@@ -1060,7 +1060,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
     @Override
     public List<TestFolderCycleCaseVO> listTestCycleCaseByIssueId(Long projectId, Long issueId) {
-        return testCycleCaseMapper.listTestCycleCaseByIssueId(projectId, issueId);
+        return testCycleCaseMapper.listTestCycleCaseByIssueId(projectId, issueId, TestCycleCaseDefectCode.CASE_STEP);
     }
 
     private void queryUserProjects(Long organizationId, Long projectId, List<Long> projectIds, List<ProjectDTO> projects, Long userId) {

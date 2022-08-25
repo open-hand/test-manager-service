@@ -167,8 +167,10 @@ public interface TestCycleCaseMapper extends BaseMapper<TestCycleCaseDTO> {
      *
      * @param projectId
      * @param issueId
+     * @param defectType
      * @return
      */
     List<TestFolderCycleCaseVO> listTestCycleCaseByIssueId(@Param("projectId") Long projectId,
-                                                           @Param("issueId") Long issueId);
+                                                           @Param("issueId") Long issueId,
+                                                           @Param("defectType") String defectType);
 }
