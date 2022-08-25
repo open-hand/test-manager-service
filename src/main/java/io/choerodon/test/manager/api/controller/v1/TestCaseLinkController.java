@@ -8,10 +8,12 @@ import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.test.manager.api.vo.IssueLinkVO;
 import io.choerodon.test.manager.api.vo.TestCaseLinkVO;
 import io.choerodon.test.manager.api.vo.TestCaseVO;
+import io.choerodon.test.manager.api.vo.TestFolderCycleCaseVO;
 import io.choerodon.test.manager.app.service.TestCaseLinkService;
 import io.choerodon.test.manager.infra.dto.TestCaseLinkDTO;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.hzero.core.util.Results;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -99,6 +101,16 @@ public class TestCaseLinkController {
                                                                @RequestParam(name = "issue_id")
                                                                @Encrypt Long issueId) {
         return new ResponseEntity<>(testCaseLinkService.queryLinkCases(projectId, issueId), HttpStatus.OK);
+    }
+
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @ApiOperation("查询问题关联的测试用例执行列表")
+    @GetMapping("/list-link-case-step")
+    public ResponseEntity<List<TestFolderCycleCaseVO>> queryLinkCaseStep(@ApiParam(value = "项目id", required = true)
+                                                                         @PathVariable(name = "project_id") Long projectId,
+                                                                         @ApiParam(value = "issueId", required = true)
+                                                                         @RequestParam @Encrypt Long issueId) {
+        return Results.success(testCaseLinkService.queryLinkCaseStep(projectId, issueId));
     }
 
     @Permission(level = ResourceLevel.ORGANIZATION)

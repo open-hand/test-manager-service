@@ -967,6 +967,29 @@
           tcc.project_id = #{projectId}
     </select>
 
+
+    <select id="listTestCycleCaseByIssueId"
+            resultType="io.choerodon.test.manager.api.vo.TestFolderCycleCaseVO">
+        select
+            tcc.summary,
+            tcc.execute_id,
+            tcc.cycle_id,
+            tc.plan_id,
+            tp.name as plan_name,
+            ts.status_id as execution_status,
+            ts.status_name as execution_status_name,
+            ts.status_color as status_color
+        from test_cycle_case_defect_rel tccdr
+        join test_cycle_case_step tccs on tccdr.defect_link_id = tccs.execute_step_id
+        join test_cycle_case tcc on tcc.execute_id = tccs.execute_id
+        join test_cycle tc on tc.cycle_id = tcc.cycle_id
+        join test_plan tp on tc.plan_id = tp.plan_id
+        left join test_status ts on tcc.execution_status = ts.status_id
+        where tccdr.project_id = #{projectId}
+        and tccdr.issue_id = #{issueId}
+        and tccdr.defect_type = #{defectType}
+    </select>
+
     <update id="batchAssignByCycle">
         UPDATE test_cycle_case
         SET assigned_to = #{assignUserId}

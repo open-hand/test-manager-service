@@ -152,4 +152,13 @@ public interface TestCycleCaseService {
     void assignCaseByCycle(Long projectId, Long assignUserId, Long cycleId, Long planId);
 
     Page<TestStatusVO> pageQueryCaseStatus(Long organizationId, Long projectId, PageRequest pageRequest, String param);
+
+    /**
+     * 根据issueId查询测试计划中的测试执行用例
+     *
+     * @param projectId
+     * @param issueId
+     * @return
+     */
+    List<TestFolderCycleCaseVO> listTestCycleCaseByIssueId(Long projectId, Long issueId);
 }
