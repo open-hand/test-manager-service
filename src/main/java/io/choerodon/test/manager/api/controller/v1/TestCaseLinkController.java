@@ -8,6 +8,7 @@ import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.test.manager.api.vo.IssueLinkVO;
 import io.choerodon.test.manager.api.vo.TestCaseLinkVO;
 import io.choerodon.test.manager.api.vo.TestCaseVO;
+import io.choerodon.test.manager.api.vo.TestFolderCycleCaseVO;
 import io.choerodon.test.manager.app.service.TestCaseLinkService;
 import io.choerodon.test.manager.infra.dto.TestCaseLinkDTO;
 import io.swagger.annotations.ApiOperation;
@@ -99,6 +100,17 @@ public class TestCaseLinkController {
                                                                @RequestParam(name = "issue_id")
                                                                @Encrypt Long issueId) {
         return new ResponseEntity<>(testCaseLinkService.queryLinkCases(projectId, issueId), HttpStatus.OK);
+    }
+
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @ApiOperation("查询问题关联的测试用例执行列表")
+    @GetMapping("/list_link_case_step")
+    public ResponseEntity<List<TestFolderCycleCaseVO>> queryLinkCaseStep(@ApiParam(value = "项目id", required = true)
+                                                                         @PathVariable(name = "project_id") Long projectId,
+                                                                         @ApiParam(value = "issueId", required = true)
+                                                                         @RequestParam(name = "issue_id")
+                                                                         @Encrypt Long issueId) {
+        return new ResponseEntity<>(testCaseLinkService.queryLinkCaseStep(projectId, issueId), HttpStatus.OK);
     }
 
     @Permission(level = ResourceLevel.ORGANIZATION)

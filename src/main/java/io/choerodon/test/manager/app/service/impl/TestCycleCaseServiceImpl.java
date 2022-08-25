@@ -1058,6 +1058,11 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         return statusVoPageInfo;
     }
 
+    @Override
+    public List<TestFolderCycleCaseVO> listTestCycleCaseByIssueId(Long projectId, Long issueId) {
+        return testCycleCaseMapper.listTestCycleCaseByIssueId(projectId, issueId);
+    }
+
     private void queryUserProjects(Long organizationId, Long projectId, List<Long> projectIds, List<ProjectDTO> projects, Long userId) {
         if (ObjectUtils.isEmpty(projectId)) {
             List<ProjectDTO> projectVOS = baseFeignClient.queryOrgProjects(organizationId,userId).getBody();

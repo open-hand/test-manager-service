@@ -4,12 +4,9 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import io.choerodon.test.manager.api.vo.TestCaseLinkVO;
-import io.choerodon.test.manager.api.vo.TestCaseVO;
-import io.choerodon.test.manager.api.vo.TestCycleCaseLinkVO;
+import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.api.vo.agile.IssueDTO;
-import io.choerodon.test.manager.app.service.TestCaseService;
-import io.choerodon.test.manager.app.service.UserService;
+import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.infra.dto.UserMessageDTO;
 import io.choerodon.test.manager.infra.feign.operator.AgileClientOperator;
 import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
@@ -22,8 +19,6 @@ import org.springframework.util.ObjectUtils;
 
 import io.choerodon.test.manager.api.vo.agile.IssueInfoDTO;
 import io.choerodon.core.exception.CommonException;
-import io.choerodon.test.manager.api.vo.IssueLinkVO;
-import io.choerodon.test.manager.app.service.TestCaseLinkService;
 import io.choerodon.test.manager.infra.dto.TestCaseLinkDTO;
 import io.choerodon.test.manager.infra.mapper.TestCaseLinkMapper;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper;
@@ -56,6 +51,8 @@ public class TestCaseLinkServiceImpl implements TestCaseLinkService {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private TestCycleCaseService testCycleCaseService;
 
     @Override
     public void delete(Long project, Long linkId) {
@@ -264,5 +261,10 @@ public class TestCaseLinkServiceImpl implements TestCaseLinkService {
         }
         List<Long> caseIds = caseLinkList.stream().map(TestCaseLinkDTO::getLinkCaseId).collect(Collectors.toList());
         createByIssue(projectId, newIssueId, caseIds);
+    }
+
+    @Override
+    public List<TestFolderCycleCaseVO> queryLinkCaseStep(Long projectId, Long issueId) {
+        return testCycleCaseService.listTestCycleCaseByIssueId(projectId, issueId);
     }
 }
