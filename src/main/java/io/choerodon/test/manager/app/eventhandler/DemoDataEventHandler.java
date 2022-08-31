@@ -38,7 +38,7 @@ public class DemoDataEventHandler {
             description = "demo消费创建项目事件初始化项目数据",
             sagaCode = REGISTER_ORG,
             seq = 105)
-    public OrganizationRegisterEventPayload demoInitProject(String message) {
+    public String demoInitProject(String message) {
         OrganizationRegisterEventPayload organizationRegisterPayload = JSONObject.parseObject(message, OrganizationRegisterEventPayload.class);
         //初始化项目层数据
         ProjectEvent projectEvent = new ProjectEvent();
@@ -46,7 +46,7 @@ public class DemoDataEventHandler {
         projectEvent.setProjectCode(organizationRegisterPayload.getProject().getCode());
         //初始化项目层数据
         testProjectInfoService.initializationProjectInfo(projectEvent);
-        return organizationRegisterPayload;
+        return message;
     }
 
     @SagaTask(code = "register-test-init-demo-data",
