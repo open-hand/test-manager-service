@@ -5,7 +5,6 @@ import java.util.List;
 
 import io.swagger.annotations.ApiModelProperty;
 
-import io.choerodon.test.manager.api.vo.event.OrganizationRegisterEventPayload;
 
 /**
  * Created by HuangFuqiang@choerodon.io on 2019/2/27.
@@ -29,7 +28,7 @@ public class DemoPayload {
     private Project project;
 
     @ApiModelProperty(value = "瀑布项目信息")
-    private OrganizationRegisterEventPayload.Project waterfallProject;
+    private Project waterfallProject;
 
     @ApiModelProperty(value = "测试模块数据")
     private TestData testData;
@@ -78,11 +77,11 @@ public class DemoPayload {
         return project;
     }
 
-    public OrganizationRegisterEventPayload.Project getWaterfallProject() {
+    public Project getWaterfallProject() {
         return waterfallProject;
     }
 
-    public void setWaterfallProject(OrganizationRegisterEventPayload.Project waterfallProject) {
+    public void setWaterfallProject(Project waterfallProject) {
         this.waterfallProject = waterfallProject;
     }
 
