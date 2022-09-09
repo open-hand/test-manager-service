@@ -3,15 +3,15 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>test-manager-service</artifactId>
-    <version>2.2.0-19-SNAPSHOT</version>
 
-    <!--加parent-->
     <parent>
         <groupId>io.choerodon</groupId>
         <artifactId>choerodon-framework-parent</artifactId>
-        <version>2.2.0-19-SNAPSHOT</version>
+        <version>2.2.0-20-SNAPSHOT</version>
     </parent>
+
+    <artifactId>test-manager-service</artifactId>
+    <version>2.2.0-20-SNAPSHOT</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
