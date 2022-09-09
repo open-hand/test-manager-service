@@ -161,4 +161,16 @@ public interface TestCycleCaseMapper extends BaseMapper<TestCycleCaseDTO> {
      * @param cycleIds 循环id
      */
     void batchAssignByCycle(@Param("assignUserId") Long assignUserId, @Param("cycleIds") Set<Long> cycleIds);
+
+    /**
+     * 根据issueId查询循环测试用例
+     *
+     * @param projectId
+     * @param issueId
+     * @param defectType
+     * @return
+     */
+    List<TestFolderCycleCaseVO> listTestCycleCaseByIssueId(@Param("projectId") Long projectId,
+                                                           @Param("issueId") Long issueId,
+                                                           @Param("defectType") String defectType);
 }

@@ -22,6 +22,9 @@ public class OrganizationRegisterEventPayload {
     @ApiModelProperty(value = "项目信息")
     private Project project;
 
+    @ApiModelProperty(value = "瀑布项目信息")
+    private Project waterfallProject;
+
     public Organization getOrganization() {
         return organization;
     }
@@ -60,6 +63,14 @@ public class OrganizationRegisterEventPayload {
 
     public void setProject(Project project) {
         this.project = project;
+    }
+
+    public Project getWaterfallProject() {
+        return waterfallProject;
+    }
+
+    public void setWaterfallProject(Project waterfallProject) {
+        this.waterfallProject = waterfallProject;
     }
 
     public static class User {

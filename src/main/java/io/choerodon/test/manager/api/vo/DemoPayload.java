@@ -5,6 +5,7 @@ import java.util.List;
 
 import io.swagger.annotations.ApiModelProperty;
 
+
 /**
  * Created by HuangFuqiang@choerodon.io on 2019/2/27.
  * Email: fuqianghuang01@gmail.com
@@ -25,6 +26,9 @@ public class DemoPayload {
 
     @ApiModelProperty(value = "项目信息")
     private Project project;
+
+    @ApiModelProperty(value = "瀑布项目信息")
+    private Project waterfallProject;
 
     @ApiModelProperty(value = "测试模块数据")
     private TestData testData;
@@ -71,6 +75,14 @@ public class DemoPayload {
 
     public Project getProject() {
         return project;
+    }
+
+    public Project getWaterfallProject() {
+        return waterfallProject;
+    }
+
+    public void setWaterfallProject(Project waterfallProject) {
+        this.waterfallProject = waterfallProject;
     }
 
     public void setProject(Project project) {
