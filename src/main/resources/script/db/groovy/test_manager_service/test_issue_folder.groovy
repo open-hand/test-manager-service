@@ -1,7 +1,7 @@
 package script.db.groovy.test_manager_service
 databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
     changeSet(author: 'zongwei.li@hang-china.com', id: '2018-08-30-add-test_issue_folder') {
-        createTable(tableName: "test_issue_folder") {
+        createTable(tableName: "test_issue_folder", remarks: '测试用例文件夹表') {
             column(name: 'folder_id', type: 'BIGINT UNSIGNED', autoIncrement: true, remarks: '表ID，主键，供其他表做外键，unsigned bigint、单表时自增、步长为 1') {
                 constraints(primaryKey: true)
             }

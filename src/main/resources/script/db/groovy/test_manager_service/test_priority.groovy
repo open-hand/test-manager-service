@@ -3,7 +3,7 @@ package script.db.groovy.test_manager_service
 
 databaseChangeLog(logicalFilePath: 'test_priority.groovy') {
     changeSet(id: '2020-08-19-test_priority', author: 'jiaxu.cui@hand-china.com') {
-        createTable(tableName: "test_priority", remarks: "优先级") {
+        createTable(tableName: "test_priority", remarks: "测试优先级") {
             column(name: 'id', type: 'BIGINT UNSIGNED', autoIncrement: true, remarks: 'ID,主键') {
                 constraints(primaryKey: true)
             }
