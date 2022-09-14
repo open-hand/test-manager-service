@@ -3,7 +3,7 @@ package script.db.groovy.test_manager_service
 databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
 
     changeSet(author: 'jialongzuo@hang-china.com', id: '2018-06-8-init_table_test_cycle_case') {
-        createTable(tableName: "test_cycle_case") {
+        createTable(tableName: "test_cycle_case", remarks: '循环测试用例表') {
             column(name: 'execute_id', type: 'BIGINT UNSIGNED', autoIncrement: true, remarks: '表ID，主键，供其他表做外键，unsigned bigint、单表时自增、步长为 1') {
                 constraints(primaryKey: true)
             }

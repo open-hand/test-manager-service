@@ -7,7 +7,7 @@ package script.db.groovy.agile_service
  **/
 databaseChangeLog(logicalFilePath: 'fd_execution_case_status_change_setting.groovy') {
     changeSet(id: '2021-05-10-create-table-fd-execution-case-status-change-setting', author: 'ztxemail@163.com') {
-        createTable(tableName: 'fd_execution_case_status_change_setting') {
+        createTable(tableName: 'fd_execution_case_status_change_setting', remarks: '状态机自定义流转测试状态配置表') {
             column(name: 'id', type: 'BIGINT UNSIGNED', autoIncrement: true, remarks: 'ID,主键') {
                 constraints(primaryKey: true)
             }

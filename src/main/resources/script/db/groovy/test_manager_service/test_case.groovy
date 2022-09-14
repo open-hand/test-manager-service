@@ -5,7 +5,7 @@ package script.db.groovy.test_manager_service
  */
 databaseChangeLog(logicalFilePath: "script/db/test_case.groovy") {
     changeSet(author: 'zhaotianxin', id: '2019-11-14-init_table_test_case') {
-        createTable(tableName: "test_case", remarks: "用例") {
+        createTable(tableName: "test_case", remarks: "测试用例") {
             column(name: 'case_id', type: 'BIGINT UNSIGNED', autoIncrement: true, remarks: '表ID，主键，供其他表做外键，unsigned bigint、单表时自增、步长为 1') {
                 constraints(primaryKey: true)
             }
