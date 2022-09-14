@@ -7,7 +7,7 @@ package script.db.groovy.agile_service
  */
 databaseChangeLog(logicalFilePath:'test_list_layout.groovy') {
     changeSet(id: '2022-05-26-test-list-layout', author: 'ztxemail@163.com') {
-        createTable(tableName: "test_list_layout") {
+        createTable(tableName: "test_list_layout", remarks: '测试用例/测试计划执行列配置表') {
             column(name: 'id', type: 'BIGINT UNSIGNED', autoIncrement: true, remarks: 'id') {
                 constraints(primaryKey: true)
             }

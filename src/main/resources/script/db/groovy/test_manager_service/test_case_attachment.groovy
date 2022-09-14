@@ -2,7 +2,7 @@ package script.db.groovy.test_manager_service
 
 databaseChangeLog(logicalFilePath: "script/db/test_case_attachment.groovy") {
     changeSet(author: 'yzj', id: '2019-11-20-init_table_test_case_attatchment.groovy') {
-        createTable(tableName: "test_case_attachment", remarks: "用例") {
+        createTable(tableName: "test_case_attachment", remarks: "测试用例附件") {
             column(name: 'attachment_id', type: 'BIGINT UNSIGNED', autoIncrement: true, remarks: '附件id') {
                 constraints(primaryKey: true)
             }

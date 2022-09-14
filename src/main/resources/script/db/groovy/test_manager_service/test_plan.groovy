@@ -5,7 +5,7 @@ package script.db.groovy.test_manager_service
  */
 databaseChangeLog(logicalFilePath: "script/db/test_data_log.groovy") {
     changeSet(author: 'lizhaozhong', id: '2019-11-26-init_table_test_plan') {
-        createTable(tableName: "test_plan", remarks: "计划") {
+        createTable(tableName: "test_plan", remarks: "测试计划表") {
             column(name: 'plan_id', type: 'BIGINT UNSIGNED', autoIncrement: true, remarks: '计划id') {
                 constraints(primaryKey: true)
             }
