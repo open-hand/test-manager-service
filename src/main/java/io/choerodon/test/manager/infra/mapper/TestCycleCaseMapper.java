@@ -5,12 +5,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import io.choerodon.test.manager.api.vo.*;
-
 import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Param;
 
 import io.choerodon.mybatis.common.BaseMapper;
+import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.infra.dto.TestStatusDTO;
 
@@ -148,10 +147,10 @@ public interface TestCycleCaseMapper extends BaseMapper<TestCycleCaseDTO> {
      * 查询测试用例关联的指定冲刺下的执行
      *
      * @param caseIdList 用例id
-     * @param sprintId 冲刺id
+     * @param sprintIds 冲刺id
      * @return 测试用例关联的指定冲刺下的执行
      */
-    List<TestCycleCaseLinkVO> selectTestCycleByCaseAndSprint(@Param("caseIdList") List<Long> caseIdList, @Param("sprintId") Long sprintId);
+    List<TestCycleCaseLinkVO> selectTestCycleByCaseAndSprint(@Param("caseIdList") List<Long> caseIdList, @Param("sprintIds") Set<Long> sprintIds);
 
     List<Long> listStatusBySprintIdAndIssueId(@Param("projectId") Long projectId, @Param("issueId")  Long issueId, @Param("sprintId")  Long sprintId);
 

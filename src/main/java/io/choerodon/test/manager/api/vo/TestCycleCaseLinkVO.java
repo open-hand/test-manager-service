@@ -16,6 +16,7 @@ public class TestCycleCaseLinkVO {
     private Long executeId;
 
     @ApiModelProperty(value = "cycleID")
+    @Encrypt
     private Long cycleId;
 
     @ApiModelProperty(value = "用例ID")
