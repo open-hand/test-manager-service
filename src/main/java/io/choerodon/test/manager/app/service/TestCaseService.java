@@ -12,7 +12,6 @@ import io.choerodon.test.manager.api.vo.TestCaseInfoVO;
 import io.choerodon.test.manager.api.vo.TestCaseRepVO;
 import io.choerodon.test.manager.api.vo.TestCaseVO;
 import io.choerodon.test.manager.api.vo.agile.*;
-import io.choerodon.test.manager.api.vo.devops.AppServiceDeployVO;
 import io.choerodon.test.manager.api.vo.devops.AppServiceVersionRespVO;
 import io.choerodon.test.manager.api.vo.devops.ApplicationRepDTO;
 import io.choerodon.test.manager.api.vo.devops.InstanceValueVO;
@@ -66,8 +65,6 @@ public interface TestCaseService {
     List<AppServiceVersionRespVO> getAppversion(Long projectId, List<Long> appVersionId);
 
     InstanceValueVO previewValues(Long projectId, InstanceValueVO replaceResult, Long appVersionId);
-
-    void deployTestApp(Long projectId, AppServiceDeployVO appServiceDeployVO);
 
     /**
      * 创建用例

@@ -1,10 +1,21 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import static io.choerodon.test.manager.infra.constant.DataLogConstants.BATCH_UPDATE_CASE_PRIORITY;
+
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
@@ -16,7 +27,6 @@ import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.api.vo.agile.*;
-import io.choerodon.test.manager.api.vo.devops.AppServiceDeployVO;
 import io.choerodon.test.manager.api.vo.devops.AppServiceVersionRespVO;
 import io.choerodon.test.manager.api.vo.devops.ApplicationRepDTO;
 import io.choerodon.test.manager.api.vo.devops.InstanceValueVO;
@@ -31,16 +41,6 @@ import io.choerodon.test.manager.infra.feign.operator.AgileClientOperator;
 import io.choerodon.test.manager.infra.feign.operator.RemoteIamOperator;
 import io.choerodon.test.manager.infra.mapper.*;
 import io.choerodon.test.manager.infra.util.*;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
-
-import static io.choerodon.test.manager.infra.constant.DataLogConstants.BATCH_UPDATE_CASE_PRIORITY;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -228,11 +228,6 @@ public class TestCaseServiceImpl implements TestCaseService {
     @Override
     public InstanceValueVO previewValues(Long projectId, InstanceValueVO replaceResult, Long appVersionId) {
         return applicationFeignClient.previewValues(projectId, replaceResult, appVersionId).getBody();
-    }
-
-    @Override
-    public void deployTestApp(Long projectId, AppServiceDeployVO appServiceDeployVO) {
-        applicationFeignClient.deployTestApp(projectId, appServiceDeployVO);
     }
 
     @Override
