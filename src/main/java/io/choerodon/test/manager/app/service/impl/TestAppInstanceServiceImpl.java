@@ -1,47 +1,45 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.choerodon.mybatis.pagehelper.PageHelper;
-import io.choerodon.core.domain.Page;
 import com.google.common.collect.Lists;
-import io.choerodon.test.manager.api.vo.asgard.QuartzTask;
-import io.choerodon.test.manager.api.vo.asgard.ScheduleTaskDTO;
-import io.choerodon.asgard.schedule.annotation.JobParam;
-import io.choerodon.asgard.schedule.annotation.JobTask;
-import io.choerodon.test.manager.infra.util.TypeUtil;
-
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
-import io.choerodon.mybatis.pagehelper.domain.Sort;
-import io.choerodon.core.exception.CommonException;
-import io.choerodon.core.iam.ResourceLevel;
-import io.choerodon.core.oauth.DetailsHelper;
-import io.choerodon.test.manager.api.vo.devops.AppServiceDeployVO;
-import io.choerodon.test.manager.api.vo.devops.ErrorLineVO;
-import io.choerodon.test.manager.api.vo.devops.InstanceValueVO;
-import io.choerodon.test.manager.api.vo.ApplicationDeployVO;
-import io.choerodon.test.manager.api.vo.TestAppInstanceVO;
-import io.choerodon.test.manager.app.service.ScheduleService;
-import io.choerodon.test.manager.app.service.TestAppInstanceService;
-import io.choerodon.test.manager.app.service.TestCaseService;
-import io.choerodon.test.manager.infra.dto.*;
-import io.choerodon.test.manager.infra.enums.TestAutomationHistoryEnums;
-import io.choerodon.test.manager.infra.mapper.*;
-import io.choerodon.test.manager.infra.util.FileUtil;
-import io.choerodon.test.manager.infra.util.GenerateUUID;
-import org.hzero.starter.keyencrypt.core.EncryptContext;
-import org.hzero.starter.keyencrypt.core.EncryptionService;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
-import org.springframework.util.ObjectUtils;
-import org.yaml.snakeyaml.Yaml;
 
-import java.util.*;
+import io.choerodon.core.domain.Page;
+import io.choerodon.core.exception.CommonException;
+import io.choerodon.core.oauth.DetailsHelper;
+import io.choerodon.mybatis.pagehelper.PageHelper;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.mybatis.pagehelper.domain.Sort;
+import io.choerodon.test.manager.api.vo.ApplicationDeployVO;
+import io.choerodon.test.manager.api.vo.asgard.QuartzTask;
+import io.choerodon.test.manager.api.vo.asgard.ScheduleTaskDTO;
+import io.choerodon.test.manager.api.vo.devops.ErrorLineVO;
+import io.choerodon.test.manager.api.vo.devops.InstanceValueVO;
+import io.choerodon.test.manager.app.service.ScheduleService;
+import io.choerodon.test.manager.app.service.TestAppInstanceService;
+import io.choerodon.test.manager.app.service.TestCaseService;
+import io.choerodon.test.manager.infra.dto.TestAppInstanceDTO;
+import io.choerodon.test.manager.infra.dto.TestAppInstanceLogDTO;
+import io.choerodon.test.manager.infra.dto.TestEnvCommandDTO;
+import io.choerodon.test.manager.infra.mapper.*;
+import io.choerodon.test.manager.infra.util.FileUtil;
+import io.choerodon.test.manager.infra.util.GenerateUUID;
+import io.choerodon.test.manager.infra.util.TypeUtil;
+
+import org.hzero.starter.keyencrypt.core.EncryptContext;
+import org.hzero.starter.keyencrypt.core.EncryptionService;
 
 /**
  * Created by zongw.lee@gmail.com on 22/11/2018
@@ -118,27 +116,6 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
     }
 
     /**
-     * 接受定时任务调用
-     *
-     * @param data
-     */
-    @JobTask(code = SCHEDULECODE,
-            level = ResourceLevel.PROJECT,
-            description = "自动化测试任务-定时部署",
-            maxRetryCount = 3, params = {
-            @JobParam(name = DEPLOYDTONAME),
-            @JobParam(name = "projectId", type = Long.class),
-            @JobParam(name = "userId", type = Integer.class)
-    })
-    @Override
-    public void createBySchedule(Map<String, Object> data) {
-        logger.info("定时任务执行方法开始，时间{}", new Date());
-        create(JSON.parseObject((String) data.get(DEPLOYDTONAME), ApplicationDeployVO.class),
-                Long.valueOf((Integer) data.get("projectId")), Long.valueOf((Integer) data.get("userId")));
-        logger.info("定时任务执行方法结束，时间{}", new Date());
-    }
-
-    /**
      * 创建定时任务
      *
      * @param taskDTO
@@ -182,100 +159,6 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         } catch (JsonProcessingException e) {
             throw new CommonException("error.parse.object.to.string", e);
         }
-    }
-
-    /**
-     * 部署应用
-     *
-     * @param deployDTO 部署的信息
-     * @param projectId
-     * @param userId    部署用户
-     * @return
-     */
-    @Override
-    public TestAppInstanceVO create(ApplicationDeployVO deployDTO, Long projectId, Long userId) {
-
-        Yaml yaml = new Yaml();
-        TestEnvCommandDTO envCommand;
-        TestEnvCommandValueDTO commandValue;
-        InstanceValueVO replaceResult = new InstanceValueVO();
-        InstanceValueVO sendResult = new InstanceValueVO();
-
-        if (ObjectUtils.isEmpty(deployDTO.getHistoryId())) {
-            sendResult.setYaml(deployDTO.getValues());
-            Assert.notNull(deployDTO.getAppVersionId(), "error.deployDTO.appVerisonId.can.not.be.null");
-            replaceResult = testCaseService.previewValues(projectId, sendResult, deployDTO.getAppVersionId());
-            //校验values
-            FileUtil.checkYamlFormat(deployDTO.getValues());
-            Long commandValueId = null;
-            //默认值是否已经改变
-            if (!ObjectUtils.isEmpty(replaceResult.getDeltaYaml())) {
-                commandValue = new TestEnvCommandValueDTO();
-                commandValue.setValue(replaceResult.getDeltaYaml());
-                if (testEnvCommandValueMapper.insert(commandValue) == 0) {
-                    throw new CommonException("error.ITestEnvCommandValueServiceImpl.insert");
-                }
-                commandValueId = testEnvCommandValueMapper.selectByPrimaryKey(commandValue.getId()).getId();
-            }
-            envCommand = new TestEnvCommandDTO(TestEnvCommandDTO.CommandType.CREATE, commandValueId);
-        } else {
-            //从history里面查instance，然后再去command里面找value，最后一个创建的value就是最新更改值
-            TestEnvCommandDTO needEnvCommand = new TestEnvCommandDTO();
-            needEnvCommand.setInstanceId(testAutomationHistoryMapper.selectByPrimaryKey(deployDTO.getHistoryId()).getInstanceId());
-            List<TestEnvCommandDTO> envCommands = queryEnvCommand(needEnvCommand);
-            Assert.notNull(envCommands, "error.deploy.retry.envCommands.are.empty");
-            TestEnvCommandDTO retryCommand = envCommands.get(0);
-
-            //先去APPInstance查找appversionId
-            TestAppInstanceDTO needInstance = new TestAppInstanceDTO();
-            needInstance.setId(retryCommand.getInstanceId());
-            TestAppInstanceDTO retryInstance = testAppInstanceMapper.selectOne(needInstance);
-            deployDTO.setAppVersionId(retryInstance.getAppVersionId());
-            deployDTO.setAppId(retryInstance.getAppId());
-            deployDTO.setEnvironmentId(retryInstance.getEnvId());
-            deployDTO.setCode(retryInstance.getCode());
-            deployDTO.setProjectVersionId(retryInstance.getProjectVersionId());
-            //重用EnvCommandValue表中以前的value数据
-            if (!ObjectUtils.isEmpty(retryCommand.getValueId())) {
-                commandValue = testEnvCommandValueMapper.selectByPrimaryKey(retryCommand.getValueId());
-                envCommand = new TestEnvCommandDTO(TestEnvCommandDTO.CommandType.RESTART, commandValue.getId());
-
-                TestEnvCommandValueDTO retryChangedValue = testEnvCommandValueMapper.selectByPrimaryKey(retryCommand.getValueId());
-                sendResult.setYaml(retryChangedValue.getValue());
-                replaceResult = testCaseService.previewValues(projectId, sendResult, retryInstance.getAppVersionId());
-            } else {
-                envCommand = new TestEnvCommandDTO(TestEnvCommandDTO.CommandType.RESTART, null);
-                replaceResult.setYaml(testCaseService.getVersionValue(projectId, retryInstance.getAppVersionId()));
-            }
-        }
-        TestEnvCommandDTO resultCommand = insertOne(envCommand);
-        TestAppInstanceDTO instanceE = new TestAppInstanceDTO(deployDTO, resultCommand.getId(), projectId, 0L);
-        if (testAppInstanceMapper.insert(instanceE) == 0) {
-            throw new CommonException("error.ITestAppInstanceServiceImpl.insert");
-        }
-        TestAppInstanceDTO resultInstance = testAppInstanceMapper.selectByPrimaryKey(instanceE.getId());
-
-        //回表EncCommand更新instanceId
-        resultCommand.setInstanceId(resultInstance.getId());
-        envCommandMapper.updateByPrimaryKey(resultCommand);
-
-        Map result = yaml.loadAs(replaceResult.getYaml(), Map.class);
-        Assert.notNull(result, FRAMEWORKERROR);
-        String frameWork = (String) result.get("framework");
-        TestAutomationHistoryDTO historyE = new TestAutomationHistoryDTO();
-        historyE.setFramework(frameWork);
-        historyE.setInstanceId(resultInstance.getId());
-        historyE.setProjectId(projectId);
-        historyE.setTestStatus(TestAutomationHistoryEnums.Status.NONEXECUTION);
-        if (testAutomationHistoryMapper.insert(historyE) == 0) {
-            throw new CommonException("error.ITestAutomationHistoryServiceImpl.insert");
-        }
-
-        //开始部署
-        AppServiceDeployVO appServiceDeployVO = new AppServiceDeployVO(deployDTO.getAppVersionId(), deployDTO.getEnvironmentId(), replaceResult.getYaml(), deployDTO.getAppId(), deployDTO.getCommandType(), resultInstance.getId());
-        testCaseService.deployTestApp(projectId, appServiceDeployVO);
-
-        return modelMapper.map(resultInstance, TestAppInstanceVO.class);
     }
 
     private List<ErrorLineVO> getErrorLine(String value) {
