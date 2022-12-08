@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
  * @since 2018/11/23
  */
 @Component
-@FeignClient(value = "choerodon-asgard", fallbackFactory = ScheduleFeignClientFallback.class)
+@FeignClient(value = "zknow-asgard", fallbackFactory = ScheduleFeignClientFallback.class)
 public interface ScheduleFeignClient {
     @ApiOperation(value = "项目层创建定时任务")
     @PostMapping(value = "/v1/schedules/projects/{project_id}/tasks")

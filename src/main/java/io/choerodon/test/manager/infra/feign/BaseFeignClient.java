@@ -20,12 +20,8 @@ import org.springframework.web.bind.annotation.*;
  * @since 2018/5/24
  */
 @Component
-@FeignClient(value = HZeroService.Iam.NAME, fallbackFactory = BaseFeignClientFallback.class)
+@FeignClient(value = "choerodon-base", fallbackFactory = BaseFeignClientFallback.class)
 public interface BaseFeignClient {
-
-    @PostMapping(value = "/choerodon/v1/users/ids")
-    ResponseEntity<List<UserDO>> listUsersByIds(@RequestBody Long[] ids,
-                                                @RequestParam(value = "only_enabled", defaultValue = "true", required = false) Boolean onlyEnabled);
 
 
     @GetMapping(value = "/choerodon/v1/projects/{project_id}/users")
@@ -43,16 +39,6 @@ public interface BaseFeignClient {
      */
     @GetMapping(value = "/choerodon/v1/organizations/{organization_id}/projects/all")
     ResponseEntity<List<ProjectDTO>> listProjectsByOrgId(@PathVariable("organization_id") Long organizationId);
-
-    /**
-     * 分页查询所有组织
-     * @param pageRequest
-     * @return
-     */
-    @GetMapping("/choerodon/v1/organizations/all")
-    ResponseEntity<Page<TenantVO>> getAllOrgs(@RequestParam("page") int page,
-                                              @RequestParam("size") int size,
-                                              @RequestParam("sort") String sort);
 
     @PostMapping(value = "/choerodon/v1/projects/ids")
     ResponseEntity<List<ProjectDTO>> queryProjects(Set<Long> ids);
