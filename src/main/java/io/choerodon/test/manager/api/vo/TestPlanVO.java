@@ -67,6 +67,7 @@ public class TestPlanVO {
     private Boolean sprintLink;
 
     @ApiModelProperty(value = "用例选择情况")
+    @Encrypt
     private Map<Long, CaseSelectVO> caseSelected;
 
     @ApiModelProperty(value = "乐观锁")
