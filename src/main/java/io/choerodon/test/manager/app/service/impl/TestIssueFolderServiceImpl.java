@@ -23,7 +23,6 @@ import io.choerodon.asgard.saga.annotation.Saga;
 import io.choerodon.asgard.saga.annotation.SagaTask;
 import io.choerodon.asgard.saga.producer.StartSagaBuilder;
 import io.choerodon.asgard.saga.producer.TransactionalProducer;
-import io.choerodon.core.client.MessageClientC7n;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.core.oauth.DetailsHelper;
@@ -49,6 +48,7 @@ import org.hzero.core.base.AopProxy;
 import org.hzero.core.base.BaseConstants;
 import org.hzero.mybatis.domian.Condition;
 import org.hzero.mybatis.util.Sqls;
+import org.hzero.websocket.helper.SocketSendHelper;
 
 
 @Service
@@ -65,7 +65,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
     private TestIssueFolderMapper testIssueFolderMapper;
     private ModelMapper modelMapper;
     private TestCaseMapper testCaseMapper;
-    private MessageClientC7n messageClientC7n;
+    private SocketSendHelper socketSendHelper;
     private TransactionalProducer producer;
     private ObjectMapper objectMapper;
     private TestProjectInfoMapper testProjectInfoMapper;
@@ -73,13 +73,13 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
     public TestIssueFolderServiceImpl(TestCaseService testCaseService,
                                       TestIssueFolderMapper testIssueFolderMapper,
                                       ModelMapper modelMapper, TestCaseMapper testCaseMapper,
-                                      MessageClientC7n messageClientC7n, TransactionalProducer producer,
+                                      SocketSendHelper socketSendHelper, TransactionalProducer producer,
                                       ObjectMapper objectMapper, TestProjectInfoMapper testProjectInfoMapper) {
         this.testCaseService = testCaseService;
         this.testIssueFolderMapper = testIssueFolderMapper;
         this.modelMapper = modelMapper;
         this.testCaseMapper = testCaseMapper;
-        this.messageClientC7n = messageClientC7n;
+        this.socketSendHelper = socketSendHelper;
         this.producer = producer;
         this.objectMapper = objectMapper;
         this.testProjectInfoMapper = testProjectInfoMapper;
@@ -340,9 +340,9 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
         testIssueFolderMapper.updateOptional(newFolder, TestIssueFolderDTO.FIELD_INIT_STATUS);
         String websocketKey = TestIssueFolderDTO.MESSAGE_COPY_TEST_FOLDER + "-" + newFolder.getProjectId();
         if (StringUtils.equals(newFolder.getInitStatus(), TestPlanInitStatus.FAIL)){
-            messageClientC7n.sendByUserId(userId, websocketKey, BaseConstants.FIELD_FAILED);
+            socketSendHelper.sendByUserId(userId, websocketKey, BaseConstants.FIELD_FAILED);
         }else {
-            messageClientC7n.sendByUserId(userId, websocketKey, BaseConstants.FIELD_SUCCESS);
+            socketSendHelper.sendByUserId(userId, websocketKey, BaseConstants.FIELD_SUCCESS);
         }
     }
 
