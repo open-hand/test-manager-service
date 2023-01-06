@@ -34,8 +34,8 @@
             <artifactId>choerodon-starter-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.choerodon</groupId>
-            <artifactId>choerodon-starter-asgard</artifactId>
+            <groupId>com.zknow.starter</groupId>
+            <artifactId>zknow-starter-asgard</artifactId>
         </dependency>
 
         <!-- hzero starter -->
@@ -57,9 +57,7 @@
         </dependency>
         <dependency>
             <groupId>org.hzero.starter</groupId>
-            <artifactId>hzero-starter-developer-route</artifactId>
-            <version>1.10.0.RELEASE</version>
-            <optional>true</optional>
+            <artifactId>hzero-starter-websocket</artifactId>
         </dependency>
         <dependency>
             <groupId>org.hzero.starter</groupId>
@@ -69,7 +67,12 @@
             <groupId>org.hzero.starter</groupId>
             <artifactId>hzero-starter-metric</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.hzero.starter</groupId>
+            <artifactId>hzero-starter-developer-route</artifactId>
+            <version>1.10.0.RELEASE</version>
+            <optional>true</optional>
+        </dependency>
         <!-- hzero boot -->
         <dependency>
             <groupId>org.hzero.boot</groupId>

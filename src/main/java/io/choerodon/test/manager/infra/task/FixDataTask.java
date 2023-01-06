@@ -14,8 +14,9 @@
 //
 //    @Autowired
 //    private DataMigrationService dataMigrationService;
-//
-//    @JobTask(maxRetryCount = 3,
+
+//    @JobTask(productSource = ZKnowDetailsHelper.VALUE_CHOERODON,
+//    maxRetryCount = 3,
 //            code = "fixDataPriority",
 //            description = "升级到0.24.0,修复优先级数据")
 //    @TimedTask(name = "fixDataPriority",
