@@ -33,6 +33,11 @@
             <groupId>io.choerodon</groupId>
             <artifactId>choerodon-starter-core</artifactId>
         </dependency>
+        <!-- zknow starter -->
+        <dependency>
+            <groupId>com.zknow.starter</groupId>
+            <artifactId>zknow-starter-mybatis-mapper</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.zknow.starter</groupId>
             <artifactId>zknow-starter-asgard</artifactId>
