@@ -5,6 +5,19 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.yqcloud.core.oauth.ZKnowDetailsHelper;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
+
 import io.choerodon.asgard.saga.annotation.Saga;
 import io.choerodon.asgard.saga.producer.StartSagaBuilder;
 import io.choerodon.asgard.saga.producer.TransactionalProducer;
@@ -27,17 +40,6 @@ import io.choerodon.test.manager.infra.mapper.*;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
 import io.choerodon.test.manager.infra.util.PageUtil;
 import io.choerodon.test.manager.infra.util.RankUtil;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ObjectUtils;
 
 /**
  * @author: 25499
@@ -159,7 +161,7 @@ public class TestPlanServiceImpl implements TestPlanService {
     }
 
     @Override
-    @Saga(code = SagaTopicCodeConstants.TEST_MANAGER_CREATE_PLAN,
+    @Saga(productSource = ZKnowDetailsHelper.VALUE_CHOERODON, code = SagaTopicCodeConstants.TEST_MANAGER_CREATE_PLAN,
             description = "test-manager创建测试计划", inputSchema = "{}")
     public TestPlanDTO create(Long projectId, TestPlanVO testPlanVO) {
         testPlanVO.setProjectId(projectId);
@@ -595,7 +597,7 @@ public class TestPlanServiceImpl implements TestPlanService {
     }
 
     @Override
-    @Saga(code = SagaTopicCodeConstants.TEST_MANAGER_CLONE_PLAN,
+    @Saga(productSource = ZKnowDetailsHelper.VALUE_CHOERODON, code = SagaTopicCodeConstants.TEST_MANAGER_CLONE_PLAN,
             description = "test-manager 复制测试计划", inputSchema = "{}")
     public TestPlanVO clone(Long projectId, Long planId, String name) {
         if (Boolean.TRUE.equals(checkName(projectId, name))) {
@@ -673,7 +675,7 @@ public class TestPlanServiceImpl implements TestPlanService {
     }
 
     @Override
-    @Saga(code = SagaTopicCodeConstants.TEST_MANAGER_PLAN_FAIL,
+    @Saga(productSource = ZKnowDetailsHelper.VALUE_CHOERODON, code = SagaTopicCodeConstants.TEST_MANAGER_PLAN_FAIL,
             description = "test-manager 改变测试测试计划的状态为fail", inputSchema = "{}")
     public void setPlanInitStatusFail(TestPlanVO testPlanVO) {
         producer.apply(

@@ -6,6 +6,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yqcloud.core.oauth.ZKnowDetailsHelper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -235,7 +236,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService, AopPr
     }
 
     @Override
-    @Saga(code = SagaTopicCodeConstants.TEST_MANAGER_CLONE_TEST_ISSUE_FOLDER,
+    @Saga(productSource = ZKnowDetailsHelper.VALUE_CHOERODON, code = SagaTopicCodeConstants.TEST_MANAGER_CLONE_TEST_ISSUE_FOLDER,
             description = "test-manager 复制用例文件夹", inputSchema = "{}")
     public TestIssueFolderDTO cloneFolder(Long projectId, Long folderId) {
         TestIssueFolderDTO newFolder = this.self().cloneCurrentFolder(projectId, folderId);
