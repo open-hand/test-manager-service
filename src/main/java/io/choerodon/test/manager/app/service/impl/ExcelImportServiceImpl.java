@@ -1,19 +1,46 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import static org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import io.choerodon.core.client.MessageClientC7n;
+import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
-import io.choerodon.test.manager.api.vo.TestFileLoadHistoryWebsocketVO;
-import io.choerodon.test.manager.api.vo.agile.*;
-
-
-import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.vo.ExcelReadMeOptionVO;
+import io.choerodon.test.manager.api.vo.TestFileLoadHistoryWebsocketVO;
+import io.choerodon.test.manager.api.vo.agile.IssueCreateDTO;
+import io.choerodon.test.manager.api.vo.agile.IssueNumDTO;
+import io.choerodon.test.manager.api.vo.agile.ProjectDTO;
+import io.choerodon.test.manager.api.vo.agile.UserDTO;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.enums.ExcelTitleName;
@@ -27,35 +54,9 @@ import io.choerodon.test.manager.infra.mapper.TestPriorityMapper;
 import io.choerodon.test.manager.infra.mapper.TestProjectInfoMapper;
 import io.choerodon.test.manager.infra.util.*;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hzero.boot.file.FileClient;
 import org.hzero.starter.keyencrypt.core.EncryptContext;
 import org.hzero.starter.keyencrypt.core.EncryptType;
-import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import static org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING;
 
 @Service
 public class ExcelImportServiceImpl implements ExcelImportService {
@@ -676,7 +677,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         IssueCreateDTO issueCreateDTO = new IssueCreateDTO();
         issueCreateDTO.setProjectId(projectId);
         issueCreateDTO.setSummary(summary);
-        issueCreateDTO.setDescription(description);
+        issueCreateDTO.setDescription("<p>" + description + "</p>");
         issueCreateDTO.setFolderId(folderId);
         issueCreateDTO.setPriorityId(priorityMap.get(priority));
         issueCreateDTO.setCustomNum(customNum);
