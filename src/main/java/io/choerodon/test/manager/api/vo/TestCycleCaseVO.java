@@ -97,6 +97,7 @@ public class TestCycleCaseVO {
     @Encrypt
     private Long nextExecuteId;
 
+    @ApiModelProperty(value = "描述")
     private String description;
 
     @ApiModelProperty(value = "执行附件")

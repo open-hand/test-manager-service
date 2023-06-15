@@ -50,4 +50,8 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
         }
     }
 
+    changeSet(author: 'kaiwen.li@hang-china.com', id: '2022-03-10-change-column-length') {
+        modifyDataType(columnName: 'file_url', newDataType: 'VARCHAR(1024)', tableName: 'test_fileload_history')
+    }
+
 }

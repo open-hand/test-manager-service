@@ -12,6 +12,7 @@ import java.util.Optional;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import io.choerodon.core.exception.CommonException;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
@@ -26,8 +27,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.web.multipart.MultipartFile;
-
-import io.choerodon.core.exception.CommonException;
 
 public class ExcelUtil {
 
@@ -85,6 +84,44 @@ public class ExcelUtil {
                 cell.setCellValue(value.toString());
         }
         return cell;
+    }
+
+    public static CellStyle createCellStyle(Workbook workbook, Boolean wrapText) {
+        return createCellStyle(workbook, HorizontalAlignment.CENTER, VerticalAlignment.CENTER, wrapText);
+    }
+
+    public static CellStyle createCellStyle(Workbook workbook) {
+        return createCellStyle(workbook, HorizontalAlignment.CENTER, VerticalAlignment.CENTER, null);
+    }
+
+    public static CellStyle createCellStyle(Workbook workbook, HorizontalAlignment horizontalAlignment) {
+        return createCellStyle(workbook, horizontalAlignment, VerticalAlignment.CENTER, null);
+    }
+
+    public static CellStyle createCellStyle(Workbook workbook, VerticalAlignment verticalAlignment) {
+        return createCellStyle(workbook, HorizontalAlignment.CENTER, verticalAlignment, null);
+    }
+
+    public static CellStyle createCellStyle(Workbook workbook,
+                                            HorizontalAlignment horizontalAlignment,
+                                            VerticalAlignment verticalAlignment,
+                                            Boolean wrapText) {
+        CellStyle cellStyle = workbook.createCellStyle();
+        Optional.ofNullable(horizontalAlignment).ifPresent(cellStyle::setAlignment);
+        Optional.ofNullable(verticalAlignment).ifPresent(cellStyle::setVerticalAlignment);
+        Optional.ofNullable(wrapText).ifPresent(cellStyle::setWrapText);
+        return cellStyle;
+    }
+
+    public static void createFont(Font font,
+                                  CellStyle cellStyle,
+                                  String fontName,
+                                  Short fontColor,
+                                  Boolean bold) {
+        Optional.ofNullable(fontName).ifPresent(font::setFontName);
+        Optional.ofNullable(fontColor).ifPresent(font::setColor);
+        Optional.ofNullable(bold).ifPresent(font::setBold);
+        cellStyle.setFont(font);
     }
 
     public static Workbook getWorkBook(Mode mode) {
@@ -194,7 +231,7 @@ public class ExcelUtil {
         return row;
     }
 
-    public static Cell getOrCreateCell(Row row, int colNum, int type) {
+    public static Cell getOrCreateCell(Row row, int colNum, org.apache.poi.ss.usermodel.CellType type) {
         Cell cell = row.getCell(colNum);
         if (cell == null) {
             cell = row.createCell(colNum, type);
@@ -220,11 +257,11 @@ public class ExcelUtil {
             Document doc = Jsoup.parse(rawText);
             doc.body().children().forEach(element -> {
                 String tagName = element.tag().getName();
-                if(tagName == null){
+                if (tagName == null) {
                     result.append(element.text()).append("\n");
                     return;
                 }
-                switch (tagName){
+                switch (tagName) {
                     case "figure":
                         break;
                     case "ol":
@@ -341,7 +378,7 @@ public class ExcelUtil {
         StringBuilder childRelText = new StringBuilder();
         element.children().forEach(childElement -> {
             String tagName = childElement.tag().getName();
-            if("ol".equals(tagName) || "ul".equals(tagName)){
+            if ("ol".equals(tagName) || "ul".equals(tagName)) {
                 childListText.append(" ").append(setListElementStr(childRelText, childElement));
             }
         });

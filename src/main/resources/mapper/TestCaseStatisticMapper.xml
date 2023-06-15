@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="io.choerodon.test.manager.infra.mapper.TestCaseStatisticMapper">
+
+    <select id="selectTestCaseAddedByDate" resultType="io.choerodon.test.manager.api.vo.DailyStatisticVO">
+        select
+        tc.project_id,
+        count(distinct tc.case_id) AS test_case_count,
+        count(tcp.step_id) AS test_step_count
+        from test_case tc
+        left join test_case_step tcp on tc.case_id = tcp.issue_id
+        where tc.project_id in
+        <foreach collection="projectIds" item="projectId" open="(" separator="," close=")">
+            #{projectId}
+        </foreach>
+        and tc.creation_date &gt; #{dailyStartDate}
+        and tc.creation_date &lt;= #{dailyEndDate}
+        group by
+        tc.project_id
+        order by
+        tc.project_id asc
+    </select>
+
+    <select id="selectTestCaseExecByDate" resultType="io.choerodon.test.manager.api.vo.DailyStatisticVO">
+        SELECT
+        count(DISTINCT tcc.case_id) AS test_case_count,
+        tcc.project_id
+        FROM
+        test_cycle_case tcc
+        WHERE
+        tcc.execute_id IN (
+        SELECT
+        tcch.execute_id
+        FROM
+        test_cycle_case_history tcch
+        WHERE
+        tcch.id IN (
+        SELECT
+        max(tcch.id)
+        FROM
+        test_cycle_case tcc
+        JOIN test_cycle tc ON tcc.cycle_id = tc.cycle_id
+        JOIN test_plan tp ON tc.plan_id = tp.plan_id
+        LEFT JOIN test_cycle_case_history tcch ON (
+        tcc.execute_id = tcch.execute_id
+        and tcch.LAST_UPDATE_DATE &gt; #{dailyStartDate}
+        and tcch.LAST_UPDATE_DATE &lt;= #{dailyEndDate}
+        )
+        WHERE
+        tp.project_id IN
+        <foreach collection="projectIds" item="projectId" open="(" separator="," close=")">
+            #{projectId}
+        </foreach>
+        AND tp.status_code = 'doing'
+        AND tcch.id IS NOT NULL
+        GROUP BY
+        tcch.execute_id
+        )
+        AND tcch.new_value != '未执行'
+        )
+        GROUP BY
+        tcc.project_id
+    </select>
+    <select id="selectTestCaseStepExecByDate" resultType="io.choerodon.test.manager.api.vo.DailyStatisticVO">
+        SELECT
+        count(DISTINCT tccs.step_id) as test_case_count,
+        tp.project_id
+        FROM
+        test_cycle_case_step tccs
+        JOIN test_cycle_case tcc ON tcc.execute_id = tccs.execute_id
+        JOIN test_cycle tc ON tcc.cycle_id = tc.cycle_id
+        JOIN test_plan tp ON tc.plan_id = tp.plan_id
+        WHERE
+        tp.project_id IN
+        <foreach collection="projectIds" item="projectId" open="(" separator="," close=")">
+            #{projectId}
+        </foreach>
+        AND tp.status_code = 'doing'
+        and tccs.step_status != 4
+        and tccs.LAST_UPDATE_DATE &gt; #{dailyStartDate}
+        and tccs.LAST_UPDATE_DATE &lt;= #{dailyEndDate}
+        group by tp.project_id
+    </select>
+</mapper>

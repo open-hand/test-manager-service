@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.api.vo;
 
+import io.swagger.annotations.ApiModelProperty;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 
 import java.util.List;
@@ -10,8 +11,10 @@ import java.util.List;
  * @description:
  */
 public class TestTreeIssueFolderVO {
+    @ApiModelProperty(value = "根节点")
     @Encrypt
     private List<Long> rootIds;
+    @ApiModelProperty(value = "文件夹树")
     private List<TestTreeFolderVO> treeFolder;
 
     public TestTreeIssueFolderVO(List<Long> rootIds, List<TestTreeFolderVO> treeFolder) {

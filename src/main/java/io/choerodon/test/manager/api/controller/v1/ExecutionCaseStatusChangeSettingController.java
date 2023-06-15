@@ -29,9 +29,10 @@ public class ExecutionCaseStatusChangeSettingController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @PostMapping
     public ResponseEntity<ExecutionCaseStatusChangeSettingVO> save(@ApiParam(value = "项目id", required = true)
-                                                               @PathVariable(value = "project_id") Long projectId,
+                                                                   @PathVariable(value = "project_id") Long projectId,
                                                                    @ApiParam(value = "组织id", required = true)
-                                                               @RequestParam Long organizationId,
+                                                                   @RequestParam Long organizationId,
+                                                                   @ApiParam(value = "状态更新vo", required = true)
                                                                    @RequestBody ExecutionCaseStatusChangeSettingVO executionCaseStatusChangeSettingVO) {
         executionCaseStatusChangeSettingService.save(projectId, organizationId, executionCaseStatusChangeSettingVO);
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -40,10 +41,12 @@ public class ExecutionCaseStatusChangeSettingController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @GetMapping("/list")
     public ResponseEntity<List<ExecutionCaseStatusChangeSettingVO>> list(@ApiParam(value = "项目id", required = true)
-                                                                     @PathVariable(value = "project_id") Long projectId,
+                                                                         @PathVariable(value = "project_id") Long projectId,
                                                                          @ApiParam(value = "组织id", required = true)
-                                                                     @RequestParam Long organizationId,
+                                                                         @RequestParam Long organizationId,
+                                                                         @ApiParam(value = "工作项类型id", required = true)
                                                                          @RequestParam Long issueTypeId,
+                                                                         @ApiParam(value = "状态id集合", required = true)
                                                                          @RequestBody List<Long> statusIds) {
         return Optional.ofNullable(executionCaseStatusChangeSettingService.listByIssueStatusIds(projectId, organizationId, issueTypeId, statusIds))
                 .map(target -> new ResponseEntity<>(target, HttpStatus.OK))
@@ -54,10 +57,12 @@ public class ExecutionCaseStatusChangeSettingController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @GetMapping("/query_option")
     public ResponseEntity<ExecutionCaseStatusChangeSettingVO> queryByOption(@ApiParam(value = "项目id", required = true)
-                                                                    @PathVariable(value = "project_id") Long projectId,
+                                                                            @PathVariable(value = "project_id") Long projectId,
                                                                             @ApiParam(value = "组织id", required = true)
-                                                                    @RequestParam Long organizationId,
+                                                                            @RequestParam Long organizationId,
+                                                                            @ApiParam(value = "工作项类型id", required = true)
                                                                             @RequestParam @Encrypt Long issueTypeId,
+                                                                            @ApiParam(value = "状态id", required = true)
                                                                             @RequestParam @Encrypt Long statusId) {
         return new ResponseEntity<>(executionCaseStatusChangeSettingService.queryByOption(projectId, organizationId, issueTypeId, statusId), HttpStatus.OK);
     }
