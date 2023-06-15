@@ -8,9 +8,12 @@ import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.test.manager.api.vo.IssueLinkVO;
 import io.choerodon.test.manager.api.vo.TestCaseLinkVO;
 import io.choerodon.test.manager.api.vo.TestCaseVO;
+import io.choerodon.test.manager.api.vo.TestFolderCycleCaseVO;
 import io.choerodon.test.manager.app.service.TestCaseLinkService;
 import io.choerodon.test.manager.infra.dto.TestCaseLinkDTO;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.hzero.core.util.Results;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,8 +34,11 @@ public class TestCaseLinkController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("创建问题链接")
     @PostMapping
-    public ResponseEntity<List<TestCaseLinkDTO>> create(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity<List<TestCaseLinkDTO>> create(@ApiParam(value = "项目id", required = true)
+                                                        @PathVariable(name = "project_id") Long projectId,
+                                                        @ApiParam(value = "用例id", required = true)
                                                         @RequestParam("case_id") @Encrypt Long caseId,
+                                                        @ApiParam(value = "关联的issue id集合", required = true)
                                                         @RequestBody @Encrypt List<Long> issueIds) {
         return new ResponseEntity<>(testCaseLinkService.create(projectId, caseId, issueIds), HttpStatus.NO_CONTENT);
     }
@@ -41,7 +47,9 @@ public class TestCaseLinkController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("解除关联issue")
     @DeleteMapping
-    public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity delete(@ApiParam(value = "项目id", required = true)
+                                 @PathVariable(name = "project_id") Long projectId,
+                                 @ApiParam(value = "关联id", required = true)
                                  @RequestParam
                                  @Encrypt Long linkId) {
         testCaseLinkService.delete(projectId, linkId);
@@ -51,7 +59,9 @@ public class TestCaseLinkController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("查询测试用例关联的问题链接")
     @GetMapping("/list_issue_info")
-    public ResponseEntity<List<IssueLinkVO>> queryLinkIssues(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity<List<IssueLinkVO>> queryLinkIssues(@ApiParam(value = "项目id", required = true)
+                                                             @PathVariable(name = "project_id") Long projectId,
+                                                             @ApiParam(value = "用例id", required = true)
                                                              @RequestParam(name = "case_id")
                                                              @Encrypt Long caseId) {
         return new ResponseEntity<>(testCaseLinkService.queryLinkIssues(projectId, caseId), HttpStatus.OK);
@@ -60,8 +70,11 @@ public class TestCaseLinkController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("issue详情页创建用例并关联")
     @PostMapping("/create_and_link")
-    public ResponseEntity<List<TestCaseLinkDTO>> createAndLink(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity<List<TestCaseLinkDTO>> createAndLink(@ApiParam(value = "项目id", required = true)
+                                                               @PathVariable(name = "project_id") Long projectId,
+                                                               @ApiParam(value = "关联的issue id", required = true)
                                                                @RequestParam("issue_id") @Encrypt Long issueId,
+                                                               @ApiParam(value = "用例创建vo", required = true)
                                                                @RequestBody TestCaseVO testCaseVO) {
         return new ResponseEntity<>(testCaseLinkService.createAndLink(projectId, issueId, testCaseVO), HttpStatus.OK);
     }
@@ -69,8 +82,11 @@ public class TestCaseLinkController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("issue详情页关联用例")
     @PostMapping("/create_by_issue")
-    public ResponseEntity creatByIssue(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity creatByIssue(@ApiParam(value = "项目id", required = true)
+                                       @PathVariable(name = "project_id") Long projectId,
+                                       @ApiParam(value = "关联的issue id", required = true)
                                        @RequestParam("issue_id") @Encrypt Long issueId,
+                                       @ApiParam(value = "关联的用例id集合", required = true)
                                        @RequestBody @Encrypt List<Long> caseIds) {
         testCaseLinkService.createByIssue(projectId, issueId, caseIds);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -79,9 +95,45 @@ public class TestCaseLinkController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("查询问题关联的测试用例")
     @GetMapping("/list_link_case_info")
-    public ResponseEntity<List<TestCaseLinkVO>> queryLinkCases(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity<List<TestCaseLinkVO>> queryLinkCases(@ApiParam(value = "项目id", required = true)
+                                                               @PathVariable(name = "project_id") Long projectId,
+                                                               @ApiParam(value = "issueId", required = true)
                                                                @RequestParam(name = "issue_id")
                                                                @Encrypt Long issueId) {
         return new ResponseEntity<>(testCaseLinkService.queryLinkCases(projectId, issueId), HttpStatus.OK);
+    }
+
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @ApiOperation("查询问题关联的测试用例执行列表")
+    @GetMapping("/list-link-case-step")
+    public ResponseEntity<List<TestFolderCycleCaseVO>> queryLinkCaseStep(@ApiParam(value = "项目id", required = true)
+                                                                         @PathVariable(name = "project_id") Long projectId,
+                                                                         @ApiParam(value = "issueId", required = true)
+                                                                         @RequestParam @Encrypt Long issueId) {
+        return Results.success(testCaseLinkService.queryLinkCaseStep(projectId, issueId));
+    }
+
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @ApiOperation("敏捷调用，查询issue是否关联用例")
+    @GetMapping("/check_exist")
+    public ResponseEntity<Boolean> checkExist(@ApiParam(value = "项目id", required = true)
+                                              @PathVariable(name = "project_id") Long projectId,
+                                              @ApiParam(value = "issueId", required = true)
+                                              @RequestParam(name = "issue_id")
+                                              @Encrypt Long issueId) {
+        return new ResponseEntity<>(testCaseLinkService.checkExist(projectId, issueId), HttpStatus.OK);
+    }
+
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @ApiOperation("敏捷调用，复制")
+    @GetMapping("/copy_by_issue_id")
+    public ResponseEntity<Void> copyIssueRelatedTestCases(@ApiParam(value = "项目id", required = true)
+                                                          @PathVariable(name = "project_id") Long projectId,
+                                                          @ApiParam(value = "issueId", required = true)
+                                                          @RequestParam @Encrypt Long issueId,
+                                                          @ApiParam(value = "newIssueId", required = true)
+                                                          @RequestParam @Encrypt Long newIssueId) {
+        testCaseLinkService.copyIssueRelatedTestCases(projectId, issueId, newIssueId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

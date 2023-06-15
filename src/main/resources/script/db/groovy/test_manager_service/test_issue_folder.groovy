@@ -60,7 +60,7 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
 
     changeSet(id: '2020-08-07-test-issue-folder-add-init-status', author: 'jiaxu.cui@hand-china.com') {
         addColumn(tableName: 'test_issue_folder') {
-            column(name: 'init_status', type: 'VARCHAR(255)', remarks: 'init_status')
+            column(name: 'init_status', type: 'VARCHAR(255)', remarks: '初始状态')
         }
     }
 }

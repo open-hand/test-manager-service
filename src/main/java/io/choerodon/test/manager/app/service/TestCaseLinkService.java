@@ -4,6 +4,7 @@ import java.util.List;
 
 import io.choerodon.test.manager.api.vo.TestCaseLinkVO;
 import io.choerodon.test.manager.api.vo.TestCaseVO;
+import io.choerodon.test.manager.api.vo.TestFolderCycleCaseVO;
 import io.choerodon.test.manager.api.vo.agile.IssueInfoDTO;
 import io.choerodon.test.manager.api.vo.IssueLinkVO;
 import io.choerodon.test.manager.infra.dto.TestCaseLinkDTO;
@@ -48,4 +49,12 @@ public interface TestCaseLinkService {
     void createByIssue(Long projectId, Long issueId, List<Long> caseIds);
 
     List<TestCaseLinkVO> queryLinkCases(Long projectId, Long issueId);
+
+    void batchDeleteByCaseId(Long project,Long caseId);
+
+    Boolean checkExist(Long projectId, Long issueId);
+
+    void copyIssueRelatedTestCases(Long projectId, Long oldIssueId, Long newIssueId);
+
+    List<TestFolderCycleCaseVO> queryLinkCaseStep(Long projectId, Long issueId);
 }

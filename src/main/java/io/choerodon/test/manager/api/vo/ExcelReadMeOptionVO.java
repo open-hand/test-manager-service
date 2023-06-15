@@ -13,6 +13,9 @@ public class ExcelReadMeOptionVO {
     @ApiModelProperty(value = "是否为必输")
     private Boolean required;
 
+    @ApiModelProperty(value = "描述")
+    private String description;
+
     public String getFiled() {
         return filed;
     }
@@ -29,8 +32,22 @@ public class ExcelReadMeOptionVO {
         this.required = required;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public ExcelReadMeOptionVO(String filed, Boolean required) {
         this.filed = filed;
         this.required = required;
+    }
+
+    public ExcelReadMeOptionVO(String filed, Boolean required, String description) {
+        this.filed = filed;
+        this.required = required;
+        this.description = description;
     }
 }

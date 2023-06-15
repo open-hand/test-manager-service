@@ -9,9 +9,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.choerodon.test.manager.api.vo.TestPlanVO;
-import io.choerodon.test.manager.api.vo.event.OrganizationCreateEventPayload;
-import io.choerodon.test.manager.api.vo.event.ProjectEvent;
-import io.choerodon.test.manager.api.vo.event.ProjectEventCategory;
+import io.choerodon.test.manager.api.vo.event.*;
 import io.choerodon.test.manager.infra.constant.SagaTaskCodeConstants;
 import io.choerodon.test.manager.infra.constant.SagaTopicCodeConstants;
 import io.choerodon.test.manager.infra.dto.*;
@@ -27,7 +25,6 @@ import org.springframework.stereotype.Component;
 
 import io.choerodon.asgard.saga.annotation.SagaTask;
 import io.choerodon.test.manager.app.service.*;
-import io.choerodon.test.manager.api.vo.event.InstancePayload;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;

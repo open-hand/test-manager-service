@@ -1,5 +1,8 @@
 package io.choerodon.test.manager.infra.feign;
 
+import java.util.List;
+import java.util.Map;
+
 import io.choerodon.core.domain.Page;
 import io.choerodon.test.manager.api.vo.devops.AppServiceDeployVO;
 import io.choerodon.test.manager.api.vo.devops.AppServiceVersionRespVO;
@@ -11,15 +14,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
-
 /**
  * @author zongw.lee@gmail.com
  * @since 2018/11/26
  */
 @Component
-@FeignClient(value = "devops-service", fallback = ApplicationFeignClientFallback.class)
+@FeignClient(value = "devops-service", fallbackFactory = ApplicationFeignClientFallback.class)
 public interface ApplicationFeignClient {
     /**
      * 根据版本id获取版本values

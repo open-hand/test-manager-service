@@ -29,8 +29,11 @@ public class TestWorkBenchController {
     @PostMapping("/personal/my_execution_case")
     public ResponseEntity<Page<TestFolderCycleCaseVO>> pagedQueryMyExecutionalCase(@ApiParam(value = "组织id", required = true)
                                                                                    @PathVariable(name = "organization_id") Long organizationId,
+                                                                                   @ApiParam(value = "项目id")
                                                                                    @RequestParam(required = false) Long projectId,
+                                                                                   @ApiParam(value = "分页信息", required = true)
                                                                                    PageRequest pageRequest,
+                                                                                   @ApiParam(value = "查询参数")
                                                                                    @RequestBody(required = false) CaseSearchVO caseSearchVO) {
         return ResponseEntity.ok(testCycleCaseService.pagedQueryMyExecutionalCase(organizationId, projectId, pageRequest, caseSearchVO));
     }
@@ -40,8 +43,11 @@ public class TestWorkBenchController {
     @PostMapping("/personal/my_execution_case/status/query")
     public ResponseEntity<Page<TestStatusVO>> pageQueryCaseStatus(@ApiParam(value = "组织id", required = true)
                                                                   @PathVariable(name="organization_id") Long organizationId,
+                                                                  @ApiParam(value = "项目id")
                                                                   @RequestParam(required = false) Long projectId,
+                                                                  @ApiParam(value = "分页信息", required = true)
                                                                   PageRequest pageRequest,
+                                                                  @ApiParam(value = "查询参数")
                                                                   @RequestParam(required = false) String param){
         return ResponseEntity.ok(testCycleCaseService.pageQueryCaseStatus(organizationId, projectId, pageRequest, param));
     }

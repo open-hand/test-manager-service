@@ -2,6 +2,7 @@ package io.choerodon.test.manager.api.vo.agile;
 
 
 import io.choerodon.test.manager.infra.util.StringUtil;
+import io.swagger.annotations.ApiModelProperty;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
@@ -12,32 +13,44 @@ import org.hzero.starter.keyencrypt.core.Encrypt;
  */
 public class IssueLinkDTO {
 
+    @ApiModelProperty(value = "issue id")
     @Encrypt
     private Long issueId;
 
+    @ApiModelProperty(value = "关联类型")
     @Encrypt
     private Long linkTypeId;
 
+    @ApiModelProperty(value = "关联的工作项id")
     @Encrypt
     private Long linkedIssueId;
 
+    @ApiModelProperty(value = "关联类型名称")
     private String linkTypeName;
 
+    @ApiModelProperty(value = "ward")
     private String ward;
 
+    @ApiModelProperty(value = "工作项编号")
     private String issueNum;
 
+    @ApiModelProperty(value = "概要")
     private String summary;
 
+    @ApiModelProperty(value = "类型编码")
     private String typeCode;
 
+    @ApiModelProperty(value = "关联id")
     @Encrypt
     private Long linkId;
 
+    @ApiModelProperty(value = "工作项类型")
     private IssueTypeVO issueTypeVO;
 
+    @ApiModelProperty(value = "状态")
     private StatusVO statusVO;
 
+    @ApiModelProperty(value = "优先级")
     private PriorityVO priorityVO;
 
     public Long getIssueId() {

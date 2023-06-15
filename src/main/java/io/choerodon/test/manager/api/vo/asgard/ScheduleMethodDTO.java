@@ -16,6 +16,7 @@ public class ScheduleMethodDTO {
     @ApiModelProperty(value = "方法编码")
     private String code;
 
+    @ApiModelProperty(value = "参数列表")
     private List<PropertyJobParam> paramList;
 
     public Long getId() {

@@ -20,7 +20,7 @@ databaseChangeLog(logicalFilePath: 'test_priority.groovy') {
             column(name: 'is_default', type: 'TINYINT UNSIGNED', defaultValue: "0", remarks: '是否默认') {
                 constraints(nullable: 'false')
             }
-            column(name: 'is_enable', type: 'TINYINT UNSIGNED', defaultValue: "1", remarks: 'is enable flag') {
+            column(name: 'is_enable', type: 'TINYINT UNSIGNED', defaultValue: "1", remarks: '是否启用') {
                 constraints(nullable: 'false')
             }
             column(name: 'sequence', type: 'DECIMAL', defaultValue: "0", remarks: '排序') {

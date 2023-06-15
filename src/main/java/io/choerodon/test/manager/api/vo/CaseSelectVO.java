@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.api.vo;
 
+import io.swagger.annotations.ApiModelProperty;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 
 import java.util.List;
@@ -10,11 +11,14 @@ import java.util.List;
  */
 public class CaseSelectVO {
 
+    @ApiModelProperty(value = "是否自定义")
     private Boolean custom;
 
+    @ApiModelProperty(value = "选择项")
     @Encrypt
     private List<Long> selected;
 
+    @ApiModelProperty(value = "未选择项")
     @Encrypt
     private List<Long> unSelected;
 

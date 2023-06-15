@@ -18,7 +18,7 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             column(name: 'url', type: 'VARCHAR(300)', remarks: "附件url") {
                 constraints(nullable: false)
             }
-            column(name: 'comment', type: 'text', remarks: "comment")
+            column(name: 'comment', type: 'text', remarks: "评论")
 
 
             column(name: "object_version_number", type: "BIGINT UNSIGNED", defaultValue: "1")

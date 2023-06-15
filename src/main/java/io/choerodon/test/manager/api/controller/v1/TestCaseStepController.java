@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import io.choerodon.core.iam.ResourceLevel;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,7 +33,9 @@ public class TestCaseStepController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("查询")
     @GetMapping("/query/{caseId}")
-    public ResponseEntity<List<TestCaseStepVO>> query(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity<List<TestCaseStepVO>> query(@ApiParam(value = "项目id", required = true)
+                                                      @PathVariable(name = "project_id") Long projectId,
+                                                      @ApiParam(value = "用例id", required = true)
                                                       @PathVariable(name = "caseId")
                                                       @Encrypt Long caseId) {
         TestCaseStepVO testCaseStepVO = new TestCaseStepVO();
@@ -46,7 +49,9 @@ public class TestCaseStepController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("变动一个测试步骤(添加|修改)")
     @PutMapping("/change")
-    public ResponseEntity<TestCaseStepVO> changeOneStep(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity<TestCaseStepVO> changeOneStep(@ApiParam(value = "项目id", required = true)
+                                                        @PathVariable(name = "project_id") Long projectId,
+                                                        @ApiParam(value = "测试步骤", required = true)
                                                         @RequestBody TestCaseStepVO testCaseStepVO) {
 
 
@@ -59,7 +64,9 @@ public class TestCaseStepController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("删除测试步骤")
     @DeleteMapping
-    public ResponseEntity<Boolean> removeStep(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity<Boolean> removeStep(@ApiParam(value = "项目id", required = true)
+                                              @PathVariable(name = "project_id") Long projectId,
+                                              @ApiParam(value = "测试步骤", required = true)
                                               @RequestBody TestCaseStepVO testCaseStepVO) {
         testCaseStepService.removeStep(projectId,testCaseStepVO);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -68,8 +75,10 @@ public class TestCaseStepController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("克隆")
     @PostMapping("/clone")
-    public ResponseEntity<TestCaseStepVO> clone(@PathVariable(name = "project_id") Long projectId,
-                                @RequestBody TestCaseStepVO testCaseStepVO) {
+    public ResponseEntity<TestCaseStepVO> clone(@ApiParam(value = "项目id", required = true)
+                                                @PathVariable(name = "project_id") Long projectId,
+                                                @ApiParam(value = "复制的测试步骤", required = true)
+                                                @RequestBody TestCaseStepVO testCaseStepVO) {
         return Optional.ofNullable(testCaseStepService.clone(testCaseStepVO, projectId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.testCycleCase.clone"));

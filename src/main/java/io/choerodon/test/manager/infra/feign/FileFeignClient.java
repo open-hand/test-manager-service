@@ -1,21 +1,24 @@
 package io.choerodon.test.manager.infra.feign;
 
-import io.choerodon.test.manager.infra.config.FeignMultipartSupportConfig;
-import io.choerodon.test.manager.infra.feign.callback.FileFeignClientFallback;
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.util.List;
 import java.util.Map;
+
+import io.choerodon.test.manager.infra.config.FeignMultipartSupportConfig;
+import io.choerodon.test.manager.infra.feign.callback.FileFeignClientFallback;
+import org.hzero.common.HZeroService;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * Created by HuangFuqiang@choerodon.io on 2018/3/21.
  * Email: fuqianghuang01@gmail.com
  */
-@FeignClient(value = "choerodon-file", fallback = FileFeignClientFallback.class, configuration = FeignMultipartSupportConfig.class)
+@FeignClient(value = HZeroService.File.NAME, fallbackFactory = FileFeignClientFallback.class,
+        configuration = FeignMultipartSupportConfig.class)
 public interface FileFeignClient {
     @PostMapping({"/choerodon/v1/{organizationId}/delete-by-url"})
     ResponseEntity<String> deleteFileByUrl(@PathVariable("organizationId") Long organizationId,

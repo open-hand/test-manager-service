@@ -12,6 +12,7 @@ import io.choerodon.test.manager.api.vo.ApplicationDeployVO;
 import io.choerodon.test.manager.api.vo.TestAppInstanceVO;
 import io.choerodon.test.manager.app.service.TestAppInstanceService;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -42,11 +43,14 @@ public class TestAppInstanceController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation(value = "查询value列表")
     @GetMapping("/value")
-    public ResponseEntity<InstanceValueVO> queryValues(
-            @PathVariable(value = "project_id") Long projectId,
-            @RequestParam(value = "appId") @Encrypt Long appId,
-            @RequestParam(value = "envId") @Encrypt Long envId,
-            @RequestParam(value = "versionId") @Encrypt Long versionId) {
+    public ResponseEntity<InstanceValueVO> queryValues(@ApiParam(value = "项目id", required = true)
+                                                       @PathVariable(value = "project_id") Long projectId,
+                                                       @ApiParam(value = "应用id", required = true)
+                                                       @RequestParam(value = "appId") @Encrypt Long appId,
+                                                       @ApiParam(value = "环境id", required = true)
+                                                       @RequestParam(value = "envId") @Encrypt Long envId,
+                                                       @ApiParam(value = "版本id", required = true)
+                                                       @RequestParam(value = "versionId") @Encrypt Long versionId) {
         return Optional.ofNullable(instanceService.queryValues(projectId, appId, envId, versionId))
                 .map(target -> new ResponseEntity<>(target, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.values.query"));
@@ -61,9 +65,10 @@ public class TestAppInstanceController {
      */
     @Permission(level = ResourceLevel.ORGANIZATION)
     @PostMapping
-    public ResponseEntity<TestAppInstanceVO> deploy(
-            @PathVariable(value = "project_id") Long projectId,
-            @RequestBody ApplicationDeployVO applicationDeployVO) {
+    public ResponseEntity<TestAppInstanceVO> deploy(@ApiParam(value = "项目id", required = true)
+                                                    @PathVariable(value = "project_id") Long projectId,
+                                                    @ApiParam(value = "部署信息", required = true)
+                                                    @RequestBody ApplicationDeployVO applicationDeployVO) {
         return Optional.ofNullable(instanceService.create(applicationDeployVO, projectId, DetailsHelper.getUserDetails().getUserId()))
                 .map(target -> new ResponseEntity<>(target, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.application.deploy.immediate"));
@@ -79,9 +84,10 @@ public class TestAppInstanceController {
      */
     @Permission(level = ResourceLevel.ORGANIZATION)
     @PostMapping("/schedule")
-    public ResponseEntity<QuartzTask> deployBySchedule(
-            @PathVariable(value = "project_id") Long projectId,
-            @RequestBody ScheduleTaskDTO scheduleTaskDTO) {
+    public ResponseEntity<QuartzTask> deployBySchedule(@ApiParam(value = "项目id", required = true)
+                                                       @PathVariable(value = "project_id") Long projectId,
+                                                       @ApiParam(value = "定时信息", required = true)
+                                                       @RequestBody ScheduleTaskDTO scheduleTaskDTO) {
         return Optional.ofNullable(instanceService.createTimedTaskForDeploy(scheduleTaskDTO, projectId))
                 .map(target -> new ResponseEntity<>(target, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.application.deploy.schedule"));

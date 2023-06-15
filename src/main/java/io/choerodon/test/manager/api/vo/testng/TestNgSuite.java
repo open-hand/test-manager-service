@@ -1,5 +1,7 @@
 package io.choerodon.test.manager.api.vo.testng;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import java.util.List;
 
 /*
@@ -7,10 +9,15 @@ import java.util.List;
  * @since 2019/1/21
  */
 public class TestNgSuite {
+    @ApiModelProperty(value = "名称")
     private String name;
+    @ApiModelProperty(value = "开始时间")
     private String startedAt;
+    @ApiModelProperty(value = "结束时间")
     private String finishedAt;
+    @ApiModelProperty(value = "持续时间")
     private Long durationMs;
+    @ApiModelProperty(value = "测试")
     private List<TestNgTest> tests;
 
     public String getName() {

@@ -1,13 +1,17 @@
 package io.choerodon.test.manager.api.vo;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * @author zhaotianxin
  * @since 2019/12/3
  */
 public class CaseChangeVO {
 
+    @ApiModelProperty(value = "循环用例")
     private TestCycleCaseVO  testCycleCase;
 
+    @ApiModelProperty(value = "测试用例")
     private TestCaseInfoVO testCase;
 
     public TestCycleCaseVO getTestCycleCase() {
