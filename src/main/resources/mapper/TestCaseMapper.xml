@@ -13,12 +13,16 @@
         <id column="created_by" property="createdBy"/>
         <id column="priority_name" property="priorityName"/>
         <id column="custom_num" property="customNum"/>
+        <id column="folder_id" property="folderId"/>
         <collection property="caseSteps"
                     ofType="io.choerodon.test.manager.api.vo.TestCaseStepVO">
             <id column="step_id" property="stepId"/>
             <id column="test_step" property="testStep"/>
             <id column="test_data" property="testData"/>
             <id column="expected_result" property="expectedResult"/>
+        </collection>
+        <collection property="releatedIssueIds" autoMapping="true" ofType="java.lang.Long">
+            <id column="issue_id"/>
         </collection>
     </resultMap>
     <select id="listCaseByFolderIds" resultType="io.choerodon.test.manager.infra.dto.TestCaseDTO">
@@ -193,12 +197,14 @@
         tpi.project_code,
         tif.`name` folderName,
         tp.name AS priority_name,
+        tcl.issue_id,
         ts.*,tcs.*
         FROM
         test_case ts
         LEFT JOIN test_priority tp ON ts.priority_id = tp.id
         LEFT JOIN test_issue_folder tif ON tif.folder_id = ts.folder_id
         LEFT JOIN test_case_step tcs on tcs.issue_id =ts.case_id
+        LEFT JOIN test_case_link tcl on ts.case_id = tcl.link_case_id and tcl.project_id = ts.project_id
         LEFT JOIN test_project_info tpi on ts.project_id=tpi.project_id
         <if test="caseIds!=null and caseIds.size>0">
             WHERE

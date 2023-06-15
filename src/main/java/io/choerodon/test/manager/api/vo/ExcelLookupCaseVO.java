@@ -6,20 +6,26 @@ import io.choerodon.test.manager.api.vo.agile.IssueStatusDTO;
 import io.choerodon.test.manager.api.vo.agile.LookupValueDTO;
 import io.choerodon.test.manager.api.vo.agile.ProductVersionDTO;
 import io.choerodon.test.manager.api.vo.agile.UserDTO;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * Created by zongw.lee@gmail.com on 18/10/2018
  */
 public class ExcelLookupCaseVO {
     //优先级
+    @ApiModelProperty(value = "lookupValueDTOS")
     private List<LookupValueDTO> lookupValueDTOS;
 
+    @ApiModelProperty(value = "用户")
     private List<UserDTO> userDTOS;
 
+    @ApiModelProperty(value = "发布版本列表")
     private List<ProductVersionDTO> productVersionDTOS;
 
+    @ApiModelProperty(value = "文件夹列表")
     private List<TestIssueFolderVO> testIssueFolderVOS;
 
+    @ApiModelProperty(value = "状态列表")
     private List<IssueStatusDTO> issueStatusDTOS;
 
     public ExcelLookupCaseVO(List<LookupValueDTO> lookupValueDTOS, List<UserDTO> userDTOS, List<ProductVersionDTO> productVersionDTOS,

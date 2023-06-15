@@ -2,22 +2,21 @@ package io.choerodon.test.manager.infra.feign;
 
 import java.util.List;
 
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
-import io.choerodon.mybatis.pagehelper.domain.Sort;
-import io.choerodon.test.manager.api.vo.agile.*;
+import io.choerodon.test.manager.api.vo.agile.IssueCreateDTO;
+import io.choerodon.test.manager.api.vo.agile.IssueLinkTypeSearchDTO;
+import io.choerodon.test.manager.api.vo.agile.SearchDTO;
+import io.choerodon.test.manager.infra.feign.callback.TestCaseFeignClientFallback;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
-import io.choerodon.test.manager.infra.feign.callback.TestCaseFeignClientFallback;
-
 /**
  * Created by 842767365@qq.com on 6/13/18.
  */
 @Component
-@FeignClient(value = "agile-service", fallback = TestCaseFeignClientFallback.class)
+@FeignClient(value = "agile-service", fallbackFactory = TestCaseFeignClientFallback.class)
 public interface TestCaseFeignClient {
 
     @PostMapping("/v1/projects/{project_id}/issues")

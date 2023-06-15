@@ -40,11 +40,13 @@ public class TestCycleCaseHistoryController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("查询循环历史")
     @GetMapping
-    public ResponseEntity<Page<TestCycleCaseHistoryVO>> query(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity<Page<TestCycleCaseHistoryVO>> query(@ApiParam(value = "项目id", required = true)
+                                                              @PathVariable(name = "project_id") Long projectId,
                                                               @ApiIgnore
                                                               @ApiParam(value = "分页信息", required = true)
                                                               @SortDefault(value = "id", direction = Sort.Direction.DESC)
-                                                                      PageRequest pageRequest,
+                                                              PageRequest pageRequest,
+                                                              @ApiParam(value = "循环用例id", required = true)
                                                               @PathVariable(name = "cycleCaseId")
                                                               @Encrypt Long cycleCaseId) {
 
