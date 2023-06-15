@@ -7,6 +7,7 @@ import java.util.Optional;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,8 +41,11 @@ public class TestCycleCaseDefectRelController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("增加缺陷")
     @PostMapping
-    public ResponseEntity<List<TestCycleCaseDefectRelVO>> insert(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity<List<TestCycleCaseDefectRelVO>> insert(@ApiParam(value = "项目id", required = true)
+                                                                 @PathVariable(name = "project_id") Long projectId,
+                                                                 @ApiParam(value = "关联的缺陷", required = true)
                                                                  @RequestBody List<TestCycleCaseDefectRelVO> testCycleCaseDefectRelVO,
+                                                                 @ApiParam(value = "组织id", required = true)
                                                                  @RequestParam Long organizationId) {
         List<TestCycleCaseDefectRelVO> dtos = new ArrayList<>();
         testCycleCaseDefectRelVO.forEach(v -> {
@@ -56,9 +60,12 @@ public class TestCycleCaseDefectRelController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("删除缺陷")
     @DeleteMapping("/delete/{defectId}")
-    public ResponseEntity removeAttachment(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity removeAttachment(@ApiParam(value = "项目id", required = true)
+                                           @PathVariable(name = "project_id") Long projectId,
+                                           @ApiParam(value = "缺陷id", required = true)
                                            @PathVariable(name = "defectId")
                                            @Encrypt Long defectId,
+                                           @ApiParam(value = "组织id", required = true)
                                            @RequestParam Long organizationId) {
         TestCycleCaseDefectRelVO testCycleCaseDefectRelVO = new TestCycleCaseDefectRelVO();
         testCycleCaseDefectRelVO.setId(defectId);
@@ -69,11 +76,17 @@ public class TestCycleCaseDefectRelController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("创建一个缺陷并且关联到对应case或者step")
     @PostMapping("/createIssueAndDefect/{defectType}/{id}")
-    public TestCycleCaseDefectRelVO createIssueAndLinkDefect(@RequestBody IssueCreateDTO issueCreateDTO,
+    public TestCycleCaseDefectRelVO createIssueAndLinkDefect(@ApiParam(value = "关联缺陷创建vo", required = true)
+                                                             @RequestBody IssueCreateDTO issueCreateDTO,
+                                                             @ApiParam(value = "项目id", required = true)
                                                              @PathVariable("project_id") Long projectId,
+                                                             @ApiParam(value = "应用类型", required = true)
                                                              @RequestParam("applyType") String applyType,
+                                                             @ApiParam(value = "缺陷类型", required = true)
                                                              @PathVariable("defectType") String defectType,
+                                                             @ApiParam(value = "组织id", required = true)
                                                              @RequestParam Long organizationId,
+                                                             @ApiParam(value = "用例或步骤id", required = true)
                                                              @PathVariable("id") @Encrypt Long id) {
         IssueDTO issueDTO = testCaseService.createTest(issueCreateDTO, projectId, applyType);
         TestCycleCaseDefectRelVO defectRelDTO = new TestCycleCaseDefectRelVO();
@@ -89,7 +102,9 @@ public class TestCycleCaseDefectRelController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("修改缺陷的projectId")
     @PutMapping("/fix")
-    public void fixDefectData(@PathVariable(name = "project_id") Long projectId,
+    public void fixDefectData(@ApiParam(value = "项目id", required = true)
+                              @PathVariable(name = "project_id") Long projectId,
+                              @ApiParam(value = "组织id", required = true)
                               @RequestParam Long organizationId) {
         TestCycleCaseDefectRelVO testCycleCaseDefectRelVO = new TestCycleCaseDefectRelVO();
         testCycleCaseDefectRelVO.setProjectId(projectId);
@@ -99,8 +114,10 @@ public class TestCycleCaseDefectRelController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("删除缺陷后解除对应关系")
     @DeleteMapping("/delete_relation/{defectId}")
-    public ResponseEntity deleteCaseRel(@PathVariable(name = "project_id") Long projectId,
-                                           @PathVariable(name = "defectId") Long defectId) {
+    public ResponseEntity deleteCaseRel(@ApiParam(value = "项目id", required = true)
+                                        @PathVariable(name = "project_id") Long projectId,
+                                        @ApiParam(value = "缺陷id", required = true)
+                                        @PathVariable(name = "defectId") Long defectId) {
         testCycleCaseDefectRelService.deleteCaseRel(projectId,defectId);
         return new ResponseEntity<>(HttpStatus.OK);
     }

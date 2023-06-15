@@ -2,6 +2,7 @@ package io.choerodon.test.manager.api.vo.agile;
 
 
 import io.choerodon.test.manager.infra.util.StringUtil;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * Created by HuangFuqiang@choerodon.io on 2018/5/16.
@@ -9,18 +10,25 @@ import io.choerodon.test.manager.infra.util.StringUtil;
  */
 public class IssueAttachmentDTO {
 
+    @ApiModelProperty(value = "附件id")
     private Long attachmentId;
 
+    @ApiModelProperty(value = "issueId")
     private Long issueId;
 
+    @ApiModelProperty(value = "描述id")
     private Long commentId;
 
+    @ApiModelProperty(value = "url")
     private String url;
 
+    @ApiModelProperty(value = "文件名")
     private String fileName;
 
+    @ApiModelProperty(value = "项目id")
     private Long projectId;
 
+    @ApiModelProperty(value = "乐观锁")
     private Long objectVersionNumber;
 
     public Long getAttachmentId() {

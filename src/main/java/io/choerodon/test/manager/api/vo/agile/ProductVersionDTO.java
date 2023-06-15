@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.api.vo.agile;
 
+import io.swagger.annotations.ApiModelProperty;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 
 import java.util.Date;
@@ -10,23 +11,32 @@ import java.util.Date;
  */
 public class ProductVersionDTO {
 
+	@ApiModelProperty(value = "版本id")
 	@Encrypt
 	private Long versionId;
 
+	@ApiModelProperty(value = "项目id")
 	private Long projectId;
 
+	@ApiModelProperty(value = "版本名称")
 	private String name;
 
+	@ApiModelProperty(value = "版本描述")
 	private String description;
 
+	@ApiModelProperty(value = "开始日期")
 	private Date startDate;
 
+	@ApiModelProperty(value = "发布日期")
 	private Date releaseDate;
 
+	@ApiModelProperty(value = "状态编码")
 	private String statusCode;
 
+	@ApiModelProperty(value = "状态名称")
 	private String statusName;
 
+	@ApiModelProperty(value = "排序")
 	private Integer sequence;
 
 	public Long getVersionId() {

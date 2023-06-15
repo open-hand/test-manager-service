@@ -1,5 +1,7 @@
 package io.choerodon.test.manager.api.vo;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import java.util.List;
 
 /**
@@ -8,8 +10,10 @@ import java.util.List;
  * @description:
  */
 public class ExecutionStatusVO {
+    @ApiModelProperty(value = "总数")
     private Long total;
 
+    @ApiModelProperty(value = "用例状态列表")
     private List<TestStatusVO> statusVOList;
 
     public ExecutionStatusVO(Long total, List<TestStatusVO> statusVOList) {

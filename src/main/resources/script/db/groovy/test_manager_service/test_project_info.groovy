@@ -6,14 +6,14 @@ package script.db.groovy.test_manager_service
 databaseChangeLog(logicalFilePath: "script/db/test_project_info.groovy") {
     changeSet(author: 'zhaotianxin', id: '2019-11-14-init_table_test_project_info') {
         createTable(tableName: "test_project_info", remarks: "项目信息") {
-            column(name: 'info_id', type: 'BIGINT UNSIGNED', autoIncrement: true, remarks: 'info id') {
+            column(name: 'info_id', type: 'BIGINT UNSIGNED', autoIncrement: true, remarks: 'id') {
                 constraints(primaryKey: true)
             }
-            column(name: 'project_id', type: 'BIGINT UNSIGNED', remarks: 'project id') {
+            column(name: 'project_id', type: 'BIGINT UNSIGNED', remarks: '项目id') {
                 constraints(nullable: false)
             }
             column(name: 'project_code', type: 'VARCHAR(255)', remarks: '项目编码')
-            column(name: 'case_max_num', type: 'BIGINT UNSIGNED', remarks: 'case max num')
+            column(name: 'case_max_num', type: 'BIGINT UNSIGNED', remarks: '用例最大编号')
 
             column(name: "object_version_number", type: "BIGINT UNSIGNED", defaultValue: "1")
             column(name: "created_by", type: "BIGINT UNSIGNED", defaultValue: "0")

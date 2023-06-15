@@ -9,10 +9,7 @@ import io.choerodon.core.exception.CommonException;
 
 import io.choerodon.core.oauth.CustomUserDetails;
 import io.choerodon.core.oauth.DetailsHelper;
-import io.choerodon.test.manager.api.vo.TestCycleCaseAttachmentRelVO;
-import io.choerodon.test.manager.api.vo.TestCycleCaseDefectRelVO;
-import io.choerodon.test.manager.api.vo.TestCycleCaseStepVO;
-import io.choerodon.test.manager.api.vo.TestStatusVO;
+import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.enums.TestAttachmentCode;
@@ -68,6 +65,9 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
     private TestCycleCaseAttachmentRelService testCycleCaseAttachmentRelService;
 
     @Autowired
+    private TestCycleCaseService testCycleCaseService;
+
+    @Autowired
     private TestCycleCaseMapper testCycleCaseMapper;
     @Override
     public void update(TestCycleCaseStepVO testCycleCaseStepVO) {
@@ -79,10 +79,15 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
             if (!CollectionUtils.isEmpty(testCycleCaseStepDTOS)) {
                 //步骤-全部通过->用例通过
                 boolean result = testCycleCaseStepDTOS.stream().allMatch(e -> e.getStepStatus().equals(defaultStatus.getStatusId()));
-               if(result){
-                    if(testCycleCaseMapper.updateExecuteStatus(testCycleCaseStepVO.getExecuteId())!=1){
-                        throw new CommonException("error.update.cycle.case.status");
-                    }
+               TestStatusVO caseStatus = testStatusService.queryDefaultStatus(TestStatusType.STATUS_TYPE_CASE, "通过");
+               TestCycleCaseDTO testCycleCaseDTO = testCycleCaseMapper.selectByPrimaryKey(testCycleCaseStepVO.getExecuteId());
+               if(result && !Objects.equals(testCycleCaseDTO.getExecutionStatus(), caseStatus.getStatusId())){
+                   TestCycleCaseVO testCycleCaseVO = new TestCycleCaseVO();
+                   testCycleCaseVO.setExecuteId(testCycleCaseStepVO.getExecuteId());
+                   testCycleCaseVO.setObjectVersionNumber(testCycleCaseDTO.getObjectVersionNumber());
+                   testCycleCaseVO.setExecutionStatus(caseStatus.getStatusId());
+                   testCycleCaseVO.setExecutionStatusName(caseStatus.getStatusName());
+                   testCycleCaseService.update(testCycleCaseVO);
                 }
 
             }

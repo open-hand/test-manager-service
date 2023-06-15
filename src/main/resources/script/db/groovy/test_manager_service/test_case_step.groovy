@@ -40,4 +40,8 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
         modifyDataType(tableName: 'test_case_step', columnName: 'test_data', newDataType: "TEXT")
         modifyDataType(tableName: 'test_case_step', columnName: 'expected_result', newDataType: "TEXT")
     }
+
+    changeSet(id: '2022-01-17-test-case-step-drop-index', author: 'huaxin.deng@hand-china.com') {
+        dropIndex(tableName: "test_case_step", indexName: "idx_case_step_issue_id")
+    }
 }

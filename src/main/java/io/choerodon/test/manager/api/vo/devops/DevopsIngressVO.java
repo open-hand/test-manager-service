@@ -15,22 +15,37 @@ import java.util.Objects;
  */
 public class DevopsIngressVO extends DevopsResourceDataInfoVO{
 
+    @ApiModelProperty(value = "入口id")
     private Long id;
+    @ApiModelProperty(value = "应用服务id")
     private Long appServiceId;
+    @ApiModelProperty(value = "域名")
     private String domain;
+    @ApiModelProperty(value = "名称")
     private String name;
+    @ApiModelProperty(value = "环境id")
     private Long envId;
+    @ApiModelProperty(value = "环境名称")
     private String envName;
+    @ApiModelProperty(value = "环境状态")
     private Boolean envStatus;
+    @ApiModelProperty(value = "是否可用")
     private Boolean isUsable;
+    @ApiModelProperty(value = "状态")
     private String status;
+    @ApiModelProperty(value = "certId")
     private Long certId;
+    @ApiModelProperty(value = "certName")
     private String certName;
+    @ApiModelProperty(value = "certStatus")
     private String certStatus;
     @ApiModelProperty("域名对应的path，其中是path对象")
     private List<DevopsIngressPathVO> pathList;
+    @ApiModelProperty(value = "命令类型")
     private String commandType;
+    @ApiModelProperty(value = "命令状态")
     private String commandStatus;
+    @ApiModelProperty(value = "错误信息")
     private String error;
     @ApiModelProperty("Annotations键值对，键不是确定值")
     private Map<String, String> annotations;

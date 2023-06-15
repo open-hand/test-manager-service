@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.api.vo;
 
+import io.swagger.annotations.ApiModelProperty;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 
 import java.util.List;
@@ -10,8 +11,10 @@ import java.util.List;
  */
 public class CaseSearchVO {
 
+    @ApiModelProperty(value = "模糊查询内容")
     private List<String> contents;
 
+    @ApiModelProperty(value = "查询参数")
     private SearchArgs searchArgs;
 
     public List<String> getContents() {

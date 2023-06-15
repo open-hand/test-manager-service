@@ -8,6 +8,7 @@ import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.test.manager.api.vo.DataLogVO;
 import io.choerodon.test.manager.app.service.TestDataLogService;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,7 +28,9 @@ public class TestCaseDataLogController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("根据caseId 查询日志记录")
     @GetMapping
-    public ResponseEntity<List<DataLogVO>> queryByCaseId(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity<List<DataLogVO>> queryByCaseId(@ApiParam(value = "项目id", required = true)
+                                                         @PathVariable(name = "project_id") Long projectId,
+                                                         @ApiParam(value = "用例id", required = true)
                                                          @RequestParam(name = "case_id")
                                                          @Encrypt Long caseId){
         return  new ResponseEntity<>(dataLogService.queryByCaseId(projectId,caseId),HttpStatus.OK);

@@ -11,25 +11,33 @@ import java.util.List;
  * @description:
  */
 public class TestCycleCaseUpdateVO {
+    @ApiModelProperty(value = "执行id")
     @Encrypt
     private Long executeId;
 
+    @ApiModelProperty(value = "概要")
     private String summary;
 
+    @ApiModelProperty(value = "描述")
     private String description;
 
+    @ApiModelProperty(value = "乐观锁")
     private Long objectVersionNumber;
 
     @ApiModelProperty(value = "优先级id")
     @Encrypt
     private Long priorityId;
 
+    @ApiModelProperty(value = "优先级")
     private PriorityVO priorityVO;
 
+    @ApiModelProperty(value = "关联附件")
     private List<TestCycleCaseAttachmentRelVO> cycleCaseAttachmentRelVOList;
 
+    @ApiModelProperty(value = "循环用例更新信息")
     private List<TestCycleCaseStepUpdateVO> testCycleCaseStepUpdateVOS;
 
+    @ApiModelProperty(value = "用例是否已存在")
     private Boolean caseHasExist;
 
     public Long getPriorityId() {

@@ -21,4 +21,11 @@ databaseChangeLog(logicalFilePath: "script/db/test_case_link.groovy") {
             column(name: "last_update_date", type: "DATETIME", defaultValueComputed: "CURRENT_TIMESTAMP")
         }
     }
+
+    changeSet(author: 'kaiwen.li@hang-china.com', id: '2022-04-15-test-case-link-add-index') {
+        createIndex(tableName: "test_case_link", indexName: "idx_project_issue_id") {
+            column(name: 'project_id')
+            column(name: 'issue_id')
+        }
+    }
 }

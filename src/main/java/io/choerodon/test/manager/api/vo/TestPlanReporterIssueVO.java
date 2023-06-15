@@ -2,6 +2,7 @@ package io.choerodon.test.manager.api.vo;
 
 import io.choerodon.test.manager.api.vo.agile.StatusVO;
 import io.choerodon.test.manager.infra.dto.UserMessageDTO;
+import io.swagger.annotations.ApiModelProperty;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 
 import java.util.List;
@@ -12,30 +13,41 @@ import java.util.List;
  */
 public class TestPlanReporterIssueVO {
 
+    @ApiModelProperty(value = "工作项id")
     @Encrypt
     private Long issueId;
 
+    @ApiModelProperty(value = "概要")
     private String summary;
 
+    @ApiModelProperty(value = "状态")
     private StatusVO statusMapVO;
 
+    @ApiModelProperty(value = "经办人")
     private UserMessageDTO assignee;
 
+    @ApiModelProperty(value = "关联的测试用例")
     private List<TestFolderCycleCaseVO> testFolderCycleCases;
 
+    @ApiModelProperty(value = "状态id")
     @Encrypt
     private Long statusId;
 
+    @ApiModelProperty(value = "用户id")
     @Encrypt
     private Long userId;
 
+    @ApiModelProperty(value = "用例概要")
     private String caseSummary;
 
+    @ApiModelProperty(value = "执行状态")
     @Encrypt
     private Long executionStatus;
 
+    @ApiModelProperty(value = "通过状态id")
     private Long passStatusId;
 
+    @ApiModelProperty(value = "通过用例计数")
     private Integer passedCaseCount;
 
     public Integer getPassedCaseCount() {

@@ -1,29 +1,16 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import io.choerodon.mybatis.helper.snowflake.SnowflakeHelper;
-import io.choerodon.test.manager.infra.util.*;
-import org.apache.commons.lang3.StringUtils;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
-
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static io.choerodon.test.manager.infra.constant.DataLogConstants.BATCH_UPDATE_CASE_PRIORITY;
-
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.core.utils.PageableHelper;
+import io.choerodon.mybatis.helper.snowflake.SnowflakeHelper;
 import io.choerodon.mybatis.pagehelper.PageHelper;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.mybatis.pagehelper.domain.Sort;
@@ -40,9 +27,20 @@ import io.choerodon.test.manager.infra.constant.DataLogConstants;
 import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.enums.IssueTypeCode;
 import io.choerodon.test.manager.infra.feign.ApplicationFeignClient;
-import io.choerodon.test.manager.infra.feign.BaseFeignClient;
 import io.choerodon.test.manager.infra.feign.operator.AgileClientOperator;
+import io.choerodon.test.manager.infra.feign.operator.RemoteIamOperator;
 import io.choerodon.test.manager.infra.mapper.*;
+import io.choerodon.test.manager.infra.util.*;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
+
+import static io.choerodon.test.manager.infra.constant.DataLogConstants.BATCH_UPDATE_CASE_PRIORITY;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -56,7 +54,7 @@ public class TestCaseServiceImpl implements TestCaseService {
     private static final String UI="ui";
     public static  final String CUSTOM_NUM_PATTERN = "^([A-Za-z0-9]+(-[A-Za-z0-9]+)*)$";
     @Autowired
-    private BaseFeignClient baseFeignClient;
+    private RemoteIamOperator remoteIamOperator;
 
     @Autowired
     private ApplicationFeignClient applicationFeignClient;
@@ -110,10 +108,14 @@ public class TestCaseServiceImpl implements TestCaseService {
     private TestPriorityMapper testPriorityMapper;
 
     @Autowired
+    private TestCaseService testCaseService;
+
+    @Autowired
+    @Lazy
     private SnowflakeHelper snowflakeHelper;
 
-    @Value("${services.attachment.url}")
-    private String attachmentUrl;
+//    @Value("${services.attachment.url}")
+//    private String attachmentUrl;
 
     @Override
     public Page<IssueListTestVO> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId) {
@@ -354,16 +356,16 @@ public class TestCaseServiceImpl implements TestCaseService {
     private void checkPageRequest(PageRequest pageRequest) {
         Sort sort = pageRequest.getSort();
         if (Objects.isNull(sort)){
-            pageRequest.setSort(new Sort(new Sort.Order(Sort.Direction.DESC, TestCaseDTO.FIELD_CASE_ID)));
+            pageRequest.setSort(new Sort(new Sort.Order(Sort.Direction.ASC, TestCaseDTO.FIELD_CASE_ID)));
             return;
         }
     }
 
     @Override
-    public List<TestCaseDTO> listCaseByFolderId(Long folderId) {
+    public int getCaseCountByFolderId(Long folderId) {
         TestCaseDTO testCaseDTO = new TestCaseDTO();
         testCaseDTO.setFolderId(folderId);
-        return testCaseMapper.select(testCaseDTO);
+        return testCaseMapper.selectCount(testCaseDTO);
     }
 
     @Override
@@ -497,7 +499,25 @@ public class TestCaseServiceImpl implements TestCaseService {
         List<String> excludeTypeCodes = new ArrayList<>();
         excludeTypeCodes.add("issue_epic");
         otherArgs.put("excludeTypeCodes", excludeTypeCodes);
+
+        ProjectDTO projectDTO = remoteIamOperator.getProjectById(projectId);
+        List<String> applyTypes = new ArrayList<>();
+        if (Boolean.TRUE.equals(checkContainProjectCategory(projectDTO.getCategories(), "N_WATERFALL_AGILE"))) {
+            applyTypes.add("waterfall");
+            applyTypes.add("agile");
+        } else if (Boolean.TRUE.equals(checkContainProjectCategory(projectDTO.getCategories(), "N_WATERFALL"))) {
+            applyTypes.add("waterfall");
+        }
+        searchDTO.setApplyTypes(applyTypes);
         return agileClientOperator.queryListIssueWithSub(projectId, searchDTO, pageRequest, organizationId);
+    }
+
+    private Boolean checkContainProjectCategory(List<ProjectCategoryDTO> categories, String category){
+        if (CollectionUtils.isEmpty(categories)) {
+            return false;
+        }
+        Set<String> codes = categories.stream().map(ProjectCategoryDTO::getCode).collect(Collectors.toSet());
+        return codes.contains(category);
     }
 
     @Override
@@ -537,7 +557,8 @@ public class TestCaseServiceImpl implements TestCaseService {
     @Override
     public ProjectDTO getProjectInfo(Long projectId) {
         Assert.notNull(projectId, "error.TestCaseService.getProjectInfo.param.projectId.not.be.null");
-        return baseFeignClient.queryProject(projectId).getBody();
+        return remoteIamOperator.getProjectById(projectId);
+
     }
 
     @Override
@@ -668,9 +689,8 @@ public class TestCaseServiceImpl implements TestCaseService {
         if (CollectionUtils.isEmpty(issueCreateDTOList)) {
             return;
         }
-        Map<String, IssueCreateDTO> issueCreateMap = new HashMap<>(issueCreateDTOList.size());
+        Map<Object, IssueCreateDTO> issueCreateMap = new HashMap<>(issueCreateDTOList.size());
         List<TestCaseDTO> testCaseList = new ArrayList<>();
-        List<TestCaseLinkDTO> testCaseLinkDTOList = new ArrayList<>();
         for (IssueCreateDTO issueCreateDTO : issueCreateDTOList) {
             Long caseNum = CaseNumUtil.getNewCaseNum(testProjectInfo.getProjectId());
             testProjectInfo.setCaseMaxNum(caseNum);
@@ -686,6 +706,51 @@ public class TestCaseServiceImpl implements TestCaseService {
         }
         // 插入测试用例
         testCaseMapper.batchInsert(testCaseList);
+        // 插入测试工作项关联
+        batchInsertTestCaseLink(testProjectInfo.getProjectId(), userId, testCaseList, issueCreateMap);
+        // 插入测试步骤
+        batchInsertTestCaseStep(issueCreateDTOList);
+        testProjectInfoMapper.updateMaxCaseNum(testProjectInfo.getProjectId(), testProjectInfo.getCaseMaxNum());
+    }
+
+    @Override
+    public void batchUpdateTestCase(List<IssueCreateDTO> issueUpdateDTOList, TestProjectInfoDTO testProjectInfo) {
+        Long userId = DetailsHelper.getUserDetails().getUserId();
+        if (ObjectUtils.isEmpty(testProjectInfo)) {
+            throw new CommonException("error.query.project.info.null");
+        }
+        if (CollectionUtils.isEmpty(issueUpdateDTOList)) {
+            return;
+        }
+        Map<Object, IssueCreateDTO> issueUpdateMap = new HashMap<>(issueUpdateDTOList.size());
+        List<TestCaseDTO> testCaseList = new ArrayList<>();
+        for (IssueCreateDTO issueUpdateDTO : issueUpdateDTOList) {
+            issueUpdateMap.put(issueUpdateDTO.getCaseNum(), issueUpdateDTO);
+            TestCaseDTO update = ConvertUtils.convertObject(issueUpdateDTO, TestCaseDTO.class);
+            TestCaseDTO testCaseDTO = testCaseMapper.selectByPrimaryKey(update.getCaseId());
+            update.setVersionNum(testCaseDTO.getVersionNum() + 1);
+            update.setObjectVersionNumber(testCaseDTO.getObjectVersionNumber());
+            testCaseList.add(update);
+        }
+        // 更新测试用例并生成日志
+        for (TestCaseDTO update : testCaseList) {
+            TestCaseRepVO testCaseRepVO = modelMapper.map(update, TestCaseRepVO.class);
+            testCaseService.updateTestCaseWithDatalog(update, testCaseRepVO, new String[]{"summary", "description", "Folder Link"});
+        }
+        // 插入关联工作项
+        batchInsertTestCaseLink(testProjectInfo.getProjectId(), userId, testCaseList, issueUpdateMap);
+        // 插入测试步骤
+        batchInsertTestCaseStep(issueUpdateDTOList);
+    }
+
+    @Override
+    @DataLog(type = DataLogConstants.CASE_UPDATE)
+    public void updateTestCaseWithDatalog(TestCaseDTO update, TestCaseRepVO testCaseRepVO, String[] fieldList) {
+        testCaseMapper.updateByPrimaryKeySelective(update);
+    }
+
+    private void batchInsertTestCaseLink(Long projectId, Long userId, List<TestCaseDTO> testCaseList, Map<Object, IssueCreateDTO> issueCreateMap) {
+        List<TestCaseLinkDTO> testCaseLinkDTOList = new ArrayList<>();
         testCaseList.forEach(testCase -> {
             IssueCreateDTO issueCreateDTO = issueCreateMap.get(testCase.getCaseNum());
             if(issueCreateDTO == null){
@@ -694,7 +759,7 @@ public class TestCaseServiceImpl implements TestCaseService {
             issueCreateDTO.setCaseId(testCase.getCaseId());
             if(!CollectionUtils.isEmpty(issueCreateDTO.getTestCaseLinkDTOList())){
                 issueCreateDTO.getTestCaseLinkDTOList().forEach(testCaseLinkDTO -> {
-                    testCaseLinkDTO.setProjectId(testProjectInfo.getProjectId());
+                    testCaseLinkDTO.setProjectId(projectId);
                     testCaseLinkDTO.setLinkCaseId(testCase.getCaseId());
                     testCaseLinkDTO.setCreatedBy(userId);
                     testCaseLinkDTO.setLastUpdatedBy(userId);
@@ -708,7 +773,27 @@ public class TestCaseServiceImpl implements TestCaseService {
         if (!CollectionUtils.isEmpty(testCaseLinkDTOList)) {
             testCaseLinkMapper.batchInsert(testCaseLinkDTOList);
         }
-        testProjectInfoMapper.updateMaxCaseNum(testProjectInfo.getProjectId(), testProjectInfo.getCaseMaxNum());
+    }
+
+    private void batchInsertTestCaseStep(List<IssueCreateDTO> issueUpdateDTOList) {
+        Long userId = DetailsHelper.getUserDetails().getUserId();
+        List<TestCaseStepProDTO> addStepList = new ArrayList<>();
+        issueUpdateDTOList.forEach(issueUpdateDTO -> {
+            if (!CollectionUtils.isEmpty(issueUpdateDTO.getTestCaseStepProList())) {
+                String rank = null;
+                for (TestCaseStepProDTO addStep : issueUpdateDTO.getTestCaseStepProList()) {
+                    rank = RankUtil.genNext(RankUtil.Operation.INSERT.getRank(rank, null));
+                    addStep.setRank(rank);
+                    addStep.setIssueId(issueUpdateDTO.getCaseId());
+                    addStep.setCreatedBy(userId);
+                    addStep.setLastUpdatedBy(userId);
+                    addStepList.add(addStep);
+                }
+            }
+        });
+        if (!CollectionUtils.isEmpty(addStepList)) {
+            testCaseStepService.batchCreateOneStep(addStepList);
+        }
     }
 
     @Override

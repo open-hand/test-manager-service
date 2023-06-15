@@ -1,24 +1,9 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import org.hzero.boot.file.FileClient;
-import org.hzero.core.util.ResponseUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-
-import java.net.MalformedURLException;
-import java.net.URL;
+import javax.servlet.http.HttpServletRequest;
 import java.net.URLDecoder;
 import java.util.*;
 import java.util.stream.Collectors;
-import javax.servlet.http.HttpServletRequest;
 
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.oauth.CustomUserDetails;
@@ -26,6 +11,7 @@ import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.test.manager.api.vo.TestCaseAttachmentCombineVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseAttachmentRelVO;
 import io.choerodon.test.manager.api.vo.agile.ProjectDTO;
+import io.choerodon.test.manager.app.service.FilePathService;
 import io.choerodon.test.manager.app.service.IIssueAttachmentService;
 import io.choerodon.test.manager.app.service.TestCaseAttachmentService;
 import io.choerodon.test.manager.app.service.TestCaseService;
@@ -35,14 +21,23 @@ import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
 import io.choerodon.test.manager.infra.dto.TestCaseDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseAttachmentRelDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
-import io.choerodon.test.manager.infra.feign.BaseFeignClient;
 import io.choerodon.test.manager.infra.feign.FileFeignClient;
+import io.choerodon.test.manager.infra.feign.operator.RemoteIamOperator;
 import io.choerodon.test.manager.infra.mapper.TestAttachmentMapper;
 import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseAttachmentRelMapper;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper;
-
-//import io.choerodon.test.manager.infra.feign.FileFeignClient;
+import org.hzero.boot.file.FileClient;
+import org.hzero.core.util.ResponseUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 /**
  * @author zhaotianxin
@@ -54,12 +49,12 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseAttachmentServiceImpl.class);
 
-    private static final String BACKETNAME = "test";
+//    private static final String BACKETNAME = "test";
 
     @Autowired
     private  FileFeignClient fileFeignClient;
     @Autowired
-    private BaseFeignClient baseFeignClient;
+    private RemoteIamOperator remoteIamOperator;
 
     @Autowired
     private TestAttachmentMapper testAttachmentMapper;
@@ -79,8 +74,10 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
     @Autowired
     private TestCycleCaseAttachmentRelMapper testCycleCaseAttachmentRelMapper;
 
-    @Value("${services.attachment.url}")
-    private String attachmentUrl;
+//    @Value("${services.attachment.url}")
+//    private String attachmentUrl;
+    @Autowired
+    private FilePathService filePathService;
     @Autowired
     private FileClient fileClient;
 
@@ -115,33 +112,35 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
 //        return true;
 //    }
 
-    private String dealUrl(String url) {
-        String dealUrl = null;
-        try {
-            URL netUrl = new URL(url);
-            dealUrl = netUrl.getFile();
-        } catch (MalformedURLException e) {
-            throw new CommonException(e.getMessage());
-        }
-        return dealUrl;
-    }
+//    private String dealUrl(String url) {
+//        String dealUrl = null;
+//        try {
+//            URL netUrl = new URL(url);
+//            dealUrl = netUrl.getFile();
+//        } catch (MalformedURLException e) {
+//            throw new CommonException(e.getMessage());
+//        }
+//        return dealUrl;
+//    }
 
     @Override
     public List<TestCaseAttachmentDTO> create(Long projectId, Long issueId, HttpServletRequest request) {
         List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
-        ProjectDTO projectDTO = baseFeignClient.queryProject(projectId).getBody();
+        ProjectDTO projectDTO = remoteIamOperator.getProjectById(projectId);
         if (files != null && !files.isEmpty()) {
             for (MultipartFile multipartFile : files) {
                 String fileName = multipartFile.getOriginalFilename();
-                String path = fileClient.uploadFile(projectDTO.getOrganizationId(),BACKETNAME,null, fileName, multipartFile);
-                dealIssue(projectId, issueId, fileName, dealUrl(path));
+                String path = fileClient.uploadFile(projectDTO.getOrganizationId(), filePathService.bucketName(),filePathService.dirName(), fileName, multipartFile);
+                String relativePath = filePathService.generateRelativePath(path);
+                dealIssue(projectId, issueId, fileName, relativePath);
             }
         }
         TestCaseAttachmentDTO issueAttachmentDTO = new TestCaseAttachmentDTO();
         issueAttachmentDTO.setCaseId(issueId);
         List<TestCaseAttachmentDTO> issueAttachmentDTOList = testAttachmentMapper.select(issueAttachmentDTO);
         if (issueAttachmentDTOList != null && !issueAttachmentDTOList.isEmpty()) {
-            issueAttachmentDTOList.forEach(attachment -> attachment.setUrl(attachmentUrl + attachment.getUrl()));
+            issueAttachmentDTOList.forEach(attachment -> attachment.setUrl(
+                    filePathService.generateFullPath(attachment.getUrl())));
         }
         testCaseService.updateVersionNum(issueId);
         List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(projectId,issueId);
@@ -160,15 +159,17 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
         Boolean result = iIssueAttachmentService.deleteBase(issueAttachmentDTO.getAttachmentId());
 
         TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO = new TestCycleCaseAttachmentRelDTO();
-        testCycleCaseAttachmentRelDTO.setUrl(attachmentUrl+issueAttachmentDTO.getUrl());
+        testCycleCaseAttachmentRelDTO.setUrl(
+                filePathService.generateFullPath(issueAttachmentDTO.getUrl()));
         List<TestCycleCaseAttachmentRelDTO> testCycleCaseAttachmentRelDTOS = testCycleCaseAttachmentRelMapper.select(testCycleCaseAttachmentRelDTO);
 
         if(CollectionUtils.isEmpty(testCycleCaseAttachmentRelDTOS)){
             String url = null;
             try {
-                ProjectDTO projectDTO = baseFeignClient.queryProject(projectId).getBody();
+                ProjectDTO projectDTO = remoteIamOperator.getProjectById(projectId);
                 url = URLDecoder.decode(issueAttachmentDTO.getUrl(), "UTF-8");
-                fileFeignClient.deleteFileByUrl(projectDTO.getOrganizationId(),BACKETNAME, Arrays.asList(attachmentUrl + url));
+                String fullPath = filePathService.generateFullPath(url);
+                fileFeignClient.deleteFileByUrl(projectDTO.getOrganizationId(), filePathService.bucketName(), Arrays.asList(fullPath));
             } catch (Exception e) {
                 LOGGER.error("error.attachment.delete", e);
             }
@@ -187,11 +188,11 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
         if (!(files != null && !files.isEmpty())) {
             throw new CommonException("error.attachment.exits");
         }
-        ProjectDTO projectDTO = baseFeignClient.queryProject(projectId).getBody();
+        ProjectDTO projectDTO = remoteIamOperator.getProjectById(projectId);
         List<String> result = new ArrayList<>();
         for (MultipartFile multipartFile : files) {
             String fileName = multipartFile.getOriginalFilename();
-            String path = fileClient.uploadFile(projectDTO.getOrganizationId(),BACKETNAME, null,fileName, multipartFile);
+            String path = fileClient.uploadFile(projectDTO.getOrganizationId(), filePathService.bucketName(), filePathService.dirName(),fileName, multipartFile);
             result.add(path);
         }
         return result;
@@ -242,14 +243,15 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
     @Override
     public TestCaseAttachmentDTO attachmentCombineUpload(Long projectId, TestCaseAttachmentCombineVO testCaseAttachmentCombineVO) {
         Long caseId = testCaseAttachmentCombineVO.getCaseId();
-        ProjectDTO projectDTO = baseFeignClient.queryProject(projectId).getBody();
+        ProjectDTO projectDTO = remoteIamOperator.getProjectById(projectId);
         if (ObjectUtils.isEmpty(projectDTO)) {
             throw new CommonException("error.attachmentRule.project");
         }
         String fileName = testCaseAttachmentCombineVO.getFileName();
 
         Map<String, String> args = new HashMap<>(1);
-        args.put("bucketName", BACKETNAME);
+        args.put("bucketName", filePathService.bucketName());
+        args.put("directory", filePathService.dirName());
         String path = ResponseUtils.getResponse(fileFeignClient.fragmentCombineBlock(
                 projectDTO.getOrganizationId(),
                 testCaseAttachmentCombineVO.getGuid(),
@@ -264,8 +266,10 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
         if (path == null) {
             throw new CommonException("error.attachment.combine.failed");
         }
-        TestCaseAttachmentDTO attachment = dealIssue(projectId, caseId, fileName, dealUrl(path));
-        attachment.setUrl(attachmentUrl + attachment.getUrl());
+        String relativePath = filePathService.generateRelativePath(path);
+        TestCaseAttachmentDTO attachment = dealIssue(projectId, caseId, fileName, relativePath);
+        String fullPath = filePathService.generateFullPath(attachment.getUrl());
+        attachment.setUrl(fullPath);
         testCaseService.updateVersionNumNotObjectVersion(caseId, DetailsHelper.getUserDetails().getUserId());
 
         List<TestCycleCaseDTO> testCycleCases = testCycleCaseMapper.listAsyncCycleCase(projectId, caseId);

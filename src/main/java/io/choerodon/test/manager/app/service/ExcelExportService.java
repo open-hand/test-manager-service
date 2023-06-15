@@ -16,14 +16,16 @@ public interface ExcelExportService<T, R> {
 
     int populateHeader(Sheet sheet, int rowNum, T cycle, CellStyle rowStyle);
 
-    void populateCellStyle(CellStyle headerRowStyle, CellStyle caseStyle1, CellStyle caseStyle2);
+    void populateCellStyle(CellStyle headerRowStyle, CellStyle caseStyle1, CellStyle caseStyle2, Workbook workbook);
 
     void populateSheetStyle(Sheet sheet);
 
     int populateBody(Sheet sheet, int column, List<R> cycleCases, Queue<CellStyle> rowStyles);
 
-    Workbook exportWorkBookWithOneSheet(Map<Long, List<R>> cycleCaseMap, String projectName, T cycle, Workbook workbook);
+    Workbook exportWorkBookWithOneSheet(Map<Long, List<R>> cycleCaseMap, String projectName, T cycle, Workbook workbook, String sheetName);
 
-
+    default Workbook exportWorkBookWithOneSheet(Map<Long, List<R>> cycleCaseMap, String projectName, T cycle, Workbook workbook) {
+        return exportWorkBookWithOneSheet(cycleCaseMap, projectName, cycle, workbook, null);
+    }
 
 }

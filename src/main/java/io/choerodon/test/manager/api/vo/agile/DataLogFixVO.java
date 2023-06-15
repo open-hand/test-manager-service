@@ -1,5 +1,7 @@
 package io.choerodon.test.manager.api.vo.agile;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import java.util.Date;
 
 /**
@@ -9,30 +11,43 @@ import java.util.Date;
  */
 public class DataLogFixVO {
 
+    @ApiModelProperty(value = "日志id")
     private Long logId;
 
+    @ApiModelProperty(value = "项目id")
     private Long projectId;
 
+    @ApiModelProperty(value = "字段")
     private String field;
 
+    @ApiModelProperty(value = "旧值")
     private String oldValue;
 
+    @ApiModelProperty(value = "旧值字符串")
     private String oldString;
 
+    @ApiModelProperty(value = "新值")
     private String newValue;
 
+    @ApiModelProperty(value = "新值字符串")
     private String newString;
 
+    @ApiModelProperty(value = "issueId")
     private Long issueId;
 
+    @ApiModelProperty(value = "乐观锁")
     private Long objectVersionNumber;
 
+    @ApiModelProperty(value = "创建人id")
     private Long createdBy;
 
+    @ApiModelProperty(value = "创建时间")
     private Date creationDate;
 
+    @ApiModelProperty(value = "更新人id")
     private Long lastUpdatedBy;
 
+    @ApiModelProperty(value = "更新时间")
     private Date lastUpdateDate;
 
     public Long getLogId() {

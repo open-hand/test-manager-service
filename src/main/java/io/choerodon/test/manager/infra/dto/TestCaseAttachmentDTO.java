@@ -8,6 +8,7 @@ import javax.persistence.Table;
 import io.choerodon.mybatis.annotation.ModifyAudit;
 import io.choerodon.mybatis.annotation.VersionAudit;
 import io.choerodon.mybatis.domain.AuditDomain;
+import io.swagger.annotations.ApiModelProperty;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 
 @VersionAudit
@@ -17,10 +18,15 @@ public class TestCaseAttachmentDTO extends AuditDomain {
     @Id
     @GeneratedValue
     @Encrypt
+    @ApiModelProperty(value = "附件id")
     private Long attachmentId;
+    @ApiModelProperty(value = "关联用例id")
     private Long caseId;
+    @ApiModelProperty(value = "链接")
     private String url;
+    @ApiModelProperty(value = "附件名称")
     private String fileName;
+    @ApiModelProperty(value = "项目id")
     private Long projectId;
 
     public Long getAttachmentId() {

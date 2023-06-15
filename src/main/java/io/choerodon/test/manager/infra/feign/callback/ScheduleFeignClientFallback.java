@@ -1,31 +1,19 @@
 package io.choerodon.test.manager.infra.feign.callback;
 
-import io.choerodon.test.manager.api.vo.asgard.QuartzTask;
-import io.choerodon.test.manager.api.vo.asgard.ScheduleMethodDTO;
-import io.choerodon.test.manager.api.vo.asgard.ScheduleTaskDTO;
-import io.choerodon.core.exception.CommonException;
+import io.choerodon.core.utils.FeignFallbackUtil;
 import io.choerodon.test.manager.infra.feign.ScheduleFeignClient;
-import org.springframework.http.ResponseEntity;
+import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 /**
  * Created by zongw.lee@gmail.com on 23/11/2018
  */
 @Component
-public class ScheduleFeignClientFallback implements ScheduleFeignClient {
-
-    private static final String CREATE_ERROR = "error.ScheduleFeign.create";
-    private static final String QUERY_ERROR = "error.ScheduleFeign.query";
+public class ScheduleFeignClientFallback implements FallbackFactory<ScheduleFeignClient> {
 
     @Override
-    public ResponseEntity<QuartzTask> create(long projectId, ScheduleTaskDTO dto) {
-        throw new CommonException(CREATE_ERROR);
+    public ScheduleFeignClient create(Throwable cause) {
+        return FeignFallbackUtil.get(cause, ScheduleFeignClient.class);
     }
 
-    @Override
-    public ResponseEntity<List<ScheduleMethodDTO>> getMethodByService(long projectId, String service) {
-        throw new CommonException(QUERY_ERROR);
-    }
 }

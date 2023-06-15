@@ -36,6 +36,7 @@ public class TestPlanTreeVO {
     @ApiModelProperty(value = "是否自动同步")
     private Boolean isAutoSync;
 
+    @ApiModelProperty(value = "初始状态")
     private String initStatus;
 
     @ApiModelProperty(value = "文件夹树")

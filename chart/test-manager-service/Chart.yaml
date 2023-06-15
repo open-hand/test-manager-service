@@ -1,6 +1,24 @@
-apiVersion: v1
-appVersion: "1.0"
-description: A Helm chart for Kubernetes
+annotations:
+  category: Infrastructure
+apiVersion: v2
+appVersion: 2.0.0
+dependencies:
+  - name: common
+    repository: https://openchart.choerodon.com.cn/choerodon/c7n
+    version: 1.x.x
+description: Test manager service of Choerodon.
+engine: gotpl
+home: https://github.com/open-hand/test-manager-service/tree/master/chart/test-manager-service
+icon: https://ui-avatars.com/api/?name=test-manager-service
+keywords:
+  - choerodon
+  - test
+maintainers:
+  - email: zhuchiyu@vip.hand-china.com
+    name: choerodon
+    url: https://choerodon.io
 name: test-manager-service
-version: 0.1.0
-
+sources:
+  - https://github.com/open-hand/test-manager-service
+  - https://gitee.com/open-hand/test-manager-service
+version: 2.0.0
