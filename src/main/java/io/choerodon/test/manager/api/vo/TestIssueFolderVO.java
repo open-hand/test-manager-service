@@ -18,6 +18,7 @@ public class TestIssueFolderVO {
     @Encrypt
     private Long parentId;
 
+    @ApiModelProperty(value = "是否是根节点")
     private Boolean rootNode;
 
     @ApiModelProperty(value = "文件夹名")
@@ -35,16 +36,22 @@ public class TestIssueFolderVO {
     @ApiModelProperty(value = "乐观锁版本号")
     private Long objectVersionNumber;
 
+    @ApiModelProperty(value = "初始化状态")
     private String initStatus;
 
+    @ApiModelProperty(value = "rank值")
     private String rank;
 
+    @ApiModelProperty(value = "前项rank值")
     private String lastRank;
 
+    @ApiModelProperty(value = "后项rank值")
     private String nextRank;
 
+    @ApiModelProperty(value = "开始时间")
     private Date fromDate;
 
+    @ApiModelProperty(value = "结束时间")
     private Date toDate;
 
     public TestIssueFolderVO() {

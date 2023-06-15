@@ -42,7 +42,7 @@ function CreateIssue(props) {
 
     if (fileList) {
       fileList.forEach((file) => {
-        formData.append('file', file);
+        formData.append('file', file?.originFileObj || file);
       });
       uploadFile(currentCaseId, formData);
     }

@@ -194,7 +194,7 @@ public class ExcelUtil {
         return row;
     }
 
-    public static Cell getOrCreateCell(Row row, int colNum, int type) {
+    public static Cell getOrCreateCell(Row row, int colNum, org.apache.poi.ss.usermodel.CellType type) {
         Cell cell = row.getCell(colNum);
         if (cell == null) {
             cell = row.createCell(colNum, type);

@@ -1,3 +1,10 @@
+export * from './caseLibrary';
+export * from './common';
+export * from './plan';
+export * from './priority';
+export * from './status';
+export * from './autoTest';
+
 // 文档地址前缀
 
 // 界面标题描述统一管理
@@ -129,8 +136,8 @@ const enUS = {
   // 自定义状态
   status_title: 'Custom Status',
   status_create: 'Create Status',
-  status_executeStatus: 'Execute Status',
-  status_steptatus: 'Step Status',
+  status_executeStatus: 'The Execute Status',
+  status_steptatus: 'The Step Status',
   status_name: 'Status Name',
   status_comment: 'Comment',
   status_color: 'Color',
@@ -180,7 +187,7 @@ const enUS = {
 
   testPlan_createPlan: 'create Plan',
   testPlan_editPlan: 'edit Paln',
-  testPlan_manualTest: 'start Manual test',
+  testPlan_manualTest: 'Start manual testing',
   testPlan_completePlan: 'complete Plan',
   testPlan_autoTest: 'automatic test',
 
@@ -303,8 +310,8 @@ const enUS = {
   issue_edit_updater: 'updater',
   issue_edit_date: 'Date',
   issue_edit_priority: 'Priority',
-  issue_edit_createDate: 'Create at',
-  issue_edit_updateDate: 'Update at',
+  issue_edit_createDate: 'Creation Time',
+  issue_edit_updateDate: 'Update Time',
   issue_edit_testDetail: 'Test detail',
   issue_edit_addTestDetail: 'Create test detail',
   issue_edit_comment: 'Comment',
@@ -410,5 +417,23 @@ const enUS = {
   'priority.disable.title': 'Disable Priority',
   'priority.disable.notice': 'Note: Your issue will not be able to choose this priority after disable.',
 
+  autoteststep_one_title: '选择测试实例',
+  autoteststep_one_description: '您可以在此页面选择测试框架，测试应用以及测试应用的版本。',
+  autoteststep_one_app: '选择应用',
+  autoteststep_one_version_title: '选择应用版本',
+  autoteststep_one_version: '应用版本',
+  select_app_first: '请先选择应用',
+  autoteststep_one_targetversion: '版本',
+  autoteststep_one_env_title: '选择环境',
+  autoteststep_one_environment: '环境',
+  autotestapp_add: '打开应用列表',
+  autoteststep_two_title: '修改配置信息',
+  autoteststep_two_description: '您可以在此页面更改配置',
+  autoteststep_two_config: '配置信息',
+  autoteststep_three_title: '确认信息并执行',
+  autoteststep_three_app: '应用名称',
+  autoteststep_three_version: '应用版本',
+  autoteststep_three_description: '在此页面预览配置信息，确认后执行测试。',
+  autotestbtn_autotest: '执行测试',
 };
-export default enUS;
+export { enUS as TEST_EN_US };

@@ -6,16 +6,18 @@ import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 import { observer } from 'mobx-react-lite';
 import {
-  Tooltip, Button, Icon, Checkbox,
+  Button,
 } from 'choerodon-ui';
+import { Tooltip, Icon, CheckBox } from 'choerodon-ui/pro';
 import { Action, stores } from '@choerodon/boot';
 import _, { isString } from 'lodash';
 import { useLoading } from '@choerodon/agile/lib/components/Loading';
 import SelectUser from '@choerodon/agile/lib/components/select/select-user';
 import { renderIssueNum } from '@/routes/IssueManage/components/IssueTable/tags';
 import {
-  StatusTags, DragTable,
+  StatusTags, DragTable as OriginDragTable,
 } from '../../../../components';
+import wrapDragTableCache from '@/components/DragTable/wrapCache';
 import CustomCheckBox from '../../../../components/CustomCheckBox';
 import User from '../../../../components/User';
 import './TestPlanTable.less';
@@ -23,9 +25,10 @@ import './TestPlanTable.less';
 import Store from '../../stores';
 import PriorityTag from '../../../../components/PriorityTag';
 import { OpenBatchModal, closeBatchModal } from '../BatchAction';
+import useFormatMessage from '@/hooks/useFormatMessage';
 
 const { AppState } = stores;
-
+const DragTable = wrapDragTableCache(OriginDragTable, 'testPlan', ['summary', 'priorityId', 'assignedUser', 'lastUpdateUser', 'lastUpdateDate', 'executionStatus']);
 const propTypes = {
   onDragEnd: PropTypes.func.isRequired,
   onTableChange: PropTypes.func.isRequired,
@@ -49,6 +52,7 @@ const TestPlanTable = observer(({
   onOnlyMeCheckedChange,
   hasCheckBox,
   isMine,
+  cached,
 }) => {
   const {
     testPlanStore,
@@ -57,6 +61,7 @@ const TestPlanTable = observer(({
   const {
     tableLoading, statusList, executePagination, mineExecutePagination, testList, checkIdMap, testPlanStatus, priorityList,
   } = testPlanStore;
+  const formatMessage = useFormatMessage();
 
   const divRef = useRef();
   const [tipVisible, setTipVisible] = useState(false);
@@ -164,7 +169,7 @@ const TestPlanTable = observer(({
 
   const renderMoreAction = (record) => {
     const action = [{
-      text: '移除',
+      text: formatMessage({ id: 'test.plan.remove' }),
       action: () => {
         closeBatchModal({ testPlanStore });
         onDeleteExecute(record);
@@ -223,18 +228,20 @@ const TestPlanTable = observer(({
     return testPlanStore.mineFilter && testPlanStore.mineFilter.priorityId ? [testPlanStore.mineFilter.priorityId] : [];
   };
   const columns = [{
-    title: '执行名称',
+    title: formatMessage({ id: 'test.plan.execute.name' }),
     dataIndex: 'summary',
     key: 'summary',
     filters: [],
+    disableClick: true,
     filteredValue: getSummaryFilterValue(),
     flex: 1.6,
     style: {
       overflow: 'hidden',
+      minWidth: 80,
     },
     render: (text, record) => renderMenu(record.summary, record),
   }, {
-    title: '自定义编号',
+    title: formatMessage({ id: 'test.common.custom.num' }),
     dataIndex: 'customNum',
     key: 'customNum',
     flex: 1.5,
@@ -242,7 +249,7 @@ const TestPlanTable = observer(({
     filters: [],
     render: (customNum) => renderIssueNum(customNum),
   }, {
-    title: <FormattedMessage id="priority" />,
+    title: formatMessage({ id: 'test.common.priority' }),
     dataIndex: 'priorityId',
     key: 'priorityId',
     filters: priorityList && priorityList.filter((priorityVO) => priorityVO.enableFlag)
@@ -259,7 +266,7 @@ const TestPlanTable = observer(({
       );
     },
   }, {
-    title: '计划执行人',
+    title: formatMessage({ id: 'test.plan.plan.executor' }),
     dataIndex: 'assignedUser',
     key: 'assignedUser',
     flex: 1.5,
@@ -277,7 +284,7 @@ const TestPlanTable = observer(({
     },
   },
   {
-    title: '实际执行人',
+    title: formatMessage({ id: 'test.plan.actual.executor' }),
     dataIndex: 'lastUpdateUser',
     key: 'lastUpdateUser',
     flex: 1.5,
@@ -295,7 +302,7 @@ const TestPlanTable = observer(({
       );
     },
   }, {
-    title: <FormattedMessage id="cycle_updatedDate" />,
+    title: formatMessage({ id: 'test.plan.update.date' }),
     dataIndex: 'lastUpdateDate',
     key: 'lastUpdateDate',
     flex: 1.5,
@@ -317,7 +324,7 @@ const TestPlanTable = observer(({
   },
 
   {
-    title: <FormattedMessage id="status" />,
+    title: formatMessage({ id: 'test.plan.execute.status' }),
     dataIndex: 'executionStatus',
     key: 'executionStatus',
     filters: statusList && statusList.map((status) => ({ text: status.statusName, value: status.statusId.toString() })),
@@ -419,15 +426,12 @@ const TestPlanTable = observer(({
               top: '-9px',
             }}
             >
-              <div>
-                <span style={{ color: 'var(--text-color)' }}>
-                  只看我的
-                </span>
-                <Checkbox style={{ marginLeft: 4 }} checked={isSelf} onChange={onOnlyMeCheckedChange} />
-              </div>
+              <CheckBox style={{ marginLeft: 4, flexFlow: 'row-reverse' }} checked={isSelf} onChange={onOnlyMeCheckedChange}>
+                {formatMessage({ id: 'test.plan.only.me' })}
+              </CheckBox>
               <SelectUser
                 clearButton
-                placeholder="计划执行人"
+                placeholder={formatMessage({ id: 'test.plan.plan.executor' })}
                 onChange={onSearchAssign}
                 value={isSelf ? undefined : testPlanStore.filter.assignUser}
                 style={{ marginLeft: 30, width: 120 }}
@@ -449,6 +453,7 @@ const TestPlanTable = observer(({
         checkField="executeId"
         key={testPlanStore.currentCycle.id}
         onChangeCallBack={handleCheckBoxChange}
+        cached={cached}
       />
     </div>
   );

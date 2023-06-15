@@ -5,6 +5,7 @@ import CKEditorViewer from '@/components/CKEditorViewer';
 import SingleFileUpload from '../../../../../../components/SingleFileUpload';
 import TestStepTable from '../TestStepTable';
 import './UpdateContent.less';
+import useFormatMessage from '@/hooks/useFormatMessage';
 
 const prefix = 'c7ntest-testPlan-updateRemind-updateContent';
 
@@ -12,6 +13,8 @@ function UpdateContent(props) {
   const {
     tag, updateData, dataSet, cycleName,
   } = props;
+  const formatMessage = useFormatMessage();
+
   const fileList = tag === 'old' ? ((updateData && updateData.caseAttachment) || []) : ((updateData && updateData.attachment) || []);
   return (
     <div className={`${prefix}-detail`}>
@@ -26,11 +29,11 @@ function UpdateContent(props) {
           <div className={`${prefix}-item-value`}>{updateData && updateData.summary}</div>
         </div>
         <div className={`${prefix}-item`}>
-          <div className={`${prefix}-item-field`}>自定义编号</div>
+          <div className={`${prefix}-item-field`}>{formatMessage({ id: 'test.common.custom.num' })}</div>
           <div className={`${prefix}-item-value`}>{updateData && updateData.customNum}</div>
         </div>
         <div className={`${prefix}-item`}>
-          <div className={`${prefix}-item-field`}>描述</div>
+          <div className={`${prefix}-item-field`}>{formatMessage({ id: 'test.plan.description' })}</div>
           <div
             className={`${prefix}-item-value`}
             style={{

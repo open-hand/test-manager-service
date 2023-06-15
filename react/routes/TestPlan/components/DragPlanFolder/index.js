@@ -5,6 +5,7 @@ import React, {
 import {
   Modal,
 } from 'choerodon-ui/pro';
+import { C7NFormat } from '@choerodon/master';
 import { findIndex, sortBy } from 'lodash';
 import { observer } from 'mobx-react-lite';
 import { handleRequestFailed } from '@/common/utils';
@@ -172,7 +173,10 @@ export default async function openDragPlanFolder({ planId, handleOk, beforeOpen 
     }),
   };
   Modal.open({
-    title: '调整计划结构',
+    title: <C7NFormat
+      intlPrefix="test.plan"
+      id="drag.rank"
+    />,
     key,
     drawer: true,
     className: 'c7ntest-DragPlanFolder',

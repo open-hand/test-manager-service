@@ -1,3 +1,3 @@
-import TypeTag from './TypeTag';
+import TypeTag from '@choerodon/agile/lib/components/TypeTag';
 
 export default TypeTag;

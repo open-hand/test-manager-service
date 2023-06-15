@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 import io.choerodon.mybatis.annotation.ModifyAudit;
 import io.choerodon.mybatis.annotation.VersionAudit;
 import io.choerodon.mybatis.domain.AuditDomain;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * 敏捷开发Issue标签
@@ -32,16 +33,19 @@ public class IssueLabelDTO extends AuditDomain {
     /***/
     @Id
     @GeneratedValue
+    @ApiModelProperty(value = "标签id")
     private Long labelId;
 
     /**
      * 标签名称
      */
+    @ApiModelProperty(value = "标签名称")
     private String labelName;
 
     /**
      * 项目id
      */
+    @ApiModelProperty(value = "项目id")
     private Long projectId;
 
     public Long getLabelId() {

@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import {
-  Table, Modal, Select, Icon, message, Menu,
+  Table, Select, Icon, message, Menu,
 } from 'choerodon-ui';
+import { Modal } from 'choerodon-ui/pro';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import {
   Content, Header, TabPage as Page, stores, Breadcrumb,
@@ -22,7 +23,6 @@ import './PriorityList.less';
 
 const { Option } = Select;
 const { AppState } = stores;
-const { confirm } = Modal;
 
 const ColorBlock = ({ color }) => (
   <div
@@ -105,7 +105,7 @@ class PriorityList extends Component {
       <Menu onClick={(item) => this.handleChooseMenu(item.key, record)}>
         <Menu.Item key="edit">
           <span>
-            编辑
+            修改
           </span>
         </Menu.Item>
         {record.enableFlag && enableList && enableList.length === 1
@@ -137,7 +137,7 @@ class PriorityList extends Component {
 
   getColumns = () => [
     {
-      title: <FormattedMessage id="priority.name" />,
+      title: <FormattedMessage id="test.common.name" />,
       dataIndex: 'name',
       key: 'name',
       width: 270,
@@ -146,7 +146,7 @@ class PriorityList extends Component {
       render: (text, record) => this.renderMenu(text, record),
     },
     {
-      title: <FormattedMessage id="priority.des" />,
+      title: <FormattedMessage id="test.common.description" />,
       dataIndex: 'description',
       key: 'des',
       width: 450,
@@ -155,7 +155,7 @@ class PriorityList extends Component {
       onFilter: (value, record) => record.description && record.description.toString().indexOf(value) !== -1,
     },
     {
-      title: <FormattedMessage id="priority.color" />,
+      title: <FormattedMessage id="test.common.color" />,
       dataIndex: 'colour',
       key: 'color',
       width: 100,
@@ -181,10 +181,10 @@ class PriorityList extends Component {
     const that = this;
     const count = await priorityApi.checkBeforeDel(priority.id);
     const priorityList = PriorityStore.getPriorityList.filter((item) => item.id !== priority.id);
-    confirm({
+    Modal.open({
       className: 'c7n-deletePriority-confirm',
       title: intl.formatMessage({ id: 'priority.delete.title' }),
-      content: (
+      children: (
         <div>
           <div style={{ marginBottom: 10 }}>
             {`${intl.formatMessage({ id: 'priority.delete.title' })}：${priority.name}`}
@@ -226,9 +226,11 @@ class PriorityList extends Component {
               </div>
             )}
         </div>),
-      width: 520,
-      onOk() {
-        that.deletePriority(priority.id, priorityList[0].id);
+      style: {
+        width: 520,
+      },
+      onOk: async () => {
+        await that.deletePriority(priority.id, priorityList[0].id);
         that.setState({
           priorityId: false,
         });
@@ -258,9 +260,9 @@ class PriorityList extends Component {
     const { intl } = this.props;
     if (priority.enableFlag) {
       const that = this;
-      confirm({
+      Modal.open({
         title: intl.formatMessage({ id: 'priority.disable.title' }),
-        content: (
+        children: (
           <div>
             <div style={{ marginBottom: 10 }}>
               {intl.formatMessage({ id: 'priority.disable.title' })}
@@ -271,9 +273,8 @@ class PriorityList extends Component {
             <div>{intl.formatMessage({ id: 'priority.disable.notice' })}</div>
           </div>),
         onOk() {
-          that.enablePriority(priority);
+          return that.enablePriority(priority);
         },
-        onCancel() { },
         okText: '确认',
         cancelText: '取消',
       });
@@ -327,9 +328,9 @@ class PriorityList extends Component {
       <Page
         className="c7ntest-priority"
       >
-        <Header title={<FormattedMessage id="priority.title" />}>
+        <Header title={<FormattedMessage id="test.priority.route" />}>
           <HeaderButtons items={[{
-            name: intl.formatMessage({ id: 'priority.create' }),
+            name: intl.formatMessage({ id: 'test.priority.create' }),
             display: true,
             handler: () => this.showSideBar('create'),
             icon: 'playlist_add',
@@ -339,7 +340,8 @@ class PriorityList extends Component {
         <Breadcrumb />
         <Content>
           <Table
-            filterBarPlaceholder="过滤表"
+            className="c7ntest-priority-table"
+            filterBarPlaceholder={intl.formatMessage({ id: 'test.common.filter' })}
             columns={this.getColumns()}
             dataSource={getPriorityList}
             rowKey={(record) => record.id}

@@ -281,7 +281,7 @@ function ExecuteDetailSide(props) {
                 {/* 附件 */}
                 <Section
                   id="attachment"
-                  icon="backup-o"
+                  icon="file_upload_black-o"
                   title="附件"
                 >
                   <UploadButtonExecuteDetail

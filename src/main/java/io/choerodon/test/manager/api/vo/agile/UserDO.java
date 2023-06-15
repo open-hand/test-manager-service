@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.api.vo.agile;
 
 import io.choerodon.test.manager.infra.util.StringUtil;
+import io.swagger.annotations.ApiModelProperty;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 
 import java.util.Date;
@@ -10,41 +11,59 @@ import java.util.Date;
  * @since 2018/5/24
  */
 public class UserDO {
+    @ApiModelProperty(value = "用户id")
     @Encrypt
     private Long id;
 
+    @ApiModelProperty(value = "登录名")
     private String loginName;
 
+    @ApiModelProperty(value = "邮箱")
     private String email;
 
+    @ApiModelProperty(value = "组织id")
     private Long organizationId;
 
+    @ApiModelProperty(value = "密码")
     private String password;
 
+    @ApiModelProperty(value = "真实名称")
     private String realName;
 
+    @ApiModelProperty(value = "电话")
     private String phone;
 
+    @ApiModelProperty(value = "头像")
     private String imageUrl;
 
+    @ApiModelProperty(value = "档案照片")
     private String profilePhoto;
 
+    @ApiModelProperty(value = "是否启用")
     private Boolean isEnabled;
 
+    @ApiModelProperty(value = "是否为ldap用户")
     private Boolean isLdap;
 
+    @ApiModelProperty(value = "语言")
     private String language;
 
+    @ApiModelProperty(value = "时区")
     private String timeZone;
 
+    @ApiModelProperty(value = "密码最后更新时间")
     private Date lastPasswordUpdatedAt;
 
+    @ApiModelProperty(value = "最后登陆时间")
     private Date lastLoginAt;
 
+    @ApiModelProperty(value = "是否锁定")
     private Boolean isLocked;
 
+    @ApiModelProperty(value = "锁定时间")
     private Date lockedUntilAt;
 
+    @ApiModelProperty(value = "密码尝试次数")
     private Integer passwordAttempt;
 
     public Long getId() {

@@ -2,11 +2,11 @@
 @circle-trail-stroke: rgba(207, 212, 245, 0.90);
 @circle-path-stroke: rgba(48, 63, 159, 0.64);
 @progress-text-color: var(--text-color3);
-@progress-area-background: #FFFFFF;
+@progress-area-background: #FFF;
 @progress-area-box-shadow1: rgba(0, 0, 0, 0.20);
 @progress-area-box-shadow2: rgba(0, 0, 0, 0.14);
 @progress-area-box-shadow3: rgba(0, 0, 0, 0.12);
-@progress-area-text: #000000;
+@progress-area-text: #000;
 @fileName-background: #F3F3F3;
 @fileName-color: var(--text-color3);
 
@@ -46,13 +46,13 @@
     &-prompt {
       font-size: 0.14rem;
       line-height: 0.2rem;
-      color: #000000;
+      color: #000;
       text-align: left;
     }
   }
 
   &-record-normal-text {
-    margin-top: 0.1rem;
+    margin-top: 0.2rem;
   }
 
   &-fileName {
@@ -79,7 +79,7 @@
     line-height: 18px;
 
     span {
-      color: #000000;
+      color: #000;
     }
 
     &-down-load {
@@ -89,7 +89,9 @@
   }
 
   &-progress {
-    &-area-text, &-area-prompt {
+
+    &-area-text,
+    &-area-prompt {
       color: var(--text-color);
     }
   }
@@ -97,6 +99,7 @@
   &-icon {
     vertical-align: sub;
     margin-right: 0.05rem;
+    font-size: 18px;
   }
 
   &-version {
@@ -109,9 +112,26 @@
   }
 
   &-form {
+    &-tip {
+      font-size: 13px;
+      margin-bottom: .24rem;
+      display: flex;
+      align-items: center;
+
+      &-icon {
+        color: #ffb100;
+        padding-right: .04rem;
+      }
+
+      & >* {
+        line-height: 18px;
+      }
+    }
+
     .c7n-pro-form {
       margin-left: -.05rem;
     }
+
     &-divider {
       border-top: 1px solid var(--divider);
       margin: .24rem 0 .2rem -.24rem;
@@ -120,10 +140,25 @@
 
     &-one {
       &-title {
+        display: inline-block;
         font-size: 16px;
         color: var(--text-color);
-        line-height: 24px;
+        line-height: 20px;
         font-weight: 500;
+
+        &-block {
+          display: inline-block;
+          margin-right: 6px;
+          width: 3px;
+          height: 16px;
+          background: #798DFB;
+          border-radius: 1.5px;
+        }
+
+        &>* {
+          vertical-align: middle;
+          line-height: 20px;
+        }
       }
 
       &-content {
@@ -137,6 +172,11 @@
       button {
         padding-left: 0;
       }
+
+    }
+
+    &-one+&-one {
+      margin-top: .3rem;
     }
 
     &-modal-footer {

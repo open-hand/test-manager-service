@@ -50,9 +50,11 @@ public class ScheduleTaskDTO {
     private String cronExpression;
 
     //需要
+    @ApiModelProperty(value = "通知用户")
     private NotifyUser notifyUser;
 
     //指定的通知用户
+    @ApiModelProperty(value = "指定的通知用户")
     private Long[] assignUserIds;
 
     public NotifyUser getNotifyUser() {

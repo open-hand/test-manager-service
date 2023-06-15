@@ -48,7 +48,7 @@ const BatchDeleteCaseModalContent: React.FC<ModalProps> = observer((props) => {
           setLoading('success');
           setProgress(Number(rate));
           setTimeout(() => {
-            Choerodon.prompt('移除成功');
+            Choerodon.prompt('删除成功');
             handleCancel();
             refresh && refresh();
           }, 2000);
@@ -71,7 +71,7 @@ const BatchDeleteCaseModalContent: React.FC<ModalProps> = observer((props) => {
   return (
     <div>
       <div style={{ marginBottom: 20 }}>
-        {`确定要移除选中的${deleteCount}个测试用例吗？`}
+        {`确定要删除选中的${deleteCount}个测试用例吗？`}
         <span style={{ color: '#F44336' }}>
           请谨慎操作！
         </span>
@@ -81,7 +81,7 @@ const BatchDeleteCaseModalContent: React.FC<ModalProps> = observer((props) => {
         >
           { loading && (
           <div style={{ textAlign: 'center', marginTop: 16 }}>
-            {loading === 'success' ? '移除成功' : ['正在移除，请稍等片刻', <span className={styles.dot}>…</span>]}
+            {loading === 'success' ? '删除成功' : ['正在删除，请稍等片刻', <span className={styles.dot}>…</span>]}
             <Progress strokeColor={STATUS_COLOR.done} value={Math.round(progress * 100)} />
           </div>
           )}
@@ -101,7 +101,7 @@ const BatchDeleteCaseModalContent: React.FC<ModalProps> = observer((props) => {
           loading={Boolean(loading)}
           onClick={handleOk}
         >
-          移除
+          删除
         </Button>
       </div>
     </div>
@@ -111,7 +111,7 @@ const BatchDeleteCaseModalContent: React.FC<ModalProps> = observer((props) => {
 const openBatchDeleteCaseModal = (props: Props) => {
   Modal.open({
     key: 'BatchRemoveCaseModal',
-    title: '移除测试用例',
+    title: '删除测试用例',
     style: {
       width: 520,
     },

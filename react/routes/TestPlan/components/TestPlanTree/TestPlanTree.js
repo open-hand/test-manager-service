@@ -1,7 +1,8 @@
 import React, { Component, createRef } from 'react';
 import { observer } from 'mobx-react';
 import { Menu, Icon } from 'choerodon-ui';
-import { Choerodon } from '@choerodon/master';
+import { Choerodon, C7NFormat } from '@choerodon/master';
+
 import Loading from '@choerodon/agile/lib/components/Loading';
 import { handleRequestFailed, getProjectId } from '@/common/utils';
 import './TestPlanTree.less';
@@ -246,52 +247,92 @@ class TestPlanTree extends Component {
     if (status === 'done') {
       return isPlan ? [
         <Menu.Item key="copy">
-          复制此计划
+          <C7NFormat
+            intlPrefix="test.plan"
+            id="copy"
+          />
         </Menu.Item>,
       ] : null;
     }
     if (isPlan) {
       return [
         <Menu.Item key="copy">
-          复制此计划
+          <C7NFormat
+            intlPrefix="test.plan"
+            id="copy"
+          />
         </Menu.Item>,
         <Menu.Item key="rename">
-          重命名
+          <C7NFormat
+            intlPrefix="test.common"
+            id="rename"
+          />
         </Menu.Item>,
         <Menu.Item key="rank">
-          {testPlanStore.getFolderDataById(item.id).isSort ? '默认排序' : '时间排序'}
+          <C7NFormat
+            intlPrefix="test.plan"
+            key={testPlanStore.getFolderDataById(item.id).isSort ? 'time.default.rank' : 'time.rank'}
+            id={testPlanStore.getFolderDataById(item.id).isSort ? 'time.default.rank' : 'time.rank'}
+          />
         </Menu.Item>,
         <Menu.Item key="drag">
-          调整计划结构
+          <C7NFormat
+            intlPrefix="test.plan"
+            id="drag.rank"
+          />
         </Menu.Item>,
         <Menu.Item key="delete">
-          删除
+          <C7NFormat
+            intlPrefix="boot"
+            id="delete"
+          />
         </Menu.Item>,
       ];
     }
     const canImport = item.children.length === 0;
     return canImport ? [
       <Menu.Item key="rename">
-        重命名
+        <C7NFormat
+          intlPrefix="test.common"
+          id="rename"
+        />
       </Menu.Item>,
       <Menu.Item key="assign">
-        批量指派
+        <C7NFormat
+          intlPrefix="test.plan"
+          id="batch.assign"
+        />
       </Menu.Item>,
       <Menu.Item key="delete">
-        删除
+        <C7NFormat
+          intlPrefix="boot"
+          id="delete"
+        />
       </Menu.Item>,
       <Menu.Item key="import">
-        导入用例
+        <C7NFormat
+          intlPrefix="test.plan"
+          id="import"
+        />
       </Menu.Item>,
     ] : [
       <Menu.Item key="rename">
-        重命名
+        <C7NFormat
+          intlPrefix="test.common"
+          id="rename"
+        />
       </Menu.Item>,
       <Menu.Item key="assign">
-        批量指派
+        <C7NFormat
+          intlPrefix="test.plan"
+          id="batch.assign"
+        />
       </Menu.Item>,
       <Menu.Item key="delete">
-        删除
+        <C7NFormat
+          intlPrefix="boot"
+          id="delete"
+        />
       </Menu.Item>,
     ];
   }

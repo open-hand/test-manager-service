@@ -5,7 +5,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.netflix.hystrix.exception.HystrixRuntimeException;
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.ServiceUnavailableException;
 import io.choerodon.core.utils.PageUtils;
@@ -537,7 +536,8 @@ public class TestPlanServiceImpl implements TestPlanService {
                 result.add(r);
             });
             return PageUtils.copyPropertiesAndResetContent(page, result);
-        } catch (HystrixRuntimeException e) {
+        }
+        catch (Exception e) {
             LOGGER.error("feign exception: {}", e);
             return PageUtil.empty(pageRequest);
         }

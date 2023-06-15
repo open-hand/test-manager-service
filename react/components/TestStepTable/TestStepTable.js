@@ -261,7 +261,7 @@ function TestStepTable(props) {
             saveRef={AutoEnterFirstRef.bind(this, record, index)}
             originData={testStep}
             formKey="testStep"
-            style={{ marginLeft: '-5px' }}
+            style={{ marginLeft: '-5px', width: '100%' }}
             onSubmit={(value) => {
               if (value) {
                 handleEditStep({
@@ -315,7 +315,7 @@ function TestStepTable(props) {
         return (
           <TextEditToggle
             simpleMode
-            style={{ marginLeft: '-5px' }}
+            style={{ marginLeft: '-5px', width: '100%' }}
             originData={testData}
             saveRef={saveCreateRef.bind(this, record, index, 'second')}
             formKey="testData"
@@ -367,7 +367,7 @@ function TestStepTable(props) {
         return (
           <TextEditToggle
             simpleMode
-            style={{ marginLeft: '-5px' }}
+            style={{ marginLeft: '-5px', width: '100%' }}
             originData={expectedResult}
             saveRef={saveCreateRef.bind(this, record, index, 'third')}
             formKey="expectedResult"

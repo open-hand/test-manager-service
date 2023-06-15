@@ -43,6 +43,7 @@ const openModal = (props: CreateBugProps) => {
     ...restProps,
     onCreate: handleCreate,
     defaultAssignee,
+    title: '新建缺陷',
   });
 };
 export default openModal;

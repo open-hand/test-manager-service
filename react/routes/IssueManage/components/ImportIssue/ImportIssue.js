@@ -8,7 +8,7 @@ import {
 
 import { Progress, Divider } from 'choerodon-ui';
 import {
-  DataSet, Form, Button, message,
+  DataSet, Form, Button, message, Icon,
 } from 'choerodon-ui/pro';
 import moment from 'moment';
 import _, { find } from 'lodash';
@@ -24,10 +24,17 @@ import SelectTree from '../SelectTree';
 
 const { AppState } = stores;
 const ImportIssueForm = (formProps) => {
-  const { title, children, bottom } = formProps;
+  const {
+    title, children, bottom, titleLine = true,
+  } = formProps;
   return (
     <div className="c7ntest-ImportIssue-form-one">
-      <span className="c7ntest-ImportIssue-form-one-title">{title}</span>
+      <span className="c7ntest-ImportIssue-form-one-title">
+        {titleLine ? <div className="c7ntest-ImportIssue-form-one-title-block" /> : null}
+        <span>
+          {title}
+        </span>
+      </span>
       <span className="c7ntest-ImportIssue-form-one-content">{children}</span>
       {bottom}
     </div>
@@ -82,7 +89,6 @@ function ImportIssue(props) {
   }), []);
   const [lastRecord, setLastRecord] = useState({});
   const [importRecord, setImportRecord] = useState({});
-  const [folder, setFolder] = useState(null);
   const uploadInput = useRef(null);
   const wsRef = useRef();
   const autoDownRef = useRef();
@@ -139,10 +145,6 @@ function ImportIssue(props) {
   const { visibleImportBtn, visibleCancelBtn } = importBtn;
 
   const upload = (file) => {
-    if (!folder) {
-      Choerodon.prompt('请选择目录');
-      return;
-    }
     const formData = new FormData();
     formData.append('file', file);
     dispatch({ type: 'import' });
@@ -285,11 +287,7 @@ function ImportIssue(props) {
   };
 
   const importExcel = () => {
-    dataSet.validate().then((res) => {
-      if (res) {
-        uploadInput.current.click();
-      }
-    });
+    uploadInput.current.click();
   };
   const renderProgress = () => {
     const {
@@ -343,6 +341,10 @@ function ImportIssue(props) {
     <div className="c7ntest-ImportIssue-form">
       {/* {renderOneForm('下载模板', ,
       )} */}
+      <span className="c7ntest-ImportIssue-form-tip">
+        <Icon type="info" className="c7ntest-ImportIssue-form-tip-icon" />
+        <span>导入测试用例支持导入新增用例和导入更新用例</span>
+      </span>
       <ImportIssueForm
         title="下载模板"
         bottom={(
@@ -351,22 +353,43 @@ function ImportIssue(props) {
           </Button>
         )}
       >
-        您必须使用模板文件，录入用例信息
+        您可以下载模板文件并按照模板录入用例后再导入
       </ImportIssueForm>
-      <div className="c7ntest-ImportIssue-form-divider" />
       <ImportIssueForm
         title="导入测试用例"
       >
-        <div className="c7ntest-ImportIssue-tips">导入文件最大为1M</div>
-        <Form dataSet={dataSet}>
-          <SelectTree
-            name="folder"
-            parentDataSet={dataSet}
-            onChange={setFolder}
-            defaultValue={defaultFolderValue.id}
-            disabled={visibleCancelBtn} // 导入过程中禁止操作文件树
-          />
-        </Form>
+        <div className="c7ntest-ImportIssue-tips">
+          <span>导入文件最大为1M</span>
+          <br />
+          <span>用例字段不符合规则，整条用例不予以导入</span>
+        </div>
+        <div className="c7ntest-ImportIssue-import-btn">
+          {visibleCancelBtn
+            ? (
+              null
+              // <Button
+              //   disabled={!visibleCancelBtn}
+              //   hidden={!visibleCancelBtn}
+              //   funcType="raised"
+              //   color="primary"
+              //   onClick={handleCancelImport}
+              // >
+              //   取消导入
+              // </Button>
+            )
+            : (
+              <Button
+                funcType="raised"
+                color="primary"
+                icon="archive-o"
+                onClick={() => importExcel()}
+              >
+                <span>
+                  <FormattedMessage id="issue_import" />
+                </span>
+              </Button>
+            )}
+        </div>
         <input
           ref={uploadInput}
           type="file"
@@ -378,34 +401,10 @@ function ImportIssue(props) {
         {renderProgress()}
       </ImportIssueForm>
       <div className="c7ntest-ImportIssue-form-modal-footer">
-        {visibleCancelBtn
-          ? (
-            <Button
-              disabled={!visibleCancelBtn}
-              hidden={!visibleCancelBtn}
-              funcType="raised"
-              color="primary"
-              onClick={handleCancelImport}
-              style={{ marginLeft: 10 }}
-            >
-              取消导入
-            </Button>
-          )
-          : (
-            <Button
-              funcType="raised"
-              color="primary"
-              onClick={() => importExcel()}
-              style={{ marginLeft: 10 }}
-            >
-              <FormattedMessage id="issue_import" />
-            </Button>
-          )}
+
         <Button
           funcType="raised"
-          style={{
-            color: 'var(--primary-color)',
-          }}
+          color="primary"
           onClick={handleCloseModal}
         >
           关闭

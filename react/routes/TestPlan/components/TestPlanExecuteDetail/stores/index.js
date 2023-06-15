@@ -3,6 +3,7 @@ import { withRouter } from 'react-router-dom';
 import { DataSet } from 'choerodon-ui/pro';
 import { inject } from 'mobx-react';
 import { injectIntl } from 'react-intl';
+import { LoadingProvider } from '@choerodon/agile/lib/components/Loading';
 import ExecuteDetailStoreObject from './ExecuteDetailStore';
 import StepTableDataSet from './StepTableDataSet';
 import ExecuteHistoryDataSet from './ExecuteHistoryDataSet';
@@ -22,10 +23,11 @@ export const StoreProvider = withRouter(injectIntl(inject('AppState')(
     const testStatusDataSet = useMemo(() => new DataSet(TestStatusDataSet(id)), [id]);
     const ExecuteDetailStore = useMemo(() => new ExecuteDetailStoreObject(), []);
     const executeHistoryDataSet = useMemo(() => new DataSet(ExecuteHistoryDataSet(id, intl, caseId)), [caseId, id, intl]);
-    const stepTableDataSet = useMemo(() => new DataSet(StepTableDataSet(id, orgId, intl, caseId, testStatusDataSet, executeHistoryDataSet)), [caseId, executeHistoryDataSet, id, intl, orgId, testStatusDataSet]);
+    const stepTableDataSet = useMemo(() => new DataSet(StepTableDataSet(id, orgId, intl, caseId, testStatusDataSet, executeHistoryDataSet, ExecuteDetailStore)), [caseId, executeHistoryDataSet, id, intl, orgId, testStatusDataSet, ExecuteDetailStore]);
     const priorityOptionDataSet = useMemo(() => new DataSet(PriorityOptionDataSet(orgId)), [orgId]);
     const editExecuteCaseDataSet = useMemo(() => new DataSet(EditExecuteCaseDataSet(caseId, 'issue', intl, priorityOptionDataSet)), [caseId, intl]);
-    const value = {
+
+    const value = useMemo(() => ({
       ...props,
       testStatusDataSet,
       executeId: caseId,
@@ -34,10 +36,12 @@ export const StoreProvider = withRouter(injectIntl(inject('AppState')(
       executeHistoryDataSet,
       editExecuteCaseDataSet,
       priorityOptionDataSet,
-    };
+    }), [ExecuteDetailStore, caseId, editExecuteCaseDataSet, executeHistoryDataSet, priorityOptionDataSet, props, stepTableDataSet, testStatusDataSet]);
     return (
       <Store.Provider value={value}>
-        {children}
+        <LoadingProvider style={{ zIndex: 'auto', height: '100%' }}>
+          {children}
+        </LoadingProvider>
       </Store.Provider>
     );
   },

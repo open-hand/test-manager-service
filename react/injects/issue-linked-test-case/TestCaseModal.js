@@ -76,7 +76,7 @@ const openTestCaseModal = (testLinkStore, intl) => {
         <span>关联测试用例</span>
 
         <Tooltip title="创建测试用例并关联到工作项" arrowPointAtCenter>
-          <Button funcType="flat" icon="playlist_add" onClick={handleOpenCreateIssue} />
+          <Button icon="playlist_add" onClick={handleOpenCreateIssue} />
         </Tooltip>
 
       </div>),

@@ -2,7 +2,7 @@
 import {
   observable, action, computed, toJS, set,
 } from 'mobx';
-import { find, pull } from 'lodash';
+import { find, pull, some } from 'lodash';
 import { getIssueTree } from '@/api/IssueManageApi';
 
 class IssueTreeStore {
@@ -64,11 +64,11 @@ class IssueTreeStore {
   @action setTreeData(treeData, initCaseSelected) {
     const { rootIds, treeFolder } = treeData;
     // 选中之前选中的
-    const selectedId = this.currentCycle.id || rootIds[0]; 
-    // 保存根目录 用于后续递归选择时判断根节点  
+    const selectedId = this.currentCycle.id || rootIds[0];
+    // 保存根目录 用于后续递归选择时判断根节点
     rootIds.forEach((r) => {
       this.treeRootMap.set(r, true);
-    }); 
+    });
     const newTreeFolder = [];
     for (let index = 0; index < treeFolder.length; index += 1) {
       const folder = treeFolder[index];
@@ -146,7 +146,7 @@ class IssueTreeStore {
     this.setItemCheck(item, checked);
     // 处理子集
     this.autoHandleChildren(item, checked);
-    // 处理父级      
+    // 处理父级
     if (!this.treeRootMap.get(folderId)) {
       this.autoHandleParent(parentId, checked);
     }
@@ -173,10 +173,10 @@ class IssueTreeStore {
       this.setItemCheck(item, true);
     } else {
       // 如果有一个子选中，就选中
-      this.setItemCheck(item, children.some(childId => this.treeMap.get(childId).checked));
+      this.setItemCheck(item, children.some((childId) => this.treeMap.get(childId).checked));
     }
     // 如果有一个子没选中，就是中间态
-    const isIndeterminate = item.checked ? children.some(childId => !this.treeMap.get(childId).checked) : false;
+    const isIndeterminate = item.checked ? children.some((childId) => !this.treeMap.get(childId).checked) : false;
     item.isIndeterminate = isIndeterminate;
     if (!this.treeRootMap.get(id)) {
       this.autoHandleParent(parentId, checked);
@@ -200,15 +200,17 @@ class IssueTreeStore {
     // 已未选中为主
     if (item.unSelected) {
       // 从取消选中去掉，代表选中
-      pull(item.unSelected, caseId);    
+      pull(item.unSelected, caseId);
     } else {
       // 以选中为主
       if (!item.selected) {
         set(item, {
           selected: [],
-        });      
+        });
       }
-      item.selected.push(caseId);
+      if (item.selected.indexOf(caseId) === -1) {
+        item.selected.push(caseId);
+      }
     }
   }
 
@@ -248,7 +250,7 @@ class IssueTreeStore {
         } else if (unSelected) {
           result[id] = {
             custom: true,
-            unSelected, 
+            unSelected,
           };
         } else {
           result[id] = {
@@ -263,7 +265,7 @@ class IssueTreeStore {
 
   // 获取当前选中的issue数量
   @computed get getSelectedIssueNum() {
-    const selectedFolders = this.getSelectedFolders();   
+    const selectedFolders = this.getSelectedFolders();
     return Object.keys(selectedFolders).reduce((total, key) => {
       const folderId = key;
       const item = this.treeMap.get(folderId);

@@ -55,10 +55,10 @@ const StatusTable = ({
     const menu = (
       <Menu onClick={handleMenuClick}>
         <Menu.Item key="edit">
-          编辑
+          <FormattedMessage id="boot.modify" />
         </Menu.Item>
         <Menu.Item key="delete">
-          删除
+          <FormattedMessage id="boot.delete" />
         </Menu.Item>
       </Menu>
     );
@@ -81,7 +81,7 @@ const StatusTable = ({
 
   const columns = [
     {
-      title: <FormattedMessage id="status_name" />,
+      title: <FormattedMessage id="test.status.name" />,
       dataIndex: 'statusName',
       key: 'statusName',
       filters: [],
@@ -98,7 +98,7 @@ const StatusTable = ({
       render: (text, record) => renderAction(text, record),
     },
     {
-      title: <FormattedMessage id="status_comment" />,
+      title: <FormattedMessage id="test.common.description" />,
       dataIndex: 'description',
       key: 'description',
       filters: [],
@@ -108,7 +108,7 @@ const StatusTable = ({
         return record.description && reg.test(record.description);
       },
     }, {
-      title: <FormattedMessage id="status_color" />,
+      title: <FormattedMessage id="test.common.color" />,
       dataIndex: 'statusColor',
       key: 'statusColor',
       render(statusColor) {
@@ -120,7 +120,6 @@ const StatusTable = ({
   ];
   return (
     <Table
-      filterBarPlaceholder="过滤表"
       filterBar={false}
       rowKey="statusId"
       columns={columns}

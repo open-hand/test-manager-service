@@ -1,3 +1,5 @@
+/* eslint-disable react/forbid-prop-types */
+/* eslint-disable react/require-default-props */
 import React from 'react';
 import { Choerodon } from '@choerodon/boot';
 import { Upload } from 'choerodon-ui';
@@ -37,7 +39,7 @@ function UploadInTable(props) {
           <SingleFileUpload
             key={item.id}
             url={item.url}
-            fileName={item.attachmentName}
+            fileName={item.name}
             onDeleteFile={() => handleDeleteFile(item)}
             hasDeletePermission
           // hasDeletePermission={hasPermission || AppState.userInfo.id === item.userId}
@@ -101,7 +103,7 @@ function UploadInTable(props) {
               return false;
             }}
           >
-            <Button icon="backup-o">
+            <Button icon="file_upload_black-o">
               <span><FormattedMessage id="upload_attachment" /></span>
             </Button>
           </Upload>

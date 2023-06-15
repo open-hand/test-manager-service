@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import {
   Modal, Form, DataSet, TextArea, DatePicker, Select, Radio, CheckBox, TextField,
 } from 'choerodon-ui/pro';
+import { C7NFormat } from '@choerodon/master';
 import { mount } from '@choerodon/inject';
 import { Choerodon } from '@choerodon/boot';
 import { observer } from 'mobx-react-lite';
@@ -23,6 +24,8 @@ import SelectIssue from './SelectIssue';
 import SelectIssueStore from './SelectIssueStore';
 import Context from './context';
 import styles from './index.less';
+import useFormatMessage from '@/hooks/useFormatMessage';
+import useIsWaterfall from '@/hooks/useIsWaterfall';
 
 const key = Modal.key();
 
@@ -38,6 +41,8 @@ function TestPlanModal({
 }) {
   const [, setUpdateCount] = useState(0);
   const hasAgile = useHasAgile();
+  const { isWaterfallAgile } = useIsWaterfall();
+  const showAgile = hasAgile || isWaterfallAgile;
   const { caseSelected: initCaseSelected } = initValue;
   const init = useMemo(() => {
     const {
@@ -112,13 +117,13 @@ function TestPlanModal({
           name="managerId"
           selected={initValue.managerId}
         />
-        {hasAgile && mount('agile:SelectSprint', {
+        {showAgile && mount('agile:SelectSprint', {
           name: 'sprintId',
           style: {
             display: 'block',
           },
         })}
-        {hasAgile && mount('agile:SelectVersion', {
+        {showAgile && mount('agile:SelectVersion', {
           name: 'productVersionId',
           valueField: 'versionId',
           multiple: false,
@@ -142,7 +147,7 @@ function TestPlanModal({
               </div>
               <div style={{ display: 'flex', alignItems: 'center', marginTop: 15 }}>
                 <Radio name="custom" value className={styles.radio}>自选用例</Radio>
-                {hasAgile && dataSet.toData() && dataSet.toData()[0]?.custom && <CheckBox style={{ marginTop: -8, marginLeft: -10 }} name="sprintLink">选择当前测试计划所属迭代中工作项关联的所有用例</CheckBox>}
+                {showAgile && dataSet.toData() && dataSet.toData()[0]?.custom && <CheckBox style={{ marginTop: -8, marginLeft: -10 }} name="sprintLink">选择当前测试计划所属迭代中工作项关联的所有用例</CheckBox>}
               </div>
             </div>
           </div>
@@ -177,7 +182,10 @@ export function openCreatePlan({
   onCreate,
 }) {
   Modal.open({
-    title: '创建计划',
+    title: <C7NFormat
+      intlPrefix="test.plan"
+      id="create"
+    />,
     key,
     drawer: true,
     style: {
@@ -196,7 +204,10 @@ export function openCreatePlan({
 export async function openEditPlan({ planId, onEdit }) {
   const planDetail = await getPlan(planId);
   Modal.open({
-    title: '修改计划',
+    title: <C7NFormat
+      intlPrefix="test.plan"
+      id="edit"
+    />,
     key,
     drawer: true,
     style: {
@@ -212,12 +223,14 @@ export async function openEditPlan({ planId, onEdit }) {
 }
 const ClonePlan = ({ modal, data: defaultValue, onCLone }) => {
   const { id: planId, data: { name } } = defaultValue;
+  const formatMessage = useFormatMessage('test.plan');
+
   const dataSet = useMemo(() => new DataSet({
     autoCreate: true,
     fields: [{
       name: 'name',
       type: 'string',
-      label: '计划名称',
+      label: formatMessage({ id: 'name' }),
       defaultValue: `${name}-副本`,
       required: true,
       validator: async (value) => {
@@ -235,7 +248,7 @@ const ClonePlan = ({ modal, data: defaultValue, onCLone }) => {
         data: {},
       }),
     },
-  }), [name, planId]);
+  }), [formatMessage, name, planId]);
 
   const handleSubmit = useCallback(async () => {
     const success = await dataSet.submit();

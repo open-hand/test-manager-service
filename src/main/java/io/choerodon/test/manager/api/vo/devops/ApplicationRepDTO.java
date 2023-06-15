@@ -1,24 +1,40 @@
 package io.choerodon.test.manager.api.vo.devops;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * @author younger
  * @date 2018/3/30
  */
 public class ApplicationRepDTO {
 
+    @ApiModelProperty(value = "应用仓库id")
     private Long id;
+    @ApiModelProperty(value = "仓库名称")
     private String name;
+    @ApiModelProperty(value = "仓库编码")
     private String code;
+    @ApiModelProperty(value = "项目id")
     private Long projectId;
+    @ApiModelProperty(value = "应用模板id")
     private Long applictionTemplateId;
+    @ApiModelProperty(value = "仓库链接")
     private String repoUrl;
+    @ApiModelProperty(value = "是否同步")
     private Boolean isSynchro;
+    @ApiModelProperty(value = "是否活跃")
     private Boolean isActive;
+    @ApiModelProperty(value = "发布level")
     private String publishLevel;
+    @ApiModelProperty(value = "贡献者")
     private String contributor;
+    @ApiModelProperty(value = "描述")
     private String description;
+    @ApiModelProperty(value = "sonarUrl")
     private String sonarUrl;
+    @ApiModelProperty(value = "是否公平")
     private Boolean isFail;
+    @ApiModelProperty(value = "类型")
     private String type;
 
     public Long getId() {

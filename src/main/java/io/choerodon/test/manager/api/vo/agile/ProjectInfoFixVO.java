@@ -10,29 +10,31 @@ import io.swagger.annotations.ApiModelProperty;
  * @description:
  */
 public class ProjectInfoFixVO {
+    @ApiModelProperty(value = "项目信息id")
     private Long infoId;
 
+    @ApiModelProperty(value = "项目id")
     private Long projectId;
 
+    @ApiModelProperty(value = "项目编码")
     private String projectCode;
 
+    @ApiModelProperty(value = "最大工作项编码")
     private Long issueMaxNum;
 
+    @ApiModelProperty(value = "反馈最大编码")
     private Long feedbackMaxNum;
 
     /**
      * 默认经办人
      */
+    @ApiModelProperty(value = "默认经办人id")
     private Long defaultAssigneeId;
 
-    /**
-     * 经办人策略
-     */
+    @ApiModelProperty(value = "经办人策略")
     private String defaultAssigneeType;
 
-    /**
-     * 经办人策略
-     */
+    @ApiModelProperty(value = "默认优先级编码")
     private String defaultPriorityCode;
 
     @ApiModelProperty(value = "版本号")

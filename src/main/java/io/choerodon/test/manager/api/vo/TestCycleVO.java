@@ -81,6 +81,7 @@ public class TestCycleVO {
     @Encrypt
     private Long planId;
 
+    @ApiModelProperty(value = "计划文件夹id集合")
     @Encrypt
     private List<Long> cycleIds;
 

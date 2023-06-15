@@ -1,4 +1,5 @@
 import React from 'react';
+import { C7NFormat } from '@choerodon/master';
 import { ILog } from '@choerodon/agile/lib/common/types';
 
 const fieldsMap = new Map([
@@ -43,10 +44,16 @@ const fieldsMap = new Map([
     },
   }],
   ['priority', {
-    name: '优先级',
+    name: <C7NFormat
+      intlPrefix="test.common"
+      id="priority"
+    />,
   }],
   ['createInitType', {
-    name: '创建测试用例',
+    name: <C7NFormat
+      intlPrefix="test.caseLibrary"
+      id="create"
+    />,
     create: {
       render: (log: ILog) => (
         <span>

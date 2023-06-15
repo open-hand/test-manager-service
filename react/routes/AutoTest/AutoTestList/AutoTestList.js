@@ -21,6 +21,7 @@ import { ContainerLog } from './components';
 import { humanizeDuration } from '../../../common/utils';
 import CreateAutoTest from '../CreateAutoTest';
 import './AutoTestList.less';
+import useFormatMessage from '@/hooks/useFormatMessage';
 
 const { Option } = Select;
 const { Item: MenuItem } = Menu;
@@ -42,16 +43,19 @@ const AutoTestList = ({
   onSaveLogRef,
   onAutoRefreshChange,
 }) => {
+  const formatMessage = useFormatMessage('test.autoTest');
+  const commonFormatMessage = useFormatMessage('test.common');
+
   const getMenu = (record) => (
     <Menu onClick={({ item, key, keyPath }) => { onItemClick(record, { item, key, keyPath }); }} style={{ margin: '10px 0 0 28px' }}>
       <MenuItem key="log" disabled={record.testAppInstanceVO.podStatus === 0 || (record.testAppInstanceVO.podStatus !== 1 && !record.testAppInstanceVO.logId)}>
-        查看日志
+        {formatMessage({ id: 'view.log' })}
       </MenuItem>
       <MenuItem key="retry">
-        重新执行
+        {formatMessage({ id: 'retry.execute' })}
       </MenuItem>
       <MenuItem key="report" disabled={!record.resultId}>
-        测试报告
+        {formatMessage({ id: 'test.report' })}
       </MenuItem>
     </Menu>
   );
@@ -59,14 +63,14 @@ const AutoTestList = ({
   const appOptions = appList.map((app) => <Option value={app.id}>{app.name}</Option>);
   const ENVS = envList.map((env) => ({ text: env.name, value: env.id.toString() }));
   const columns = [{
-    title: '运行状态',
+    title: formatMessage({ id: 'run.status' }),
     dataIndex: 'podStatus',
     key: 'podStatus',
-    filters: PODSTATUS,
+    filters: PODSTATUS.map((item) => ({ ...item, text: formatMessage({ id: item.text }) })),
     render: (status, record) => {
       const { testAppInstanceVO } = record;
       const { podStatus } = testAppInstanceVO || {};
-      return PodStatus(podStatus);
+      return <PodStatus status={podStatus} />;
     },
   },
   {
@@ -83,7 +87,7 @@ const AutoTestList = ({
     ),
   },
   {
-    title: '环境',
+    title: formatMessage({ id: 'environment' }),
     dataIndex: 'envId',
     key: 'envId',
     filters: ENVS,
@@ -95,19 +99,19 @@ const AutoTestList = ({
     },
   },
   {
-    title: '执行方',
+    title: formatMessage({ id: 'executive' }),
     dataIndex: 'createUser',
     key: 'createUser',
     render: (createUser) => <User user={createUser} />,
   },
   {
-    title: '测试框架',
+    title: formatMessage({ id: 'test.framework' }),
     dataIndex: 'framework',
     key: 'framework',
     filters: [],
   },
   {
-    title: '应用版本',
+    title: formatMessage({ id: 'app.version' }),
     dataIndex: 'version',
     key: 'version',
     filters: [],
@@ -118,7 +122,7 @@ const AutoTestList = ({
     },
   },
   {
-    title: '时长',
+    title: formatMessage({ id: 'during' }),
     dataIndex: 'during',
     key: 'during',
     render: (during, record) => {
@@ -130,24 +134,24 @@ const AutoTestList = ({
     },
   },
   {
-    title: '执行时间',
+    title: formatMessage({ id: 'execute.time' }),
     dataIndex: 'creationDate',
     key: 'creationDate',
   },
   {
-    title: '测试结果',
+    title: formatMessage({ id: 'result' }),
     dataIndex: 'testStatus',
     key: 'testStatus',
-    filters: TESTRESULT,
-    render: (testStatus) => TestResult(testStatus),
+    filters: TESTRESULT.map((item) => ({ ...item, text: formatMessage({ id: item.text }) })),
+    render: (testStatus) => <TestResult result={testStatus} />,
   }];
   return (
     <Page
       className="c7ntest-AutoTestList"
     >
-      <Header title={<FormattedMessage id="autotestlist_title" />}>
+      <Header title={formatMessage({ id: 'route' })}>
         <HeaderButtons items={[{
-          name: '添加测试',
+          name: formatMessage({ id: 'add' }),
           icon: 'playlist_add',
           handler: toCreateAutoTest,
           display: true,
@@ -157,7 +161,7 @@ const AutoTestList = ({
       <Breadcrumb />
       <Content>
         <Select
-          label="选择应用"
+          label={formatMessage({ id: 'chose.app' })}
           style={{ width: 512, marginBottom: 20 }}
           filter
           value={currentApp}
@@ -167,7 +171,7 @@ const AutoTestList = ({
         >
           {appOptions}
         </Select>
-        <Table filterBarPlaceholder="过滤表" loading={loading} columns={columns} dataSource={historyList} pagination={pagination} onChange={onTableChange} />
+        <Table filterBarPlaceholder={commonFormatMessage({ id: 'filter' })} loading={loading} columns={columns} dataSource={historyList} pagination={pagination} onChange={onTableChange} />
         <ContainerLog
           ref={onSaveLogRef('ContainerLog')}
         />

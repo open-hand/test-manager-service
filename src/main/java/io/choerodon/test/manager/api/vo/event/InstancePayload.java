@@ -1,11 +1,18 @@
 package io.choerodon.test.manager.api.vo.event;
 
+import io.swagger.annotations.ApiModelProperty;
+
 public class InstancePayload {
 
+    @ApiModelProperty(value = "发布名称")
     String releaseNames;
+    @ApiModelProperty(value = "状态")
     Long status;
+    @ApiModelProperty(value = "日志文件")
     String logFile;
+    @ApiModelProperty(value = "节点名称")
     String podName;
+    @ApiModelProperty(value = "conName")
     String conName;
 
     public String getReleaseNames() {

@@ -1,21 +1,36 @@
 package io.choerodon.test.manager.api.vo;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import java.util.Date;
 
 public class TestCaseMigrateDTO {
 
+    @ApiModelProperty(value = "用例id")
     private Long caseId;
+    @ApiModelProperty(value = "用例编码")
     private String caseNum;
+    @ApiModelProperty(value = "概要")
     private String summary;
+    @ApiModelProperty(value = "描述")
     private String description;
+    @ApiModelProperty(value = "rank")
     private String rank;
+    @ApiModelProperty(value = "乐观锁")
     private Long objectVersionNumber;
+    @ApiModelProperty(value = "文件夹id")
     private Long folderId;
+    @ApiModelProperty(value = "版本编号")
     private Long versionNum;
+    @ApiModelProperty(value = "项目id")
     private Long projectId;
+    @ApiModelProperty(value = "创建人")
     private Long createdBy;
+    @ApiModelProperty(value = "创建时间")
     private Date creationDate;
+    @ApiModelProperty(value = "更新时间")
     private Date lastUpdateDate;
+    @ApiModelProperty(value = "更新人")
     private Long lastUpdatedBy;
 
     public Long getCaseId() {

@@ -226,4 +226,12 @@ public class TestCaseLinkServiceImpl implements TestCaseLinkService {
         });
         return result;
     }
+
+    @Override
+    public void batchDeleteByCaseId(Long project, Long caseId) {
+        TestCaseLinkDTO delete = new TestCaseLinkDTO();
+        delete.setProjectId(project);
+        delete.setLinkCaseId(caseId);
+        testCaseLinkMapper.delete(delete);
+    }
 }

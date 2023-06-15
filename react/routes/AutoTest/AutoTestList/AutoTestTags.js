@@ -1,24 +1,25 @@
 import React from 'react';
 import { Icon } from 'choerodon-ui';
+import useFormatMessage from '@/hooks/useFormatMessage';
 
 export const PODSTATUS = [{
   icon: 'pause_circle_outline',
-  text: '等待中',
+  text: 'run.status.wait',
   color: '#ffb100',
   value: '0',
 }, {
   icon: 'timelapse',
-  text: '进行中',
+  text: 'run.status.doing',
   color: '#4D90FE',
   value: '1',
 }, {
   icon: 'check_circle',
-  text: '完成',
+  text: 'run.status.done',
   color: '#00BF96',
   value: '2',
 }, {
   icon: 'cancel',
-  text: '失败',
+  text: 'run.status.failed',
   color: '#F44336',
   value: '3',
 }];
@@ -26,25 +27,25 @@ export const PODSTATUS = [{
 export const TESTRESULT = [
   {
     icon: 'check_circle',
-    text: '未执行',
+    text: 'result.todo',
     color: 'rgba(0, 0, 0, 0.18)',
     value: '0',
   },
   {
     icon: 'check_circle',
-    text: '全部通过',
+    text: 'result.all.pass',
     color: '#00BF96',
     value: '1',
   },
   {
     icon: 'timelapse',
-    text: '部分通过',
+    text: 'result.part.pass',
     color: '#4D90FE',
     value: '2',
   },
   {
     icon: 'cancel',
-    text: '全未通过',
+    text: 'result.no.pass',
     color: '#F44336',
     value: '3',
   },
@@ -66,32 +67,34 @@ export const TESTRESULT = [
 //     color: '#F44336',
 //   },
 // };
-export function PodStatus(status) {
+export function PodStatus({ status }) {
   const tag = PODSTATUS[status] || {};
+  const formatMessage = useFormatMessage('test.autoTest');
+
   return (
     <div className="c7ntest-center">
       <Icon type={tag.icon} style={{ color: tag.color, marginRight: 5 }} />
-      {tag.text}
+      {formatMessage({ id: tag.text })}
     </div>
   );
 }
 
-
-export function TestResult(result) {
+export function TestResult({ result }) {
   const tag = TESTRESULT[result] || {};
+  const formatMessage = useFormatMessage('test.autoTest');
   return (
     <div style={{
       width: 50,
       height: 16,
       color: 'white',
       background: tag.color,
-      borderRadius: 2, 
+      borderRadius: 2,
       fontSize: '10px',
       lineHeight: '16px',
       textAlign: 'center',
     }}
-    >     
-      {tag.text}
+    >
+      {formatMessage({ id: tag.text })}
     </div>
   );
 }

@@ -69,7 +69,7 @@ class SelectVariable extends Component {
         <SelectFocusLoad
           disabled={!app.id}
           type="appVersion"
-          label="应用版本"
+          label={formatMessage({ id: 'test.autoTest.app.version' })}
           style={{ width: 512, display: 'block', marginTop: 20 }}
           appId={app.id}
           onChange={this.handleSelectAppVersion}
@@ -97,7 +97,7 @@ class SelectVariable extends Component {
             filter
             onFocus={this.loadEnvs}
           >
-            {envList.map(v => (
+            {envList.map((v) => (
               <Option value={v.id} key={v.id} disabled={!v.connect}>
                 {v.connect ? <span className="c7ntest-ist-status_on" /> : <span className="c7ntest-ist-status_off" />}
                 {v.name}
@@ -109,6 +109,5 @@ class SelectVariable extends Component {
     );
   }
 }
-
 
 export default SelectVariable;

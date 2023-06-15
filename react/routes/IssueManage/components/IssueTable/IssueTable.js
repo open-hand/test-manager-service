@@ -19,21 +19,26 @@ import TableDraggleItem from './TableDraggleItem';
 import IssueTreeStore from '../../stores/IssueTreeStore';
 import { getTask } from '../IssueTree/TreeNode';
 import {
-  renderIssueNum, renderSummary, renderAction,
+  renderIssueNum, renderSummary,
 } from './tags';
 import './IssueTable.less';
 import PriorityTag from '../../../../components/PriorityTag';
 import CustomCheckBox from '@/components/CustomCheckBox';
+import useFormatMessage from '@/hooks/useFormatMessage';
+import { useSimpleUpdateColumnCache } from '@/hooks/data/useTableColumns';
 
 const CHECKBOX_KEY = 'checkbox';
-
+const defaultShowColumns = ['summary', 'caseId', 'sequence', 'createUser', 'creationDate', 'lastUpdateUser', 'lastUpdateDate'];
 export default observer((props) => {
+  const formatMessage = useFormatMessage();
+
   const [firstIndex, setFirstIndex] = useState(null);
-  const [filteredColumns, setFilteredColumns] = useState([]);
+  const [filteredColumns, setFilteredColumns] = useState(props.defaultFilteredColumns || defaultShowColumns);
   const instance = useRef();
-  const tableRef = useRef();
+  const { updateColumnCache } = useSimpleUpdateColumnCache('testManger', ['summary', 'caseId', 'customNum', 'sequence', 'createUser', 'creationDate', 'lastUpdateUser', 'lastUpdateDate']);
   const handleColumnFilterChange = ({ selectedKeys }) => {
     setFilteredColumns(selectedKeys);
+    updateColumnCache(selectedKeys);
   };
   const transformFilters = (filters, reverse = false) => {
     const transformedFilters = Object.entries(filters).filter((item) => item[1].length > 0);
@@ -95,7 +100,7 @@ export default observer((props) => {
       <th
         className={IssueStore.order.orderField === column.key && `c7ntest-issuetable-sorter-${IssueStore.order.orderType}`}
         key={column.key}
-        style={{ width: column.width, flex: column.width ? 'unset' : (column.flex || 1) }}
+        style={{ ...column.style, width: column.width, flex: column.width ? 'unset' : (column.flex || 1) }}
         onClick={column.sorter && handleSortByField.bind(this, column.key)}
       >
         {column.key === CHECKBOX_KEY && !column.title ? (
@@ -164,7 +169,7 @@ export default observer((props) => {
       }
       return (
         // <td style={{ flex: flex || 1 }} >
-        <td key={column.key} style={{ width: column.width, flex: column.width ? 'unset' : (column.flex || 1) }}>
+        <td key={column.key} style={{ ...column.style, width: column.width, flex: column.width ? 'unset' : (column.flex || 1) }}>
           {renderedItem}
         </td>
       );
@@ -292,7 +297,7 @@ export default observer((props) => {
         onColumnFilterChange={handleColumnFilterChange}
         pagination={false}
         filters={IssueStore.getBarFilters || []}
-        filterBarPlaceholder="过滤表"
+        filterBarPlaceholder={formatMessage({ id: 'test.common.filter' })}
         noFilter
       />
     </div>
@@ -303,7 +308,8 @@ export default observer((props) => {
   };
 
   const handlePaginationShowSizeChange = (current, size) => {
-    IssueStore.loadIssues(current, size);
+    const newCurrent = IssueStore.pagination.pageSize !== current ? 1 : current;
+    IssueStore.loadIssues(newCurrent, size);
   };
 
   const manageVisible = (columns) => columns.map((column) => (shouldColumnShow(column) ? { ...column, hidden: false } : { ...column, hidden: true }));
@@ -328,20 +334,18 @@ export default observer((props) => {
       ),
     },
     {
-      title: '用例名称',
+      title: formatMessage({ id: 'test.caseLibrary.name' }),
       dataIndex: 'summary',
       key: 'summary',
+      flex: 2,
+      disableClick: true,
+      style: { minWidth: 80 },
       filters: [],
-      render: (summary, record) => renderSummary(summary, record, onClick, history),
-    },
-    {
-      key: 'action',
-      render: (text, record) => renderAction(record, history, reLoadTable),
-      width: '0.6rem',
+      render: (summary, record) => renderSummary(summary, record, onClick, reLoadTable),
     },
 
     {
-      title: '用例编号',
+      title: formatMessage({ id: 'test.caseLibrary.num' }),
       dataIndex: 'caseNum',
       key: 'caseId',
       sorter: true,
@@ -349,7 +353,7 @@ export default observer((props) => {
       render: (caseNum) => renderIssueNum(caseNum),
     },
     {
-      title: '自定义编号',
+      title: formatMessage({ id: 'test.common.custom.num' }),
       dataIndex: 'customNum',
       key: 'customNum',
       sorter: true,
@@ -357,7 +361,7 @@ export default observer((props) => {
       render: (customNum) => renderIssueNum(customNum),
     },
     {
-      title: '优先级',
+      title: formatMessage({ id: 'test.common.priority' }),
       dataIndex: 'priorityId',
       key: 'sequence',
       sorter: true,
@@ -367,28 +371,28 @@ export default observer((props) => {
       render: (priorityId, record) => priorityId && <PriorityTag priority={record.priorityVO} />,
     },
     {
-      title: '创建人',
+      title: formatMessage({ id: 'test.common.creator' }),
       dataIndex: 'createUser',
       key: 'createUser',
       render: (createUser) => createUser && <UserHead user={createUser} style={{ display: 'flex' }} />,
       width: '1rem',
     },
     {
-      title: '创建时间',
+      title: formatMessage({ id: 'test.common.create.date' }),
       dataIndex: 'creationDate',
       key: 'creationDate',
       sorter: true,
       render: (creationDate) => <Tooltip title={creationDate}><span>{creationDate}</span></Tooltip>,
     },
     {
-      title: '更新人',
+      title: formatMessage({ id: 'test.common.update.user' }),
       dataIndex: 'lastUpdateUser',
       key: 'lastUpdateUser',
       render: (lastUpdateUser) => lastUpdateUser && <UserHead user={lastUpdateUser} style={{ display: 'flex' }} />,
       width: '1rem',
     },
     {
-      title: '更新时间',
+      title: formatMessage({ id: 'test.common.update.date' }),
       dataIndex: 'lastUpdateDate',
       key: 'lastUpdateDate',
       sorter: true,
@@ -402,11 +406,11 @@ export default observer((props) => {
     <div className="c7ntest-issueArea">
       <div id="template_copy" style={{ display: 'none' }}>
         当前状态：
-        <span style={{ fontWeight: 500 }}>复制</span>
+        <span style={{ fontWeight: 500 }}>{formatMessage({ id: 'test.common.copy' })}</span>
       </div>
       <div id="template_move" style={{ display: 'none' }}>
         当前状态：
-        <span style={{ fontWeight: 500 }}>移动</span>
+        <span style={{ fontWeight: 500 }}>{formatMessage({ id: 'test.common.move' })}</span>
       </div>
       <section
         style={{
@@ -447,7 +451,7 @@ export default observer((props) => {
             pageSize={IssueStore.pagination.pageSize}
             showSizeChanger
             total={IssueStore.pagination.total}
-            onChange={handlePaginationChange.bind(this)}
+            onChange={handlePaginationChange}
             onShowSizeChange={handlePaginationShowSizeChange.bind(this)}
           />
         </div>

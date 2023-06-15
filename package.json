@@ -1,7 +1,7 @@
 {
   "name": "@choerodon/testmanager",
   "routeName": "testManager",
-  "version": "1.1.1",
+  "version": "2.1.0",
   "description": " ",
   "main": "./lib/index.js",
   "install": "./lib/install.js",
@@ -30,16 +30,15 @@
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
-    "@choerodon/agile": "1.1.0",
-    "@choerodon/boot": "0.23.3",
+    "@choerodon/agile": "2.1.0",
+    "@choerodon/boot": "1.2.0",
     "@choerodon/compiler": "^0.0.1",
-    "@choerodon/master": "1.1.0",
+    "@choerodon/master": "2.0.0",
     "@types/echarts": "^4.6.5",
     "@types/file-saver": "^2.0.2",
     "@types/lodash": "^4.14.165",
     "@types/react": "^16.9.35",
     "@types/react-dom": "^16.9.8",
-    "@types/react-intl": "^2.3.18",
     "@types/react-router": "^5.1.8",
     "@types/react-router-dom": "^5.1.5",
     "@typescript-eslint/eslint-plugin": "^3.7.1",
@@ -73,7 +72,9 @@
   },
   "resolutions": {
     "react": "16.14.0",
-    "react-dom": "16.14.0"
+    "react-dom": "16.14.0",
+    "@types/react": "16.14.21",
+    "@types/react-dom": "16.9.14"
   },
   "husky": {
     "hooks": {

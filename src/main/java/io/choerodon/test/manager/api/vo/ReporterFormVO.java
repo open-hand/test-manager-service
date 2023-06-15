@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import io.swagger.annotations.ApiModelProperty;
 import org.springframework.util.ObjectUtils;
 
 import io.choerodon.test.manager.api.vo.agile.IssueLinkDTO;
@@ -13,10 +14,13 @@ import io.choerodon.test.manager.api.vo.agile.IssueLinkDTO;
  */
 public class ReporterFormVO {
 
+    @ApiModelProperty(value = "缺陷")
     private IssueInfosVO defectInfo;
 
+    @ApiModelProperty(value = "缺陷总数")
     private Long defectCount = 0L;
 
+    @ApiModelProperty(value = "关联测试问题列表")
     private List<LinkedTestIssue> linkedTestIssues = new ArrayList<>();
 
 

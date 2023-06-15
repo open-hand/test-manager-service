@@ -3,18 +3,23 @@ package io.choerodon.test.manager.api.vo;
 import java.util.List;
 import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
 import io.choerodon.test.manager.infra.dto.TestCaseStepDTO;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * @author zhaotianxin
  * @since 2019/12/4
  */
 public class CaseCompareVO {
+    @ApiModelProperty(value = "用例id")
     private Long caseId;
 
+    @ApiModelProperty(value = "测试用例")
     private TestCaseVO testCase;
 
+    @ApiModelProperty(value = "用例步骤")
     private List<TestCaseStepDTO> caseStep;
 
+    @ApiModelProperty(value = "用例关联附件")
     private List<TestCaseAttachmentDTO> caseAttach;
 
     public TestCaseVO getTestCase() {
