@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.api.vo.agile;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotEmpty;
 
@@ -19,41 +20,56 @@ public class UserDTO {
 
     public static final String PHONE_REGULAR_EXPRESSION = "^((13[0-9]|14[579]|15[0-3,5-9]|17[0135678]|18[0-9])\\d{8})?$";
 
+    @ApiModelProperty(value = "用户id")
     private Long id;
 
+    @ApiModelProperty(value = "登录名")
     @NotEmpty(message = "error.user.login_name.empty")
     @Size(min = 1, max = 128, message = "error.user.login_name.size")
     private String loginName;
 
+    @ApiModelProperty(value = "邮箱")
     @Pattern(regexp = EMAIL_REGULAR_EXPRESSION, message = "error.user.email.illegal")
     @NotEmpty(message = "error.user.email.empty")
     private String email;
 
+    @ApiModelProperty(value = "电话")
     @Pattern(regexp = PHONE_REGULAR_EXPRESSION, message = "error.phone.illegal")
     private String phone;
 
+    @ApiModelProperty(value = "组织id")
     private Long organizationId;
 
+    @ApiModelProperty(value = "密码")
     private String password;
 
+    @ApiModelProperty(value = "真实名称")
     @NotNull
     private String realName;
 
+    @ApiModelProperty(value = "语言")
     private String language;
 
+    @ApiModelProperty(value = "是否启用")
     private Boolean enabled;
 
+    @ApiModelProperty(value = "是否锁定")
     private Boolean locked;
 
+    @ApiModelProperty(value = "是否为ldap用户")
     private Boolean ldap;
 
+    @ApiModelProperty(value = "乐观锁")
     private Long objectVersionNumber;
 
+    @ApiModelProperty(value = "角色列表")
     private List<RoleDTO> roles;
 
+    @ApiModelProperty(value = "param")
     @JsonIgnore
     private String param;
 
+    @ApiModelProperty(value = "是否是管理员")
     private Boolean admin;
 
     public String getParam() {

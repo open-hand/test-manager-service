@@ -1,5 +1,7 @@
 package io.choerodon.test.manager.api.vo;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import java.util.List;
 
 /**
@@ -8,12 +10,16 @@ import java.util.List;
  */
 public class IssueQueryVO {
 
+    @ApiModelProperty(value = "issue ids")
     private List<Long> issueIds;
 
+    @ApiModelProperty(value = "概要")
     private String summary;
 
+    @ApiModelProperty(value = "状态id")
     private Long statusId;
 
+    @ApiModelProperty(value = "用户id")
     private Long userId;
 
     public IssueQueryVO() {}

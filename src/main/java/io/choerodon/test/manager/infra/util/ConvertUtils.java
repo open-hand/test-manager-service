@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.vo.agile.ProjectDTO;
-import io.choerodon.test.manager.infra.feign.BaseFeignClient;
+import io.choerodon.test.manager.infra.feign.operator.RemoteIamOperator;
 import org.springframework.beans.BeanUtils;
 
 public class ConvertUtils {
@@ -154,7 +154,7 @@ public class ConvertUtils {
         if (projectVO != null) {
             return projectVO;
         } else {
-            projectVO = SpringBeanUtil.getBean(BaseFeignClient.class).queryProject(projectId).getBody();
+            projectVO = SpringBeanUtil.getBean(RemoteIamOperator.class).getProjectById(projectId);
             if (projectVO != null) {
                 ORGANIZATION_MAP.put(projectId, projectVO);
                 return projectVO;

@@ -7,6 +7,7 @@ import io.choerodon.test.manager.app.service.TestAppInstanceService;
 import io.choerodon.test.manager.infra.dto.TestAppInstanceDTO;
 import io.choerodon.test.manager.infra.util.FileUtil;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,9 @@ public class TestAutomationController {
     @Permission(permissionPublic = true)
     @ApiOperation("导入自动化测试报告【mocha】")
     @PostMapping("/import/report/mocha")
-    public ResponseEntity<Long> importMochaReport(@RequestParam String releaseName,
+    public ResponseEntity<Long> importMochaReport(@ApiParam(value = "releaseName", required = true)
+                                                  @RequestParam String releaseName,
+                                                  @ApiParam(value = "file", required = true)
                                                   @RequestParam("file") MultipartFile file) {
         byte[] bytes;
         try {
@@ -59,7 +62,9 @@ public class TestAutomationController {
     @Permission(permissionPublic = true)
     @ApiOperation("导入自动化测试报告【testng】")
     @PostMapping("/import/report/testng")
-    public ResponseEntity<Long> importTestNgReport(@RequestParam String releaseName,
+    public ResponseEntity<Long> importTestNgReport(@ApiParam(value = "releaseName", required = true)
+                                                   @RequestParam String releaseName,
+                                                   @ApiParam(value = "file", required = true)
                                                    @RequestParam("file") MultipartFile file) {
         byte[] bytes;
         try {

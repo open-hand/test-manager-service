@@ -3,7 +3,7 @@ package script.db.groovy.test_manager_service
 
 databaseChangeLog(logicalFilePath: 'test_priority.groovy') {
     changeSet(id: '2020-08-19-test_priority', author: 'jiaxu.cui@hand-china.com') {
-        createTable(tableName: "test_priority", remarks: "优先级") {
+        createTable(tableName: "test_priority", remarks: "测试优先级") {
             column(name: 'id', type: 'BIGINT UNSIGNED', autoIncrement: true, remarks: 'ID,主键') {
                 constraints(primaryKey: true)
             }
@@ -20,7 +20,7 @@ databaseChangeLog(logicalFilePath: 'test_priority.groovy') {
             column(name: 'is_default', type: 'TINYINT UNSIGNED', defaultValue: "0", remarks: '是否默认') {
                 constraints(nullable: 'false')
             }
-            column(name: 'is_enable', type: 'TINYINT UNSIGNED', defaultValue: "1", remarks: 'is enable flag') {
+            column(name: 'is_enable', type: 'TINYINT UNSIGNED', defaultValue: "1", remarks: '是否启用') {
                 constraints(nullable: 'false')
             }
             column(name: 'sequence', type: 'DECIMAL', defaultValue: "0", remarks: '排序') {

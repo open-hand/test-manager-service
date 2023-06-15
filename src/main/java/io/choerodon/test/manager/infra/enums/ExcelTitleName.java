@@ -8,15 +8,29 @@ public class ExcelTitleName {
     private ExcelTitleName() {
     }
 
-    public static final String FOLDER = "文件夹*";
+    public static final String[] EXCEL_HEADERS = new String[]
+            {
+                    ExcelTitleName.FOLDER_PATH,
+                    ExcelTitleName.CASE_NUM,
+                    ExcelTitleName.CUSTOM_NUM,
+                    ExcelTitleName.CASE_SUMMARY,
+                    ExcelTitleName.PRIORITY,
+                    ExcelTitleName.LINK_ISSUE,
+                    ExcelTitleName.CASE_DESCRIPTION,
+                    ExcelTitleName.TEST_STEP,
+                    ExcelTitleName.TEST_DATA,
+                    ExcelTitleName.EXPECT_RESULT
+            };
+
     public static final String CASE_SUMMARY = "用例概要*";
     public static final String CASE_DESCRIPTION = "前置条件";
-    public static final String CASE_CODE = "用例编号";
+    public static final String CASE_NUM = "用例编号";
     public static final String ASSIGNER = "执行人";
-    public static final String LINK_ISSUE = "关联问题";
-    public static final String TEST_STEP = "测试步骤";
+    public static final String LINK_ISSUE = "关联工作项";
+    public static final String TEST_STEP = "测试步骤*";
     public static final String TEST_DATA = "测试数据";
-    public static final String EXPECT_RESULT = "预期结果";
+    public static final String EXPECT_RESULT = "预期结果*";
     public static final String PRIORITY = "优先级*";
     public static final String CUSTOM_NUM = "自定义编号";
+    public static final String FOLDER_PATH = "目录*";
 }

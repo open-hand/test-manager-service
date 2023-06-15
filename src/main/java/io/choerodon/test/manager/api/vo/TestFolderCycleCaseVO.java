@@ -68,38 +68,54 @@ public class TestFolderCycleCaseVO {
     @ApiModelProperty(value = "更新人")
     private UserMessageDTO lastUpdateUser;
 
+    @ApiModelProperty(value = "版本编号")
     private Long versionNum;
 
+    @ApiModelProperty(value = "是否更新用例")
     private Boolean changeCase;
 
+    @ApiModelProperty(value = "是否更新步骤")
     private Boolean changeStep;
 
+    @ApiModelProperty(value = "是否更新附件")
     private Boolean changeAttach;
 
+    @ApiModelProperty(value = "优先级id")
     @Encrypt
     private Long priorityId;
 
+    @ApiModelProperty(value = "优先级名称")
     private String priorityName;
 
+    @ApiModelProperty(value = "优先级颜色")
     private String priorityColour;
 
+    @ApiModelProperty(value = "sequence")
     private BigDecimal sequence;
+    @ApiModelProperty(value = "文件夹id")
     @Encrypt
     private Long folderId;
 
+    @ApiModelProperty(value = "用例编号")
     private String caseNum;
 
+    @ApiModelProperty(value = "计划id")
     @Encrypt
     private Long planId;
 
+    @ApiModelProperty(value = "计划名称")
     private String planName;
 
+    @ApiModelProperty(value = "计划状态")
     private String planStatus;
 
+    @ApiModelProperty(value = "项目信息")
     private ProjectDTO projectDTO;
 
+    @ApiModelProperty(value = "自定义编号")
     private String customNum;
 
+    @ApiModelProperty(value = "计划文件夹名称")
     private String cycleName;
 
     public String getCaseNum() {

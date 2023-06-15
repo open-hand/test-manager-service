@@ -1,42 +1,68 @@
 package io.choerodon.test.manager.api.vo.agile;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import java.util.List;
 
 /**
  * Created by jian_zhang02@163.com on 2018/5/16.
  */
 public class IssueSearchDTO {
+    @ApiModelProperty(value = "issue id")
     private Long issueId;
+    @ApiModelProperty(value = "工作项编号")
     private String issueNum;
+    @ApiModelProperty(value = "类型编码")
     private String typeCode;
+    @ApiModelProperty(value = "概要")
     private String summary;
+    @ApiModelProperty(value = "报告人id")
     private Long reporterId;
+    @ApiModelProperty(value = "描述")
     private String description;
+    @ApiModelProperty(value = "经办人id")
     private Long assigneeId;
+    @ApiModelProperty(value = "经办人名称")
     private String assigneeName;
+    @ApiModelProperty(value = "头像")
     private String imageUrl;
+    @ApiModelProperty(value = "项目id")
     private Long projectId;
+    @ApiModelProperty(value = "状态id")
     private Long statusId;
+    @ApiModelProperty(value = "类型编码")
     private String categoryCode;
+    @ApiModelProperty(value = "状态名称")
     private String statusName;
+    @ApiModelProperty(value = "所属史诗id")
     private Long epicId;
+    @ApiModelProperty(value = "所属史诗名称")
     private String epicName;
+    @ApiModelProperty(value = "优先级编码")
     private String priorityCode;
+    @ApiModelProperty(value = "优先级名称")
     private String priorityName;
+    @ApiModelProperty(value = "版本id集合")
     private List<Long> versionIds;
+    @ApiModelProperty(value = "版本名称集合")
     private List<String> versionNames;
+    @ApiModelProperty(value = "冲刺id")
     private Long sprintId;
+    @ApiModelProperty(value = "故事点")
     private Integer storyPoints;
+    @ApiModelProperty(value = "颜色")
     private String color;
+    @ApiModelProperty(value = "状态颜色")
     private String statusColor;
+    @ApiModelProperty(value = "乐观锁")
     private Long objectVersionNumber;
-
+    @ApiModelProperty(value = "优先级")
     private PriorityVO priorityVO;
-
+    @ApiModelProperty(value = "状态")
     private StatusVO statusVO;
-
+    @ApiModelProperty(value = "工作项类型")
     private IssueTypeVO issueTypeVO;
-
+    @ApiModelProperty(value = "优先级id")
     private Long priorityId;
 
     public Long getIssueId() {

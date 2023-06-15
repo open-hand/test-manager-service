@@ -1,5 +1,7 @@
 package io.choerodon.test.manager.api.vo.event;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import java.util.List;
 
 /**
@@ -8,26 +10,37 @@ import java.util.List;
  */
 public class ProjectEvent {
 
+    @ApiModelProperty(value = "项目id")
     private Long projectId;
 
+    @ApiModelProperty(value = "项目编码")
     private String projectCode;
 
+    @ApiModelProperty(value = "项目名称")
     private String projectName;
 
+    @ApiModelProperty(value = "组织编码")
     private String organizationCode;
 
+    @ApiModelProperty(value = "组织名称")
     private String organizationName;
 
+    @ApiModelProperty(value = "用户名称")
     private String userName;
 
+    @ApiModelProperty(value = "用户id")
     private Long userId;
 
+    @ApiModelProperty(value = "项目类别")
     private String projectCategory;
 
+    @ApiModelProperty(value = "角色标签")
     private List<String> roleLabels;
 
+    @ApiModelProperty(value = "项目群id")
     private Long programId;
 
+    @ApiModelProperty(value = "项目类别列表")
     private List<ProjectEventCategory> projectCategoryVOS;
 
     public List<ProjectEventCategory> getProjectCategoryVOS() {

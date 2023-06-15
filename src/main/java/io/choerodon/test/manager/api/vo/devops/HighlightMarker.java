@@ -1,16 +1,24 @@
 package io.choerodon.test.manager.api.vo.devops;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * 标记高亮
  *
  * @author crockitwood
  */
 public class HighlightMarker {
+    @ApiModelProperty(value = "行号")
     private int line;
+    @ApiModelProperty(value = "结束行号")
     private int endLine;
+    @ApiModelProperty(value = "起始位")
     private int startIndex;
+    @ApiModelProperty(value = "结束位")
     private int endIndex;
+    @ApiModelProperty(value = "开始列")
     private int startColumn;
+    @ApiModelProperty(value = "结束列")
     private int endColumn;
 
     public int getEndLine() {

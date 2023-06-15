@@ -1,14 +1,15 @@
 package io.choerodon.test.manager.api.vo;
 
-import io.swagger.annotations.ApiModelProperty;
-import org.hzero.starter.keyencrypt.core.Encrypt;
-
 import java.util.Date;
 import java.util.Map;
+
+import io.swagger.annotations.ApiModelProperty;
 
 import io.choerodon.test.manager.api.vo.agile.ProductVersionDTO;
 import io.choerodon.test.manager.api.vo.agile.SprintNameDTO;
 import io.choerodon.test.manager.api.vo.agile.UserDO;
+
+import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
  * @author zhaotianxin
@@ -65,13 +66,17 @@ public class TestPlanVO {
     @ApiModelProperty(value = "是否当前迭代所有用例")
     private Boolean sprintLink;
 
+    @ApiModelProperty(value = "用例选择情况")
     @Encrypt
     private Map<Long, CaseSelectVO> caseSelected;
 
+    @ApiModelProperty(value = "乐观锁")
     private Long objectVersionNumber;
 
+    @ApiModelProperty(value = "管理员")
     private UserDO managerUser;
 
+    @ApiModelProperty(value = "初始状态")
     private String initStatus;
 
     public Long getPlanId() {

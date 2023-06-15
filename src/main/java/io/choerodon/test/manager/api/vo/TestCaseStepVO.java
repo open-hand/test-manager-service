@@ -5,6 +5,7 @@ import java.util.List;
 import io.swagger.annotations.ApiModelProperty;
 
 import io.choerodon.test.manager.infra.dto.TestCycleCaseAttachmentRelDTO;
+
 import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
@@ -45,7 +46,6 @@ public class TestCaseStepVO {
     private IssueInfosVO issueInfosVO;
 
     @ApiModelProperty(value = "附件DTOList")
-    @Encrypt
     private List<TestCycleCaseAttachmentRelDTO> attachments;
 
     public IssueInfosVO getIssueInfosVO() {

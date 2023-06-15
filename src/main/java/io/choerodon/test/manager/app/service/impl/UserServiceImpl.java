@@ -17,6 +17,7 @@ import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.api.vo.TestAutomationHistoryVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseHistoryVO;
 import io.choerodon.test.manager.app.service.UserService;
+import io.choerodon.test.manager.infra.feign.IamFeignClient;
 import io.choerodon.test.manager.infra.util.LongUtils;
 import io.choerodon.test.manager.infra.feign.BaseFeignClient;
 
@@ -29,11 +30,14 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private BaseFeignClient baseFeignClient;
 
+    @Autowired
+    private IamFeignClient iamFeignClient;
+
     public Map<Long, UserDO> query(Long[] ids) {
         if (ObjectUtils.isEmpty(ids)) {
             return new HashMap<>();
         }
-        return baseFeignClient.listUsersByIds(ids, false).getBody().stream().collect(Collectors.toMap(UserDO::getId, Function.identity()));
+        return iamFeignClient.listUsersByIds(ids, false).getBody().stream().collect(Collectors.toMap(UserDO::getId, Function.identity()));
     }
 
     @Override
@@ -76,7 +80,7 @@ public class UserServiceImpl implements UserService {
         if (!assigneeIdList.isEmpty()) {
             Long[] assigneeIds = new Long[assigneeIdList.size()];
             assigneeIdList.toArray(assigneeIds);
-            List<UserDO> userDTOS = baseFeignClient.listUsersByIds(assigneeIds, false).getBody();
+            List<UserDO> userDTOS = iamFeignClient.listUsersByIds(assigneeIds, false).getBody();
             userDTOS.forEach(userDO -> {
                 String ldapName = userDO.getRealName() + "（" + userDO.getLoginName() + "）";
                 String noLdapName = userDO.getRealName() + "（" + userDO.getEmail() + "）";

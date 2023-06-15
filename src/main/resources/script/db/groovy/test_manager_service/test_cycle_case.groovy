@@ -3,7 +3,7 @@ package script.db.groovy.test_manager_service
 databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
 
     changeSet(author: 'jialongzuo@hang-china.com', id: '2018-06-8-init_table_test_cycle_case') {
-        createTable(tableName: "test_cycle_case") {
+        createTable(tableName: "test_cycle_case", remarks: '循环测试用例表') {
             column(name: 'execute_id', type: 'BIGINT UNSIGNED', autoIncrement: true, remarks: '表ID，主键，供其他表做外键，unsigned bigint、单表时自增、步长为 1') {
                 constraints(primaryKey: true)
             }
@@ -60,7 +60,7 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
     }
     changeSet(author: 'zhaotianxin', id: '2019-11-27-rename-colume-version-num') {
         addColumn(tableName: 'test_cycle_case') {
-            column(name: 'version_num', type: 'BIGINT UNSIGNED', remarks: 'version num')
+            column(name: 'version_num', type: 'BIGINT UNSIGNED', remarks: '版本编号')
         }
     }
     changeSet(author: 'lizhaozhong', id: '2019-11-27-add-colume-summary') {
@@ -90,7 +90,7 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
 
     changeSet(id: '2020-08-24-test-cycle-case-add-column-priority-id', author: 'jiaxu.cui@gmail.com') {
         addColumn(tableName: 'test_cycle_case') {
-            column(name: 'priority_id', type: 'BIGINT UNSIGNED', remarks: 'priority id'){
+            column(name: 'priority_id', type: 'BIGINT UNSIGNED', remarks: '优先级id'){
                 constraints(nullable: false)
             }
         }

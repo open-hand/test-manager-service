@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.apache.commons.collections4.CollectionUtils;
 
+import io.choerodon.test.manager.infra.feign.IamFeignClient;
 import io.choerodon.test.manager.infra.util.RankUtil;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.infra.dto.*;
@@ -88,6 +89,9 @@ public class DataMigrationServiceImpl implements DataMigrationService {
 
     @Autowired
     private BaseFeignClient baseFeignClient;
+
+    @Autowired
+    private IamFeignClient iamFeignClient;
 
     @Async
     @Override
@@ -443,7 +447,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         int currentPage = 0;
         int size = 9999;
         String sort = "tenantId,ASC";
-        Page<TenantVO> body = baseFeignClient.getAllOrgs(currentPage, size, sort).getBody();
+        Page<TenantVO> body = iamFeignClient.getAllOrgs(currentPage, size, sort).getBody();
         if (CollectionUtils.isEmpty(body)){
             return Collections.emptyList();
         }
@@ -451,7 +455,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         long page = body.getTotalPages();
         if (page > 0){
             for (int i = 1; i <= page; i++) {
-                Page<TenantVO> temp = baseFeignClient.getAllOrgs(i, size, sort).getBody();
+                Page<TenantVO> temp = iamFeignClient.getAllOrgs(i, size, sort).getBody();
                 if (CollectionUtils.isEmpty(temp)){
                     break;
                 }

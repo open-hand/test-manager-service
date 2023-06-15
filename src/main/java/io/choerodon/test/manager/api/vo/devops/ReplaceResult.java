@@ -1,5 +1,7 @@
 package io.choerodon.test.manager.api.vo.devops;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import java.util.List;
 
 /**
@@ -8,12 +10,19 @@ import java.util.List;
  * @author crockitwood
  */
 public class ReplaceResult {
+    @ApiModelProperty(value = "yaml")
     private String yaml;
+    @ApiModelProperty(value = "高亮标记")
     private List<HighlightMarker> highlightMarkers;
+    @ApiModelProperty(value = "总行数")
     private Integer totalLine;
+    @ApiModelProperty(value = "错误信息")
     private String errorMsg;
+    @ApiModelProperty(value = "错误行")
     private List<ErrorLineDTO> errorLines;
+    @ApiModelProperty(value = "新行")
     private List<Integer> newLines;
+    @ApiModelProperty(value = "deltaYaml")
     private String deltaYaml;
 
     public String getYaml() {

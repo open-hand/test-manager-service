@@ -3,6 +3,7 @@ package io.choerodon.test.manager.api.vo.agile;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.test.manager.infra.util.StringUtil;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.Transient;
 import java.util.List;
@@ -17,29 +18,43 @@ public class SearchDTO {
     /**
      * 输入查询参数
      */
+    @ApiModelProperty(value = "输入查询参数")
     private Map<String, Object> searchArgs;
 
     /**
      * 过滤查询参数
      */
+    @ApiModelProperty(value = "过滤查询参数")
     private Map<String, Object> advancedSearchArgs;
 
     /**
      * 关联查询参数
      */
+    @ApiModelProperty(value = "关联查询参数")
     private Map<String, Object> otherArgs;
 
+    @ApiModelProperty(value = "执行状态")
     @Transient
     private Long[] executionStatus;
 
+    @ApiModelProperty(value = "缺陷状态")
     @Transient
     private String[] defectStatus;
 
+    @ApiModelProperty(value = "输入查询参数")
     private String content;
 
+    @ApiModelProperty(value = "页码")
     private int page;
+
+    @ApiModelProperty(value = "大小")
     private int size;
+
+    @ApiModelProperty(value = "排序")
     private Sort sort;
+
+    @ApiModelProperty(value = "应用类型")
+    private List<String> applyTypes;
 
     public int getPage() {
         return page;
@@ -124,6 +139,14 @@ public class SearchDTO {
 
     public void setDefectStatus(String[] defectStatus) {
         this.defectStatus = defectStatus;
+    }
+
+    public List<String> getApplyTypes() {
+        return applyTypes;
+    }
+
+    public void setApplyTypes(List<String> applyTypes) {
+        this.applyTypes = applyTypes;
     }
 
     @Override

@@ -942,7 +942,12 @@
         <foreach collection="caseIdList" item="caseId" open="(" close=")" separator=",">
             #{caseId}
         </foreach>
-        AND tp.sprint_id = #{sprintId}
+        <if test="sprintIds != null and sprintIds.size()>0">
+            and tp.sprint_id in
+            <foreach collection="sprintIds" item="sprintId" open="(" close=")" separator=",">
+                #{sprintId}
+            </foreach>
+        </if>
         ORDER BY tcc.rank
     </select>
 
@@ -957,12 +962,41 @@
             AND tc1.plan_id in (
                select plan_id from test_plan tp
                where tp.project_id = #{projectId}
-               and tp.sprint_id = #{sprintId}
+               <if test="sprintId != null">
+                   and tp.sprint_id = #{sprintId}
+               </if>
             )
          ) tc ON tc.cycle_id = tcc.cycle_id
          JOIN test_case_link tcl on tcl.project_id = #{projectId} and tcl.issue_id = #{issueId} and  tcl.link_case_id = tcc.case_id
          WHERE
           tcc.project_id = #{projectId}
+    </select>
+
+
+    <select id="listTestCycleCaseByIssueId"
+            resultType="io.choerodon.test.manager.api.vo.TestFolderCycleCaseVO">
+        select
+            tcc.summary,
+            tcc.execute_id,
+            tcc.cycle_id,
+            tc.plan_id,
+            tp.name as plan_name,
+            ts.status_id as execution_status,
+            ts.status_name as execution_status_name,
+            ts.status_color as status_color
+        from (
+            select distinct tcc.execute_id
+            from test_cycle_case tcc
+            join test_cycle_case_step tccs on tcc.execute_id = tccs.execute_id
+            join test_cycle_case_defect_rel tccdr on tccdr.defect_link_id = tccs.execute_step_id
+            where tccdr.project_id = #{projectId}
+            and tccdr.issue_id = #{issueId}
+            and tccdr.defect_type = #{defectType}
+        ) temp
+        join test_cycle_case tcc on temp.execute_id = tcc.execute_id
+        join test_cycle tc on tc.cycle_id = tcc.cycle_id
+        join test_plan tp on tc.plan_id = tp.plan_id
+        left join test_status ts on tcc.execution_status = ts.status_id
     </select>
 
     <update id="batchAssignByCycle">

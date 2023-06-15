@@ -12,7 +12,6 @@ import io.choerodon.test.manager.api.vo.TestCaseInfoVO;
 import io.choerodon.test.manager.api.vo.TestCaseRepVO;
 import io.choerodon.test.manager.api.vo.TestCaseVO;
 import io.choerodon.test.manager.api.vo.agile.*;
-import io.choerodon.test.manager.api.vo.devops.AppServiceDeployVO;
 import io.choerodon.test.manager.api.vo.devops.AppServiceVersionRespVO;
 import io.choerodon.test.manager.api.vo.devops.ApplicationRepDTO;
 import io.choerodon.test.manager.api.vo.devops.InstanceValueVO;
@@ -67,8 +66,6 @@ public interface TestCaseService {
 
     InstanceValueVO previewValues(Long projectId, InstanceValueVO replaceResult, Long appVersionId);
 
-    void deployTestApp(Long projectId, AppServiceDeployVO appServiceDeployVO);
-
     /**
      * 创建用例
      *
@@ -122,7 +119,7 @@ public interface TestCaseService {
      * @param folderId
      * @return
      */
-    List<TestCaseDTO> listCaseByFolderId(Long folderId);
+    int getCaseCountByFolderId(Long folderId);
 
     /**
      * 修改测试用例的信息
@@ -233,6 +230,21 @@ public interface TestCaseService {
      * @param testProjectInfo 测试项目信息
      */
     void batchImportTestCase(List<IssueCreateDTO> issueCreateDTOList, TestProjectInfoDTO testProjectInfo);
+
+    /**
+     * 批量更新导入的case
+     * @param issueUpdateDTOList 要更新的列表
+     * @param testProjectInfo 测试项目信息
+     */
+    void batchUpdateTestCase(List<IssueCreateDTO> issueUpdateDTOList, TestProjectInfoDTO testProjectInfo);
+
+    /**
+     * 更新导入的case并生成日志
+     * @param update
+     * @param testCaseRepVO
+     * @param fieldList
+     */
+    void updateTestCaseWithDatalog(TestCaseDTO update, TestCaseRepVO testCaseRepVO, String[] fieldList);
 
     void autoAsyncCase(List<TestCycleCaseDTO> testCycleCaseDTOS, Boolean changeCase, Boolean changeStep, Boolean changeAttach);
 }

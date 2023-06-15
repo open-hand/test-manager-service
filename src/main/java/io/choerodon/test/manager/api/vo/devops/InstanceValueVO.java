@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.api.vo.devops;
 
+import io.swagger.annotations.ApiModelProperty;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 
 import java.util.List;
@@ -10,16 +11,26 @@ import java.util.List;
  * @author crockitwood
  */
 public class InstanceValueVO {
+    @ApiModelProperty(value = "yaml")
     private String yaml;
+    @ApiModelProperty(value = "高亮标记")
     private List<HighlightMarker> highlightMarkers;
+    @ApiModelProperty(value = "总行数")
     private Integer totalLine;
+    @ApiModelProperty(value = "错误信息")
     private String errorMsg;
+    @ApiModelProperty(value = "错误行")
     private List<ErrorLineVO> errorLines;
+    @ApiModelProperty(value = "新行")
     private List<Integer> newLines;
+    @ApiModelProperty(value = "deltaYaml")
     private String deltaYaml;
+    @ApiModelProperty(value = "名称")
     private String name;
+    @ApiModelProperty(value = "id")
     @Encrypt
     private Long id;
+    @ApiModelProperty(value = "乐观锁")
     private Long objectVersionNumber;
 
     public String getYaml() {

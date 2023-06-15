@@ -4,13 +4,24 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import com.alibaba.fastjson.JSON;
-import io.choerodon.core.client.MessageClientC7n;
-import io.choerodon.mybatis.pagehelper.PageHelper;
+import org.apache.commons.lang.StringUtils;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
+
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.oauth.CustomUserDetails;
 import io.choerodon.core.oauth.DetailsHelper;
+import io.choerodon.mybatis.pagehelper.PageHelper;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.api.vo.agile.ProjectCategoryDTO;
@@ -23,18 +34,14 @@ import io.choerodon.test.manager.infra.enums.TestAttachmentCode;
 import io.choerodon.test.manager.infra.enums.TestCycleCaseDefectCode;
 import io.choerodon.test.manager.infra.enums.TestStatusType;
 import io.choerodon.test.manager.infra.feign.BaseFeignClient;
+import io.choerodon.test.manager.infra.feign.operator.RemoteIamOperator;
 import io.choerodon.test.manager.infra.mapper.*;
-import io.choerodon.test.manager.infra.util.*;
-import org.apache.commons.lang.StringUtils;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
-import org.springframework.beans.factory.annotation.Autowired;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
+import io.choerodon.test.manager.infra.util.ConvertUtils;
+import io.choerodon.test.manager.infra.util.DBValidateUtil;
+import io.choerodon.test.manager.infra.util.PageUtil;
+import io.choerodon.test.manager.infra.util.RankUtil;
+
+import org.hzero.websocket.helper.SocketSendHelper;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -107,7 +114,10 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     private BaseFeignClient baseFeignClient;
 
     @Autowired
-    private MessageClientC7n messageClientC7n;
+    private RemoteIamOperator remoteIamOperator;
+
+    @Autowired
+    private SocketSendHelper socketSendHelper;
 
     @Autowired
     private ExecutionCaseStatusChangeSettingService executionCaseStatusChangeSettingService;
@@ -1050,6 +1060,11 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         return statusVoPageInfo;
     }
 
+    @Override
+    public List<TestFolderCycleCaseVO> listTestCycleCaseByIssueId(Long projectId, Long issueId) {
+        return testCycleCaseMapper.listTestCycleCaseByIssueId(projectId, issueId, TestCycleCaseDefectCode.CASE_STEP);
+    }
+
     private void queryUserProjects(Long organizationId, Long projectId, List<Long> projectIds, List<ProjectDTO> projects, Long userId) {
         if (ObjectUtils.isEmpty(projectId)) {
             List<ProjectDTO> projectVOS = baseFeignClient.queryOrgProjects(organizationId,userId).getBody();
@@ -1063,11 +1078,11 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                         });
             }
         } else {
-            ProjectDTO projectVO = baseFeignClient.queryProject(projectId).getBody();
-            if (!organizationId.equals(projectVO.getOrganizationId())) {
+            ProjectDTO projectDTO = remoteIamOperator.getProjectById(projectId);
+            if (!organizationId.equals(projectDTO.getOrganizationId())) {
                 throw new CommonException("error.organization.illegal");
             }
-            projects.add(projectVO);
+            projects.add(projectDTO);
             projectIds.add(projectId);
         }
     }

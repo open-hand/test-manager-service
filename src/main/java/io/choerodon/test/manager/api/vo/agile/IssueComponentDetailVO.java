@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.api.vo.agile;
 
 import io.choerodon.test.manager.infra.util.StringUtil;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Date;
 import java.util.List;
@@ -11,58 +12,85 @@ import java.util.List;
  */
 public class IssueComponentDetailVO {
 
+    @ApiModelProperty(value = "issueId")
     private Long issueId;
 
+    @ApiModelProperty(value = "类型编码")
     private String typeCode;
 
+    @ApiModelProperty(value = "概要")
     private String summary;
 
+    @ApiModelProperty(value = "状态id")
     private Long statusId;
 
+    @ApiModelProperty(value = "经办人id")
     private Long assigneeId;
 
+    @ApiModelProperty(value = "经办人名称")
     private String assigneeName;
 
+    @ApiModelProperty(value = "经办人头像")
     private String assigneeImageUrl;
 
+    @ApiModelProperty(value = "经办人登录名")
     private String assigneeLoginName;
 
+    @ApiModelProperty(value = "经办人真实名称")
     private String assigneeRealName;
 
+    @ApiModelProperty(value = "项目id")
     private Long projectId;
 
+    @ApiModelProperty(value = "工作项编号")
     private String issueNum;
 
+    @ApiModelProperty(value = "报告人id")
     private Long reporterId;
 
+    @ApiModelProperty(value = "报告人名称")
     private String reporterName;
 
+    @ApiModelProperty(value = "报告人登录名")
     private String reporterLoginName;
 
+    @ApiModelProperty(value = "报告人真实名称")
     private String reporterRealName;
 
+    @ApiModelProperty(value = "报告人头像url")
     private String reporterImageUrl;
 
+    @ApiModelProperty(value = "更新时间")
     private Date lastUpdateDate;
 
+    @ApiModelProperty(value = "创建时间")
     private Date creationDate;
 
+    @ApiModelProperty(value = "所属史诗名称")
     private String epicName;
 
+    @ApiModelProperty(value = "所属史诗颜色")
     private String epicColor;
 
+    @ApiModelProperty(value = "描述")
     private String description;
 
+    @ApiModelProperty(value = "工作项类型")
     private IssueTypeVO issueTypeVO;
 
+    @ApiModelProperty(value = "状态")
     private StatusVO statusVO;
 
+    @ApiModelProperty(value = "优先级")
     private PriorityVO priorityVO;
 
+    @ApiModelProperty(value = "关联版本")
     private List<VersionIssueRelVO> versionIssueRelVOList;
 
+    @ApiModelProperty(value = "关联标签")
     private List<LabelIssueRelVO> labelIssueRelVOList;
 
+    @ApiModelProperty(value = "关联模块列表")
     private List<ComponentIssueRelVO> componentIssueRelVOList;
 
     public String getAssigneeName() {

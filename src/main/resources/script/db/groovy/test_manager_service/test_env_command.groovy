@@ -2,7 +2,7 @@ package script.db.groovy.test_manager_service
 
 databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
     changeSet(author: 'zongw.lee@gmail.com', id: '2018-11-20-init_table_test_env_command') {
-        createTable(tableName: "test_env_command") {
+        createTable(tableName: "test_env_command", remarks: '自动化测试环境命令行表') {
             column(name: 'id', type: 'BIGINT UNSIGNED', autoIncrement: true, remarks: '表ID，主键，供其他表做外键，unsigned bigint、单表时自增、步长为 1') {
                 constraints(primaryKey: true)
             }

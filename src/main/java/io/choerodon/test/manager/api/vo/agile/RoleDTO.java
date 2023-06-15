@@ -7,6 +7,7 @@ import io.choerodon.core.exception.CommonException;
 
 import javax.validation.constraints.NotEmpty;
 
+import io.swagger.annotations.ApiModelProperty;
 import org.springframework.util.StringUtils;
 
 import javax.validation.constraints.Size;
@@ -21,30 +22,47 @@ public class RoleDTO {
     private static final String CODE_REGULAR_EXPRESSION
             = "^[a-z]([-a-z0-9]*[a-z0-9])$";
 
+    @ApiModelProperty(value = "角色id")
     private Long id;
+    @ApiModelProperty(value = "角色名")
     @NotEmpty(message = "error.role.name.empty")
     @Size(min = 1, max = 64)
     private String name;
     @NotEmpty(message = "error.role.code.empty")
     @Size(min = 1, max = 128)
+    @ApiModelProperty(value = "角色编码")
     private String code;
+    @ApiModelProperty(value = "描述")
     private String description;
     @NotEmpty(message = "error.role.level.empty")
+    @ApiModelProperty(value = "等级")
     private String level;
+    @ApiModelProperty(value = "是否启用")
     private Boolean enabled;
+    @ApiModelProperty(value = "是否可修改")
     private Boolean modified;
+    @ApiModelProperty(value = "启用禁止")
     private Boolean enableForbidden;
+    @ApiModelProperty(value = "系统")
     private Boolean builtIn;
+    @ApiModelProperty(value = "是否可转让")
     private Boolean assignable;
+    @ApiModelProperty(value = "乐观锁")
     private Long objectVersionNumber;
+    @ApiModelProperty(value = "用户数量")
     private Integer userCount;
+    @ApiModelProperty(value = "权限集")
     private List<PermissionDTO> permissions;
+    @ApiModelProperty(value = "角色权限集")
     private List<RolePermissionDTO> rolePermissions;
+    @ApiModelProperty(value = "用户")
     private List<UserDTO> users;
 
+    @ApiModelProperty(value = "参数")
     @JsonIgnore
     private String param;
 
+    @ApiModelProperty(value = "角色id集合")
     private List<Long> roleIds;
 
     public List<UserDTO> getUsers() {
