@@ -60,9 +60,11 @@ public class TestPriorityDTO extends AuditDomain {
     @ApiModelProperty(value = "是否启用",required = true)
     @Column(name = "is_enable")
     private Boolean enableFlag;
+    @ApiModelProperty(value = "搜索参数")
     @Transient
     private String param;
     @Transient
+    @ApiModelProperty(value = "移交的优先级id")
     @Encrypt
     private Long changePriorityId;
 

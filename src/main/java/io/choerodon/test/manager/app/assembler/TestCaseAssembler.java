@@ -8,9 +8,11 @@ import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.oauth.CustomUserDetails;
 import io.choerodon.mybatis.domain.AuditDomain;
 import io.choerodon.test.manager.api.vo.*;
+import io.choerodon.test.manager.app.service.FilePathService;
 import io.choerodon.test.manager.app.service.TestCaseLinkService;
 import io.choerodon.test.manager.app.service.UserService;
 import io.choerodon.test.manager.infra.dto.*;
+import io.choerodon.test.manager.infra.enums.FileUploadBucket;
 import io.choerodon.test.manager.infra.mapper.*;
 import org.apache.commons.lang3.StringUtils;
 import org.hzero.core.base.BaseConstants;
@@ -19,7 +21,6 @@ import org.modelmapper.TypeToken;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -58,9 +59,11 @@ public class TestCaseAssembler {
 
     @Autowired
     private TestPriorityMapper testPriorityMapper;
+    @Autowired
+    private FilePathService filePathService;
 
-    @Value("${services.attachment.url}")
-    private String attachmentUrl;
+//    @Value("${services.attachment.url}")
+//    private String attachmentUrl;
 
     private static final String TYPE = "CYCLE_CASE";
     private ModelMapper modelMapper = new ModelMapper();
@@ -79,7 +82,8 @@ public class TestCaseAssembler {
         testCaseRepVO.setCaseNum(getIssueNum(testCaseDTO.getProjectId(), testCaseDTO.getCaseNum()));
         testCaseRepVO.setCreateUser(map.get(testCaseDTO.getCreatedBy()));
         testCaseRepVO.setLastUpdateUser(map.get(testCaseDTO.getLastUpdatedBy()));
-        testCaseRepVO.setFolderName(folderMap.get(testCaseDTO.getFolderId()).getName());
+        String folderName = Optional.ofNullable(folderMap.get(testCaseDTO.getFolderId())).map(TestIssueFolderDTO::getName).orElse(null);
+        testCaseRepVO.setFolderName(folderName);
         testCaseRepVO.setPriorityVO(new PriorityVO(testCaseDTO.getPriorityId(), testCaseDTO.getPriorityName(), testCaseDTO.getPriorityColour(), testCaseDTO.getSequence()));
         return testCaseRepVO;
     }
@@ -96,7 +100,8 @@ public class TestCaseAssembler {
                 testCaseRepVO.setCaseNum(getIssueNum(testCaseDTO.getProjectId(), testCaseDTO.getCaseNum()));
                 testCaseRepVO.setCreateUser(map.get(testCaseDTO.getCreatedBy()));
                 testCaseRepVO.setLastUpdateUser(map.get(testCaseDTO.getLastUpdatedBy()));
-                testCaseRepVO.setFolderName(folderMap.get(testCaseDTO.getFolderId()).getName());
+                String folderName = Optional.ofNullable(folderMap.get(testCaseDTO.getFolderId())).map(TestIssueFolderDTO::getName).orElse(null);
+                testCaseRepVO.setFolderName(folderName);
                 testCaseRepVO.setPriorityVO(new PriorityVO(testCaseDTO.getPriorityId(), testCaseDTO.getPriorityName(), testCaseDTO.getPriorityColour(), testCaseDTO.getSequence()));
                 if (!CollectionUtils.isEmpty(caseIds)) {
                     if (caseIds.contains(testCaseDTO.getCaseId())) {
@@ -128,7 +133,7 @@ public class TestCaseAssembler {
             }
         }
         UserMessageDTO updateUser = userMap.get(testCycleCaseDTO.getLastUpdatedBy());
-        if(!ObjectUtils.isEmpty(updateUser)){
+        if(!ObjectUtils.isEmpty(updateUser) && !Objects.equals(testCycleCaseDTO.getCreationDate(), testCycleCaseDTO.getLastUpdateDate())){
             testFolderCycleCaseVO.setLastUpdateUser(updateUser);
         }
         return testFolderCycleCaseVO;
@@ -163,7 +168,8 @@ public class TestCaseAssembler {
         testCaseAttachmentDTO.setCaseId(testCaseDTO.getCaseId());
         List<TestCaseAttachmentDTO> attachment = testAttachmentMapper.select(testCaseAttachmentDTO);
         if (!CollectionUtils.isEmpty(attachment)) {
-            attachment.forEach(v -> v.setUrl(attachmentUrl + v.getUrl()));
+            attachment.forEach(v -> v.setUrl(
+                    filePathService.generateFullPath(v.getUrl())));
             testCaseInfoVO.setAttachment(attachment);
         }
         // 查询测试用例所属的文件夹

@@ -1,33 +1,15 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import java.io.IOException;
-import java.net.URLDecoder;
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.stream.Collectors;
-import javax.servlet.http.HttpServletRequest;
-
-import io.choerodon.test.manager.api.vo.agile.ProjectDTO;
-import io.choerodon.test.manager.infra.feign.BaseFeignClient;
-import io.choerodon.test.manager.infra.feign.FileFeignClient;
-import org.hzero.boot.file.FileClient;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.oauth.CustomUserDetails;
 import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.test.manager.api.vo.TestCycleCaseAttachmentRelVO;
-//import io.choerodon.test.manager.app.service.FileService;
+import io.choerodon.test.manager.api.vo.agile.ProjectDTO;
+import io.choerodon.test.manager.app.service.FilePathService;
 import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
 import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelUploadService;
 import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
@@ -35,8 +17,21 @@ import io.choerodon.test.manager.infra.dto.TestCaseDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseAttachmentRelDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.infra.enums.TestAttachmentCode;
+import io.choerodon.test.manager.infra.feign.BaseFeignClient;
+import io.choerodon.test.manager.infra.feign.FileFeignClient;
+import io.choerodon.test.manager.infra.feign.operator.RemoteIamOperator;
 import io.choerodon.test.manager.infra.mapper.TestAttachmentMapper;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseAttachmentRelMapper;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -57,30 +52,31 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
     @Autowired
     private TestAttachmentMapper testAttachmentMapper;
 
-    private static final String BACKETNAME = "test";
+//    private static final String BACKETNAME = "test";
 
     @Autowired
     private BaseFeignClient baseFeignClient;
-
     @Autowired
-    private FileClient fileClient;
+    private RemoteIamOperator remoteIamOperator;
 
     @Autowired
     private FileFeignClient fileFeignClient;
 
     @Autowired
     private TestCycleCaseAttachmentRelUploadService testCycleCaseAttachmentRelUploadService;
+    @Autowired
+    private FilePathService filePathService;
 
 
-    @Value("${services.attachment.url}")
-    private String attachmentUrl;
+//    @Value("${services.attachment.url}")
+//    private String attachmentUrl;
 
 
 
     @Override
     public void deleteAttachmentRel(Long projectId,Long attachId) {
-        ProjectDTO projectDTO = baseFeignClient.queryProject(projectId).getBody();
-        baseDelete(projectDTO.getOrganizationId(),BACKETNAME, attachId);
+        ProjectDTO projectDTO = remoteIamOperator.getProjectById(projectId);
+        baseDelete(projectDTO.getOrganizationId(), filePathService.bucketName(), attachId);
     }
 
     @Override
@@ -95,9 +91,9 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
         TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO = new TestCycleCaseAttachmentRelDTO();
         testCycleCaseAttachmentRelDTO.setAttachmentLinkId(linkedId);
         testCycleCaseAttachmentRelDTO.setAttachmentType(type);
-        ProjectDTO projectDTO= baseFeignClient.queryProject(projectId).getBody();
+        ProjectDTO projectDTO = remoteIamOperator.getProjectById(projectId);
         Optional.ofNullable(testCycleCaseAttachmentRelMapper.select(testCycleCaseAttachmentRelDTO)).ifPresent(m ->
-                m.forEach(v -> baseDelete(projectDTO.getOrganizationId(),TestAttachmentCode.ATTACHMENT_BUCKET, v.getId()))
+                m.forEach(v -> baseDelete(projectDTO.getOrganizationId(), filePathService.bucketName(), v.getId()))
         );
     }
 
@@ -108,10 +104,10 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
         if (CollectionUtils.isEmpty(files)) {
             throw new CommonException("error.files.null");
         }
-        ProjectDTO projectDTO = baseFeignClient.queryProject(projectId).getBody();
+        ProjectDTO projectDTO = remoteIamOperator.getProjectById(projectId);
         for (MultipartFile multipartFile : files) {
             String fileName = multipartFile.getOriginalFilename();
-            upload(projectDTO.getOrganizationId(),BACKETNAME, fileName, multipartFile, attachmentLinkId, attachmentType, comment);
+            upload(projectDTO.getOrganizationId(), filePathService.bucketName(), fileName, multipartFile, attachmentLinkId, attachmentType, comment);
         }
         TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO = new TestCycleCaseAttachmentRelDTO();
         testCycleCaseAttachmentRelDTO.setAttachmentType(attachmentType);
@@ -138,7 +134,8 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
                 testCycleCaseAttachmentRelDTO.setAttachmentName(attachmentDTO.getFileName());
                 testCycleCaseAttachmentRelDTO.setAttachmentLinkId(v.getExecuteId());
                 testCycleCaseAttachmentRelDTO.setAttachmentType(TestAttachmentCode.ATTACHMENT_CYCLE_CASE);
-                testCycleCaseAttachmentRelDTO.setUrl(String.format("%s%s",attachmentUrl,attachmentDTO.getUrl()));
+                String fullPath = filePathService.generateFullPath(attachmentDTO.getUrl());
+                testCycleCaseAttachmentRelDTO.setUrl(fullPath);
                 testCycleCaseAttachmentRelDTO.setCreatedBy(attachmentDTO.getCreatedBy());
                 testCycleCaseAttachmentRelDTO.setLastUpdatedBy(attachmentDTO.getLastUpdatedBy());
                 attachmentRelDTOS.add(testCycleCaseAttachmentRelDTO);
@@ -193,22 +190,14 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
         TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO = testCycleCaseAttachmentRelMapper.selectByPrimaryKey(attachId);
         TestCaseAttachmentDTO testCaseAttachmentDTO = new TestCaseAttachmentDTO();
         String url1 = testCycleCaseAttachmentRelDTO.getUrl();
-        String[] split = url1.split("/"+attachmentUrl);
-        if(split.length==2){
-            testCaseAttachmentDTO.setUrl(split[1]);
+        if (!ObjectUtils.isEmpty(url1) && url1.startsWith("http")) {
+            String relativePath = filePathService.generateRelativePath(url1);
+            testCaseAttachmentDTO.setUrl(relativePath);
             List<TestCaseAttachmentDTO> testCaseAttachmentDTOS = testAttachmentMapper.select(testCaseAttachmentDTO);
-
             if(CollectionUtils.isEmpty(testCaseAttachmentDTOS)){
-                String url;
-                try {
-                    url = URLDecoder.decode(testCycleCaseAttachmentRelDTO.getUrl(), "UTF-8");
-                } catch (IOException i) {
-                    throw new CommonException(i);
-                }
-                fileFeignClient.deleteFileByUrl(organizationId,bucketName,Arrays.asList(url));
+                fileFeignClient.deleteFileByUrl(organizationId,bucketName,Arrays.asList(url1));
             }
         }
         testCycleCaseAttachmentRelMapper.deleteByPrimaryKey(attachId);
     }
-
 }

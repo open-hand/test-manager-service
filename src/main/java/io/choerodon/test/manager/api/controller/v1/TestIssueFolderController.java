@@ -7,6 +7,7 @@ import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.test.manager.api.vo.TestTreeIssueFolderVO;
 import io.choerodon.test.manager.infra.dto.TestIssueFolderDTO;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.hzero.core.util.Results;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,8 @@ public class TestIssueFolderController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("查询文件夹，返回树结构")
     @GetMapping("/query")
-    public ResponseEntity<TestTreeIssueFolderVO> query(@PathVariable(name = "project_id") Long projectId) {
+    public ResponseEntity<TestTreeIssueFolderVO> query(@ApiParam(value = "项目id", required = true)
+                                                       @PathVariable(name = "project_id") Long projectId) {
         return Optional.ofNullable(testIssueFolderService.queryTreeFolder(projectId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.testIssueFolder.query"));
@@ -45,7 +47,9 @@ public class TestIssueFolderController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("删除文件夹")
     @DeleteMapping("/{folderId}")
-    public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity delete(@ApiParam(value = "项目id", required = true)
+                                 @PathVariable(name = "project_id") Long projectId,
+                                 @ApiParam(value = "删除的文件夹id", required = true)
                                  @PathVariable(name = "folderId")
                                  @Encrypt Long folderId) {
         testIssueFolderService.delete(projectId, folderId);
@@ -55,7 +59,9 @@ public class TestIssueFolderController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("创建文件夹")
     @PostMapping
-    public ResponseEntity<TestIssueFolderVO> create(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity<TestIssueFolderVO> create(@ApiParam(value = "项目id", required = true)
+                                                    @PathVariable(name = "project_id") Long projectId,
+                                                    @ApiParam(value = "文件夹创建vo", required = true)
                                                     @RequestBody TestIssueFolderVO testIssueFolderVO) {
         if (!Pattern.matches(TEST_ISSUE_FOLDER_NAME_REG, testIssueFolderVO.getName())) {
             throw new CommonException("error.testIssueFolder.name.invalid");
@@ -68,7 +74,9 @@ public class TestIssueFolderController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("更新文件夹")
     @PutMapping("/update")
-    public ResponseEntity<TestIssueFolderVO> update(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity<TestIssueFolderVO> update(@ApiParam(value = "项目id", required = true)
+                                                    @PathVariable(name = "project_id") Long projectId,
+                                                    @ApiParam(value = "文件夹更新vo", required = true)
                                                     @RequestBody TestIssueFolderVO testIssueFolderVO) {
         if (!Pattern.matches(TEST_ISSUE_FOLDER_NAME_REG, testIssueFolderVO.getName())) {
             throw new CommonException("error.testIssueFolder.name.invalid");
@@ -81,9 +89,12 @@ public class TestIssueFolderController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("移动文件夹")
     @PutMapping("/move")
-    public ResponseEntity<String> moveFolder(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity<String> moveFolder(@ApiParam(value = "项目id", required = true)
+                                             @PathVariable(name = "project_id") Long projectId,
+                                             @ApiParam(value = "目标文件夹id", required = true)
                                              @RequestParam(name = "targetFolderId", required = false)
                                              @Encrypt Long targetFolderId,
+                                             @ApiParam(value = "文件夹移动vo", required = true)
                                              @RequestBody TestIssueFolderVO issueFolderVO) {
         return Optional.ofNullable(testIssueFolderService.moveFolder(projectId, targetFolderId, issueFolderVO))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
@@ -96,7 +107,9 @@ public class TestIssueFolderController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("复制计划文件夹")
     @PostMapping("/folder/{folderId}/clone")
-    public ResponseEntity<TestIssueFolderDTO> cloneTestCaseFolder(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity<TestIssueFolderDTO> cloneTestCaseFolder(@ApiParam(value = "项目id", required = true)
+                                                                  @PathVariable(name = "project_id") Long projectId,
+                                                                  @ApiParam(value = "文件夹id", required = true)
                                                                   @PathVariable(name = "folderId")
                                                                   @Encrypt Long folderId) {
         return Results.success(testIssueFolderService.cloneFolder(projectId, folderId));
@@ -108,7 +121,9 @@ public class TestIssueFolderController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("检查复制文件夹名称合规")
     @GetMapping("/folder/{folderId}/clone/check_name")
-    public ResponseEntity<Boolean> checkCopyFolderName(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity<Boolean> checkCopyFolderName(@ApiParam(value = "项目id", required = true)
+                                                       @PathVariable(name = "project_id") Long projectId,
+                                                       @ApiParam(value = "文件夹id", required = true)
                                                        @PathVariable(name = "folderId")
                                                        @Encrypt Long folderId) {
         return Results.success(testIssueFolderService.checkCopyFolderName(projectId, folderId));

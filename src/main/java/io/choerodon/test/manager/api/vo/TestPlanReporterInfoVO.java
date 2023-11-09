@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.api.vo;
 
 import io.choerodon.test.manager.api.vo.agile.UserDO;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Date;
 
@@ -10,20 +11,28 @@ import java.util.Date;
  */
 public class TestPlanReporterInfoVO {
 
+    @ApiModelProperty(value = "管理员")
     private UserDO manager;
 
+    @ApiModelProperty(value = "开始时间")
     private Date startDate;
 
+    @ApiModelProperty(value = "结束时间")
     private Date endDate;
 
+    @ApiModelProperty(value = "用例总数")
     private Integer totalCaseCount;
 
+    @ApiModelProperty(value = "关联用例总数")
     private Integer relatedIssueCount;
 
+    @ApiModelProperty(value = "缺陷总数")
     private Integer totalBugCount;
 
+    @ApiModelProperty(value = "已解决缺陷总数")
     private Integer solvedBugCount;
 
+    @ApiModelProperty(value = "完成工作项总数")
     private Integer passedIssueCount;
 
     public Integer getPassedIssueCount() {

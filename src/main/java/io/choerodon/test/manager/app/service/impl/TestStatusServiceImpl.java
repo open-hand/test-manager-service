@@ -2,6 +2,7 @@ package io.choerodon.test.manager.app.service.impl;
 
 import java.util.List;
 
+import io.choerodon.test.manager.api.validator.TestStatusValidator;
 import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -32,6 +33,9 @@ public class TestStatusServiceImpl implements TestStatusService {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    private TestStatusValidator testStatusValidator;
 
     @Override
     public List<TestStatusVO> query(Long projectId,TestStatusVO testStatusVO) {
@@ -80,6 +84,8 @@ public class TestStatusServiceImpl implements TestStatusService {
     @Override
     public TestStatusVO update(TestStatusVO testStatusVO) {
         TestStatusDTO testStatusDTO = modelMapper.map(testStatusVO, TestStatusDTO.class);
+        // 修改测试状态颜色时需要校验颜色
+        testStatusValidator.validateTestStatusColor(testStatusDTO);
         DBValidateUtil.executeAndvalidateUpdateNum(testStatusMapper::updateByPrimaryKey, testStatusDTO, 1, "error.test.status.update");
         return modelMapper.map(testStatusMapper.selectByPrimaryKey(testStatusDTO.getStatusId()), TestStatusVO.class);
     }

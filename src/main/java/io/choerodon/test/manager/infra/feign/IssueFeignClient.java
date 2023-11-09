@@ -4,16 +4,16 @@ import java.util.List;
 
 import io.choerodon.test.manager.api.vo.ExecutionUpdateIssueVO;
 import io.choerodon.test.manager.api.vo.IssueQueryVO;
+import io.choerodon.test.manager.infra.feign.callback.IssueFeignClientFallback;
 import io.swagger.annotations.ApiParam;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
-import io.choerodon.test.manager.infra.feign.callback.IssueFeignClientFallback;
 
 @Component
-@FeignClient(value = "agile-service", fallback = IssueFeignClientFallback.class)
+@FeignClient(value = "agile-service", fallbackFactory = IssueFeignClientFallback.class)
 public interface IssueFeignClient {
 
     @PostMapping("/v1/projects/{project_id}/issues/query_issue_ids")

@@ -5,6 +5,7 @@ import javax.persistence.*;
 import io.choerodon.mybatis.annotation.ModifyAudit;
 import io.choerodon.mybatis.annotation.VersionAudit;
 import io.choerodon.mybatis.domain.AuditDomain;
+import io.swagger.annotations.ApiModelProperty;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 
 /**
@@ -31,26 +32,37 @@ public class TestIssueFolderDTO extends AuditDomain {
     @Id
     @GeneratedValue
     @Encrypt
+    @ApiModelProperty(value = "主键id")
     private Long folderId;
 
+    @ApiModelProperty(value = "文件夹名称")
     private String name;
 
+    @ApiModelProperty(value = "版本id")
     private Long versionId;
 
+    @ApiModelProperty(value = "项目id")
     private Long projectId;
 
+    @ApiModelProperty(value = "类型")
     private String type;
 
+    @ApiModelProperty(value = "乐观锁")
     private Long objectVersionNumber;
 
+    @ApiModelProperty(value = "父级id")
     private Long parentId;
 
+    @ApiModelProperty(value = "rank值")
     private String rank;
 
+    @ApiModelProperty(value = "初始状态")
     private String initStatus;
 
+    @ApiModelProperty(value = "用例计数")
     @Transient
     private Long caseCount;
+    @ApiModelProperty(value = "原文件夹id")
     @Transient
     @Encrypt
     private Long oldFolderId;

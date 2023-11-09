@@ -38,7 +38,8 @@ public class TestCycleCaseStepController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("更新一个循环步骤")
     @PutMapping
-    public ResponseEntity update(@RequestBody TestCycleCaseStepVO testCycleCaseStepVO) {
+    public ResponseEntity update(@ApiParam(value = "循环步骤vo", required = true)
+                                 @RequestBody TestCycleCaseStepVO testCycleCaseStepVO) {
         testCycleCaseStepService.update(testCycleCaseStepVO);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -52,11 +53,14 @@ public class TestCycleCaseStepController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("查询循环步骤")
     @GetMapping("/query/{cycleCaseId}")
-    public ResponseEntity<Page<TestCycleCaseStepVO>> querySubStep(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity<Page<TestCycleCaseStepVO>> querySubStep(@ApiParam(value = "项目id", required = true)
+                                                                  @PathVariable(name = "project_id") Long projectId,
                                                                   @ApiParam(value = "cycleCaseId", required = true)
                                                                   @PathVariable(name = "cycleCaseId")
                                                                   @Encrypt Long cycleCaseId,
+                                                                  @ApiParam(value = "组织id", required = true)
                                                                   @RequestParam Long organizationId,
+                                                                  @ApiParam(value = "分页信息", required = true)
                                                                   PageRequest pageRequest) {
         return Optional.ofNullable(testCycleCaseStepService.querySubStep(cycleCaseId, projectId, organizationId,pageRequest))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
@@ -67,9 +71,11 @@ public class TestCycleCaseStepController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("查询循环步骤")
     @GetMapping("/query_list/{execute_id}")
-    public ResponseEntity<Page<TestCycleCaseStepVO>> queryCaseStep(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity<Page<TestCycleCaseStepVO>> queryCaseStep(@ApiParam(value = "项目id", required = true)
+                                                                   @PathVariable(name = "project_id") Long projectId,
                                                                    @ApiParam(value = "execute_id", required = true)
                                                                    @PathVariable(name = "execute_id") @Encrypt Long execute_id,
+                                                                   @ApiParam(value = "分页信息", required = true)
                                                                    PageRequest pageRequest) {
         return Optional.ofNullable(testCycleCaseStepService.queryCaseStep(execute_id, projectId, pageRequest))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
@@ -80,7 +86,9 @@ public class TestCycleCaseStepController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("删除一个循环步骤")
     @DeleteMapping("/{execute_step_id}")
-    public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity delete(@ApiParam(value = "项目id", required = true)
+                                 @PathVariable(name = "project_id") Long projectId,
+                                 @ApiParam(value = "执行步骤id", required = true)
                                  @PathVariable(name = "execute_step_id")
                                  @Encrypt Long executeStepId) {
         testCycleCaseStepService.delete(executeStepId);
@@ -90,7 +98,9 @@ public class TestCycleCaseStepController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("创建一个循环步骤")
     @PostMapping
-    public ResponseEntity create(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity create(@ApiParam(value = "项目id", required = true)
+                                 @PathVariable(name = "project_id") Long projectId,
+                                 @ApiParam(value = "循环步骤创建vo", required = true)
                                  @RequestBody TestCycleCaseStepVO testCycleCaseStepVO) {
         testCycleCaseStepService.create(testCycleCaseStepVO);
         return new ResponseEntity<>(HttpStatus.CREATED);

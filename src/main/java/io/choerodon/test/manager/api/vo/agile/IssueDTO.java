@@ -2,6 +2,7 @@ package io.choerodon.test.manager.api.vo.agile;
 
 
 import io.choerodon.test.manager.infra.util.StringUtil;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -15,80 +16,118 @@ import java.util.List;
  */
 public class IssueDTO {
 
+    @ApiModelProperty(value = "issueId")
     private Long issueId;
 
+    @ApiModelProperty(value = "工作项编号")
     private String issueNum;
 
+    @ApiModelProperty(value = "类型编码")
     private String typeCode;
 
+    @ApiModelProperty(value = "状态id")
     private Long statusId;
 
+    @ApiModelProperty(value = "概要")
     private String summary;
 
+    @ApiModelProperty(value = "报告人id")
     private Long reporterId;
 
+    @ApiModelProperty(value = "报告人名称")
     private String reporterName;
 
+    @ApiModelProperty(value = "描述")
     private String description;
 
+    @ApiModelProperty(value = "经办人id")
     private Long assigneeId;
 
+    @ApiModelProperty(value = "经办人名称")
     private String assigneeName;
 
+    @ApiModelProperty(value = "项目id")
     private Long projectId;
 
+    @ApiModelProperty(value = "所属史诗id")
     private Long epicId;
 
+    @ApiModelProperty(value = "父任务id")
     private Long parentIssueId;
 
+    @ApiModelProperty(value = "故事点")
     private Integer storyPoints;
 
+    @ApiModelProperty(value = "关联版本列表")
     private List<VersionIssueRelVO> versionIssueRelVOList;
 
+    @ApiModelProperty(value = "活跃冲抵")
     private SprintNameDTO activeSprint;
 
+    @ApiModelProperty(value = "已关闭冲刺列表")
     private List<SprintNameDTO> closeSprint;
 
+    @ApiModelProperty(value = "关联标签列表")
     private List<LabelIssueRelVO> labelIssueRelVOList;
 
+    @ApiModelProperty(value = "关联模块列表")
     private List<ComponentIssueRelVO> componentIssueRelVOList;
 
+    @ApiModelProperty(value = "附件列表")
     private List<IssueAttachmentDTO> issueAttachmentDTOList;
 
+    @ApiModelProperty(value = "子任务列表")
     private List<IssueSubListDTO> subIssueDTOList;
 
+    @ApiModelProperty(value = "乐观锁")
     private Long objectVersionNumber;
 
+    @ApiModelProperty(value = "创建时间")
     private Date creationDate;
 
+    @ApiModelProperty(value = "更新时间")
     private Date lastUpdateDate;
 
+    @ApiModelProperty(value = "原始预估时间")
     private BigDecimal estimateTime;
 
+    @ApiModelProperty(value = "剩余预估时间")
     private BigDecimal remainingTime;
 
+    @ApiModelProperty(value = "史诗名称")
     private String epicName;
 
+    @ApiModelProperty(value = "颜色")
     private String color;
 
+    @ApiModelProperty(value = "所属史诗颜色")
     private String epicColor;
 
+    @ApiModelProperty(value = "冲刺名称")
     private String sprintName;
 
+    @ApiModelProperty(value = "父任务编号")
     private String parentIssueNum;
 
+    @ApiModelProperty(value = "经办人头像url")
     private String assigneeImageUrl;
 
+    @ApiModelProperty(value = "报告人头像url")
     private String reporterImageUrl;
 
+    @ApiModelProperty(value = "优先级id")
     private Long priorityId;
 
+    @ApiModelProperty(value = "工作项类型id")
     private Long issueTypeId;
 
+    @ApiModelProperty(value = "优先级")
     private PriorityVO priorityVO;
 
+    @ApiModelProperty(value = "工作项类型")
     private IssueTypeVO issueTypeVO;
 
+    @ApiModelProperty(value = "状态")
     private StatusVO statusVO;
 
     public Long getIssueTypeId() {

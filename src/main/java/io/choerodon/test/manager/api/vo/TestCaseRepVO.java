@@ -58,14 +58,19 @@ public class TestCaseRepVO {
     @ApiModelProperty(value = "文件夹名称")
     private String folderName;
 
+    @ApiModelProperty(value = "是否已禁用")
     private Boolean hasDisable;
 
+    @ApiModelProperty(value = "rank")
     private String rank;
 
+    @ApiModelProperty(value = "前项rank值")
     private String lastRank;
 
+    @ApiModelProperty(value = "后项rank值")
     private String nextRank;
 
+    @ApiModelProperty(value = "执行id")
     private Long executeId;
 
     @ApiModelProperty(value = "优先级id")

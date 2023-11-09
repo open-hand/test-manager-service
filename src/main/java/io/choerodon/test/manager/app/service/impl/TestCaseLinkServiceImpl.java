@@ -226,4 +226,43 @@ public class TestCaseLinkServiceImpl implements TestCaseLinkService {
         });
         return result;
     }
+
+    @Override
+    public void batchDeleteByCaseId(Long project, Long caseId) {
+        TestCaseLinkDTO delete = new TestCaseLinkDTO();
+        delete.setProjectId(project);
+        delete.setLinkCaseId(caseId);
+        testCaseLinkMapper.delete(delete);
+    }
+
+    @Override
+    public Boolean checkExist(Long projectId, Long issueId) {
+        if (ObjectUtils.isEmpty(projectId) || ObjectUtils.isEmpty(issueId)) {
+            return false;
+        }
+        TestCaseLinkDTO testCaseLinkDTO = new TestCaseLinkDTO();
+        testCaseLinkDTO.setIssueId(issueId);
+        testCaseLinkDTO.setProjectId(projectId);
+        List<TestCaseLinkDTO> caseLinkList = testCaseLinkMapper.select(testCaseLinkDTO);
+        if (!ObjectUtils.isEmpty(caseLinkList)) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void copyIssueRelatedTestCases(Long projectId, Long oldIssueId, Long newIssueId) {
+        if (ObjectUtils.isEmpty(projectId) || ObjectUtils.isEmpty(oldIssueId)) {
+            return;
+        }
+        TestCaseLinkDTO select = new TestCaseLinkDTO();
+        select.setIssueId(oldIssueId);
+        select.setProjectId(projectId);
+        List<TestCaseLinkDTO> caseLinkList = testCaseLinkMapper.select(select);
+        if (ObjectUtils.isEmpty(caseLinkList)) {
+            return;
+        }
+        List<Long> caseIds = caseLinkList.stream().map(TestCaseLinkDTO::getLinkCaseId).collect(Collectors.toList());
+        createByIssue(projectId, newIssueId, caseIds);
+    }
 }

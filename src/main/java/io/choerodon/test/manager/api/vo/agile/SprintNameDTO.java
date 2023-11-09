@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.api.vo.agile;
 
+import io.swagger.annotations.ApiModelProperty;
 import org.hzero.starter.keyencrypt.core.Encrypt;
 
 import java.util.Date;
@@ -8,10 +9,14 @@ import java.util.Date;
  * Created by jian_zhang02@163.com on 2018/5/17.
  */
 public class SprintNameDTO {
+    @ApiModelProperty(value = "冲刺id")
     @Encrypt
     private Long sprintId;
+    @ApiModelProperty(value = "冲刺名称")
     private String sprintName;
+    @ApiModelProperty(value = "开始时间")
     private Date startDate;
+    @ApiModelProperty(value = "结束时间")
     private Date endDate;
 
     public Long getSprintId() {

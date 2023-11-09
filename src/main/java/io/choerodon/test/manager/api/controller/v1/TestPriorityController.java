@@ -34,7 +34,9 @@ public class TestPriorityController extends BaseController {
     @ApiOperation(value = "优先级列表")
     @Permission(level = ResourceLevel.ORGANIZATION)
     @GetMapping
-    public ResponseEntity<List<TestPriorityDTO>> list(@PathVariable("organization_id") Long organizationId,
+    public ResponseEntity<List<TestPriorityDTO>> list(@ApiParam(value = "组织id", required = true)
+                                                      @PathVariable("organization_id") Long organizationId,
+                                                      @ApiParam(value = "查询参数", required = true)
                                                       TestPriorityDTO testPriorityDTO) {
         testPriorityDTO.setOrganizationId(organizationId);
         return Results.success(testPriorityService.list(organizationId, testPriorityDTO));
@@ -43,7 +45,9 @@ public class TestPriorityController extends BaseController {
     @ApiOperation(value = "创建优先级")
     @Permission(level = ResourceLevel.ORGANIZATION)
     @PostMapping
-    public ResponseEntity<TestPriorityDTO> create(@PathVariable("organization_id") Long organizationId,
+    public ResponseEntity<TestPriorityDTO> create(@ApiParam(value = "组织id", required = true)
+                                                  @PathVariable("organization_id") Long organizationId,
+                                                  @ApiParam(value = "创建vo", required = true)
                                                   @RequestBody TestPriorityDTO testPriorityDTO) {
         validObject(testPriorityDTO);
         testPriorityDTO.setOrganizationId(organizationId);
@@ -53,7 +57,9 @@ public class TestPriorityController extends BaseController {
     @ApiOperation(value = "更新优先级")
     @Permission(level = ResourceLevel.ORGANIZATION)
     @PutMapping
-    public ResponseEntity<TestPriorityDTO> update(@PathVariable("organization_id") Long organizationId,
+    public ResponseEntity<TestPriorityDTO> update(@ApiParam(value = "组织id", required = true)
+                                                  @PathVariable("organization_id") Long organizationId,
+                                                  @ApiParam(value = "更新vo", required = true)
                                                   @RequestBody TestPriorityDTO testPriorityDTO) {
         validObject(testPriorityDTO);
         testPriorityDTO.setOrganizationId(organizationId);
@@ -63,8 +69,10 @@ public class TestPriorityController extends BaseController {
     @ApiOperation(value = "删除")
     @Permission(level = ResourceLevel.ORGANIZATION)
     @DeleteMapping
-    public ResponseEntity<Void> remove(@PathVariable("organization_id") Long organizationId,
-                                        @RequestBody TestPriorityDTO testPriorityDTO) {
+    public ResponseEntity<Void> remove(@ApiParam(value = "组织id", required = true)
+                                       @PathVariable("organization_id") Long organizationId,
+                                       @ApiParam(value = "删除vo", required = true)
+                                       @RequestBody TestPriorityDTO testPriorityDTO) {
         testPriorityService.delete(organizationId, testPriorityDTO);
         return Results.success();
     }
@@ -72,7 +80,8 @@ public class TestPriorityController extends BaseController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation(value = "生效/失效优先级")
     @PostMapping("/{id}/enabled")
-    public ResponseEntity<Void> enablePriority(@PathVariable("organization_id") Long organizationId,
+    public ResponseEntity<Void> enablePriority(@ApiParam(value = "组织id", required = true)
+                                               @PathVariable("organization_id") Long organizationId,
                                                @ApiParam(value = "id", required = true)
                                                @PathVariable @Encrypt Long id) {
         testPriorityService.changePriorityEnabled(organizationId, id, true);
@@ -82,7 +91,8 @@ public class TestPriorityController extends BaseController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation(value = "生效/失效优先级")
     @PostMapping("/{id}/disabled")
-    public ResponseEntity<Void> disablePriority(@PathVariable("organization_id") Long organizationId,
+    public ResponseEntity<Void> disablePriority(@ApiParam(value = "组织id", required = true)
+                                                @PathVariable("organization_id") Long organizationId,
                                                 @ApiParam(value = "id", required = true)
                                                 @PathVariable @Encrypt Long id) {
         testPriorityService.changePriorityEnabled(organizationId, id, false);
@@ -92,7 +102,9 @@ public class TestPriorityController extends BaseController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation(value = "更新展示顺序")
     @PutMapping(value = "/sequence")
-    public ResponseEntity<List<TestPriorityDTO>> updateByList(@PathVariable("organization_id") Long organizationId,
+    public ResponseEntity<List<TestPriorityDTO>> updateByList(@ApiParam(value = "组织id", required = true)
+                                                              @PathVariable("organization_id") Long organizationId,
+                                                              @ApiParam(value = "顺序更新列表", required = true)
                                                               @RequestBody List<TestPriorityDTO> list) {
         return new ResponseEntity<>(testPriorityService.updateByList(list, organizationId), HttpStatus.OK);
     }
@@ -100,7 +112,9 @@ public class TestPriorityController extends BaseController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation(value = "校验优先级名字是否未被使用")
     @GetMapping(value = "/check_name")
-    public ResponseEntity<Boolean> checkName(@PathVariable("organization_id") Long organizationId,
+    public ResponseEntity<Boolean> checkName(@ApiParam(value = "组织id", required = true)
+                                             @PathVariable("organization_id") Long organizationId,
+                                             @ApiParam(value = "校验名称", required = true)
                                              @RequestParam("name") String name) {
         return Optional.ofNullable(testPriorityService.checkName(organizationId, name))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
@@ -110,7 +124,8 @@ public class TestPriorityController extends BaseController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation(value = "校验删除优先级")
     @GetMapping("/check_delete/{id}")
-    public ResponseEntity<Long> checkDelete(@PathVariable("organization_id") Long organizationId,
+    public ResponseEntity<Long> checkDelete(@ApiParam(value = "组织id", required = true)
+                                            @PathVariable("organization_id") Long organizationId,
                                             @ApiParam(value = "id", required = true)
                                             @PathVariable @Encrypt Long id) {
         return new ResponseEntity<>(testPriorityService.checkDelete(organizationId, id), HttpStatus.OK);

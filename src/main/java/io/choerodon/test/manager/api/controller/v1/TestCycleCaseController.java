@@ -61,11 +61,14 @@ public class TestCycleCaseController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("excel")
     @GetMapping("/download/excel/{cycleId}")
-    public ResponseEntity downLoad(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity downLoad(@ApiParam(value = "项目id", required = true)
+                                   @PathVariable(name = "project_id") Long projectId,
+                                   @ApiParam(value = "计划文件夹id", required = true)
                                    @PathVariable(name = "cycleId")
                                    @Encrypt Long cycleId,
                                    HttpServletRequest request,
                                    HttpServletResponse response,
+                                   @ApiParam(value = "组织id", required = true)
                                    @RequestParam Long organizationId) {
         excelServiceHandler.exportCycleCaseInOneCycle(cycleId, projectId, request, response, organizationId);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -74,12 +77,17 @@ public class TestCycleCaseController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("查询测试执行详情")
     @PostMapping("/{executeId}/info")
-    public ResponseEntity<TestCycleCaseInfoVO> queryCaseInfo(@PathVariable("project_id") Long projectId,
-                                                             @RequestParam(name = "cycle_id")
+    public ResponseEntity<TestCycleCaseInfoVO> queryCaseInfo(@ApiParam(value = "项目id", required = true)
+                                                             @PathVariable("project_id") Long projectId,
+                                                             @ApiParam(value = "计划文件夹id", required = true)
+                                                             @RequestParam(name = "cycle_id", required = false)
                                                              @Encrypt Long cycleId,
+                                                             @ApiParam(value = "计划id", required = true)
                                                              @RequestParam(name = "plan_id")
                                                              @Encrypt Long planId,
+                                                             @ApiParam(value = "查询参数")
                                                              @RequestBody(required = false) CaseSearchVO caseSearchVO,
+                                                             @ApiParam(value = "执行id", required = true)
                                                              @PathVariable(name = "executeId")
                                                              @Encrypt Long executeId) {
         return new ResponseEntity<>(testCycleCaseService.queryCycleCaseInfo(executeId, projectId, planId, cycleId, caseSearchVO), HttpStatus.OK);
@@ -88,12 +96,13 @@ public class TestCycleCaseController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("查询计划下的执行状态总览")
     @GetMapping("/query/status")
-    public ResponseEntity<ExecutionStatusVO> queryExecutionStatus(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity<ExecutionStatusVO> queryExecutionStatus(@ApiParam(value = "项目id", required = true)
+                                                                  @PathVariable(name = "project_id") Long projectId,
                                                                   @ApiParam(value = "plan_id", required = false)
                                                                   @RequestParam(name = "plan_id")
                                                                   @Encrypt Long planId,
-                                                                  @ApiParam(value = "cycle_id", required = false)
-                                                                  @RequestParam(name = "cycle_id")
+                                                                  @ApiParam(value = "cycle_id")
+                                                                  @RequestParam(name = "cycle_id", required = false)
                                                                   @Encrypt Long cycleId) {
         return Optional.ofNullable(testCycleCaseService.queryExecuteStatus(projectId, planId, cycleId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
@@ -104,8 +113,11 @@ public class TestCycleCaseController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("更新测试执行和其对应步骤")
     @PutMapping("/case_step")
-    public ResponseEntity updateCaseAndStep(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity updateCaseAndStep(@ApiParam(value = "项目id", required = true)
+                                            @PathVariable(name = "project_id") Long projectId,
+                                            @ApiParam(value = "执行及步骤更新内容", required = true)
                                             @RequestBody TestCycleCaseUpdateVO testCycleCaseUpdateVO,
+                                            @ApiParam(value = "是否同步", required = true)
                                             @RequestParam(name = "isAsync", defaultValue = "false") Boolean isAsync) {
         testCycleCaseService.updateCaseAndStep(projectId, testCycleCaseUpdateVO, isAsync);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -115,7 +127,9 @@ public class TestCycleCaseController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("更新测试执行信息")
     @PutMapping("/cycle_case")
-    public ResponseEntity update(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity update(@ApiParam(value = "项目id", required = true)
+                                 @PathVariable(name = "project_id") Long projectId,
+                                 @ApiParam(value = "执行更新信息", required = true)
                                  @RequestBody TestCycleCaseVO testCycleCaseVO) {
         testCycleCaseService.update(testCycleCaseVO);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -125,12 +139,17 @@ public class TestCycleCaseController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("查询当前文件夹下面所有子文件夹中用例")
     @PostMapping("/query/caseList")
-    public ResponseEntity<Page<TestFolderCycleCaseVO>> listCaseByCycleId(@PathVariable("project_id") Long projectId,
-                                                                         @RequestParam(name = "cycle_id")
+    public ResponseEntity<Page<TestFolderCycleCaseVO>> listCaseByCycleId(@ApiParam(value = "项目id", required = true)
+                                                                         @PathVariable("project_id") Long projectId,
+                                                                         @ApiParam(value = "计划文件夹id", required = true)
+                                                                         @RequestParam(name = "cycle_id", required = false)
                                                                          @Encrypt Long cycleId,
+                                                                         @ApiParam(value = "计划id", required = true)
                                                                          @RequestParam(name = "plan_id")
                                                                          @Encrypt Long planId,
+                                                                         @ApiParam(value = "分页信息", required = true)
                                                                          @SortDefault PageRequest pageRequest,
+                                                                         @ApiParam(value = "查询参数")
                                                                          @RequestBody(required = false) CaseSearchVO caseSearchVO) {
         return new ResponseEntity<>(testCycleCaseService.listAllCaseByCycleId(projectId, planId, cycleId, pageRequest, caseSearchVO), HttpStatus.OK);
     }
@@ -138,10 +157,13 @@ public class TestCycleCaseController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("批量指派用例")
     @PostMapping("/batchAssign/cycleCase")
-    public ResponseEntity batchAssignCase(@PathVariable("project_id") Long projectId,
+    public ResponseEntity batchAssignCase(@ApiParam(value = "项目id", required = true)
+                                          @PathVariable("project_id") Long projectId,
+                                          @ApiParam(value = "指派人员id", required = true)
                                           @RequestParam(name = "assign_user_id")
                                           @Encrypt Long assignUserId,
                                           @RequestBody
+                                              @ApiParam(value = "指派的循环用例id集合", required = true)
                                           @Encrypt List<Long> cycleCaseIds) {
         testCycleCaseService.batchAssignCycleCase(projectId, assignUserId, cycleCaseIds);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -150,7 +172,9 @@ public class TestCycleCaseController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("查询一个执行和步骤")
     @GetMapping("/case_step/{execute_id}")
-    public ResponseEntity<TestCycleCaseUpdateVO> queryCaseAndStep(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity<TestCycleCaseUpdateVO> queryCaseAndStep(@ApiParam(value = "项目id", required = true)
+                                                                  @PathVariable(name = "project_id") Long projectId,
+                                                                  @ApiParam(value = "执行id", required = true)
                                                                   @PathVariable(name = "execute_id")
                                                                   @Encrypt Long executeId) {
         return Optional.ofNullable(testCycleCaseService.queryCaseAndStep(executeId))
@@ -161,7 +185,9 @@ public class TestCycleCaseController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("查询更新对比")
     @GetMapping("/{execute_id}/compared")
-    public ResponseEntity<CaseChangeVO> selectUpdateCompare(@PathVariable("project_id") Long projectId,
+    public ResponseEntity<CaseChangeVO> selectUpdateCompare(@ApiParam(value = "项目id", required = true)
+                                                            @PathVariable("project_id") Long projectId,
+                                                            @ApiParam(value = "执行id", required = true)
                                                             @PathVariable(name = "execute_id")
                                                             @Encrypt Long executeId) {
 
@@ -171,7 +197,9 @@ public class TestCycleCaseController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("更新用例")
     @PostMapping("/compared")
-    public ResponseEntity updateCompare(@PathVariable("project_id") Long projectId,
+    public ResponseEntity updateCompare(@ApiParam(value = "项目id", required = true)
+                                        @PathVariable("project_id") Long projectId,
+                                        @ApiParam(value = "用例更新vo", required = true)
                                         @RequestBody CaseCompareRepVO caseCompareRepVO) {
         testCycleCaseService.updateCompare(projectId, caseCompareRepVO);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -180,7 +208,9 @@ public class TestCycleCaseController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("忽略用例更新")
     @PostMapping("/{execute_id}/ignore/update")
-    public ResponseEntity ignoreUpdate(@PathVariable("project_id") Long projectId,
+    public ResponseEntity ignoreUpdate(@ApiParam(value = "项目id", required = true)
+                                       @PathVariable("project_id") Long projectId,
+                                       @ApiParam(value = "执行id", required = true)
                                        @PathVariable("execute_id")
                                        @Encrypt Long executedId) {
         testCycleCaseService.ignoreUpdate(projectId, executedId);
@@ -190,11 +220,15 @@ public class TestCycleCaseController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("导入用例")
     @PostMapping("/import")
-    public ResponseEntity importCase(@PathVariable("project_id") Long projectId,
+    public ResponseEntity importCase(@ApiParam(value = "项目id", required = true)
+                                     @PathVariable("project_id") Long projectId,
+                                     @ApiParam(value = "计划文件夹id", required = true)
                                      @RequestParam("cycle_id")
                                      @Encrypt Long cycleId,
+                                     @ApiParam(value = "计划id", required = true)
                                      @RequestParam("plan_id")
                                      @Encrypt Long planId,
+                                     @ApiParam(value = "计划信息", required = true)
                                      @RequestBody TestPlanVO testPlanVO) {
         testCycleCaseService.importCase(projectId, cycleId, testPlanVO.getCaseSelected(), planId);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -203,7 +237,9 @@ public class TestCycleCaseController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("批量异步删除测试循环用例")
     @DeleteMapping("/async_batch_delete")
-    public ResponseEntity asyncBatchDelete(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity asyncBatchDelete(@ApiParam(value = "项目id", required = true)
+                                           @PathVariable(name = "project_id") Long projectId,
+                                           @ApiParam(value = "批量删除的循环用例id集合", required = true)
                                            @RequestBody @Encrypt List<Long> cycleCaseIds) {
         testCycleCaseAsyncService.asyncBatchDelete(cycleCaseIds, projectId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -212,14 +248,17 @@ public class TestCycleCaseController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("指派文件夹测试用例")
     @PutMapping("/assign")
-    public ResponseEntity<Void> assignCycleCase(
-            @PathVariable("project_id") Long projectId,
-            @RequestParam(name = "cycle_id")
-            @Encrypt Long cycleId,
-            @RequestParam(name = "assign_user_id")
-            @Encrypt Long assignUserId,
-            @RequestParam(name = "plan_id")
-            @Encrypt Long planId) {
+    public ResponseEntity<Void> assignCycleCase(@ApiParam(value = "项目id", required = true)
+                                                @PathVariable("project_id") Long projectId,
+                                                @ApiParam(value = "计划文件夹id")
+                                                @RequestParam(name = "cycle_id", required = false)
+                                                @Encrypt Long cycleId,
+                                                @ApiParam(value = "指派人员id", required = true)
+                                                @RequestParam(name = "assign_user_id")
+                                                @Encrypt Long assignUserId,
+                                                @ApiParam(value = "计划id", required = true)
+                                                @RequestParam(name = "plan_id")
+                                                @Encrypt Long planId) {
         testCycleCaseService.assignCaseByCycle(projectId, assignUserId, cycleId, planId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -227,12 +266,14 @@ public class TestCycleCaseController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("取消指派文件夹测试用例")
     @DeleteMapping("/assign")
-    public ResponseEntity<Void> deleteFolderAssignCase(
-            @PathVariable("project_id") Long projectId,
-            @RequestParam(name = "cycle_id")
-            @Encrypt Long cycleId,
-            @RequestParam(name = "plan_id")
-            @Encrypt Long planId) {
+    public ResponseEntity<Void> deleteFolderAssignCase(@ApiParam(value = "项目id", required = true)
+                                                       @PathVariable("project_id") Long projectId,
+                                                       @ApiParam(value = "计划文件夹id")
+                                                       @RequestParam(name = "cycle_id", required = false)
+                                                       @Encrypt Long cycleId,
+                                                       @ApiParam(value = "计划id", required = true)
+                                                       @RequestParam(name = "plan_id")
+                                                       @Encrypt Long planId) {
         testCycleCaseService.assignCaseByCycle(projectId, null, cycleId, planId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
